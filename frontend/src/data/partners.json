@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Thru the Bible",
+    "logo": "ttb.webp",
+    "url": "https://ttb.org"
+  },
+  {
+    "name": "Your Network of Praise", 
+    "logo": "ynop.webp",
+    "url": "https://www.ynop.org"
+  },
+  {
+    "name": "Galcom",
+    "logo": "galcom.webp", 
+    "url": "https://galcom.org"
+  },
+  {
+    "name": "Nations One",
+    "logo": "nationsone.webp",
+    "url": "https://nationsone.org"
+  },
+  {
+    "name": "Trans World Radio",
+    "logo": "twr.webp",
+    "url": "https://twr.org"
+  },
+  {
+    "name": "HCJB Global",
+    "logo": "hcjb.webp", 
+    "url": "https://hcjb.org"
+  }
+]
