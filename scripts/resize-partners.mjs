@@ -118,8 +118,10 @@ async function processLogos() {
     }
   }
 
-  const targetHeight = Math.min(...heights);
-  console.log(`🎯 Target height set to: ${targetHeight}px (smallest logo)`);
+  // Use a minimum visible size instead of the smallest logo
+  const minHeight = Math.min(...heights);
+  const targetHeight = Math.max(minHeight, 56); // Ensure minimum 56px for visibility
+  console.log(`🎯 Target height set to: ${targetHeight}px (minimum visible size)`);
 
   // Process each logo - for demo, we'll create optimized copies
   for (const file of imageFiles) {
