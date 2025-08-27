@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 import sys
 
-BACKEND_URL = "https://radiokioo.preview.emergentagent.com/api"
+BACKEND_URL = "https://radio-streaming-3.preview.emergentagent.com/api"
 
 def print_header(title):
     print(f"\n{'='*50}")
