@@ -92,57 +92,89 @@ const ListenLive = () => {
               </div>
             </div>
 
-            {/* Player Controls */}
+            {/* Audio Player */}
             <div className="flex flex-col items-center space-y-6">
               
-              {/* Play/Pause Button */}
-              <button
-                onClick={togglePlay}
-                className="w-20 h-20 bg-white text-kioo-primary rounded-full flex items-center justify-center text-2xl hover:scale-105 transition-transform duration-200 shadow-lg"
-              >
-                {isPlaying ? '⏸️' : '▶️'}
-              </button>
-
-              {/* Volume Control */}
-              <div className="flex items-center space-x-4 w-full max-w-xs">
-                <span className="text-white text-sm">🔈</span>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={volume}
-                  onChange={handleVolumeChange}
-                  className="flex-1 h-2 bg-white bg-opacity-20 rounded-lg appearance-none slider"
-                />
-                <span className="text-white text-sm">🔊</span>
-                <span className="text-white text-sm w-8">{volume}%</span>
+              {/* HTML5 Audio Player */}
+              <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-6 w-full max-w-md">
+                <audio 
+                  controls 
+                  preload="none"
+                  className="w-full h-12"
+                  style={{
+                    background: 'transparent',
+                    borderRadius: '8px'
+                  }}
+                >
+                  <source src="https://radio.galcom.org/?station=VOXRadio" type="audio/mpeg" />
+                  <p className="text-white">Your browser does not support the audio element. Please try using a different browser.</p>
+                </audio>
+                
+                <div className="text-center mt-4">
+                  <p className="text-white text-sm">🔴 Live Stream</p>
+                  <p className="text-green-200 text-xs">Powered by Galcom Radio Network</p>
+                </div>
               </div>
 
-              {/* Quality Toggle */}
-              <div className="flex items-center space-x-3">
-                <span className="text-green-200 text-sm">Audio Quality:</span>
+              {/* Alternative Access Methods */}
+              <div className="grid grid-cols-2 gap-4 w-full max-w-md">
+                <a
+                  href="https://radio.galcom.org/?station=VOXRadio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-opacity-20 transition-colors"
+                >
+                  <div className="text-2xl mb-2">🌐</div>
+                  <div className="text-white text-sm font-semibold">Web Player</div>
+                  <div className="text-green-200 text-xs">Direct Link</div>
+                </a>
+                
                 <button
                   onClick={() => setLowDataMode(!lowDataMode)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`rounded-lg p-4 text-center transition-colors ${
                     lowDataMode 
-                      ? 'bg-yellow-500 text-yellow-900' 
-                      : 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+                      ? 'bg-yellow-500 bg-opacity-20 border border-yellow-400' 
+                      : 'bg-white bg-opacity-10 hover:bg-opacity-20'
                   }`}
                 >
-                  {lowDataMode ? '📱 Low Data Mode' : '💎 High Quality'}
+                  <div className="text-2xl mb-2">{lowDataMode ? '📱' : '💎'}</div>
+                  <div className="text-white text-sm font-semibold">
+                    {lowDataMode ? 'Low Data' : 'High Quality'}
+                  </div>
+                  <div className="text-green-200 text-xs">
+                    {lowDataMode ? 'Data Saver' : 'Best Audio'}
+                  </div>
                 </button>
               </div>
 
               {/* Share Buttons */}
               <div className="flex items-center space-x-4 pt-4">
                 <span className="text-green-200 text-sm">Share:</span>
-                <button className="text-white hover:text-green-200 transition-colors">
-                  📘 Facebook
+                <button 
+                  onClick={() => navigator.share && navigator.share({
+                    title: 'Kioo Radio 98.1 FM',
+                    text: 'Listen to Kioo Radio - The Gift of Good News',
+                    url: window.location.href
+                  })}
+                  className="text-white hover:text-green-200 transition-colors"
+                >
+                  📱 Share
                 </button>
-                <button className="text-white hover:text-green-200 transition-colors">
+                <a
+                  href="https://wa.me/?text=Listen%20to%20Kioo%20Radio%2098.1%20FM%20-%20The%20Gift%20of%20Good%20News%20https://radiokioo.preview.emergentagent.com/listen-live"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-green-200 transition-colors"
+                >
                   💬 WhatsApp
-                </button>
-                <button className="text-white hover:text-green-200 transition-colors">
+                </a>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Link copied to clipboard!');
+                  }}
+                  className="text-white hover:text-green-200 transition-colors"
+                >
                   🔗 Copy Link
                 </button>
               </div>
