@@ -6,30 +6,22 @@ const Footer = () => {
 
   const footerLinks = {
     'Quick Links': [
-      { name: 'Listen Live', path: '/listen-live' },
-      { name: 'Programs', path: '/programs' },
-      { name: 'Impact Stories', path: '/impact' },
-      { name: 'Latest News', path: '/news' },
+      { name: 'Listen Live', nameKey: 'navListen', path: '/listen-live' },
+      { name: 'Programs', nameKey: 'navPrograms', path: '/programs' },
+      { name: 'Impact Stories', nameKey: 'navImpact', path: '/impact' },
+      { name: 'About Us', nameKey: 'navAbout', path: '/about' },
     ],
     'Get Involved': [
-      { name: 'Pray for Us', path: '/get-involved' },
-      { name: 'Volunteer', path: '/get-involved' },
-      { name: 'Partner with Us', path: '/get-involved' },
-      { name: 'Donate Now', path: '/donate' },
-    ],
-    'About': [
-      { name: 'Our Mission', path: '/about' },
-      { name: 'Our Team', path: '/about' },
-      { name: 'Contact Us', path: '/contact' },
-      { name: 'Coverage Area', path: '/impact' },
-    ],
+      { name: 'Donate', nameKey: 'navDonate', path: '/donate' },
+      { name: 'Contact Us', nameKey: 'contact', path: '/contact' },
+    ]
   };
 
   const socialLinks = [
     { name: 'Facebook', icon: '📘', url: 'https://facebook.com/kiooradio' },
-    { name: 'WhatsApp', icon: '💬', url: 'https://wa.me/+2311234567890' },
+    { name: 'WhatsApp', icon: '💬', url: 'https://wa.me/+2317783837O3' },
     { name: 'YouTube', icon: '📺', url: 'https://youtube.com/@kiooradio' },
-    { name: 'Email', icon: '✉️', url: 'mailto:info@kiooradio.com' },
+    { name: 'Email', icon: '✉️', url: 'mailto:info@kiooradio.org' },
   ];
 
   return (
@@ -58,10 +50,10 @@ const Footer = () => {
       {/* Main Footer Content */}
       <div className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
             {/* Logo and Description */}
-            <div className="lg:col-span-2">
+            <div>
               <div className="flex items-center space-x-3 mb-4">
                 <img 
                   src="https://customer-assets.emergentagent.com/job_ab37571b-81ea-4716-830b-4dd3875c42b0/artifacts/3n0kpvfn_KIOO%20RADIO.png" 
@@ -74,23 +66,23 @@ const Footer = () => {
                 </div>
               </div>
               <p className="text-gray-300 mb-6 leading-relaxed">
-                Broadcasting hope, faith, and community news across Liberia, Sierra Leone, and Guinea. 
+                Broadcasting hope, faith, and community news across the Makona River Region. 
                 Bringing people together through the power of radio since 2025.
               </p>
               
-              {/* Contact Information */}
+              {/* Updated Contact Information */}
               <div className="space-y-2 text-sm">
                 <div className="flex items-center space-x-2">
                   <span>📍</span>
-                  <span className="text-gray-300">Monrovia, Liberia</span>
+                  <span className="text-gray-300">Kioo Radio, Betche Hill, Foya, Lofa County, Liberia</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span>📞</span>
-                  <span className="text-gray-300">+231 123 456 7890</span>
+                  <span className="text-gray-300">+231 77 838 3703</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span>✉️</span>
-                  <span className="text-gray-300">info@kiooradio.com</span>
+                  <span className="text-gray-300">info@kiooradio.org</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span>📡</span>
@@ -109,6 +101,7 @@ const Footer = () => {
                       <Link
                         to={link.path}
                         className="text-gray-300 hover:text-kioo-primary transition-colors text-sm"
+                        data-i18n={link.nameKey}
                       >
                         {link.name}
                       </Link>
@@ -153,11 +146,11 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Signal Coverage Indicator */}
+      {/* Signal Coverage Indicator - Updated */}
       <div className="bg-kioo-secondary py-2">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-green-100 text-xs">
-            🌍 Reaching 3 Nations • 🎯 150+ Mile Radius • 📻 Crystal Clear Signal • ⚡ Solar Powered
+            🌍 Reaching the Makona River Region • 🎯 150+ Mile Radius • 📻 Crystal Clear Signal • 🎙️ English & French
           </p>
         </div>
       </div>
