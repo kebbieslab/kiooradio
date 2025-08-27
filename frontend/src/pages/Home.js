@@ -88,31 +88,13 @@ const Home = () => {
 
             </div>
 
-            {/* Hero Image/Stats */}
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-6">
-                <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 card-hover">
-                  <div className="text-3xl mb-2">🌍</div>
-                  <h3 className="text-2xl font-bold">3 Nations</h3>
-                  <p className="text-green-200">Coverage Area</p>
-                </div>
-                <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 card-hover">
-                  <div className="text-3xl mb-2">📡</div>
-                  <h3 className="text-2xl font-bold">98.1 FM</h3>
-                  <p className="text-green-200">Crystal Clear</p>
-                </div>
-              </div>
-              <div className="space-y-6 mt-8">
-                <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 card-hover">
-                  <div className="text-3xl mb-2">🎙️</div>
-                  <h3 className="text-2xl font-bold">English</h3>
-                  <p className="text-green-200">& French</p>
-                </div>
-                <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 card-hover">
-                  <div className="text-3xl mb-2">🕐</div>
-                  <h3 className="text-2xl font-bold">24/7</h3>
-                  <p className="text-green-200">Broadcasting</p>
-                </div>
+            {/* Hero Visual Element */}
+            <div className="flex justify-center">
+              <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-8 max-w-md text-center card-hover">
+                <div className="text-6xl mb-4">📻</div>
+                <h3 className="text-2xl font-bold text-white mb-2">Kioo Radio</h3>
+                <p className="text-green-200 text-lg">98.1 FM</p>
+                <p className="text-green-100 text-sm mt-2">The Gift of Good News</p>
               </div>
             </div>
           </div>
