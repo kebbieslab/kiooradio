@@ -73,8 +73,6 @@ const ListenLive = () => {
                 <span>📡 98.1 FM</span>
                 <span>•</span>
                 <span>🌍 Makona River Region</span>
-                <span>•</span>
-                <span>🎙️ English & French</span>
               </div>
             </div>
 
