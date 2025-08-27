@@ -90,7 +90,7 @@ const ListenLive = () => {
                     borderRadius: '8px'
                   }}
                 >
-                  <source src="https://radio.galcom.org/?station=VOXRadio" type="audio/mpeg" />
+                  <source src="https://stream.galcom.org/stream/vox" type="audio/mpeg" />
                   <p className="text-white">Your browser does not support the audio element. Please try using a different browser.</p>
                 </audio>
                 
