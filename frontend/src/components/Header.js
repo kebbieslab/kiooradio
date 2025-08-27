@@ -1,30 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Header = ({ currentLanguage, setCurrentLanguage, languages, setIsPlayerVisible }) => {
+const Header = ({ setIsPlayerVisible }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState('en');
   const location = useLocation();
 
+  // Reduced navigation - only 6 items as specified
   const navigation = [
-    { name: 'Home', path: '/', icon: '🏠' },
-    { name: 'Listen Live', path: '/listen-live', icon: '📻' },
-    { name: 'Programs', path: '/programs', icon: '📅' },
-    { name: 'Impact', path: '/impact', icon: '💝' },
-    { name: 'News', path: '/news', icon: '📰' },
-    { name: 'Get Involved', path: '/get-involved', icon: '🤝' },
-    { name: 'Donate', path: '/donate', icon: '💖' },
-    { name: 'About', path: '/about', icon: 'ℹ️' },
-    { name: 'Contact', path: '/contact', icon: '📞' },
+    { name: 'Home', nameKey: 'navHome', path: '/', icon: '🏠' },
+    { name: 'Listen', nameKey: 'navListen', path: '/listen-live', icon: '📻' },
+    { name: 'Programs', nameKey: 'navPrograms', path: '/programs', icon: '📅' },
+    { name: 'Impact', nameKey: 'navImpact', path: '/impact', icon: '💝' },
+    { name: 'Donate', nameKey: 'navDonate', path: '/donate', icon: '💖' },
+    { name: 'About', nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
   ];
+
+  // Language system initialization
+  useEffect(() => {
+    const initLanguage = () => {
+      const saved = localStorage.getItem('lang');
+      if (saved) {
+        setCurrentLanguage(saved);
+        return;
+      }
+      
+      // Auto-detect based on browser language
+      const nav = (navigator.language || 'en').toLowerCase();
+      const defaultLang = nav.startsWith('fr') ? 'fr' : 'en';
+      setCurrentLanguage(defaultLang);
+      localStorage.setItem('lang', defaultLang);
+    };
+
+    initLanguage();
+  }, []);
+
+  // Apply i18n translations
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.applyI18n) {
+      window.applyI18n();
+    }
+  }, [currentLanguage]);
+
+  const switchLanguage = (lang) => {
+    setCurrentLanguage(lang);
+    localStorage.setItem('lang', lang);
+    if (typeof window !== 'undefined' && window.setLang) {
+      window.setLang(lang);
+    }
+  };
 
   const isActive = (path) => location.pathname === path;
 
   return (
     <>
-      {/* Top Ticker */}
+      {/* Countdown Bar - site-wide */}
+      <div id="countdown" style={{
+        background: '#0F172A',
+        color: '#fff',
+        textAlign: 'center',
+        padding: '6px 10px',
+        font: '600 14px/1.4 Inter, system-ui'
+      }}>
+        Launching Kioo Radio in <span id="cd"></span> — November 13, 2025
+      </div>
+
+      {/* Top Ticker - Updated without solar */}
       <div className="bg-kioo-primary text-white py-2 px-4 text-center text-sm font-medium overflow-hidden">
         <div className="animate-pulse">
-          🎙️ Launch set for November 13, 2025 • ⚡ Solar power installed • 🌍 Broadcasting into 3 nations
+          🎙️ Launch set for November 13, 2025 • 📡 Broadcasting into 3 nations • 🌍 Reaching the Makona River Region
         </div>
       </div>
 
@@ -61,27 +105,35 @@ const Header = ({ currentLanguage, setCurrentLanguage, languages, setIsPlayerVis
                   }`}
                 >
                   <span className="text-xs">{item.icon}</span>
-                  <span>{item.name}</span>
+                  <span data-i18n={item.nameKey}>{item.name}</span>
                 </Link>
               ))}
             </nav>
 
-            {/* Action Buttons & Language Switcher */}
+            {/* Language Toggle + Listen Live Button */}
             <div className="flex items-center space-x-4">
               
-              {/* Language Switcher */}
-              <div className="language-switcher">
-                <select
-                  value={currentLanguage}
-                  onChange={(e) => setCurrentLanguage(e.target.value)}
-                  className="bg-transparent text-kioo-primary text-sm font-medium px-2 py-1 rounded border-none outline-none cursor-pointer"
+              {/* EN/FR Language Toggle */}
+              <div className="language-switcher flex items-center space-x-1">
+                <button
+                  onClick={() => switchLanguage('en')}
+                  className={`px-2 py-1 text-sm font-medium rounded ${
+                    currentLanguage === 'en' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
+                  }`}
+                  aria-label="Switch to English"
                 >
-                  {Object.entries(languages).map(([code, name]) => (
-                    <option key={code} value={code} className="bg-white text-gray-700">
-                      {name}
-                    </option>
-                  ))}
-                </select>
+                  EN
+                </button>
+                <span className="text-gray-400">|</span>
+                <button
+                  onClick={() => switchLanguage('fr')}
+                  className={`px-2 py-1 text-sm font-medium rounded ${
+                    currentLanguage === 'fr' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
+                  }`}
+                  aria-label="Basculer en français"
+                >
+                  FR
+                </button>
               </div>
 
               {/* Listen Live Button */}
@@ -90,7 +142,7 @@ const Header = ({ currentLanguage, setCurrentLanguage, languages, setIsPlayerVis
                 className="btn-primary hidden sm:flex items-center space-x-2 text-sm"
               >
                 <span className="w-2 h-2 bg-red-500 rounded-full live-pulse"></span>
-                <span>Listen Live</span>
+                <span data-i18n="listen">Listen Live</span>
               </button>
 
               {/* Mobile Menu Button */}
@@ -127,7 +179,7 @@ const Header = ({ currentLanguage, setCurrentLanguage, languages, setIsPlayerVis
                     }`}
                   >
                     <span>{item.icon}</span>
-                    <span>{item.name}</span>
+                    <span data-i18n={item.nameKey}>{item.name}</span>
                   </Link>
                 ))}
                 
@@ -140,13 +192,33 @@ const Header = ({ currentLanguage, setCurrentLanguage, languages, setIsPlayerVis
                   className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-kioo-primary text-white rounded-lg font-medium"
                 >
                   <span className="w-2 h-2 bg-red-400 rounded-full live-pulse"></span>
-                  <span>🔴 Listen Live</span>
+                  <span data-i18n="listen">🔴 Listen Live</span>
                 </button>
               </div>
             </div>
           )}
         </div>
       </header>
+
+      {/* Countdown Script */}
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          (function(){
+            const target = new Date('2025-11-13T09:00:00Z');
+            const el = document.getElementById('cd');
+            if (!el) return;
+            function tick(){
+              const now = new Date();
+              let s = Math.max(0, Math.floor((target - now)/1000));
+              const d = Math.floor(s/86400); s%=86400;
+              const h = Math.floor(s/3600);  s%=3600;
+              const m = Math.floor(s/60);    s%=60;
+              el.textContent = d + 'd ' + h + 'h ' + m + 'm ' + s + 's';
+            }
+            tick(); setInterval(tick, 1000);
+          })();
+        `
+      }} />
     </>
   );
 };
