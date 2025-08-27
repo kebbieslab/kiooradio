@@ -225,15 +225,15 @@
 
 /* Partners Strip Styles */
 .partners { 
-  padding: 32px 0 16px; 
+  padding: 48px 0 32px; 
   background: #fff; 
   border-top: 1px solid #e5e7eb;
 }
 
 .partners-title { 
-  font: 700 24px/1.2 Poppins, system-ui; 
+  font: 700 28px/1.2 Poppins, system-ui; 
   color: #0F172A; 
-  margin: 0 0 20px; 
+  margin: 0 0 32px; 
   text-align: center;
 }
 
