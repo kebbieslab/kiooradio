@@ -3,7 +3,7 @@ import partnersData from '../data/partners.json';
 
 const PartnersStrip = () => {
   const [partners] = useState(partnersData);
-  const [logoHeight] = useState(32); // From our resize script output
+  const [logoHeight] = useState(56); // Increased size for better visibility
 
   useEffect(() => {
     // Set CSS custom property for logo height (determined by resize script)
