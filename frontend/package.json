@@ -57,7 +57,9 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "resize-partners": "node ../scripts/resize-partners.mjs",
+    "predeploy": "npm run resize-partners"
   },
   "browserslist": {
     "production": [
