@@ -78,21 +78,19 @@ const ListenLive = () => {
           {/* Audio Player */}
           <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 mb-8 border border-white border-opacity-20">
             
-            {/* Current Program Info */}
-            {radioStatus && (
-              <div className="text-center mb-8">
-                <p className="text-green-200 text-sm mb-2">Currently Playing</p>
-                <h2 className="text-2xl font-bold text-white mb-2">{radioStatus.current_program}</h2>
-                <p className="text-green-100">Next: {radioStatus.next_program}</p>
-                <div className="flex items-center justify-center space-x-4 mt-4 text-sm text-green-200">
-                  <span>👥 {radioStatus.listener_count} Listeners</span>
-                  <span>•</span>
-                  <span>📡 98.1 FM</span>
-                  <span>•</span>
-                  <span>🌍 3 Nations</span>
-                </div>
+            {/* Live Radio Info */}
+            <div className="text-center mb-8">
+              <p className="text-green-200 text-sm mb-2">Now Broadcasting</p>
+              <h2 className="text-2xl font-bold text-white mb-2">Kioo Radio 98.1 FM</h2>
+              <p className="text-green-100">The Gift of Good News</p>
+              <div className="flex items-center justify-center space-x-4 mt-4 text-sm text-green-200">
+                <span>📡 98.1 FM</span>
+                <span>•</span>
+                <span>🌍 Makona River Region</span>
+                <span>•</span>
+                <span>🎙️ English & French</span>
               </div>
-            )}
+            </div>
 
             {/* Player Controls */}
             <div className="flex flex-col items-center space-y-6">
