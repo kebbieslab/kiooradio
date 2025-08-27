@@ -27,7 +27,8 @@ function App() {
         listen: "Listen Live", programs: "Programs", donate: "Donate",
         donateBlurb: "Your donation helps us continue broadcasting Hope, Faith, and give vital information across the Makona River Region. Every contribution makes a difference in someone's life.",
         impactTitle: "Our Coverage at a Glance",
-        contact: "Contact Us"
+        contact: "Contact Us",
+        partnersTitle: "Our Partners"
       },
       fr: {
         heroTitle: "Toucher les cœurs dans la région de la rivière Makona",
