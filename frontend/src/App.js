@@ -38,7 +38,8 @@ function App() {
         listen: "Écouter en direct", programs: "Programmes", donate: "Faire un don",
         donateBlurb: "Votre don nous aide à continuer de diffuser la Foi, l'Espérance et des informations essentielles dans la région de la rivière Makona. Chaque contribution change une vie.",
         impactTitle: "Notre Couverture en un Coup d'Œil",
-        contact: "Nous Contacter"
+        contact: "Nous Contacter",
+        partnersTitle: "Nos partenaires"
       }
     };
 
