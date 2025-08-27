@@ -23,5 +23,25 @@
     "name": "Galcom Canada",
     "logo": "galcom-canada.webp", 
     "url": "https://galcom.ca"
+  },
+  {
+    "name": "RPFFG",
+    "logo": "rpffg.webp",
+    "url": "#"
+  },
+  {
+    "name": "SonSet Solutions",
+    "logo": "sonset-solutions.webp",
+    "url": "https://sonsetsolutions.com"
+  },
+  {
+    "name": "Nations One",
+    "logo": "nations-one-square.webp",
+    "url": "https://nationsone.org"
+  },
+  {
+    "name": "Diguna",
+    "logo": "diguna.webp",
+    "url": "#"
   }
 ]
