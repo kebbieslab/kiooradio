@@ -306,6 +306,9 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Partners Strip - Above Footer */}
+      <PartnersStrip />
     </div>
   );
 };
