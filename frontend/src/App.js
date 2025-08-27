@@ -108,7 +108,7 @@ function App() {
               </div>
               <div className="flex items-center space-x-4">
                 <audio controls autoPlay className="h-8">
-                  <source src="https://radio.galcom.org/?station=VOXRadio" type="audio/mpeg" />
+                  <source src="https://stream.galcom.org/stream/vox" type="audio/mpeg" />
                   Your browser does not support the audio element.
                 </audio>
                 <button 
