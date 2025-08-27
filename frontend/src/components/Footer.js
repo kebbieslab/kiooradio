@@ -86,7 +86,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <span>📡</span>
-                  <span className="text-gray-300">98.1 FM • 24/7 Broadcasting</span>
+                  <span className="text-gray-300">98.1 FM</span>
                 </div>
               </div>
             </div>
