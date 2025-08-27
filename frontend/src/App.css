@@ -279,6 +279,14 @@
   transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
+/* Specific styling for Galcom Canada logo for better visibility */
+.logo img[alt="Galcom Canada"] {
+  filter: grayscale(100%) brightness(1.2) contrast(1.3);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 8px;
+  border-radius: 6px;
+}
+
 .logo:focus img,
 .logo:hover img { 
   filter: none; 
