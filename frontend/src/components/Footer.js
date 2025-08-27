@@ -150,7 +150,7 @@ const Footer = () => {
       <div className="bg-kioo-secondary py-2">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-green-100 text-xs">
-            🌍 Reaching the Makona River Region • 🎯 150+ Mile Radius • 📻 Crystal Clear Signal • 🎙️ English & French
+            🌍 Reaching the Makona River Region • 🎯 150+ Mile Radius
           </p>
         </div>
       </div>
