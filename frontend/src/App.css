@@ -249,9 +249,9 @@
 .logo-track {
   display: flex;
   align-items: center;
-  gap: 48px;
+  gap: 60px;
   will-change: transform;
-  animation: partners-scroll 40s linear infinite;
+  animation: partners-scroll 45s linear infinite;
 }
 
 .logo {
