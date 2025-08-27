@@ -24,13 +24,7 @@ const ListenLive = () => {
     fetchData();
   }, []);
 
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-  };
 
-  const handleVolumeChange = (e) => {
-    setVolume(e.target.value);
-  };
 
   if (loading) {
     return (
