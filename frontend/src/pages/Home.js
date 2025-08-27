@@ -43,7 +43,7 @@ const Home = () => {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="text-center">
             
             {/* Hero Content - Updated Text */}
             <div className="hero-content hero-fade-in">
@@ -53,15 +53,18 @@ const Home = () => {
                 </span>
               </div>
               
-              <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-                <span data-i18n="heroTitle">Reaching Hearts across the Makona River Region</span>
-              </h1>
-              
-              <p className="text-xl lg:text-2xl mb-8 text-green-100 leading-relaxed">
-                <span data-i18n="heroSub">Our signal covers over 150 miles, bringing Faith and Hope to the Kissi, Mandingo, Fulani, Gbandi and more.</span>
-              </p>
+              {/* Centered Main Title */}
+              <div className="text-center mb-8">
+                <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                  <span data-i18n="heroTitle">Reaching Hearts across the Makona River Region</span>
+                </h1>
+                
+                <p className="text-xl lg:text-2xl mb-8 text-green-100 leading-relaxed max-w-3xl mx-auto">
+                  <span data-i18n="heroSub">Our signal covers over 150 miles, bringing Faith and Hope to the Kissi, Mandingo, Fulani, Gbandi and more.</span>
+                </p>
+              </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
                 <Link 
                   to="/listen-live"
                   className="btn-primary inline-flex items-center justify-center space-x-3 text-lg"
@@ -84,15 +87,6 @@ const Home = () => {
                   <span data-i18n="donate">💖 Donate</span>
                 </Link>
               </div>
-
-
-            </div>
-
-            {/* Centered Main Title */}
-            <div className="text-center">
-              <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                <span data-i18n="heroTitle">Reaching Hearts across the Makona River Region</span>
-              </h1>
             </div>
           </div>
         </div>
