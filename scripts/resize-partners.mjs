@@ -14,7 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Configuration
 const SRC = path.join(__dirname, "../frontend/public/assets/partners");
 const OUT = path.join(__dirname, "../frontend/public/partners");
-const FALLBACK_HEIGHT = 48; // Default if no images found
+const FALLBACK_HEIGHT = 56; // Default height for good visibility
 
 async function initDirectories() {
   try {
