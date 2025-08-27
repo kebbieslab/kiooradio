@@ -6,19 +6,13 @@ const API = `${BACKEND_URL}/api`;
 
 const Impact = () => {
   const [impactStories, setImpactStories] = useState([]);
-  const [coverageData, setCoverageData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [storiesRes, coverageRes] = await Promise.all([
-          axios.get(`${API}/impact-stories`),
-          axios.get(`${API}/coverage`)
-        ]);
-        
+        const storiesRes = await axios.get(`${API}/impact-stories`);
         setImpactStories(storiesRes.data);
-        setCoverageData(coverageRes.data);
       } catch (error) {
         console.error('Error fetching impact data:', error);
       } finally {
@@ -51,7 +45,7 @@ const Impact = () => {
               💝 Lives Transformed
             </h1>
             <p className="text-xl text-green-100 max-w-3xl mx-auto leading-relaxed">
-              Every day, Kioo Radio touches hearts and changes lives across West Africa. 
+              Every day, Kioo Radio touches hearts and changes lives across the Makona River Region. 
               Here are the real stories of hope, healing, and transformation from our listeners.
             </p>
           </div>
@@ -74,7 +68,7 @@ const Impact = () => {
               <div className="w-20 h-20 bg-kioo-secondary rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white text-2xl font-bold">👥</span>
               </div>
-              <h3 className="text-3xl font-bold text-kioo-dark mb-2">7M+</h3>
+              <h3 className="text-3xl font-bold text-kioo-dark mb-2">3M+</h3>
               <p className="text-gray-600">People in Coverage</p>
             </div>
             
@@ -88,80 +82,102 @@ const Impact = () => {
             
             <div className="text-center">
               <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white text-2xl font-bold">⚡</span>
+                <span className="text-white text-2xl font-bold">🎙️</span>
               </div>
-              <h3 className="text-3xl font-bold text-kioo-dark mb-2">100%</h3>
-              <p className="text-gray-600">Solar Powered</p>
+              <h3 className="text-3xl font-bold text-kioo-dark mb-2">2</h3>
+              <p className="text-gray-600">Languages</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Coverage Map */}
-      {coverageData && (
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-kioo-dark mb-4">📡 Our Reach</h2>
-              <p className="text-lg text-gray-600">Broadcasting the gift of good news across West Africa</p>
-            </div>
+      {/* Coverage Areas - Updated per specifications */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-kioo-dark mb-4" data-i18n="impactTitle">Our Coverage at a Glance</h2>
+            <p className="text-lg text-gray-600">Broadcasting across the Makona River Region</p>
+          </div>
 
-            <div className="coverage-map">
-              <div className="grid md:grid-cols-3 gap-8 mb-8">
-                {coverageData.countries.map((country) => (
-                  <div key={country.name} className="text-center">
-                    <div className="bg-white rounded-xl shadow-lg p-6 card-hover">
-                      <h3 className="text-xl font-bold text-kioo-dark mb-4">{country.name}</h3>
-                      
-                      <div className="mb-4">
-                        <div className="text-3xl font-bold text-kioo-primary">{country.coverage}%</div>
-                        <p className="text-gray-600">Coverage Area</p>
-                      </div>
-                      
-                      <div className="bg-gray-200 rounded-full h-3 mb-4">
-                        <div 
-                          className="bg-kioo-primary h-3 rounded-full transition-all duration-1000"
-                          style={{ width: `${country.coverage}%` }}
-                        ></div>
-                      </div>
-
-                      <div>
-                        <p className="text-sm text-gray-600 mb-2">Major Cities:</p>
-                        <div className="flex flex-wrap justify-center gap-1">
-                          {country.major_cities.map((city) => (
-                            <span key={city} className="bg-kioo-primary bg-opacity-10 text-kioo-primary px-2 py-1 rounded text-xs">
-                              {city}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            {/* Foya, Lofa County: Liberia */}
+            <article className="card bg-white border border-gray-200 rounded-xl p-6 shadow-lg card-hover">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-kioo-primary rounded-full flex items-center justify-center mr-4">
+                  <span className="text-white text-xl">🇱🇷</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-kioo-dark">Foya, Lofa County: Liberia</h3>
+                </div>
               </div>
-              
-              <div className="text-center">
-                <div className="bg-kioo-primary text-white rounded-xl p-6">
-                  <div className="grid md:grid-cols-3 gap-6">
-                    <div>
-                      <div className="text-2xl font-bold">{coverageData.total_reach}</div>
-                      <div className="text-green-100 text-sm">Total Reach</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold">150+ Miles</div>
-                      <div className="text-green-100 text-sm">Signal Range</div>
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold">4 Languages</div>
-                      <div className="text-green-100 text-sm">Multilingual</div>
-                    </div>
-                  </div>
+              <p className="text-gray-600 leading-relaxed">
+                <span className="en-text">Estimated 400,000 people within our coverage area.</span>
+                <span className="fr-text hidden">Environ 400 000 personnes couvertes.</span>
+              </p>
+              <div className="mt-4 bg-gray-200 rounded-full h-3">
+                <div className="bg-kioo-primary h-3 rounded-full transition-all duration-1000" style={{ width: '85%' }}></div>
+              </div>
+            </article>
+
+            {/* Koindu, Kailahun District: Sierra Leone */}
+            <article className="card bg-white border border-gray-200 rounded-xl p-6 shadow-lg card-hover">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-kioo-secondary rounded-full flex items-center justify-center mr-4">
+                  <span className="text-white text-xl">🇸🇱</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-kioo-dark">Koindu, Kailahun District: Sierra Leone</h3>
+                </div>
+              </div>
+              <p className="text-gray-600 leading-relaxed">
+                <span className="en-text">Our signal reaches over 500,000 people.</span>
+                <span className="fr-text hidden">Notre signal atteint plus de 500 000 personnes.</span>
+              </p>
+              <div className="mt-4 bg-gray-200 rounded-full h-3">
+                <div className="bg-kioo-secondary h-3 rounded-full transition-all duration-1000" style={{ width: '70%' }}></div>
+              </div>
+            </article>
+
+            {/* Guéckédou – N'Zérékoré corridor: Guinea */}
+            <article className="card bg-white border border-gray-200 rounded-xl p-6 shadow-lg card-hover">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-kioo-accent rounded-full flex items-center justify-center mr-4">
+                  <span className="text-white text-xl">🇬🇳</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-kioo-dark">Guéckédou – N'Zérékoré corridor: Guinea</h3>
+                </div>
+              </div>
+              <p className="text-gray-600 leading-relaxed">
+                <span className="en-text">The most populous region in our coverage area, with over 2.1 million people.</span>
+                <span className="fr-text hidden">La région la plus peuplée de notre couverture, avec plus de 2,1 millions de personnes.</span>
+              </p>
+              <div className="mt-4 bg-gray-200 rounded-full h-3">
+                <div className="bg-kioo-accent h-3 rounded-full transition-all duration-1000" style={{ width: '90%' }}></div>
+              </div>
+            </article>
+          </div>
+          
+          <div className="text-center">
+            <div className="bg-kioo-primary text-white rounded-xl p-6">
+              <div className="grid md:grid-cols-3 gap-6">
+                <div>
+                  <div className="text-2xl font-bold">3M+ People</div>
+                  <div className="text-green-100 text-sm">Total Reach</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">150+ Miles</div>
+                  <div className="text-green-100 text-sm">Signal Range</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">English & French</div>
+                  <div className="text-green-100 text-sm">Languages</div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* Impact Stories */}
       {impactStories.length > 0 && (
@@ -211,10 +227,10 @@ const Impact = () => {
       )}
 
       {/* Impact Categories */}
-      <section className="py-16 bg-kioo-primary">
+      <section className="py-16 bg-kioo-primary text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">🎯 Areas of Impact</h2>
+            <h2 className="text-3xl font-bold mb-4">🎯 Areas of Impact</h2>
             <p className="text-green-100">How Kioo Radio is making a difference</p>
           </div>
 
@@ -272,40 +288,12 @@ const Impact = () => {
                 💬 Share Your Story
               </a>
               <a
-                href="tel:+2311234567890"
+                href="tel:+2317783837O3"
                 className="bg-white bg-opacity-20 backdrop-blur-sm text-white border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-kioo-primary transition-all"
               >
                 📞 Call Us Live
               </a>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Photo Gallery Preview */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-kioo-dark mb-4">📸 Community Gallery</h2>
-            <p className="text-lg text-gray-600">Moments from our broadcasts and community events</p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
-              <div key={index} className="bg-gray-200 rounded-lg aspect-square flex items-center justify-center card-hover">
-                <span className="text-gray-400 text-2xl">📷</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center mt-8">
-            <p className="text-gray-600 mb-4">More photos coming soon from our community events and studio</p>
-            <a
-              href="/contact"
-              className="text-kioo-primary hover:text-kioo-secondary font-semibold"
-            >
-              Submit Your Photos →
-            </a>
           </div>
         </div>
       </section>
