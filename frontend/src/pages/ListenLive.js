@@ -5,9 +5,6 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const ListenLive = () => {
-  const [radioStatus, setRadioStatus] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(70);
   const [lowDataMode, setLowDataMode] = useState(false);
   const [upcomingPrograms, setUpcomingPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,12 +12,7 @@ const ListenLive = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statusRes, programsRes] = await Promise.all([
-          axios.get(`${API}/radio/status`),
-          axios.get(`${API}/programs`)
-        ]);
-        
-        setRadioStatus(statusRes.data);
+        const programsRes = await axios.get(`${API}/programs`);
         setUpcomingPrograms(programsRes.data.slice(0, 5));
       } catch (error) {
         console.error('Error fetching radio data:', error);
