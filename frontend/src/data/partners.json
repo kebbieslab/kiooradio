@@ -10,23 +10,18 @@
     "url": "https://www.ynop.org"
   },
   {
-    "name": "Galcom",
-    "logo": "galcom.webp", 
+    "name": "Community Foundation of the North State",
+    "logo": "community-foundation.webp", 
+    "url": "https://cfns.org"
+  },
+  {
+    "name": "Galcom USA",
+    "logo": "galcom-usa.webp",
     "url": "https://galcom.org"
   },
   {
-    "name": "Nations One",
-    "logo": "nationsone.webp",
-    "url": "https://nationsone.org"
-  },
-  {
-    "name": "Trans World Radio",
-    "logo": "twr.webp",
-    "url": "https://twr.org"
-  },
-  {
-    "name": "HCJB Global",
-    "logo": "hcjb.webp", 
-    "url": "https://hcjb.org"
+    "name": "Galcom Canada",
+    "logo": "galcom-canada.webp", 
+    "url": "https://galcom.ca"
   }
 ]
