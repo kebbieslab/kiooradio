@@ -8,7 +8,6 @@ const Donate = () => {
   const [selectedAmount, setSelectedAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
   const [donationType, setDonationType] = useState('one-time');
-  const [donationTotal, setDonationTotal] = useState(null);
   const [formData, setFormData] = useState({
     donor_name: '',
     donor_email: '',
@@ -20,25 +19,12 @@ const Donate = () => {
 
   const suggestedAmounts = [
     { amount: 25, description: 'One Hour of Broadcasting' },
-    { amount: 50, description: 'Daily Solar Power' },
+    { amount: 50, description: 'Daily Equipment Maintenance' },
     { amount: 100, description: 'Weekly Program Sponsorship' },
-    { amount: 250, description: 'Monthly Equipment Maintenance' },
+    { amount: 250, description: 'Monthly Operations Support' },
     { amount: 500, description: 'Generator Fuel for One Month' },
-    { amount: 1000, description: 'Solar Panel Upgrade Fund' }
+    { amount: 1000, description: 'Equipment Upgrade Fund' }
   ];
-
-  useEffect(() => {
-    const fetchDonationTotal = async () => {
-      try {
-        const response = await axios.get(`${API}/donations/total`);
-        setDonationTotal(response.data);
-      } catch (error) {
-        console.error('Error fetching donation total:', error);
-      }
-    };
-
-    fetchDonationTotal();
-  }, []);
 
   const handleAmountSelect = (amount) => {
     setSelectedAmount(amount);
@@ -90,10 +76,6 @@ const Donate = () => {
       setSelectedAmount('');
       setCustomAmount('');
       
-      // Refresh donation total
-      const response = await axios.get(`${API}/donations/total`);
-      setDonationTotal(response.data);
-      
     } catch (error) {
       console.error('Error submitting donation:', error);
       setSubmitMessage('There was an error processing your donation. Please try again.');
@@ -115,40 +97,16 @@ const Donate = () => {
               💖 Support Our Mission
             </h1>
             <p className="text-xl text-green-100 max-w-3xl mx-auto leading-relaxed">
-              Your donation helps us continue broadcasting hope, faith, and vital information 
-              across West Africa. Every contribution makes a difference in someone's life.
+              <span data-i18n="donateBlurb" className="en-text">
+                Your donation helps us continue broadcasting Hope, Faith, and give vital information across the Makona River Region. Every contribution makes a difference in someone's life.
+              </span>
+              <span data-i18n="donateBlurb" className="fr-text hidden">
+                Votre don nous aide à continuer de diffuser la Foi, l'Espérance et des informations essentielles dans la région de la rivière Makona. Chaque contribution change une vie.
+              </span>
             </p>
           </div>
         </div>
       </section>
-
-      {/* Donation Progress */}
-      {donationTotal && (
-        <section className="py-8 bg-white border-b">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-kioo-primary mb-2">
-                ${donationTotal.total_amount?.toLocaleString() || '0'}
-              </div>
-              <p className="text-gray-600 mb-4">
-                Raised by {donationTotal.donor_count || 0} generous donors
-              </p>
-              
-              <div className="bg-gray-200 rounded-full h-4 max-w-md mx-auto">
-                <div 
-                  className="donation-progress"
-                  style={{ width: `${Math.min((donationTotal.total_amount || 0) / 50000 * 100, 100)}%` }}
-                ></div>
-              </div>
-              
-              <div className="flex justify-between text-sm text-gray-600 max-w-md mx-auto mt-2">
-                <span>$0</span>
-                <span className="font-semibold">Goal: $50,000</span>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Main Donation Form */}
       <section className="py-16">
@@ -333,15 +291,15 @@ const Donate = () => {
                 
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="text-xl">⚡</span>
+                    <span className="text-xl">🎙️</span>
                     <div className="text-sm">
-                      <div className="font-semibold">Solar Power</div>
-                      <div className="text-gray-600">Keeps us broadcasting 24/7</div>
+                      <div className="font-semibold">Broadcasting</div>
+                      <div className="text-gray-600">Keeps us on air 24/7</div>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="text-xl">🎙️</span>
+                    <span className="text-xl">🔧</span>
                     <div className="text-sm">
                       <div className="font-semibold">Equipment</div>
                       <div className="text-gray-600">Maintains broadcast quality</div>
