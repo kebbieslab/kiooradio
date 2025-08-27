@@ -101,3 +101,91 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+## user_problem_statement: 
+User reported several issues with the Kioo Radio website that need to be fixed:
+1. Remove specific banners from home page: "3 Nations Coverage Area", "English & French", "98.1 FM Crystal Clear", "24/7 Broadcasting"
+2. Fix TTB and Your Network of Praise partner logos not displaying in the partners strip
+3. Change Galcom Canada logo color/visibility for better contrast
+4. Fix non-working streaming link in the audio player
+
+## backend:
+  - task: "Backend API endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Backend endpoints appear functional based on previous testing"
+
+## frontend:
+  - task: "Remove homepage banners"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/Home.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Need to remove specific banner texts found in Home.js and Header.js"
+
+  - task: "Fix partner logo display"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/PartnersStrip.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "TTB and Your Network of Praise logos not displaying - need to investigate file paths"
+
+  - task: "Fix Galcom Canada logo visibility"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/components/PartnersStrip.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Galcom Canada logo visibility issue - may need color/styling adjustments"
+
+  - task: "Fix streaming audio player"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/ListenLive.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Streaming link not working - need to verify audio URL and player implementation"
+
+## metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+## test_plan:
+  current_focus:
+    - "Remove homepage banners"
+    - "Fix partner logo display"
+    - "Fix streaming audio player"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+## agent_communication:
+    - agent: "main"
+      message: "Starting systematic fixes for reported issues - identified banner locations and partner logo files"
