@@ -88,21 +88,7 @@ const Home = () => {
                 </Link>
               </div>
 
-              {/* Live Status */}
-              {radioStatus && (
-                <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4 border border-white border-opacity-20">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-200 text-sm">Currently Playing</p>
-                      <p className="text-white font-semibold">{radioStatus.current_program}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-green-200 text-sm">Listeners</p>
-                      <p className="text-white font-bold text-lg">{radioStatus.listener_count}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
+
             </div>
 
             {/* Hero Image/Stats */}
