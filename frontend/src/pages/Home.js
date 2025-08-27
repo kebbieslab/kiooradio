@@ -7,20 +7,17 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Home = () => {
-  const [radioStatus, setRadioStatus] = useState(null);
   const [impactStories, setImpactStories] = useState([]);
   const [latestNews, setLatestNews] = useState([]);
 
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const [statusRes, impactRes, newsRes] = await Promise.all([
-          axios.get(`${API}/radio/status`),
+        const [impactRes, newsRes] = await Promise.all([
           axios.get(`${API}/impact-stories?featured_only=true`),
           axios.get(`${API}/news`),
         ]);
         
-        setRadioStatus(statusRes.data);
         setImpactStories(impactRes.data.slice(0, 3));
         setLatestNews(newsRes.data.slice(0, 3));
       } catch (error) {
