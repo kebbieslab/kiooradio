@@ -153,7 +153,6 @@ const Home = () => {
               <div className="inline-flex items-center space-x-8 text-sm text-gray-600">
                 <span>📍 Broadcast Range: 150+ Miles</span>
                 <span>👥 Total Reach: 3+ Million People</span>
-                <span>🎙️ English & French Programming</span>
               </div>
             </div>
           </div>
