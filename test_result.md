@@ -127,52 +127,76 @@ User reported several issues with the Kioo Radio website that need to be fixed:
 
 ## frontend:
   - task: "Remove homepage banners"
-    implemented: false
-    working: false
+    implemented: true
+    working: true
     file: "/app/frontend/src/pages/Home.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "main"
           comment: "Need to remove specific banner texts found in Home.js and Header.js"
+        - working: true
+          agent: "testing"
+          comment: "✅ VERIFIED: All specified banners ('3 Nations Coverage Area', 'English & French', '98.1 FM Crystal Clear', '24/7 Broadcasting') have been successfully removed from homepage. Coverage section now correctly shows only 'Broadcast Range: 150+ Miles' and 'Total Reach: 3+ Million People' without the 'English & French Programming' text. Footer properly displays '98.1 FM' without '24/7 Broadcasting' or 'Crystal Clear Signal' text."
 
   - task: "Fix partner logo display"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/PartnersStrip.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "main"
           comment: "TTB and Your Network of Praise logos not displaying - need to investigate file paths"
+        - working: true
+          agent: "testing"
+          comment: "✅ VERIFIED: All key partner logos are displaying correctly. TTB (Thru the Bible) logo found at /partners/ttb.webp, Your Network of Praise logo at /partners/ynop.webp, and Galcom Canada logo at /partners/galcom-canada.webp. Partners section is visible with proper scrolling animation working. All logos are loading successfully."
 
   - task: "Fix Galcom Canada logo visibility"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/PartnersStrip.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "main"
           comment: "Galcom Canada logo visibility issue - may need color/styling adjustments"
+        - working: true
+          agent: "testing"
+          comment: "✅ VERIFIED: Galcom Canada logo is displaying correctly with enhanced CSS styling. The logo has improved visibility with brightness/contrast enhancement as specified in the CSS (filter: grayscale(100%) brightness(1.2) contrast(1.3) with background-color: rgba(255, 255, 255, 0.9) and padding: 8px)."
 
   - task: "Fix streaming audio player"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/pages/ListenLive.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "main"
           comment: "Streaming link not working - need to verify audio URL and player implementation"
+        - working: true
+          agent: "testing"
+          comment: "✅ VERIFIED: Audio player is functioning correctly on Listen Live page. Streaming URL has been updated to https://stream.galcom.org/stream/vox as requested. Web Player direct link also uses the correct URL. Audio player is present and properly configured. 'English & French' banner has been successfully removed from the broadcast details section."
+
+  - task: "General website functionality"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "✅ VERIFIED: All navigation pages (Home, Programs, Impact, Donate, About) load successfully. Language switcher (EN/FR) buttons are present and functional. Minor issue: Countdown timer format needs adjustment but core functionality works. Overall website performance is excellent with 7/8 test categories passing."
 
 ## metadata:
   created_by: "main_agent"
