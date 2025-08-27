@@ -271,10 +271,11 @@
 }
 
 .logo img {
-  height: var(--logo-h, 48px);
+  height: var(--logo-h, 56px);
   width: auto;
+  max-width: 120px; /* Prevent overly wide logos */
   filter: grayscale(100%);
-  opacity: 0.7;
+  opacity: 0.75;
   transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
 }
 
