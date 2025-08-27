@@ -222,3 +222,117 @@
 .schedule-table tr:hover td {
   background-color: rgba(0, 177, 64, 0.05);
 }
+
+/* Partners Strip Styles */
+.partners { 
+  padding: 32px 0 16px; 
+  background: #fff; 
+  border-top: 1px solid #e5e7eb;
+}
+
+.partners-title { 
+  font: 700 24px/1.2 Poppins, system-ui; 
+  color: #0F172A; 
+  margin: 0 0 20px; 
+  text-align: center;
+}
+
+.logo-scroller {
+  overflow: hidden;
+  --fade: 48px;
+  mask-image: linear-gradient(to right, transparent, black var(--fade),
+                                       black calc(100% - var(--fade)), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black var(--fade),
+                                       black calc(100% - var(--fade)), transparent);
+}
+
+.logo-track {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  will-change: transform;
+  animation: partners-scroll 40s linear infinite;
+}
+
+.logo {
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center;
+  height: calc(var(--logo-h, 48px) + 16px); /* extra tap area */
+  min-width: calc(var(--logo-h, 48px) + 16px);
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.logo:hover,
+.logo:focus {
+  background-color: rgba(0, 177, 64, 0.05);
+}
+
+.logo img {
+  height: var(--logo-h, 48px);
+  width: auto;
+  filter: grayscale(100%);
+  opacity: 0.7;
+  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.logo:focus img,
+.logo:hover img { 
+  filter: none; 
+  opacity: 1; 
+  transform: translateY(-2px) scale(1.05); 
+}
+
+.logo-scroller:hover .logo-track,
+.logo-scroller:focus-within .logo-track { 
+  animation-play-state: paused; 
+}
+
+@keyframes partners-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); } /* because we duplicate list items */
+}
+
+/* Respect reduced motion: no auto scroll; show grid */
+@media (prefers-reduced-motion: reduce) {
+  .logo-track { 
+    animation: none !important; 
+    flex-wrap: wrap; 
+    justify-content: center;
+    gap: 24px;
+  }
+  
+  .partners {
+    padding: 32px 0;
+  }
+}
+
+/* Small screens spacing */
+@media (max-width: 768px) {
+  .logo-track { 
+    gap: 32px; 
+  }
+  
+  .partners-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  
+  .logo-scroller {
+    --fade: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-track { 
+    gap: 24px; 
+  }
+  
+  .logo {
+    height: calc(var(--logo-h, 48px) + 12px);
+    min-width: calc(var(--logo-h, 48px) + 12px);
+    padding: 6px;
+  }
+}
