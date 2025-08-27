@@ -104,15 +104,16 @@ function App() {
             <div className="max-w-4xl mx-auto flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="bg-kioo-secondary rounded-full w-3 h-3 animate-pulse"></div>
-                <span className="text-sm">🔴 LIVE: Good Morning Kioo</span>
+                <span className="text-sm">🔴 LIVE: Kioo Radio 98.1 FM</span>
               </div>
               <div className="flex items-center space-x-4">
-                <button className="text-white hover:text-green-200 transition-colors">
-                  🔊
-                </button>
+                <audio controls autoPlay className="h-8">
+                  <source src="https://radio.galcom.org/?station=VOXRadio" type="audio/mpeg" />
+                  Your browser does not support the audio element.
+                </audio>
                 <button 
                   onClick={() => setIsPlayerVisible(false)}
-                  className="text-white hover:text-green-200 transition-colors"
+                  className="text-white hover:text-green-200 transition-colors ml-2"
                 >
                   ✕
                 </button>
