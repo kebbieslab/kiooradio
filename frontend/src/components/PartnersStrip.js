@@ -6,8 +6,16 @@ const PartnersStrip = () => {
   const [logoHeight] = useState(32); // From our resize script output
 
   useEffect(() => {
-    // Set CSS custom property for logo height
+    // Set CSS custom property for logo height (determined by resize script)
     document.documentElement.style.setProperty('--logo-h', `${logoHeight}px`);
+    
+    // Runtime safety: if prefers-reduced-motion, disable animation
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const track = document.getElementById('partners-track');
+      if (track) {
+        track.style.animation = 'none';
+      }
+    }
   }, [logoHeight]);
 
   // Create screen reader accessible text
