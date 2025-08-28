@@ -223,75 +223,109 @@
   background-color: rgba(0, 177, 64, 0.05);
 }
 
-/* Partners Scrolling Strip Styles - Updated with new logos */
-.partners { 
-  padding: 48px 0 32px; 
-  background: #fff; 
-  border-top: 1px solid #e5e7eb;
+/* Beautiful Uniform Partners Section */
+.partners-section { 
+  padding: 64px 0 48px; 
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .partners-title { 
-  font: 700 28px/1.2 Poppins, system-ui; 
-  color: #0F172A; 
-  margin: 0 0 32px; 
+  font: 700 32px/1.2 Poppins, system-ui; 
+  color: #1e293b; 
+  margin: 0 0 48px; 
   text-align: center;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .logo-scroller {
   overflow: hidden;
-  --fade: 48px;
+  --fade: 80px;
   mask-image: linear-gradient(to right, transparent, black var(--fade),
                                        black calc(100% - var(--fade)), transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black var(--fade),
                                        black calc(100% - var(--fade)), transparent);
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  padding: 32px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .logo-track {
   display: flex;
   align-items: center;
-  gap: 60px;
+  gap: 80px;
   will-change: transform;
-  animation: partners-scroll 45s linear infinite;
+  animation: partners-scroll 50s linear infinite;
 }
 
-.logo {
+.logo-container {
   display: inline-flex; 
   align-items: center; 
   justify-content: center;
-  height: calc(var(--logo-h, 56px) + 24px); /* extra tap area for larger logos */
-  min-width: calc(var(--logo-h, 56px) + 24px);
-  padding: 12px;
+  height: 96px; /* Fixed uniform height */
+  width: 140px; /* Fixed uniform width */
+  padding: 16px;
+  background: white;
   border-radius: 12px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
-.logo:hover,
-.logo:focus {
-  background-color: rgba(0, 177, 64, 0.05);
+.logo-container:hover,
+.logo-container:focus {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 177, 64, 0.15);
+  background: rgba(0, 177, 64, 0.02);
 }
 
-.logo img {
-  height: var(--logo-h, 56px);
+/* Uniform logo sizing for all partner logos */
+.partner-logo-uniform {
+  height: var(--logo-h, 64px);
   width: auto;
-  max-width: 120px; /* Prevent overly wide logos */
-  filter: grayscale(100%);
-  opacity: 0.75;
-  transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  max-width: 108px; /* Consistent max width */
+  min-width: 60px; /* Minimum width for small logos */
+  object-fit: contain;
+  filter: grayscale(70%);
+  opacity: 0.85;
+  transition: all 0.3s ease;
 }
 
-/* Enhanced styling for Galcom Canada logo for better visibility */
-.logo img[alt="Galcom Canada"] {
-  filter: grayscale(100%) brightness(1.2) contrast(1.3);
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 8px;
-  border-radius: 6px;
-}
-
-.logo:focus img,
-.logo:hover img { 
+.logo-container:focus .partner-logo-uniform,
+.logo-container:hover .partner-logo-uniform { 
   filter: none; 
   opacity: 1; 
-  transform: translateY(-2px) scale(1.05); 
+  transform: scale(1.1); 
+}
+
+/* Special handling for specific logos to ensure uniform appearance */
+.partner-logo-uniform[alt="Galcom Canada"] {
+  filter: grayscale(70%) brightness(1.1) contrast(1.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.partner-logo-uniform[alt="Nations One"] {
+  filter: grayscale(70%) brightness(1.05) contrast(1.05);
+}
+
+.partner-logo-uniform[alt="Reaching People far from God"] {
+  filter: grayscale(70%) brightness(1.05);
+}
+
+/* Hover state improvements for problematic logos */
+.logo-container:hover .partner-logo-uniform[alt="Galcom Canada"],
+.logo-container:focus .partner-logo-uniform[alt="Galcom Canada"] {
+  filter: brightness(1.1) contrast(1.1);
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.logo-container:hover .partner-logo-uniform[alt="Nations One"],
+.logo-container:focus .partner-logo-uniform[alt="Nations One"] {
+  filter: brightness(1.05) contrast(1.05);
 }
 
 .logo-scroller:hover .logo-track,
