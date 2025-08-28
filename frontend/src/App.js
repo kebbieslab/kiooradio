@@ -10,6 +10,7 @@ import Impact from "./pages/Impact";
 import Donate from "./pages/Donate";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import ProgramsLineup from "./pages/ProgramsLineup";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
