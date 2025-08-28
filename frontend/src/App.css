@@ -257,7 +257,8 @@
   align-items: center;
   gap: 80px;
   will-change: transform;
-  animation: partners-scroll 50s linear infinite;
+  animation: partners-scroll 30s linear infinite;
+  transform: translateX(0); /* Initial state */
 }
 
 .logo-container {
