@@ -334,8 +334,12 @@
 }
 
 @keyframes partners-scroll {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); } /* because we duplicate list items */
+  from { 
+    transform: translateX(0); 
+  }
+  to { 
+    transform: translateX(-50%); 
+  } 
 }
 
 /* Respect reduced motion: no auto scroll; show grid */
