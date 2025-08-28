@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const PartnersStrip = () => {
-  // Updated partner data with new logos
+  // Updated partner data with correct URLs and logos
   const partnersData = [
     {
       "name": "Thru the Bible",
@@ -21,17 +21,17 @@ const PartnersStrip = () => {
     {
       "name": "Galcom USA",
       "logo": "galcom-usa.webp",
-      "url": "https://galcom.org"
+      "url": "https://galcomusa.com"
     },
     {
       "name": "Galcom Canada",
       "logo": "galcom-canada-updated.png", 
-      "url": "https://galcom.ca"
+      "url": "https://galcom.org"
     },
     {
-      "name": "RPFFG",
+      "name": "Reaching People far from God",
       "logo": "rpffg.webp",
-      "url": "#"
+      "url": "https://www.rpffg.org"
     },
     {
       "name": "SonSet Solutions",
@@ -51,10 +51,10 @@ const PartnersStrip = () => {
   ];
 
   const [partners] = useState(partnersData);
-  const [logoHeight] = useState(56); // Size for better visibility
+  const [logoHeight] = useState(64); // Increased for better uniformity
 
   useEffect(() => {
-    // Set CSS custom property for logo height
+    // Set CSS custom property for uniform logo height
     document.documentElement.style.setProperty('--logo-h', `${logoHeight}px`);
     
     // Runtime safety: if prefers-reduced-motion, disable animation
@@ -70,7 +70,7 @@ const PartnersStrip = () => {
   const partnersListText = partners.map(p => p.name).join(', ');
 
   return (
-    <section className="partners" aria-labelledby="partners-title">
+    <section className="partners-section" aria-labelledby="partners-title">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 id="partners-title" data-i18n="partnersTitle" className="partners-title">
           Our Partners
@@ -82,7 +82,7 @@ const PartnersStrip = () => {
             {partners.map((partner, index) => (
               <a
                 key={`first-${index}`}
-                className="logo"
+                className="logo-container"
                 href={partner.url}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -93,6 +93,7 @@ const PartnersStrip = () => {
                   alt={partner.name}
                   loading="lazy"
                   decoding="async"
+                  className="partner-logo-uniform"
                 />
               </a>
             ))}
@@ -100,7 +101,7 @@ const PartnersStrip = () => {
             {partners.map((partner, index) => (
               <a
                 key={`second-${index}`}
-                className="logo"
+                className="logo-container"
                 href={partner.url}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -111,6 +112,7 @@ const PartnersStrip = () => {
                   alt={partner.name}
                   loading="lazy"
                   decoding="async"
+                  className="partner-logo-uniform"
                 />
               </a>
             ))}
