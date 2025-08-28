@@ -1,0 +1,338 @@
+[
+  {
+    "Start Time": "00:00",
+    "End Time": "00:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "English",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "00:30",
+    "End Time": "01:00",
+    "Program": "Music & Reflection",
+    "Language": "English",
+    "Type": "Music"
+  },
+  {
+    "Start Time": "01:00",
+    "End Time": "01:30",
+    "Program": "Community Announcements",
+    "Language": "English",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "01:30",
+    "End Time": "02:00",
+    "Program": "Phone-in Program",
+    "Language": "English",
+    "Type": "Interactive"
+  },
+  {
+    "Start Time": "02:00",
+    "End Time": "02:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "Kissi",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "02:30",
+    "End Time": "03:00",
+    "Program": "Music & Reflection",
+    "Language": "Kissi",
+    "Type": "Music"
+  },
+  {
+    "Start Time": "03:00",
+    "End Time": "03:30",
+    "Program": "Community Announcements",
+    "Language": "Kissi",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "03:30",
+    "End Time": "04:00",
+    "Program": "Phone-in Program",
+    "Language": "Kissi",
+    "Type": "Interactive"
+  },
+  {
+    "Start Time": "04:00",
+    "End Time": "04:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "French",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "04:30",
+    "End Time": "05:00",
+    "Program": "Music & Reflection",
+    "Language": "French",
+    "Type": "Music"
+  },
+  {
+    "Start Time": "05:00",
+    "End Time": "05:15",
+    "Program": "Morning Devotional",
+    "Language": "English",
+    "Type": "Devotional"
+  },
+  {
+    "Start Time": "05:15",
+    "End Time": "05:45",
+    "Program": "Morning Prayer & Worship",
+    "Language": "English",
+    "Type": "Worship"
+  },
+  {
+    "Start Time": "05:45",
+    "End Time": "06:00",
+    "Program": "Community Announcements",
+    "Language": "English",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "06:00",
+    "End Time": "06:30",
+    "Program": "Local Pastors' Preaching",
+    "Language": "English (rotating)",
+    "Type": "Sermon"
+  },
+  {
+    "Start Time": "06:30",
+    "End Time": "07:00",
+    "Program": "Phone-in Program",
+    "Language": "English",
+    "Type": "Interactive"
+  },
+  {
+    "Start Time": "07:00",
+    "End Time": "07:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "English",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "07:30",
+    "End Time": "08:00",
+    "Program": "Community Programming",
+    "Language": "English",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "08:00",
+    "End Time": "08:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "Kissi",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "08:30",
+    "End Time": "09:00",
+    "Program": "Community Programming",
+    "Language": "Kissi",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "09:00",
+    "End Time": "10:00",
+    "Program": "VNA French Satellite Feed",
+    "Language": "French",
+    "Type": "Satellite"
+  },
+  {
+    "Start Time": "10:00",
+    "End Time": "10:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "English",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "10:30",
+    "End Time": "11:00",
+    "Program": "Women & Family Hour",
+    "Language": "English",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "11:00",
+    "End Time": "11:30",
+    "Program": "Community Announcements",
+    "Language": "English",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "11:30",
+    "End Time": "12:00",
+    "Program": "Music & Reflection",
+    "Language": "English",
+    "Type": "Music"
+  },
+  {
+    "Start Time": "12:00",
+    "End Time": "12:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "Kissi",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "12:30",
+    "End Time": "13:00",
+    "Program": "Youth Connect",
+    "Language": "Kissi",
+    "Type": "Youth/Community"
+  },
+  {
+    "Start Time": "13:00",
+    "End Time": "13:30",
+    "Program": "Community Announcements",
+    "Language": "Kissi",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "13:30",
+    "End Time": "14:00",
+    "Program": "Phone-in Program",
+    "Language": "Kissi",
+    "Type": "Interactive"
+  },
+  {
+    "Start Time": "14:00",
+    "End Time": "14:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "French",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "14:30",
+    "End Time": "15:00",
+    "Program": "Health & Wellness",
+    "Language": "French",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "15:00",
+    "End Time": "15:30",
+    "Program": "Community Announcements",
+    "Language": "French",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "15:30",
+    "End Time": "16:00",
+    "Program": "Music & Reflection",
+    "Language": "French",
+    "Type": "Music"
+  },
+  {
+    "Start Time": "16:00",
+    "End Time": "16:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "Mandingo",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "16:30",
+    "End Time": "17:00",
+    "Program": "Community Programming",
+    "Language": "Mandingo",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "17:00",
+    "End Time": "17:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "Fula",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "17:30",
+    "End Time": "18:00",
+    "Program": "Community Programming",
+    "Language": "Fula",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "18:00",
+    "End Time": "18:30",
+    "Program": "Evening News & Roundup",
+    "Language": "Mixed",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "18:30",
+    "End Time": "19:00",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "English",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "19:00",
+    "End Time": "19:30",
+    "Program": "Music & Reflection",
+    "Language": "English",
+    "Type": "Music"
+  },
+  {
+    "Start Time": "19:30",
+    "End Time": "20:00",
+    "Program": "Community Announcements",
+    "Language": "English",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "20:00",
+    "End Time": "20:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "Kissi",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "20:30",
+    "End Time": "21:00",
+    "Program": "Phone-in Program",
+    "Language": "Kissi",
+    "Type": "Interactive"
+  },
+  {
+    "Start Time": "21:00",
+    "End Time": "21:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "English",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "21:30",
+    "End Time": "22:00",
+    "Program": "Evening Worship & Reflection",
+    "Language": "English",
+    "Type": "Devotional"
+  },
+  {
+    "Start Time": "22:00",
+    "End Time": "22:30",
+    "Program": "Thru the Bible (TTB)",
+    "Language": "French",
+    "Type": "Bible Teaching"
+  },
+  {
+    "Start Time": "22:30",
+    "End Time": "23:00",
+    "Program": "Community Announcements",
+    "Language": "Mixed",
+    "Type": "Community"
+  },
+  {
+    "Start Time": "23:00",
+    "End Time": "23:30",
+    "Program": "Music & Reflection",
+    "Language": "Mixed",
+    "Type": "Music"
+  },
+  {
+    "Start Time": "23:30",
+    "End Time": "00:00",
+    "Program": "Hope & Care Outreach",
+    "Language": "Mixed",
+    "Type": "Community"
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "Language": "English",
+    "Daily Minutes": 600,
+    "Daily Hours": 10,
+    "Percentage": 41.7,
+    "Priority Rank": 1
+  },
+  {
+    "Language": "Kissi",
+    "Daily Minutes": 360,
+    "Daily Hours": 6,
+    "Percentage": 25.0,
+    "Priority Rank": 2
+  },
+  {
+    "Language": "French",
+    "Daily Minutes": 240,
+    "Daily Hours": 4,
+    "Percentage": 16.7,
+    "Priority Rank": 3
+  },
+  {
+    "Language": "Mixed",
+    "Daily Minutes": 120,
+    "Daily Hours": 2,
+    "Percentage": 8.3,
+    "Priority Rank": 6
+  },
+  {
+    "Language": "Mandingo",
+    "Daily Minutes": 60,
+    "Daily Hours": 1,
+    "Percentage": 4.2,
+    "Priority Rank": 4
+  },
+  {
+    "Language": "Fula",
+    "Daily Minutes": 60,
+    "Daily Hours": 1,
+    "Percentage": 4.2,
+    "Priority Rank": 5
+  }
+]
