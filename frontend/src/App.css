@@ -223,127 +223,174 @@
   background-color: rgba(0, 177, 64, 0.05);
 }
 
-/* Beautiful Uniform Partners Section */
-.partners-section { 
-  padding: 64px 0 48px; 
+/* Right-to-Left Partners Marquee with Enlarged Logos */
+.partners-marquee {
+  --speed: 35s; /* Smooth scrolling speed */
+  --logo-h: clamp(72px, 8vw, 120px); /* Enlarged logo size */
+  --gap: 3rem; /* Space between logos */
+  
+  padding: 4rem 0 3rem;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-top: 1px solid #e2e8f0;
   border-bottom: 1px solid #e2e8f0;
+  overflow: hidden;
 }
 
-.partners-title { 
-  font: 700 32px/1.2 Poppins, system-ui; 
-  color: #1e293b; 
-  margin: 0 0 48px; 
+.partners-title {
+  font: 700 2rem/1.2 Poppins, system-ui;
+  color: #1e293b;
+  margin: 0 0 3rem;
   text-align: center;
   text-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.logo-scroller {
+.marquee-container {
+  position: relative;
   overflow: hidden;
-  --fade: 80px;
-  mask-image: linear-gradient(to right, transparent, black var(--fade),
-                                       black calc(100% - var(--fade)), transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black var(--fade),
-                                       black calc(100% - var(--fade)), transparent);
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 16px;
-  padding: 32px 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  
+  /* Gradient fade masks */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 90%,
+    transparent 100%
+  );
 }
 
-.logo-track {
+.partner-track {
   display: flex;
   align-items: center;
-  gap: 80px;
+  gap: var(--gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  
+  /* Right-to-left marquee animation */
+  animation: marquee-rtl var(--speed) linear infinite;
   will-change: transform;
-  animation: partners-scroll 30s linear infinite;
-  transform: translateX(0); /* Initial state */
 }
 
-.logo-container {
-  display: inline-flex; 
-  align-items: center; 
-  justify-content: center;
-  height: 96px; /* Fixed uniform height */
-  width: 140px; /* Fixed uniform width */
-  padding: 16px;
-  background: white;
+.partner-item {
+  flex-shrink: 0;
+}
+
+.partner-link {
+  display: block;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   text-decoration: none;
+  
+  /* Fixed dimensions for consistency */
+  width: 160px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.logo-container:hover,
-.logo-container:focus {
+.partner-link:hover,
+.partner-link:focus {
   transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 177, 64, 0.15);
-  background: rgba(0, 177, 64, 0.02);
+  box-shadow: 0 12px 28px rgba(0, 177, 64, 0.15);
+  background: rgba(255, 255, 255, 0.95);
 }
 
-/* Uniform logo sizing for all partner logos */
-.partner-logo-uniform {
-  height: var(--logo-h, 64px);
+.partner-logo-marquee {
+  height: var(--logo-h);
   width: auto;
-  max-width: 108px; /* Consistent max width */
-  min-width: 60px; /* Minimum width for small logos */
+  max-width: 128px;
+  min-width: 60px;
   object-fit: contain;
-  filter: grayscale(70%);
-  opacity: 0.85;
+  filter: grayscale(60%);
+  opacity: 0.9;
   transition: all 0.3s ease;
 }
 
-.logo-container:focus .partner-logo-uniform,
-.logo-container:hover .partner-logo-uniform { 
-  filter: none; 
-  opacity: 1; 
-  transform: scale(1.1); 
+.partner-link:hover .partner-logo-marquee,
+.partner-link:focus .partner-logo-marquee {
+  filter: none;
+  opacity: 1;
+  transform: scale(1.1);
 }
 
-/* Special handling for specific logos to ensure uniform appearance */
-.partner-logo-uniform[alt="Galcom Canada"] {
-  filter: grayscale(70%) brightness(1.1) contrast(1.1);
+/* Enhanced visibility for specific logos */
+.partner-logo-marquee[alt="Galcom Canada"] {
+  filter: grayscale(60%) brightness(1.1) contrast(1.1);
   background-color: rgba(255, 255, 255, 0.8);
-  padding: 4px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
 }
 
-.partner-logo-uniform[alt="Nations One"] {
-  filter: grayscale(70%) brightness(1.05) contrast(1.05);
+.partner-logo-marquee[alt="Nations One"] {
+  filter: grayscale(60%) brightness(1.05) contrast(1.05);
 }
 
-.partner-logo-uniform[alt="Reaching People far from God"] {
-  filter: grayscale(70%) brightness(1.05);
-}
-
-/* Hover state improvements for problematic logos */
-.logo-container:hover .partner-logo-uniform[alt="Galcom Canada"],
-.logo-container:focus .partner-logo-uniform[alt="Galcom Canada"] {
-  filter: brightness(1.1) contrast(1.1);
-  background-color: rgba(255, 255, 255, 0.95);
-}
-
-.logo-container:hover .partner-logo-uniform[alt="Nations One"],
-.logo-container:focus .partner-logo-uniform[alt="Nations One"] {
-  filter: brightness(1.05) contrast(1.05);
-}
-
-.logo-scroller:hover .logo-track,
-.logo-scroller:focus-within .logo-track { 
-  animation-play-state: paused; 
-}
-
-@keyframes partners-scroll {
-  from { 
-    transform: translateX(0); 
+/* Right-to-left marquee animation */
+@keyframes marquee-rtl {
+  from {
+    transform: translateX(0%);
   }
-  to { 
-    transform: translateX(-50%); 
-  } 
+  to {
+    transform: translateX(-50%);
+  }
 }
 
-/* Respect reduced motion: no auto scroll; show grid */
+/* Pause animation on hover and focus */
+.marquee-container:hover .partner-track,
+.marquee-container:focus-within .partner-track {
+  animation-play-state: paused;
+}
+
+/* Accessibility: Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .partner-track {
+    animation: none !important;
+    overflow-x: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  
+  .marquee-container {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+  
+  .partners-marquee {
+    overflow: visible;
+  }
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .partners-marquee {
+    --logo-h: clamp(60px, 7vw, 96px);
+    --gap: 2rem;
+    padding: 3rem 0 2rem;
+  }
+  
+  .partner-link {
+    width: 140px;
+    height: 96px;
+    padding: 0.75rem;
+  }
+  
+  .partners-title {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+}
 
 @keyframes partners-scroll {
   /* Remove animation */
