@@ -49,7 +49,7 @@ const Home = () => {
             <div className="hero-content hero-fade-in">
               <div className="mb-6">
                 <span className="inline-flex items-center px-4 py-2 bg-white bg-opacity-20 rounded-full text-sm font-medium backdrop-blur-sm">
-                  🎙️ Now Broadcasting Live
+                  🎙️ Broadcasting Soon
                 </span>
               </div>
               
