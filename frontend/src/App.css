@@ -306,11 +306,11 @@
   border-radius: 6px;
 }
 
-/* Remove old scrolling animation styles */
+/* Remove old scrolling animation styles - keep as fallback */
 .logo-scroller,
 .logo-track,
 .logo {
-  display: none !important;
+  /* Legacy styles removed, using new grid layout */
 }
 
 @keyframes partners-scroll {
