@@ -35,7 +35,7 @@ function App() {
         heroTitle: "Toucher les cœurs dans la région de la rivière Makona",
         heroSub: "Notre signal couvre plus de 150 miles, apportant la Foi et l'Espérance aux Kissi, Mandingo, Peuls, Gbandi, et d'autres.",
         navHome: "Accueil", navListen: "Écouter", navPrograms: "Programmes",
-        navImpact: "Impact", navDonate: "Don", navAbout: "À propos", 
+        navLineup: "Programmation", navImpact: "Impact", navDonate: "Don", navAbout: "À propos", 
         listen: "Écouter en direct", programs: "Programmes", donate: "Faire un don",
         donateBlurb: "Votre don nous aide à continuer de diffuser la Foi, l'Espérance et des informations essentielles dans la région de la rivière Makona. Chaque contribution change une vie.",
         impactTitle: "Notre Couverture en un Coup d'Œil",
