@@ -316,6 +316,8 @@
 @keyframes partners-scroll {
   /* Remove animation */
 }
+
+@media (prefers-reduced-motion: reduce) {
   .logo-track { 
     animation: none !important; 
     flex-wrap: wrap; 
