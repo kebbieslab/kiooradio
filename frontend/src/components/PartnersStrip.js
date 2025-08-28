@@ -51,77 +51,74 @@ const PartnersStrip = () => {
   ];
 
   const [partners] = useState(partnersData);
-  const [logoHeight] = useState(64); // Increased for better uniformity
 
   useEffect(() => {
-    // Set CSS custom property for uniform logo height
-    document.documentElement.style.setProperty('--logo-h', `${logoHeight}px`);
-    
     // Runtime safety: if prefers-reduced-motion, disable animation
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const track = document.getElementById('partners-track');
+      const track = document.getElementById('partner-track');
       if (track) {
         track.style.animation = 'none';
+        track.style.overflow = 'auto';
       }
     }
-  }, [logoHeight]);
-
-  // Create screen reader accessible text
-  const partnersListText = partners.map(p => p.name).join(', ');
+  }, []);
 
   return (
-    <section className="partners-section" aria-labelledby="partners-title">
+    <section className="partners-marquee" aria-labelledby="partners-title">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 id="partners-title" data-i18n="partnersTitle" className="partners-title">
+        <h2 id="partners-title" className="partners-title">
           Our Partners
         </h2>
 
-        <div className="logo-scroller" role="region" aria-label="Partner logos (scrolling)">
-          <div className="logo-track" id="partners-track">
-            {/* First set of logos */}
+        <div className="marquee-container">
+          <ul className="partner-track" id="partner-track">
+            {/* First set of logos with proper alt text */}
             {partners.map((partner, index) => (
-              <a
-                key={`first-${index}`}
-                className="logo-container"
-                href={partner.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={partner.name}
-              >
-                <img
-                  src={`/partners/${partner.logo}`}
-                  alt={partner.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="partner-logo-uniform"
-                />
-              </a>
+              <li key={`first-${index}`} className="partner-item">
+                <a
+                  href={partner.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`Visit ${partner.name}`}
+                  className="partner-link"
+                >
+                  <img
+                    src={`/partners/${partner.logo}`}
+                    alt={partner.name}
+                    loading={index < 3 ? "eager" : "lazy"}
+                    decoding="async"
+                    className="partner-logo-marquee"
+                  />
+                </a>
+              </li>
             ))}
-            {/* Duplicate set for seamless loop */}
+            {/* Duplicate set for seamless loop with aria-hidden */}
             {partners.map((partner, index) => (
-              <a
-                key={`second-${index}`}
-                className="logo-container"
-                href={partner.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={partner.name}
-              >
-                <img
-                  src={`/partners/${partner.logo}`}
-                  alt={partner.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="partner-logo-uniform"
-                />
-              </a>
+              <li key={`second-${index}`} className="partner-item" aria-hidden="true">
+                <a
+                  href={partner.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`Visit ${partner.name}`}
+                  className="partner-link"
+                  tabIndex="-1"
+                >
+                  <img
+                    src={`/partners/${partner.logo}`}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="partner-logo-marquee"
+                  />
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         {/* Screen reader accessible text list */}
-        <p className="sr-only" id="partners-list">
-          Our partners: {partnersListText}
+        <p className="sr-only">
+          Our partners: {partners.map(p => p.name).join(', ')}
         </p>
       </div>
     </section>
