@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const PartnersStrip = () => {
-  // Partner data directly in component for now
+  // Updated partner data with new logos
   const partnersData = [
     {
       "name": "Thru the Bible",
@@ -50,40 +50,76 @@ const PartnersStrip = () => {
     }
   ];
 
+  const [partners] = useState(partnersData);
+  const [logoHeight] = useState(56); // Size for better visibility
+
+  useEffect(() => {
+    // Set CSS custom property for logo height
+    document.documentElement.style.setProperty('--logo-h', `${logoHeight}px`);
+    
+    // Runtime safety: if prefers-reduced-motion, disable animation
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const track = document.getElementById('partners-track');
+      if (track) {
+        track.style.animation = 'none';
+      }
+    }
+  }, [logoHeight]);
+
+  // Create screen reader accessible text
+  const partnersListText = partners.map(p => p.name).join(', ');
+
   return (
-    <section className="partners bg-white py-16 border-t border-gray-200" aria-labelledby="partners-title">
+    <section className="partners" aria-labelledby="partners-title">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 id="partners-title" className="partners-title text-center text-2xl font-bold text-gray-900 mb-12">
+        <h2 id="partners-title" data-i18n="partnersTitle" className="partners-title">
           Our Partners
         </h2>
 
-        <ul className="logo-grid">
-          {partnersData.map((partner, index) => (
-            <li key={partner.name} className="logo-card">
+        <div className="logo-scroller" role="region" aria-label="Partner logos (scrolling)">
+          <div className="logo-track" id="partners-track">
+            {/* First set of logos */}
+            {partners.map((partner, index) => (
               <a
+                key={`first-${index}`}
+                className="logo"
                 href={partner.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 title={partner.name}
-                className="logo-link"
               >
                 <img
                   src={`/partners/${partner.logo}`}
                   alt={partner.name}
-                  width="160"
-                  height="96"
-                  loading={index < 3 ? "eager" : "lazy"}
+                  loading="lazy"
                   decoding="async"
-                  className="partner-logo"
                 />
               </a>
-            </li>
-          ))}
-        </ul>
+            ))}
+            {/* Duplicate set for seamless loop */}
+            {partners.map((partner, index) => (
+              <a
+                key={`second-${index}`}
+                className="logo"
+                href={partner.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={partner.name}
+              >
+                <img
+                  src={`/partners/${partner.logo}`}
+                  alt={partner.name}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+            ))}
+          </div>
+        </div>
 
         {/* Screen reader accessible text list */}
         <p className="sr-only" id="partners-list">
-          Our partners: {partnersData.map(p => p.name).join(', ')}
+          Our partners: {partnersListText}
         </p>
       </div>
     </section>
