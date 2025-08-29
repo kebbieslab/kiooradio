@@ -28,6 +28,36 @@ const ListenLive = () => {
     fetchData();
   }, []);
 
+  const handlePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    } else {
+      audio.play()
+        .then(() => {
+          setIsPlaying(true);
+          setStreamError(false);
+        })
+        .catch((error) => {
+          console.error('Stream playback error:', error);
+          setStreamError(true);
+          setIsPlaying(false);
+        });
+    }
+  };
+
+  const handleAudioError = () => {
+    setStreamError(true);
+    setIsPlaying(false);
+  };
+
+  const handleAudioLoad = () => {
+    setStreamError(false);
+  };
+
 
 
   if (loading) {
