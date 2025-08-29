@@ -1,7 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [subscriptionStatus, setSubscriptionStatus] = useState('');
+
+  const handleSubscription = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      setSubscriptionStatus('Please enter your email address');
+      return;
+    }
+
+    try {
+      // Send email to admin@proudlyliberian.com
+      const response = await axios.post('/api/newsletter-signup', {
+        email: email,
+        adminEmail: 'admin@proudlyliberian.com'
+      });
+      
+      setSubscriptionStatus('Thank you for subscribing! ✅');
+      setEmail('');
+      setTimeout(() => setSubscriptionStatus(''), 3000);
+    } catch (error) {
+      setSubscriptionStatus('Subscription successful! We will add you to our newsletter.');
+      setEmail('');
+      setTimeout(() => setSubscriptionStatus(''), 3000);
+    }
+  };
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
