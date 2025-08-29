@@ -5,36 +5,12 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const Programs = () => {
+  const [activeTab, setActiveTab] = useState('weekday');
+  const [selectedLanguage, setSelectedLanguage] = useState('all');
+  const [filteredPrograms, setFilteredPrograms] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [schedule, setSchedule] = useState({});
-  const [activeTab, setActiveTab] = useState('all');
-  const [selectedLanguage, setSelectedLanguage] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
   const [loading, setLoading] = useState(true);
-
-  const languages = {
-    '': 'All Languages',
-    'english': 'English',
-    'french': 'Français',
-    'kissi': 'Kissi',
-    'krio': 'Krio'
-  };
-
-  const categories = {
-    '': 'All Categories',
-    'news': 'News & Current Affairs',
-    'music': 'Music',
-    'talk': 'Talk Shows',
-    'religious': 'Religious',
-    'youth': 'Youth Programs',
-    'farming': 'Farming & Agriculture',
-    'community': 'Community Focus'
-  };
-
-  const daysOfWeek = [
-    'monday', 'tuesday', 'wednesday', 'thursday', 
-    'friday', 'saturday', 'sunday'
-  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -48,6 +24,7 @@ const Programs = () => {
         setSchedule(scheduleRes.data);
       } catch (error) {
         console.error('Error fetching programs:', error);
+        // Fall back to static data if API is not available
       } finally {
         setLoading(false);
       }
@@ -56,310 +33,462 @@ const Programs = () => {
     fetchData();
   }, []);
 
-  const filteredPrograms = programs.filter(program => {
-    const matchesLanguage = !selectedLanguage || program.language === selectedLanguage;
-    const matchesCategory = !selectedCategory || program.category === selectedCategory;
-    return matchesLanguage && matchesCategory;
-  });
+  // Complete schedule data from the Excel file
+  const weekdaySchedule = [
+    { "Start Time": "00:00", "End Time": "00:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "00:30", "End Time": "01:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "01:00", "End Time": "01:30", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
+    { "Start Time": "01:30", "End Time": "02:00", "Program": "Phone-in Program", "Language": "English", "Type": "Interactive" },
+    { "Start Time": "02:00", "End Time": "02:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "02:30", "End Time": "03:00", "Program": "Music & Reflection", "Language": "Kissi", "Type": "Music" },
+    { "Start Time": "03:00", "End Time": "03:30", "Program": "Community Announcements", "Language": "Kissi", "Type": "Community" },
+    { "Start Time": "03:30", "End Time": "04:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
+    { "Start Time": "04:00", "End Time": "04:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "04:30", "End Time": "05:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
+    { "Start Time": "05:00", "End Time": "05:15", "Program": "Morning Devotional", "Language": "English", "Type": "Devotional" },
+    { "Start Time": "05:15", "End Time": "05:45", "Program": "Morning Prayer & Worship", "Language": "English", "Type": "Worship" },
+    { "Start Time": "05:45", "End Time": "06:00", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
+    { "Start Time": "06:00", "End Time": "06:30", "Program": "Local Pastors' Preaching", "Language": "English (rotating)", "Type": "Sermon" },
+    { "Start Time": "06:30", "End Time": "07:00", "Program": "Phone-in Program", "Language": "English", "Type": "Interactive" },
+    { "Start Time": "07:00", "End Time": "07:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "07:30", "End Time": "08:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
+    { "Start Time": "08:00", "End Time": "08:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "08:30", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
+    { "Start Time": "09:00", "End Time": "10:00", "Program": "VNA French Satellite Feed", "Language": "French", "Type": "Satellite" },
+    { "Start Time": "10:00", "End Time": "10:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "10:30", "End Time": "11:00", "Program": "Women & Family Hour", "Language": "English", "Type": "Community" },
+    { "Start Time": "11:00", "End Time": "11:30", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
+    { "Start Time": "11:30", "End Time": "12:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "12:00", "End Time": "12:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "12:30", "End Time": "13:00", "Program": "Youth Connect", "Language": "Kissi", "Type": "Youth/Community" },
+    { "Start Time": "13:00", "End Time": "13:30", "Program": "Community Announcements", "Language": "Kissi", "Type": "Community" },
+    { "Start Time": "13:30", "End Time": "14:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
+    { "Start Time": "14:00", "End Time": "14:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "14:30", "End Time": "15:00", "Program": "Health & Wellness", "Language": "French", "Type": "Community" },
+    { "Start Time": "15:00", "End Time": "15:30", "Program": "Community Announcements", "Language": "French", "Type": "Community" },
+    { "Start Time": "15:30", "End Time": "16:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
+    { "Start Time": "16:00", "End Time": "16:30", "Program": "Thru the Bible (TTB)", "Language": "Mandingo", "Type": "Bible Teaching" },
+    { "Start Time": "16:30", "End Time": "17:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
+    { "Start Time": "17:00", "End Time": "17:30", "Program": "Thru the Bible (TTB)", "Language": "Fula", "Type": "Bible Teaching" },
+    { "Start Time": "17:30", "End Time": "18:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
+    { "Start Time": "18:00", "End Time": "18:30", "Program": "Evening News & Roundup", "Language": "Mixed", "Type": "Community" },
+    { "Start Time": "18:30", "End Time": "19:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "19:00", "End Time": "19:30", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "19:30", "End Time": "20:00", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
+    { "Start Time": "20:00", "End Time": "20:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "20:30", "End Time": "21:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
+    { "Start Time": "21:00", "End Time": "21:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "21:30", "End Time": "22:00", "Program": "Evening Worship & Reflection", "Language": "English", "Type": "Devotional" },
+    { "Start Time": "22:00", "End Time": "22:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "22:30", "End Time": "23:00", "Program": "Community Announcements", "Language": "Mixed", "Type": "Community" },
+    { "Start Time": "23:00", "End Time": "23:30", "Program": "Music & Reflection", "Language": "Mixed", "Type": "Music" },
+    { "Start Time": "23:30", "End Time": "00:00", "Program": "Hope & Care Outreach", "Language": "Mixed", "Type": "Community" }
+  ];
 
-  const formatTime = (timeString) => {
-    const [hours, minutes] = timeString.split(':');
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour % 12 || 12;
-    return `${displayHour}:${minutes} ${ampm}`;
+  const saturdaySchedule = [
+    { "Start Time": "00:00", "End Time": "00:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "00:30", "End Time": "01:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "01:00", "End Time": "02:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
+    { "Start Time": "02:00", "End Time": "03:00", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "03:00", "End Time": "04:00", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "04:00", "End Time": "05:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
+    { "Start Time": "05:00", "End Time": "06:00", "Program": "Morning Devotional & Prayer", "Language": "English", "Type": "Devotional" },
+    { "Start Time": "06:00", "End Time": "07:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
+    { "Start Time": "07:00", "End Time": "08:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "08:00", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
+    { "Start Time": "09:00", "End Time": "11:00", "Program": "NLASN 'Island Praise'", "Language": "English", "Type": "Satellite", "highlight": true },
+    { "Start Time": "11:00", "End Time": "12:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "12:00", "End Time": "13:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
+    { "Start Time": "13:00", "End Time": "14:00", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "14:00", "End Time": "15:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
+    { "Start Time": "15:00", "End Time": "16:00", "Program": "Thru the Bible (TTB)", "Language": "Mandingo", "Type": "Bible Teaching" },
+    { "Start Time": "16:00", "End Time": "17:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
+    { "Start Time": "17:00", "End Time": "18:00", "Program": "Thru the Bible (TTB)", "Language": "Fula", "Type": "Bible Teaching" },
+    { "Start Time": "18:00", "End Time": "19:00", "Program": "Evening Programming", "Language": "Mixed", "Type": "Community" },
+    { "Start Time": "19:00", "End Time": "20:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "20:00", "End Time": "21:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "21:00", "End Time": "22:00", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "22:00", "End Time": "23:00", "Program": "Community Programming", "Language": "Mixed", "Type": "Community" },
+    { "Start Time": "23:00", "End Time": "00:00", "Program": "Music & Reflection", "Language": "Mixed", "Type": "Music" }
+  ];
+
+  const sundaySchedule = [
+    { "Start Time": "00:00", "End Time": "01:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "01:00", "End Time": "02:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "02:00", "End Time": "03:00", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "03:00", "End Time": "04:00", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "04:00", "End Time": "05:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
+    { "Start Time": "05:00", "End Time": "06:00", "Program": "Morning Devotional & Prayer", "Language": "English", "Type": "Devotional" },
+    { "Start Time": "06:00", "End Time": "07:00", "Program": "Pre-Service Programming", "Language": "English", "Type": "Community" },
+    { "Start Time": "07:00", "End Time": "08:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "08:00", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
+    { "Start Time": "09:00", "End Time": "10:00", "Program": "Pre-Service Worship", "Language": "Mixed", "Type": "Worship" },
+    { "Start Time": "10:00", "End Time": "12:00", "Program": "Live Partner Church Service", "Language": "English/French/Mixed", "Type": "Live Service", "highlight": true },
+    { "Start Time": "12:00", "End Time": "13:00", "Program": "Post-Service Reflection", "Language": "Mixed", "Type": "Devotional" },
+    { "Start Time": "13:00", "End Time": "14:00", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "14:00", "End Time": "15:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
+    { "Start Time": "15:00", "End Time": "16:00", "Program": "Thru the Bible (TTB)", "Language": "Mandingo", "Type": "Bible Teaching" },
+    { "Start Time": "16:00", "End Time": "17:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
+    { "Start Time": "17:00", "End Time": "18:00", "Program": "Thru the Bible (TTB)", "Language": "Fula", "Type": "Bible Teaching" },
+    { "Start Time": "18:00", "End Time": "19:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
+    { "Start Time": "19:00", "End Time": "20:00", "Program": "Sunday Evening Worship", "Language": "Mixed", "Type": "Worship" },
+    { "Start Time": "20:00", "End Time": "21:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "21:00", "End Time": "22:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "22:00", "End Time": "23:00", "Program": "Community Programming", "Language": "Mixed", "Type": "Community" },
+    { "Start Time": "23:00", "End Time": "00:00", "Program": "Evening Devotional", "Language": "Mixed", "Type": "Devotional" }
+  ];
+
+  // Special weekly programs
+  const weeklySpecial = [
+    { "Day": "Monday", "Time": "19:00-20:00", "Program": "Gbandi Language Hour", "Language": "Gbandi", "Type": "Community" },
+    { "Day": "Wednesday", "Time": "20:00-21:00", "Program": "Youth Connect Special", "Language": "English", "Type": "Youth/Community" },
+    { "Day": "Friday", "Time": "18:00-19:00", "Program": "Women's Empowerment Hour", "Language": "Mixed", "Type": "Community" }
+  ];
+
+  // Color mapping for program types
+  const typeColors = {
+    'Bible Teaching': 'bg-blue-100 text-blue-800',
+    'Community': 'bg-green-100 text-green-800',
+    'Interactive': 'bg-orange-100 text-orange-800',
+    'Satellite': 'bg-purple-100 text-purple-800',
+    'Live Service': 'bg-red-100 text-red-800',
+    'Music': 'bg-yellow-100 text-yellow-800',
+    'Devotional': 'bg-indigo-100 text-indigo-800',
+    'Worship': 'bg-pink-100 text-pink-800',
+    'Sermon': 'bg-teal-100 text-teal-800',
+    'Youth/Community': 'bg-lime-100 text-lime-800'
   };
 
-  const getCategoryIcon = (category) => {
-    const icons = {
-      'news': '📰',
-      'music': '🎵',
-      'talk': '💬',
-      'religious': '⛪',
-      'youth': '🌟',
-      'farming': '🌱',
-      'community': '🏘️'
-    };
-    return icons[category] || '📻';
+  // Language options
+  const languages = ['all', 'English', 'French', 'Kissi', 'Fula', 'Mandingo', 'Gbandi', 'Mixed'];
+
+  useEffect(() => {
+    let schedule = [];
+    if (activeTab === 'weekday') schedule = weekdaySchedule;
+    else if (activeTab === 'saturday') schedule = saturdaySchedule;
+    else if (activeTab === 'sunday') schedule = sundaySchedule;
+
+    if (selectedLanguage === 'all') {
+      setFilteredPrograms(schedule);
+    } else {
+      setFilteredPrograms(schedule.filter(program => 
+        program.Language.toLowerCase().includes(selectedLanguage.toLowerCase())
+      ));
+    }
+  }, [activeTab, selectedLanguage]);
+
+  const getCurrentSchedule = () => {
+    if (activeTab === 'weekday') return weekdaySchedule;
+    if (activeTab === 'saturday') return saturdaySchedule;
+    if (activeTab === 'sunday') return sundaySchedule;
+    return [];
   };
 
-  const getLanguageFlag = (language) => {
-    const flags = {
-      'english': '🇺🇸',
-      'french': '🇫🇷',
-      'kissi': '🇱🇷',
-      'krio': '🇸🇱'
-    };
-    return flags[language] || '🌍';
+  const getScheduleTitle = () => {
+    if (activeTab === 'weekday') return 'Daily Program Schedule (Monday - Friday)';
+    if (activeTab === 'saturday') return 'Saturday Schedule';
+    if (activeTab === 'sunday') return 'Sunday Schedule';
+    return '';
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="radio-waves mb-4">
-            <div className="w-16 h-16 border-4 border-kioo-primary rounded-full"></div>
-          </div>
-          <p className="text-kioo-primary">Loading programs...</p>
-        </div>
-      </div>
-    );
-  }
+  // Generate pie chart data for visual representation
+  const generatePieChartData = (schedule) => {
+    const typeCount = {};
+    schedule.forEach(program => {
+      const type = program.Type;
+      typeCount[type] = (typeCount[type] || 0) + 1;
+    });
+    return typeCount;
+  };
+
+  const downloadSchedule = () => {
+    // Create downloadable content
+    const content = `KIOO RADIO 98.1FM - PROGRAM SCHEDULE
+    
+${getScheduleTitle()}
+
+${filteredPrograms.map(program => 
+  `${program['Start Time']} - ${program['End Time']} | ${program.Program} | ${program.Language} | ${program.Type}`
+).join('\n')}
+
+Generated on: ${new Date().toLocaleString()}
+`;
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kioo-radio-schedule-${activeTab}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      
       {/* Header */}
-      <section className="bg-gradient-to-r from-kioo-primary to-kioo-secondary text-white py-16">
+      <section className="bg-kioo-primary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4">
-              📅 Radio Programs
+            <h1 className="text-4xl lg:text-5xl font-bold mb-6">
+              📻 Programs Lineup
             </h1>
-            <p className="text-xl text-green-100 max-w-2xl mx-auto">
-              Discover our diverse programming in English, French, Kissi, and Krio. 
-              Something meaningful for everyone, every day.
-            </p>
+            <div className="max-w-4xl mx-auto">
+              <p className="text-lg lg:text-xl text-green-100 leading-relaxed">
+                Kioo Radio 98.1FM exists to serve the Makona River Region across Liberia, Sierra Leone, and Guinea with Christ-centered teaching, uplifting music, and community-focused programming. Our broadcast lineup reflects our commitment to daily Bible teaching in multiple languages (English, French, Kissi, Fula, Mandingo), along with weekly cultural programming (Gbandi), interactive phone-in shows, and live Sunday church services. This schedule will continue to evolve as we grow, ensuring that every community and language group in our coverage area is represented.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Filters & Tabs */}
+      {/* Color Legend */}
       <section className="py-8 bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* View Tabs */}
-          <div className="flex flex-wrap justify-center mb-6">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-6 py-3 mx-1 my-1 rounded-lg font-medium transition-all ${
-                activeTab === 'all'
-                  ? 'bg-kioo-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              📻 All Programs
-            </button>
-            <button
-              onClick={() => setActiveTab('schedule')}
-              className={`px-6 py-3 mx-1 my-1 rounded-lg font-medium transition-all ${
-                activeTab === 'schedule'
-                  ? 'bg-kioo-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              🗓️ Weekly Schedule
-            </button>
-            <button
-              onClick={() => setActiveTab('live')}
-              className={`px-6 py-3 mx-1 my-1 rounded-lg font-medium transition-all ${
-                activeTab === 'live'
-                  ? 'bg-kioo-primary text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              🔴 Live Now
-            </button>
-          </div>
-
-          {/* Filters */}
-          {activeTab === 'all' && (
-            <div className="flex flex-wrap justify-center gap-4">
-              <select
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kioo-primary"
-              >
-                {Object.entries(languages).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
-                ))}
-              </select>
-              
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-kioo-primary"
-              >
-                {Object.entries(categories).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
-                ))}
-              </select>
+          <h3 className="text-lg font-semibold text-kioo-dark mb-4 text-center">Program Type Legend</h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-blue-500 rounded"></div>
+              <span className="text-sm">Bible Teaching</span>
             </div>
-          )}
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-green-500 rounded"></div>
+              <span className="text-sm">Community</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-orange-500 rounded"></div>
+              <span className="text-sm">Interactive</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-purple-500 rounded"></div>
+              <span className="text-sm">Satellite</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-red-500 rounded"></div>
+              <span className="text-sm">Live Services</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+              <span className="text-sm">Music</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-indigo-500 rounded"></div>
+              <span className="text-sm">Devotional</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-pink-500 rounded"></div>
+              <span className="text-sm">Worship</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-teal-500 rounded"></div>
+              <span className="text-sm">Sermon</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-lime-500 rounded"></div>
+              <span className="text-sm">Youth Programs</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Content */}
-      <section className="py-12">
+      {/* Controls */}
+      <section className="py-6 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* All Programs View */}
-          {activeTab === 'all' && (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPrograms.map((program) => (
-                <div key={program.id} className="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-2xl">{getCategoryIcon(program.category)}</span>
-                        <span className="text-lg">{getLanguageFlag(program.language)}</span>
-                      </div>
-                      {program.is_live && (
-                        <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center">
-                          <span className="w-2 h-2 bg-white rounded-full mr-1 live-pulse"></span>
-                          LIVE
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            
+            {/* Day Tabs */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setActiveTab('weekday')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'weekday'
+                    ? 'bg-kioo-primary text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Mon-Fri
+              </button>
+              <button
+                onClick={() => setActiveTab('saturday')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'saturday'
+                    ? 'bg-kioo-primary text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Saturday
+              </button>
+              <button
+                onClick={() => setActiveTab('sunday')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  activeTab === 'sunday'
+                    ? 'bg-kioo-primary text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                Sunday
+              </button>
+            </div>
+
+            {/* Language Filter */}
+            <div className="flex items-center gap-4">
+              <label htmlFor="language-filter" className="text-sm font-medium text-gray-700">
+                Filter by Language:
+              </label>
+              <select
+                id="language-filter"
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+              >
+                {languages.map(lang => (
+                  <option key={lang} value={lang}>
+                    {lang === 'all' ? 'All Languages' : lang}
+                  </option>
+                ))}
+              </select>
+
+              {/* Download Button */}
+              <button
+                onClick={downloadSchedule}
+                className="px-4 py-2 bg-kioo-primary text-white rounded-lg hover:bg-kioo-secondary transition-colors flex items-center gap-2"
+              >
+                📄 Download
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Schedule Table */}
+      <section className="py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div className="bg-kioo-primary text-white px-6 py-4">
+              <h2 className="text-2xl font-bold">
+                {getScheduleTitle()}
+              </h2>
+              <p className="text-green-100 mt-1">
+                {filteredPrograms.length} programs
+                {selectedLanguage !== 'all' && ` in ${selectedLanguage}`}
+              </p>
+            </div>
+
+            {/* Responsive Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Time
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Program
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Language
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredPrograms.map((program, index) => (
+                    <tr 
+                      key={index} 
+                      className={`hover:bg-gray-50 ${program.highlight ? 'bg-yellow-50 border-l-4 border-yellow-400' : ''}`}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {program['Start Time']} - {program['End Time']}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        <div className="font-medium">{program.Program}</div>
+                        {program.highlight && (
+                          <div className="text-xs text-yellow-600 font-medium">⭐ Special Program</div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          {program.Language}
                         </span>
-                      )}
-                    </div>
-                    
-                    <h3 className="text-xl font-bold text-kioo-dark mb-2">{program.title}</h3>
-                    <p className="text-gray-600 mb-4">{program.description}</p>
-                    
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center space-x-2">
-                        <span>🎙️</span>
-                        <span className="font-medium">{program.host}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span>🗓️</span>
-                        <span className="capitalize">{program.day_of_week}s</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span>⏰</span>
-                        <span>{formatTime(program.start_time)} • {program.duration_minutes} min</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span>🏷️</span>
-                        <span className="capitalize">{program.category.replace('_', ' ')}</span>
-                      </div>
-                    </div>
-                  </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          typeColors[program.Type] || 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {program.Type}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Weekly Special Programs */}
+      <section className="py-8 bg-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-2xl font-bold text-kioo-dark mb-6 text-center">
+              🌟 Weekly Special Programs
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {weeklySpecial.map((special, index) => (
+                <div key={index} className="bg-gradient-to-r from-kioo-primary to-kioo-secondary rounded-lg p-6 text-white">
+                  <div className="text-2xl mb-3">📅</div>
+                  <h4 className="text-lg font-semibold mb-2">{special.Program}</h4>
+                  <p className="text-green-100 text-sm mb-1">{special.Day} • {special.Time}</p>
+                  <p className="text-green-100 text-sm">{special.Language} • {special.Type}</p>
                 </div>
               ))}
             </div>
-          )}
-
-          {/* Schedule View */}
-          {activeTab === 'schedule' && (
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="schedule-table w-full">
-                  <thead>
-                    <tr>
-                      <th className="text-left">Time</th>
-                      {daysOfWeek.map((day) => (
-                        <th key={day} className="text-center capitalize">
-                          {day.substring(0, 3)}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: 24 }, (_, hour) => {
-                      const timeSlot = `${hour.toString().padStart(2, '0')}:00`;
-                      return (
-                        <tr key={timeSlot}>
-                          <td className="font-semibold text-kioo-primary">
-                            {formatTime(timeSlot)}
-                          </td>
-                          {daysOfWeek.map((day) => {
-                            const program = schedule[day]?.find(p => p.start_time === timeSlot);
-                            return (
-                              <td key={`${day}-${timeSlot}`} className="text-center">
-                                {program ? (
-                                  <div className="bg-kioo-primary bg-opacity-10 p-2 rounded text-xs">
-                                    <div className="font-semibold text-kioo-dark">
-                                      {program.title}
-                                    </div>
-                                    <div className="text-gray-500">
-                                      {getLanguageFlag(program.language)} {getCategoryIcon(program.category)}
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <span className="text-gray-300">-</span>
-                                )}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* Live Now View */}
-          {activeTab === 'live' && (
-            <div className="text-center py-16">
-              <div className="max-w-2xl mx-auto">
-                <div className="bg-kioo-primary text-white rounded-2xl p-8 mb-8">
-                  <div className="radio-waves mb-4">
-                    <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto">
-                      <span className="text-2xl">📻</span>
-                    </div>
-                  </div>
-                  <h2 className="text-2xl font-bold mb-2">🔴 Live Now</h2>
-                  <p className="text-green-100 mb-6">Good Morning Kioo with Sarah Johnson</p>
-                  <button className="bg-white text-kioo-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                    🎧 Listen Live
-                  </button>
-                </div>
-                
-                <div className="bg-white rounded-xl shadow-lg p-8">
-                  <h3 className="text-xl font-semibold text-kioo-dark mb-4">Coming Up Next</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                      <div>
-                        <h4 className="font-semibold">Community Voice</h4>
-                        <p className="text-sm text-gray-600">Local news and discussions in Krio</p>
-                      </div>
-                      <span className="text-kioo-primary font-bold">9:00 AM</span>
-                    </div>
-                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                      <div>
-                        <h4 className="font-semibold">Farming Today</h4>
-                        <p className="text-sm text-gray-600">Agricultural tips and market updates</p>
-                      </div>
-                      <span className="text-kioo-primary font-bold">10:00 AM</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </section>
 
-      {/* Featured Programs */}
-      <section className="py-16 bg-kioo-primary">
+      {/* Language Statistics */}
+      <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">⭐ Featured Programs</h2>
-            <p className="text-green-100">Don't miss these popular shows</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 text-center">
-              <div className="text-4xl mb-4">🌅</div>
-              <h3 className="text-xl font-semibold text-white mb-2">Good Morning Kioo</h3>
-              <p className="text-green-100 mb-4">Start your day with uplifting news, music, and community updates</p>
-              <div className="text-sm text-green-200">Mon-Fri • 6:00-9:00 AM • English</div>
-            </div>
-            
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 text-center">
-              <div className="text-4xl mb-4">🌟</div>
-              <h3 className="text-xl font-semibold text-white mb-2">Youth Pulse</h3>
-              <p className="text-green-100 mb-4">Music, discussions, and opportunities for young people</p>
-              <div className="text-sm text-green-200">Weekdays • 7:00-8:00 PM • English/Krio</div>
-            </div>
-            
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 text-center">
-              <div className="text-4xl mb-4">📖</div>
-              <h3 className="text-xl font-semibold text-white mb-2">Word in Kissi</h3>
-              <p className="text-green-100 mb-4">Biblical teachings and spiritual growth in Kissi language</p>
-              <div className="text-sm text-green-200">Sun • 8:00-9:00 AM • Kissi</div>
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h3 className="text-2xl font-bold text-kioo-dark mb-6 text-center">
+              🗣️ Language Distribution
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+              <div className="text-center p-4 bg-red-50 rounded-lg">
+                <div className="text-2xl font-bold text-red-600">41.7%</div>
+                <div className="text-sm text-gray-600">Kissi</div>
+                <div className="text-xs text-gray-500">10 hours daily</div>
+              </div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">25.0%</div>
+                <div className="text-sm text-gray-600">English</div>
+                <div className="text-xs text-gray-500">6 hours daily</div>
+              </div>
+              <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600">16.7%</div>
+                <div className="text-sm text-gray-600">French</div>
+                <div className="text-xs text-gray-500">4 hours daily</div>
+              </div>
+              <div className="text-center p-4 bg-orange-50 rounded-lg">
+                <div className="text-2xl font-bold text-orange-600">8.3%</div>
+                <div className="text-sm text-gray-600">Mixed</div>
+                <div className="text-xs text-gray-500">2 hours daily</div>
+              </div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">4.2%</div>
+                <div className="text-sm text-gray-600">Mandingo</div>
+                <div className="text-xs text-gray-500">1 hour daily</div>
+              </div>
+              <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                <div className="text-2xl font-bold text-yellow-600">4.2%</div>
+                <div className="text-sm text-gray-600">Fula</div>
+                <div className="text-xs text-gray-500">1 hour daily</div>
+              </div>
             </div>
           </div>
         </div>
