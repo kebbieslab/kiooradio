@@ -1,9 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const ProgramsLineup = () => {
   const [activeTab, setActiveTab] = useState('weekday');
   const [selectedLanguage, setSelectedLanguage] = useState('all');
   const [filteredPrograms, setFilteredPrograms] = useState([]);
+  const [programs, setPrograms] = useState([]);
+  const [schedule, setSchedule] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [programsRes, scheduleRes] = await Promise.all([
+          axios.get(`${API}/programs`),
+          axios.get(`${API}/programs/schedule`)
+        ]);
+        
+        setPrograms(programsRes.data);
+        setSchedule(scheduleRes.data);
+      } catch (error) {
+        console.error('Error fetching programs:', error);
+        // Fall back to static data if API is not available
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Complete schedule data from the Excel file
   const weekdaySchedule = [
