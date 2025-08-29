@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+const STREAM_URL = "https://stream.galcom.org/stream/vox";
 
 const ListenLive = () => {
   const [lowDataMode, setLowDataMode] = useState(false);
   const [upcomingPrograms, setUpcomingPrograms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [streamError, setStreamError] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
