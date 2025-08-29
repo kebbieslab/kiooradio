@@ -29,8 +29,10 @@ const About = () => {
   ];
 
   const milestones = [
-    { year: '2024', event: 'Broadcasting license approved by Liberian authorities' },
-    { year: '2024', event: 'Studio construction and equipment installation' },
+    { year: '2006', event: 'Vision received in Cape Town while studying Video and Radio Production' },
+    { year: '2006+', event: 'Vox Radio established, now reaching 3.2M+ people in 8 counties' },
+    { year: '2024', event: 'Broadcasting license approved for Kioo Radio extension' },
+    { year: '2024', event: 'Studio construction and equipment installation in Foya' },
     { year: '2024', event: 'Multi-language programming development begins' },
     { year: '2025', event: 'Official launch scheduled for November 13, 2025' }
   ];
