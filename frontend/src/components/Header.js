@@ -6,15 +6,15 @@ const Header = ({ setIsPlayerVisible }) => {
   const [currentLanguage, setCurrentLanguage] = useState('en');
   const location = useLocation();
 
-  // Reduced navigation - only 6 items as specified
+  // Reduced navigation - About moved right after Home
   const navigation = [
     { name: 'Home', nameKey: 'navHome', path: '/', icon: '🏠' },
+    { name: 'About', nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
     { name: 'Listen', nameKey: 'navListen', path: '/listen-live', icon: '📻' },
     { name: 'Programs', nameKey: 'navPrograms', path: '/programs', icon: '📅' },
     { name: 'Lineup', nameKey: 'navLineup', path: '/programs-lineup', icon: '📋' },
     { name: 'Impact', nameKey: 'navImpact', path: '/impact', icon: '💝' },
     { name: 'Donate', nameKey: 'navDonate', path: '/donate', icon: '💖' },
-    { name: 'About', nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
   ];
 
   // Language system initialization
