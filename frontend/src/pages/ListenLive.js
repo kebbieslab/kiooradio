@@ -327,7 +327,7 @@ const ListenLive = () => {
                 <h3 className="text-white font-semibold mb-4">Broadcast Details</h3>
                 <ul className="space-y-2 text-green-100">
                   <li>📻 Frequency: 98.1 FM</li>
-                  <li>📍 Location: Monrovia, Liberia</li>
+                  <li>📍 Location: Betche Hill, Foya, Lofa County, Liberia</li>
                   <li>📡 Range: 150+ mile radius</li>
                   <li>🌍 Coverage: Liberia, Sierra Leone, Guinea</li>
                 </ul>
