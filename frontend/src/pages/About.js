@@ -48,7 +48,7 @@ const About = () => {
               ℹ️ About Kioo Radio
             </h1>
             <p className="text-xl text-green-100 max-w-3xl mx-auto leading-relaxed">
-              Broadcasting hope, faith, and community across the Makona River Region - A testimony of God's calling and His people's prayers
+              Broadcasting hope, faith, and community across the Makona River Region - An extension of God's 2006 vision that started with Vox Radio
             </p>
           </div>
         </div>
