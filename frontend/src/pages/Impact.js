@@ -84,7 +84,7 @@ const Impact = () => {
               <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white text-2xl font-bold">🎙️</span>
               </div>
-              <h3 className="text-3xl font-bold text-kioo-dark mb-2">2</h3>
+              <h3 className="text-3xl font-bold text-kioo-dark mb-2">6</h3>
               <p className="text-gray-600">Languages</p>
             </div>
           </div>
