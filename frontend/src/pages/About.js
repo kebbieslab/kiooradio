@@ -61,9 +61,11 @@ const About = () => {
             </h2>
             <div className="max-w-3xl mx-auto">
               <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-8">
-                In Cape Town, during the Lausanne 2010 gathering, God placed a burden on Joseph Kebbie's heart: 
+                The vision to establish Kioo Radio came in 2006 when Joseph Kebbie was in Cape Town studying Video and Radio Production. 
+                God placed a burden on his heart: 
                 <em className="text-kioo-primary font-semibold"> "Return to Liberia and start a radio station to reach my people."</em> 
-                This calling gave birth to Kioo Radio, a gift of light for the Makona River Region.
+                This vision started with Vox Radio, which now broadcasts to over 3.2 million people in 8 counties in Liberia. 
+                Kioo Radio is the extension of this calling - a gift of light for the Makona River Region.
               </p>
             </div>
           </div>
