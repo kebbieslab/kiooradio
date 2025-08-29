@@ -110,27 +110,73 @@ const ListenLive = () => {
               </div>
             </div>
 
-            {/* Audio Player */}
+            {/* Enhanced Audio Player */}
             <div className="flex flex-col items-center space-y-6">
               
-              {/* HTML5 Audio Player */}
+              {/* Streaming Player with Controls */}
               <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-6 w-full max-w-md">
-                <audio 
-                  controls 
-                  preload="none"
-                  className="w-full h-12"
-                  style={{
-                    background: 'transparent',
-                    borderRadius: '8px'
-                  }}
-                >
-                  <source src="https://stream.galcom.org/stream/vox" type="audio/mpeg" />
-                  <p className="text-white">Your browser does not support the audio element. Please try using a different browser.</p>
-                </audio>
                 
-                <div className="text-center mt-4">
-                  <p className="text-white text-sm">🔴 Live Stream</p>
-                  <p className="text-green-200 text-xs">Powered by Galcom Radio Network</p>
+                {/* Hidden HTML5 Audio Element */}
+                <audio 
+                  ref={audioRef}
+                  preload="none"
+                  onError={handleAudioError}
+                  onLoadStart={handleAudioLoad}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  crossOrigin="anonymous"
+                >
+                  <source src={STREAM_URL} type="audio/mpeg" />
+                  <source src={STREAM_URL} type="audio/aac" />
+                  Your browser does not support the audio element.
+                </audio>
+
+                {/* Custom Player Interface */}
+                <div className="text-center">
+                  <div className="mb-4">
+                    <div className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center transition-all duration-300 ${
+                      isPlaying ? 'bg-red-500 animate-pulse' : 'bg-kioo-primary hover:bg-kioo-secondary'
+                    }`}>
+                      <button
+                        onClick={handlePlayPause}
+                        disabled={streamError}
+                        className="text-white text-2xl focus:outline-none disabled:opacity-50"
+                        title={isPlaying ? 'Pause Stream' : 'Play Stream'}
+                      >
+                        {isPlaying ? '⏸️' : '▶️'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {streamError ? (
+                    <div className="text-red-200 text-sm">
+                      <p>⚠️ Stream temporarily unavailable</p>
+                      <p className="text-xs mt-1">Please try again in a moment</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-white font-semibold">🔴 Kioo Radio 98.1 FM</p>
+                      <p className="text-green-200 text-sm">
+                        {isPlaying ? 'Now Streaming Live' : 'Click to Listen Live'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Traditional HTML5 Controls (Fallback) */}
+                <div className="mt-4">
+                  <audio 
+                    controls 
+                    preload="none"
+                    className="w-full h-10 opacity-75"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px'
+                    }}
+                  >
+                    <source src={STREAM_URL} type="audio/mpeg" />
+                    <p className="text-white text-xs">Your browser does not support the audio element. Please try using a different browser.</p>
+                  </audio>
                 </div>
               </div>
 
