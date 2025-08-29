@@ -170,7 +170,7 @@ const Impact = () => {
                   <div className="text-green-100 text-sm">Signal Range</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">English & French</div>
+                  <div className="text-2xl font-bold">Kissi, English, French, Mandingo, Fula & Gbandi +</div>
                   <div className="text-green-100 text-sm">Languages</div>
                 </div>
               </div>
