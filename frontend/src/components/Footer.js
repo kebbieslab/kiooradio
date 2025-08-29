@@ -60,16 +60,27 @@ const Footer = () => {
           <div className="text-center">
             <h3 className="text-xl font-semibold mb-2">Stay Connected with Kioo Radio</h3>
             <p className="text-green-100 mb-6">Get updates on programs, events, and impact stories delivered to your inbox</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
+            <form onSubmit={handleSubscription} className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-md mx-auto">
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
                 className="flex-1 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
+                required
               />
-              <button className="px-6 py-3 bg-white text-kioo-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap">
+              <button 
+                type="submit"
+                className="px-6 py-3 bg-white text-kioo-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap"
+              >
                 Subscribe
               </button>
-            </div>
+            </form>
+            {subscriptionStatus && (
+              <p className="text-center mt-4 text-green-200 font-medium">
+                {subscriptionStatus}
+              </p>
+            )}
           </div>
         </div>
       </div>
