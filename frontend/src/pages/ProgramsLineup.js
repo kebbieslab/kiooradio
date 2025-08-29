@@ -431,14 +431,14 @@ Generated on: ${new Date().toLocaleString()}
               🗣️ Language Distribution
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">41.7%</div>
-                <div className="text-sm text-gray-600">English</div>
+              <div className="text-center p-4 bg-red-50 rounded-lg">
+                <div className="text-2xl font-bold text-red-600">41.7%</div>
+                <div className="text-sm text-gray-600">Kissi</div>
                 <div className="text-xs text-gray-500">10 hours daily</div>
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">25.0%</div>
-                <div className="text-sm text-gray-600">Kissi</div>
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">25.0%</div>
+                <div className="text-sm text-gray-600">English</div>
                 <div className="text-xs text-gray-500">6 hours daily</div>
               </div>
               <div className="text-center p-4 bg-purple-50 rounded-lg">
@@ -451,8 +451,8 @@ Generated on: ${new Date().toLocaleString()}
                 <div className="text-sm text-gray-600">Mixed</div>
                 <div className="text-xs text-gray-500">2 hours daily</div>
               </div>
-              <div className="text-center p-4 bg-red-50 rounded-lg">
-                <div className="text-2xl font-bold text-red-600">4.2%</div>
+              <div className="text-center p-4 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">4.2%</div>
                 <div className="text-sm text-gray-600">Mandingo</div>
                 <div className="text-xs text-gray-500">1 hour daily</div>
               </div>
