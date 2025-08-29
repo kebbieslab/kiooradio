@@ -273,6 +273,23 @@ async def get_contact_messages():
     messages = await db.contact_messages.find().sort("created_at", -1).to_list(1000)
     return [ContactMessage(**message) for message in messages]
 
+# Newsletter signup endpoint
+@api_router.post("/newsletter-signup")
+async def newsletter_signup(signup: NewsletterSignupCreate):
+    # Store the newsletter signup in database
+    signup_record = {
+        "email": signup.email,
+        "admin_email": signup.adminEmail,
+        "subscribed_at": datetime.utcnow(),
+        "id": str(uuid.uuid4())
+    }
+    await db.newsletter_signups.insert_one(signup_record)
+    
+    # In a real implementation, you would send an email to admin@proudlyliberian.com
+    # For now, we'll just store the subscription
+    
+    return {"message": "Successfully subscribed to newsletter", "email": signup.email}
+
 # Coverage areas endpoint
 @api_router.get("/coverage")
 async def get_coverage_areas():
