@@ -183,7 +183,7 @@ const ListenLive = () => {
               {/* Alternative Access Methods */}
               <div className="grid grid-cols-2 gap-4 w-full max-w-md">
                 <a
-                  href="https://stream.galcom.org/stream/vox"
+                  href={STREAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-opacity-20 transition-colors"
