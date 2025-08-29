@@ -152,6 +152,14 @@ class RadioStatus(BaseModel):
     next_program: Optional[str] = None
     listener_count: int = 0
 
+class NewsletterSignup(BaseModel):
+    email: str
+    adminEmail: str
+
+class NewsletterSignupCreate(BaseModel):
+    email: str
+    adminEmail: str
+
 # Routes
 @api_router.get("/")
 async def root():
