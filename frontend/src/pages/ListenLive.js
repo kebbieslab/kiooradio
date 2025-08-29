@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
-const STREAM_URL = "https://stream.galcom.org/stream/vox";
+const STREAM_URL = "https://radio.galcom.org/?station=VOXRadio";
 
 const ListenLive = () => {
   const [lowDataMode, setLowDataMode] = useState(false);
