@@ -389,21 +389,21 @@ const ChurchPartners = () => {
                   className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
                 >
                   
-                  {/* Pastor Photo - Bigger with responsive dimensions */}
+                  {/* Pastor Photo - Reasonable size with better cropping */}
                   <div className="relative">
                     {partner.photoUrl ? (
                       <img
                         src={partner.photoUrl}
                         alt={`Pastor ${partner.pastorName}`}
-                        className="w-full object-cover aspect-[4/3] md:h-80 sm:h-64 h-56"
+                        className="w-full object-cover h-48 sm:h-56 md:h-64 rounded-t-xl"
                         loading="lazy"
-                        style={{ minHeight: '14rem' }}
+                        style={{ objectPosition: 'center top' }}
                       />
                     ) : (
-                      <div className="w-full aspect-[4/3] md:h-80 sm:h-64 h-56 bg-gradient-to-br from-kioo-primary to-kioo-secondary flex items-center justify-center relative">
+                      <div className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-kioo-primary to-kioo-secondary flex items-center justify-center relative rounded-t-xl">
                         <div className="text-center">
-                          <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span className="text-white text-2xl font-bold">
+                          <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span className="text-white text-xl font-bold">
                               {getInitials(partner.pastorName)}
                             </span>
                           </div>
