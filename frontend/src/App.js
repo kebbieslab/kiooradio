@@ -84,8 +84,9 @@ function App() {
   }, []);
 
   return (
-    <div className="App min-h-screen bg-white">
-      <Router>
+    <HelmetProvider>
+      <div className="App min-h-screen bg-white">
+        <Router>
         <Header setIsPlayerVisible={setIsPlayerVisible} />
         
         <main className="flex-1">
