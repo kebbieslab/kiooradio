@@ -10,7 +10,6 @@ const Header = ({ setIsPlayerVisible }) => {
   const navigation = [
     { name: 'Home', nameKey: 'navHome', path: '/', icon: '🏠' },
     { name: 'About', nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
-    { name: 'Listen', nameKey: 'navListen', path: '/listen-live', icon: '📻' },
     { name: 'Programs', nameKey: 'navPrograms', path: '/programs', icon: '📅' },
     { name: 'Churches', nameKey: 'navChurches', path: '/church-partners', icon: '⛪' },
     { name: 'Impact', nameKey: 'navImpact', path: '/impact', icon: '💝' },
