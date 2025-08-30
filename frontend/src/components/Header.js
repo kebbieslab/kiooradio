@@ -12,7 +12,7 @@ const Header = ({ setIsPlayerVisible }) => {
     { name: 'About', nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
     { name: 'Listen', nameKey: 'navListen', path: '/listen-live', icon: '📻' },
     { name: 'Programs', nameKey: 'navPrograms', path: '/programs', icon: '📅' },
-    { name: 'Lineup', nameKey: 'navLineup', path: '/programs-lineup', icon: '📋' },
+    { name: 'Church Partners', nameKey: 'navChurchPartners', path: '/church-partners', icon: '⛪' },
     { name: 'Impact', nameKey: 'navImpact', path: '/impact', icon: '💝' },
     { name: 'Donate', nameKey: 'navDonate', path: '/donate', icon: '💖' },
   ];
