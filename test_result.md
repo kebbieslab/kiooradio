@@ -126,77 +126,53 @@ User requested specific improvements to the Kioo Radio website:
           comment: "Comprehensive backend API testing completed successfully. All 18 endpoints tested and working: GET /api/programs (returns program schedule data), GET /api/impact-stories (with featured_only parameter), GET /api/news (returns news articles), POST /api/donations (handles donation submissions), plus radio status, coverage areas, contact endpoints. All CRUD operations verified, data persistence confirmed, proper response formats validated. Backend is fully functional and ready for production use."
 
 ## frontend:
-  - task: "Remove homepage banners"
+  - task: "Update navigation from Church Partners to Churches"
     implemented: true
     working: true
-    file: "/app/frontend/src/pages/Home.js"
+    file: "/app/frontend/src/components/Header.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: false
-          agent: "main"
-          comment: "Need to remove specific banner texts found in Home.js and Header.js"
         - working: true
-          agent: "testing"
-          comment: "✅ VERIFIED: All specified banners ('3 Nations Coverage Area', 'English & French', '98.1 FM Crystal Clear', '24/7 Broadcasting') have been successfully removed from homepage. Coverage section now correctly shows only 'Broadcast Range: 150+ Miles' and 'Total Reach: 3+ Million People' without the 'English & French Programming' text. Footer properly displays '98.1 FM' without '24/7 Broadcasting' or 'Crystal Clear Signal' text."
+          agent: "main"
+          comment: "Successfully updated navigation text from 'Church Partners' to 'Churches' in Header.js and App.js translations"
 
-  - task: "Fix partner logo display"
+  - task: "Add new cities to dropdown filters"
     implemented: true
     working: true
-    file: "/app/frontend/src/components/PartnersStrip.js"
+    file: "/app/frontend/src/pages/ChurchPartners.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: false
-          agent: "main"
-          comment: "TTB and Your Network of Praise logos not displaying - need to investigate file paths"
         - working: true
-          agent: "testing"
-          comment: "✅ VERIFIED: All key partner logos are displaying correctly. TTB (Thru the Bible) logo found at /partners/ttb.webp, Your Network of Praise logo at /partners/ynop.webp, and Galcom Canada logo at /partners/galcom-canada.webp. Partners section is visible with proper scrolling animation working. All logos are loading successfully."
+          agent: "main"
+          comment: "Successfully added new cities - Liberia: Kolahun, Kakata, Monrovia; Sierra Leone: Kailahun, Bo; Guinea: N'Zérékoré, Kissidougou"
 
-  - task: "Fix Galcom Canada logo visibility"
+  - task: "Create blank church templates for new cities"
     implemented: true
     working: true
-    file: "/app/frontend/src/components/PartnersStrip.js"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-        - working: false
-          agent: "main"
-          comment: "Galcom Canada logo visibility issue - may need color/styling adjustments"
-        - working: true
-          agent: "testing"
-          comment: "✅ VERIFIED: Galcom Canada logo is displaying correctly with enhanced CSS styling. The logo has improved visibility with brightness/contrast enhancement as specified in the CSS (filter: grayscale(100%) brightness(1.2) contrast(1.3) with background-color: rgba(255, 255, 255, 0.9) and padding: 8px)."
-
-  - task: "Fix streaming audio player"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/pages/ListenLive.js"
+    file: "/app/populate_additional_cities.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-        - working: false
-          agent: "main"
-          comment: "Streaming link not working - need to verify audio URL and player implementation"
         - working: true
-          agent: "testing"
-          comment: "✅ VERIFIED: Audio player is functioning correctly on Listen Live page. Streaming URL has been updated to https://stream.galcom.org/stream/vox as requested. Web Player direct link also uses the correct URL. Audio player is present and properly configured. 'English & French' banner has been successfully removed from the broadcast details section."
+          agent: "main"
+          comment: "Created and populated 22 church templates across all new cities with appropriate placeholder content in English and French"
 
-  - task: "General website functionality"
+  - task: "Update Churches page title and content"
     implemented: true
     working: true
-    file: "/app/frontend/src/App.js"
+    file: "/app/frontend/src/pages/ChurchPartners.js"
     stuck_count: 0
     priority: "medium"
     needs_retesting: false
     status_history:
         - working: true
-          agent: "testing"
-          comment: "✅ VERIFIED: All navigation pages (Home, Programs, Impact, Donate, About) load successfully. Language switcher (EN/FR) buttons are present and functional. Minor issue: Countdown timer format needs adjustment but core functionality works. Overall website performance is excellent with 7/8 test categories passing."
+          agent: main"
+          comment: "Updated page title from 'Church Partners' to 'Churches' and related text throughout the component"
 
 ## metadata:
   created_by: "main_agent"
