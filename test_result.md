@@ -212,6 +212,7 @@ User requested specific improvements to the Kioo Radio website:
 
 ## test_plan:
   current_focus:
+    - "Church Partners API endpoint for Monrovia filtering"
     - "Enhanced Churches page functionality"
     - "Mobile responsiveness improvements"
     - "French language support for Guinea"
