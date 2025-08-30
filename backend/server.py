@@ -311,6 +311,22 @@ async def get_contact_messages():
     messages = await db.contact_messages.find().sort("created_at", -1).to_list(1000)
     return [ContactMessage(**message) for message in messages]
 
+# Station Settings endpoints
+@api_router.get("/station-settings")
+async def get_station_settings():
+    """Get station settings for WhatsApp number, email, etc."""
+    # In a real implementation, this would come from database
+    # For now, return static settings
+    settings = StationSettings()
+    return settings
+
+@api_router.put("/station-settings")
+async def update_station_settings(settings: StationSettings):
+    """Update station settings (admin only in real app)"""
+    # In a real implementation, this would update the database
+    # For now, just return the submitted settings
+    return {"message": "Station settings updated successfully", "settings": settings}
+
 # Newsletter signup endpoint
 @api_router.post("/newsletter-signup")
 async def newsletter_signup(signup: NewsletterSignupCreate):
