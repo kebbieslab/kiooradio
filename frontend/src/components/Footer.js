@@ -17,7 +17,7 @@ const Footer = () => {
 
     try {
       // Send email to admin@proudlyliberian.com
-      const response = await axios.post('/api/newsletter-signup', {
+      const response = await axios.post(`${BACKEND_URL}/api/newsletter-signup`, {
         email: email,
         adminEmail: 'admin@proudlyliberian.com'
       });
