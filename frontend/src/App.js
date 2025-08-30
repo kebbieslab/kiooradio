@@ -96,6 +96,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/programs-lineup" element={<ProgramsLineup />} />
+            <Route path="/church-partners" element={<ChurchPartners />} />
           </Routes>
         </main>
 
