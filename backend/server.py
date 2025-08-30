@@ -323,7 +323,7 @@ async def newsletter_signup(signup: NewsletterSignupCreate):
     return {"message": "Successfully subscribed to newsletter", "email": signup.email}
 
 # Church Partners endpoints
-@api_router.get("/church-partners", response_model=List[ChurchPartner])
+@api_router.get("/church-partners")
 async def get_church_partners(country: Optional[str] = None, city: Optional[str] = None, published_only: bool = True):
     query = {}
     if country:
@@ -341,13 +341,16 @@ async def get_church_partners(country: Optional[str] = None, city: Optional[str]
     
     partners.sort(key=sort_key)
     
-    # Convert MongoDB documents to ChurchPartner objects
+    # Convert MongoDB documents to proper format
     result = []
     for partner in partners:
         # Convert MongoDB _id to string and remove it
         if '_id' in partner:
             del partner['_id']
-        result.append(ChurchPartner(**partner))
+        # Convert datetime to string if present
+        if 'created_at' in partner:
+            partner['created_at'] = partner['created_at'].isoformat()
+        result.append(partner)
     
     return result
 
