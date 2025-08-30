@@ -164,7 +164,7 @@ const Header = ({ setIsPlayerVisible }) => {
                 {navigation.map((item) => (
                   <Link
                     key={item.path}
-                    to={item.path}
+                    to={getLocalizedPath(item.path)}
                     onClick={() => setIsMenuOpen(false)}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive(item.path)
@@ -173,7 +173,7 @@ const Header = ({ setIsPlayerVisible }) => {
                     }`}
                   >
                     <span>{item.icon}</span>
-                    <span data-i18n={item.nameKey}>{item.name}</span>
+                    <span>{t(item.name)}</span>
                   </Link>
                 ))}
                 
@@ -186,7 +186,7 @@ const Header = ({ setIsPlayerVisible }) => {
                   className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-kioo-primary text-white rounded-lg font-medium"
                 >
                   <span className="w-2 h-2 bg-red-400 rounded-full live-pulse"></span>
-                  <span data-i18n="listen">🔴 Listen Live</span>
+                  <span>🔴 {t('nav.listenLive')}</span>
                 </button>
               </div>
             </div>
