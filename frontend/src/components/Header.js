@@ -72,7 +72,7 @@ const Header = ({ setIsPlayerVisible }) => {
           <div className="flex justify-between items-center py-4">
             
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 group">
+            <Link to={getLocalizedPath('/')} className="flex items-center space-x-3 group">
               <div className="radio-waves">
                 <img 
                   src="https://customer-assets.emergentagent.com/job_ab37571b-81ea-4716-830b-4dd3875c42b0/artifacts/3n0kpvfn_KIOO%20RADIO.png" 
@@ -81,8 +81,8 @@ const Header = ({ setIsPlayerVisible }) => {
                 />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-xl font-bold text-kioo-primary">Kioo Radio</h1>
-                <p className="text-xs text-kioo-secondary -mt-1">98.1 FM - The Gift of Good News</p>
+                <h1 className="text-xl font-bold text-kioo-primary">{t('home.title')}</h1>
+                <p className="text-xs text-kioo-secondary -mt-1">98.1 FM - {t('home.subtitle')}</p>
               </div>
             </Link>
 
@@ -91,7 +91,7 @@ const Header = ({ setIsPlayerVisible }) => {
               {navigation.map((item) => (
                 <Link
                   key={item.path}
-                  to={item.path}
+                  to={getLocalizedPath(item.path)}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${
                     isActive(item.path)
                       ? 'bg-kioo-primary text-white shadow-lg transform scale-105'
@@ -99,7 +99,7 @@ const Header = ({ setIsPlayerVisible }) => {
                   }`}
                 >
                   <span className="text-xs">{item.icon}</span>
-                  <span data-i18n={item.nameKey}>{item.name}</span>
+                  <span>{t(item.name)}</span>
                 </Link>
               ))}
             </nav>
@@ -112,21 +112,21 @@ const Header = ({ setIsPlayerVisible }) => {
                 <button
                   onClick={() => switchLanguage('en')}
                   className={`px-2 py-1 text-sm font-medium rounded ${
-                    currentLanguage === 'en' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
+                    language === 'en' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
                   }`}
                   aria-label="Switch to English"
                 >
-                  EN
+                  {t('common.english')}
                 </button>
                 <span className="text-gray-400">|</span>
                 <button
                   onClick={() => switchLanguage('fr')}
                   className={`px-2 py-1 text-sm font-medium rounded ${
-                    currentLanguage === 'fr' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
+                    language === 'fr' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
                   }`}
                   aria-label="Basculer en français"
                 >
-                  FR
+                  {t('common.french')}
                 </button>
               </div>
 
@@ -136,7 +136,7 @@ const Header = ({ setIsPlayerVisible }) => {
                 className="btn-primary hidden sm:flex items-center space-x-2 text-sm"
               >
                 <span className="w-2 h-2 bg-red-500 rounded-full live-pulse"></span>
-                <span data-i18n="listen">Listen Live</span>
+                <span>{t('nav.listenLive')}</span>
               </button>
 
               {/* Mobile Menu Button */}
