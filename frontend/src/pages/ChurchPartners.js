@@ -200,7 +200,7 @@ const ChurchPartners = () => {
               ) : (
                 <div>
                   <div className="text-6xl mb-4">🚧</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Partners list coming soon</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Churches list coming soon</h3>
                   <p className="text-gray-600">We're working to connect with churches in {selectedCountry}.</p>
                 </div>
               )}
