@@ -130,6 +130,12 @@ class DonationCreate(BaseModel):
     message: Optional[str] = None
     is_anonymous: bool = False
 
+class StationSettings(BaseModel):
+    stationWhatsAppNumber: str = "+231778383703"
+    stationWhatsAppDigitsOnly: str = "231778383703" 
+    stationEmail: str = "info@kiooradio.org"
+    stationName: str = "Kioo Radio 98.1 FM"
+
 class ContactMessage(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
