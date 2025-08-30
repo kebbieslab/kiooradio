@@ -129,7 +129,8 @@ function App() {
           </div>
         )}
       </Router>
-    </div>
+      </div>
+    </HelmetProvider>
   );
 }
 
