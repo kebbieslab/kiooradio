@@ -1,0 +1,89 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "listen": "Écouter",
+    "programs": "Programmes",
+    "churchPartners": "Partenaires Église",
+    "impact": "Impact",
+    "donate": "Faire un don",
+    "listenLive": "Écouter en direct"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "download": "Télécharger",
+    "share": "Partager",
+    "contact": "Contact",
+    "readMore": "Lire plus",
+    "learnMore": "En savoir plus",
+    "getStarted": "Commencer",
+    "subscribe": "S'abonner",
+    "close": "Fermer",
+    "menu": "Menu",
+    "language": "Langue",
+    "english": "Anglais",
+    "french": "Français"
+  },
+  "home": {
+    "title": "Radio Kioo 98.1 FM",
+    "subtitle": "Le Cadeau de Bonnes Nouvelles",
+    "heroTitle": "Toucher les cœurs dans la région de la rivière Makona",
+    "heroSub": "Notre signal couvre plus de 150 miles, apportant foi et espoir aux Kissi, Mandingo, Fulani, Gbandi et plus encore.",
+    "broadcastingSoon": "Diffusion bientôt",
+    "listenLive": "Écouter en direct",
+    "programs": "Programmes",
+    "donate": "Faire un don",
+    "partnersTitle": "Nos Partenaires"
+  },
+  "churchPartners": {
+    "title": "Partenaires Église",
+    "subtitle": "Nous travaillons avec des pasteurs et des églises de confiance dans la région de la rivière Makona. Trouvez leurs coordonnées et connectez-vous directement pour la prière, le conseil ou les questions. Les heures de diffusion seront ajoutées bientôt.",
+    "searchPlaceholder": "Rechercher par pasteur ou nom d'église...",
+    "cityLabel": "Ville :",
+    "allCities": "Toutes les villes",
+    "showingResults": "Affichage de {count} partenaires d'église",
+    "inCity": "à {city}",
+    "matching": "correspondant à \"{query}\"",
+    "onKiooRadio": "Sur Radio Kioo :",
+    "toBeAnnounced": "À annoncer",
+    "contactComingSoon": "Contact : Bientôt disponible",
+    "call": "Appeler",
+    "whatsapp": "WhatsApp",
+    "askQuestion": "Poser une question",
+    "comingSoon": "Liste des partenaires bientôt disponible",
+    "workingToConnect": "Nous travaillons pour nous connecter avec les églises en {country}."
+  },
+  "footer": {
+    "stayConnected": "Restez connecté avec Radio Kioo",
+    "newsletterText": "Recevez des mises à jour sur les programmes, événements et histoires d'impact dans votre boîte de réception",
+    "emailPlaceholder": "Entrez votre adresse e-mail",
+    "subscribeSuccess": "Merci de vous être abonné !",
+    "subscribeError": "Abonnement réussi ! Nous vous ajouterons à notre newsletter.",
+    "quickLinks": "Liens rapides",
+    "contact": "Nous contacter",
+    "location": "Betche Hill, Foya, Comté de Lofa, Libéria",
+    "broadcastInfo": "Atteignant la région de la rivière Makona • Rayon de 150+ miles",
+    "copyright": "© 2024 Radio Kioo. Tous droits réservés."
+  },
+  "about": {
+    "title": "À propos de Radio Kioo",
+    "subtitle": "Diffuser l'espoir, la foi et la communauté dans la région de la rivière Makona - Une extension de la vision de Dieu de 2006 qui a commencé avec Vox Radio",
+    "godGivenCall": "L'Appel Donné par Dieu",
+    "cryOfPeople": "Le Cri du Peuple",
+    "ourMission": "Notre Mission",
+    "ourTeam": "Notre Équipe",
+    "ourJourney": "Notre Parcours",
+    "joinWork": "Rejoignez l'Œuvre de Dieu",
+    "supportMission": "Soutenir Notre Mission",
+    "getInvolved": "S'impliquer"
+  },
+  "language": {
+    "banner": {
+      "text": "Nous avons réglé la langue sur le français selon votre région.",
+      "keep": "Garder le français",
+      "switch": "Passer à l'anglais"
+    }
+  }
+}
