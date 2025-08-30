@@ -178,7 +178,7 @@ const ChurchPartners = () => {
 
           {/* Results Count */}
           <div className="mt-4 text-sm text-gray-600">
-            Showing {filteredPartners.length} churches
+            Showing {filteredPartners.length} partner churches
             {selectedCity !== 'all' && ` in ${selectedCity}`}
             {searchQuery && ` matching "${searchQuery}"`}
           </div>
