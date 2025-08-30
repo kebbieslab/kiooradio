@@ -4,6 +4,13 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Station settings (in real app, this would come from backend)
+const STATION_SETTINGS = {
+  stationWhatsAppNumber: "+231778383703",
+  stationWhatsAppDigitsOnly: "231778383703",
+  stationEmail: "info@kiooradio.org"
+};
+
 const ChurchPartners = () => {
   const [partners, setPartners] = useState([]);
   const [filteredPartners, setFilteredPartners] = useState([]);
@@ -11,6 +18,8 @@ const ChurchPartners = () => {
   const [selectedCity, setSelectedCity] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [selectedPartner, setSelectedPartner] = useState(null);
 
   const countries = ['Liberia', 'Sierra Leone', 'Guinea'];
   
@@ -18,6 +27,33 @@ const ChurchPartners = () => {
     'Liberia': ['all', 'Foya', 'Kolahun', 'Kakata', 'Monrovia'],
     'Sierra Leone': ['all', 'Koindu', 'Kailahun', 'Bo'],
     'Guinea': ['all', 'Guéckédou', 'N\'Zérékoré', 'Kissidougou']
+  };
+
+  // Placeholder partners for empty cities
+  const getPlaceholderPartners = (city, country) => {
+    const placeholders = [
+      {
+        id: `placeholder-${city}-1`,
+        pastorName: country === 'Guinea' ? 'Pasteur Bientôt Disponible' : 'Pastor Coming Soon',
+        churchName: country === 'Guinea' ? 'Église Partenaire Bientôt' : 'Partner Church Coming Soon',
+        city: city,
+        country: country,
+        isPlaceholder: true,
+        photoUrl: null,
+        contactPhone: null
+      },
+      {
+        id: `placeholder-${city}-2`,
+        pastorName: country === 'Guinea' ? 'Ministre Bientôt Disponible' : 'Minister Coming Soon',
+        churchName: country === 'Guinea' ? 'Ministère Partenaire Bientôt' : 'Partner Ministry Coming Soon',
+        city: city,
+        country: country,
+        isPlaceholder: true,
+        photoUrl: null,
+        contactPhone: null
+      }
+    ];
+    return placeholders;
   };
 
   useEffect(() => {
@@ -44,11 +80,16 @@ const ChurchPartners = () => {
     
     if (selectedCity !== 'all') {
       filtered = filtered.filter(partner => 
-        partner.city === selectedCity || partner.altCityNames.includes(selectedCity)
+        partner.city === selectedCity || partner.altCityNames?.includes(selectedCity)
       );
+      
+      // Add placeholder partners if no real partners exist for this city
+      if (filtered.length === 0) {
+        filtered = getPlaceholderPartners(selectedCity, selectedCountry);
+      }
     }
     
-    if (searchQuery) {
+    if (searchQuery && !searchQuery.includes('placeholder')) {
       filtered = filtered.filter(partner =>
         partner.pastorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         partner.churchName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -63,24 +104,160 @@ const ChurchPartners = () => {
     setSelectedCity('all');
   };
 
-  const handleShare = (partner) => {
-    const url = `${window.location.origin}/church-partners?q=${encodeURIComponent(partner.pastorName)}`;
-    navigator.clipboard.writeText(url);
-    alert('Partner link copied to clipboard!');
+  const handleCall = (partner) => {
+    if (partner.contactPhone) {
+      window.open(`tel:${partner.contactPhone}`, '_self');
+    }
+  };
+
+  const handleWhatsApp = (partner) => {
+    const message = encodeURIComponent(
+      `Hello Kioo Radio, I'm contacting about ${partner.pastorName} — ${partner.churchName} in ${partner.city}, ${partner.country}. I have a question / testimony:`
+    );
+    window.open(`https://wa.me/${STATION_SETTINGS.stationWhatsAppDigitsOnly}?text=${message}`, '_blank');
+  };
+
+  const handleShare = async (partner) => {
+    const url = `${window.location.origin}/church-partners?partner=${partner.id}`;
+    
+    try {
+      await navigator.clipboard.writeText(url);
+      // Show toast notification
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+      toast.textContent = 'Link copied to clipboard!';
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.removeChild(toast), 3000);
+    } catch (error) {
+      // Fallback to Web Share API
+      if (navigator.share) {
+        navigator.share({
+          title: `${partner.pastorName} - ${partner.churchName}`,
+          text: `Connect with ${partner.pastorName} from ${partner.churchName} in ${partner.city}, ${partner.country}`,
+          url: url,
+        });
+      }
+    }
   };
 
   const handleAskQuestion = (partner) => {
-    if (partner.whatsAppNumber && partner.consentToDisplayContact) {
-      const cleanNumber = partner.whatsAppNumber.replace(/\D/g, '');
-      window.open(`https://wa.me/${cleanNumber}`, '_blank');
-    } else {
-      window.location.href = `/contact?partner=${encodeURIComponent(partner.pastorName)}`;
-    }
+    setSelectedPartner(partner);
+    setShowContactModal(true);
+  };
+
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   const formatPhoneNumber = (phone) => {
     if (!phone) return null;
     return phone.startsWith('+') ? phone : `+${phone}`;
+  };
+
+  const ActionButton = ({ onClick, disabled, children, className = "", title }) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors ${
+        disabled 
+          ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+          : className
+      }`}
+    >
+      {children}
+    </button>
+  );
+
+  const ContactModal = ({ isOpen, onClose, partner }) => {
+    const [formData, setFormData] = useState({
+      name: '',
+      email: '',
+      message: '',
+      partnerRef: partner?.id || '',
+      pastorName: partner?.pastorName || '',
+      churchName: partner?.churchName || '',
+      city: partner?.city || '',
+      country: partner?.country || ''
+    });
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        await axios.post(`${API}/contact`, formData);
+        alert('Message sent successfully!');
+        onClose();
+        setFormData({ name: '', email: '', message: '', partnerRef: '', pastorName: '', churchName: '', city: '', country: '' });
+      } catch (error) {
+        alert('Error sending message. Please try again.');
+      }
+    };
+
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg max-w-md w-full p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">Contact About {partner?.pastorName}</h3>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700">✕</button>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+              <input
+                type="text"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+              <textarea
+                required
+                rows={4}
+                value={formData.message}
+                onChange={(e) => setFormData({...formData, message: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+                placeholder="Your question or message..."
+              />
+            </div>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-4 py-2 bg-kioo-primary text-white rounded-lg hover:bg-kioo-secondary"
+              >
+                Send Message
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
