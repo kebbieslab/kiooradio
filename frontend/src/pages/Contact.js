@@ -67,7 +67,7 @@ const Contact = () => {
     {
       icon: '✉️',
       title: 'Email',
-      details: 'info@kiooradio.com',
+      details: 'info@kiooradio.org',
       subtitle: 'Send us an email',
       action: 'mailto:info@kiooradio.com'
     },
