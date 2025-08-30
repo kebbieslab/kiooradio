@@ -325,37 +325,45 @@ async def newsletter_signup(signup: NewsletterSignupCreate):
 # Church Partners endpoints
 @api_router.get("/church-partners")
 async def get_church_partners(country: Optional[str] = None, city: Optional[str] = None, published_only: bool = True):
-    query = {}
-    if country:
-        query["country"] = country
-    if city:
-        query["city"] = city
-    if published_only:
-        query["isPublished"] = True
-    
-    print(f"Query: {query}")  # Debug
-    
-    partners = await db.church_partners.find(query).to_list(1000)
-    print(f"Found {len(partners)} partners")  # Debug
-    
-    # Sort by sortOrder if provided, then by pastorName
-    def sort_key(partner):
-        return (partner.get("sortOrder", 9999), partner.get("pastorName", ""))
-    
-    partners.sort(key=sort_key)
-    
-    # Convert MongoDB documents to proper format
-    result = []
-    for partner in partners:
-        # Convert MongoDB _id to string and remove it
-        if '_id' in partner:
-            del partner['_id']
-        # Convert datetime to string if present
-        if 'created_at' in partner:
-            partner['created_at'] = partner['created_at'].isoformat()
-        result.append(partner)
-    
-    return result
+    try:
+        # Test database connection
+        total_count = await db.church_partners.count_documents({})
+        print(f"Total partners in DB: {total_count}")
+        
+        query = {}
+        if country:
+            query["country"] = country
+        if city:
+            query["city"] = city
+        if published_only:
+            query["isPublished"] = True
+        
+        print(f"Query: {query}")  # Debug
+        
+        partners = await db.church_partners.find(query).to_list(1000)
+        print(f"Found {len(partners)} partners")  # Debug
+        
+        # Sort by sortOrder if provided, then by pastorName
+        def sort_key(partner):
+            return (partner.get("sortOrder", 9999), partner.get("pastorName", ""))
+        
+        partners.sort(key=sort_key)
+        
+        # Convert MongoDB documents to proper format
+        result = []
+        for partner in partners:
+            # Convert MongoDB _id to string and remove it
+            if '_id' in partner:
+                del partner['_id']
+            # Convert datetime to string if present
+            if 'created_at' in partner:
+                partner['created_at'] = partner['created_at'].isoformat()
+            result.append(partner)
+        
+        return result
+    except Exception as e:
+        print(f"Error in get_church_partners: {e}")
+        return []
 
 @api_router.post("/church-partners", response_model=ChurchPartner)
 async def create_church_partner(partner: ChurchPartnerCreate):
