@@ -3,47 +3,55 @@ import { Link, useLocation } from 'react-router-dom';
 
 const Header = ({ setIsPlayerVisible }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { language, setLanguage, t, isLoading } = useTranslation();
+  const [currentLanguage, setCurrentLanguage] = useState('en');
   const location = useLocation();
 
-  // Reduced navigation - About moved right after Home  
+  // Reduced navigation - About moved right after Home
   const navigation = [
-    { name: 'nav.home', path: '/', icon: '🏠' },
-    { name: 'nav.about', path: '/about', icon: 'ℹ️' },
-    { name: 'nav.listenLive', path: '/listen-live', icon: '📻' },
-    { name: 'nav.programs', path: '/programs', icon: '📅' },
-    { name: 'nav.churchPartners', path: '/church-partners', icon: '⛪' },
-    { name: 'nav.impact', path: '/impact', icon: '💝' },
-    { name: 'nav.donate', path: '/donate', icon: '💖' },
+    { name: 'Home', nameKey: 'navHome', path: '/', icon: '🏠' },
+    { name: 'About', nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
+    { name: 'Listen', nameKey: 'navListen', path: '/listen-live', icon: '📻' },
+    { name: 'Programs', nameKey: 'navPrograms', path: '/programs', icon: '📅' },
+    { name: 'Church Partners', nameKey: 'navChurchPartners', path: '/church-partners', icon: '⛪' },
+    { name: 'Impact', nameKey: 'navImpact', path: '/impact', icon: '💝' },
+    { name: 'Donate', nameKey: 'navDonate', path: '/donate', icon: '💖' },
   ];
 
-  const switchLanguage = (lang) => {
-    setLanguage(lang);
-  };
+  // Language system initialization
+  useEffect(() => {
+    const initLanguage = () => {
+      const saved = localStorage.getItem('lang');
+      if (saved) {
+        setCurrentLanguage(saved);
+        return;
+      }
+      
+      // Auto-detect based on browser language
+      const nav = (navigator.language || 'en').toLowerCase();
+      const defaultLang = nav.startsWith('fr') ? 'fr' : 'en';
+      setCurrentLanguage(defaultLang);
+      localStorage.setItem('lang', defaultLang);
+    };
 
-  const isActive = (path) => {
-    const currentPath = location.pathname;
-    // Handle localized paths
-    const cleanPath = currentPath.replace(/^\/fr/, '');
-    return cleanPath === path || (path === '/' && cleanPath === '');
-  };
+    initLanguage();
+  }, []);
 
-  const getLocalizedPath = (path) => {
-    if (language === 'fr') {
-      return path === '/' ? '/fr' : `/fr${path}`;
+  // Apply i18n translations
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.applyI18n) {
+      window.applyI18n();
     }
-    return path;
+  }, [currentLanguage]);
+
+  const switchLanguage = (lang) => {
+    setCurrentLanguage(lang);
+    localStorage.setItem('lang', lang);
+    if (typeof window !== 'undefined' && window.setLang) {
+      window.setLang(lang);
+    }
   };
 
-  if (isLoading) {
-    return (
-      <div className="bg-white shadow-lg border-b-2 border-kioo-primary sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4 text-center">
-          <div className="animate-pulse text-gray-500">{t('common.loading', 'Loading...')}</div>
-        </div>
-      </div>
-    );
-  }
+  const isActive = (path) => location.pathname === path;
 
   return (
     <>
