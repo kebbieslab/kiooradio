@@ -345,7 +345,10 @@ async def get_church_partners(country: Optional[str] = None, city: Optional[str]
         
         # Sort by sortOrder if provided, then by pastorName
         def sort_key(partner):
-            return (partner.get("sortOrder", 9999), partner.get("pastorName", ""))
+            sort_order = partner.get("sortOrder")
+            if sort_order is None:
+                sort_order = 9999
+            return (sort_order, partner.get("pastorName", ""))
         
         partners.sort(key=sort_key)
         
