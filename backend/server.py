@@ -141,16 +141,26 @@ class ContactMessage(BaseModel):
     name: str
     email: str
     phone: Optional[str] = None
-    subject: str
+    subject: str = ""
     message: str
+    partnerRef: Optional[str] = None
+    pastorName: Optional[str] = None
+    churchName: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class ContactMessageCreate(BaseModel):
     name: str
     email: str
     phone: Optional[str] = None
-    subject: str
+    subject: str = ""
     message: str
+    partnerRef: Optional[str] = None
+    pastorName: Optional[str] = None
+    churchName: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
 
 class RadioStatus(BaseModel):
     is_live: bool
