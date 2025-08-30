@@ -333,7 +333,10 @@ async def get_church_partners(country: Optional[str] = None, city: Optional[str]
     if published_only:
         query["isPublished"] = True
     
+    print(f"Query: {query}")  # Debug
+    
     partners = await db.church_partners.find(query).to_list(1000)
+    print(f"Found {len(partners)} partners")  # Debug
     
     # Sort by sortOrder if provided, then by pastorName
     def sort_key(partner):
