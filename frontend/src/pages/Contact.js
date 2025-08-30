@@ -55,7 +55,7 @@ const Contact = () => {
       title: 'Phone',
       details: '+231 77 838 3703',
       subtitle: 'Call us 24/7',
-      action: 'tel:+2317783837O3'
+      action: 'tel:+231778383703'
     },
     {
       icon: '💬',
