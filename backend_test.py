@@ -167,6 +167,47 @@ class KiooRadioAPITester:
         }
         self.run_test("Create Contact Message", "POST", "contact", 200, data=contact_data)
 
+    def test_newsletter_signup_endpoint(self):
+        """Test newsletter signup endpoint"""
+        print("\n=== TESTING NEWSLETTER SIGNUP ENDPOINT ===")
+        
+        # Test newsletter signup with proper data
+        newsletter_data = {
+            "email": "subscriber@kiooradio.com",
+            "adminEmail": "admin@proudlyliberian.com"
+        }
+        success, response = self.run_test("Newsletter Signup", "POST", "newsletter-signup", 200, data=newsletter_data)
+        
+        if success:
+            # Verify response contains expected fields
+            if "message" in response and "email" in response:
+                print(f"✅ Newsletter signup response contains required fields")
+                if response["email"] == newsletter_data["email"]:
+                    print(f"✅ Response email matches submitted email")
+                else:
+                    print(f"❌ Response email mismatch: expected {newsletter_data['email']}, got {response.get('email')}")
+            else:
+                print(f"❌ Newsletter signup response missing required fields")
+        
+        # Test with different email to verify multiple signups work
+        newsletter_data2 = {
+            "email": "listener@kiooradio.com", 
+            "adminEmail": "admin@proudlyliberian.com"
+        }
+        self.run_test("Newsletter Signup (Second)", "POST", "newsletter-signup", 200, data=newsletter_data2)
+        
+        # Test with missing email field
+        invalid_data = {
+            "adminEmail": "admin@proudlyliberian.com"
+        }
+        self.run_test("Newsletter Signup (Missing Email)", "POST", "newsletter-signup", 422, data=invalid_data)
+        
+        # Test with missing adminEmail field
+        invalid_data2 = {
+            "email": "test@example.com"
+        }
+        self.run_test("Newsletter Signup (Missing AdminEmail)", "POST", "newsletter-signup", 422, data=invalid_data2)
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Kioo Radio API Tests...")
