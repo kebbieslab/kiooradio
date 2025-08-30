@@ -285,7 +285,7 @@ const Contact = () => {
                   </a>
                   
                   <a
-                    href="https://wa.me/+2317783837O3"
+                    href="https://wa.me/+231778383703"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
