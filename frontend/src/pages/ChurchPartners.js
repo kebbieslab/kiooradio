@@ -22,6 +22,9 @@ const ChurchPartners = () => {
   const [loading, setLoading] = useState(true);
   const [showContactModal, setShowContactModal] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState(null);
+  const [featuredPartner, setFeaturedPartner] = useState(null);
+  
+  const location = useLocation();
 
   const countries = ['Liberia', 'Sierra Leone', 'Guinea'];
   
