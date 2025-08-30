@@ -140,6 +140,21 @@ User requested specific improvements to the Kioo Radio website:
           agent: "testing"
           comment: "Newsletter signup endpoint fully tested and working. Endpoint accepts POST requests with email and adminEmail fields, stores data properly in database with correct adminEmail set to 'admin@proudlyliberian.com', returns proper success response. Database verification shows 5 newsletter signups stored correctly with timestamps and UUIDs. All validation tests passed including proper 422 errors for missing fields."
 
+  - task: "Church Partners API endpoint for Monrovia filtering"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Initial testing revealed critical sorting bug in church-partners endpoint. Error: '<' not supported between instances of 'int' and 'NoneType' caused by sortOrder comparison. Fixed by properly handling None values in sort_key function."
+        - working: true
+          agent: "testing"
+          comment: "Church Partners endpoint fully tested and working correctly. Fixed critical sorting bug that was preventing results from being returned. Endpoint now properly returns 12 partners for Monrovia, Liberia including all expected pastors: Rev. Henry SN Powoe, Bishop Robert Bimba, Apostle David Fatorma, and Rev. Dr Joseph Bannah. Filtering by country=Liberia and city=Monrovia works perfectly. Database contains 64 total partners (40 in Liberia, 12 in Monrovia). All CRUD operations tested successfully. Data structure validation confirmed with all required fields present."
+
 ## frontend:
   - task: "Update navigation from Church Partners to Churches"
     implemented: true
