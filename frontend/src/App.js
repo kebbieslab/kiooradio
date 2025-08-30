@@ -25,7 +25,7 @@ function App() {
         heroTitle: "Reaching Hearts across the Makona River Region",
         heroSub: "Our signal covers over 150 miles, bringing Faith and Hope to the Kissi, Mandingo, Fulani, Gbandi and more.",
         navHome: "Home", navListen: "Listen", navPrograms: "Programs",
-        navChurchPartners: "Church Partners", navImpact: "Impact", navDonate: "Donate", navAbout: "About",
+        navChurchPartners: "Churches", navImpact: "Impact", navDonate: "Donate", navAbout: "About",
         listen: "Listen Live", programs: "Programs", donate: "Donate",
         donateBlurb: "Your donation helps us continue broadcasting Hope, Faith, and give vital information across the Makona River Region. Every contribution makes a difference in someone's life.",
         impactTitle: "Our Coverage at a Glance",
