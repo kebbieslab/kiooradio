@@ -62,7 +62,7 @@ const Contact = () => {
       title: 'WhatsApp',
       details: '+231 77 838 3703',
       subtitle: 'Quick messages',
-      action: 'https://wa.me/+2317783837O3'
+      action: 'https://wa.me/+231778383703'
     },
     {
       icon: '✉️',
