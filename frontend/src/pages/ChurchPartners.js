@@ -291,6 +291,17 @@ const ChurchPartners = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       
+      {/* SEO Head for social sharing */}
+      <SEOHead 
+        partner={featuredPartner}
+        url="/church-partners"
+        title={featuredPartner ? `${featuredPartner.pastorName} - Partner Churches` : 'Partner Churches - Kioo Radio 98.1 FM'}
+        description={featuredPartner 
+          ? `Connect with ${featuredPartner.pastorName} from ${featuredPartner.churchName} in ${featuredPartner.city}, ${featuredPartner.country}. Partner church of Kioo Radio 98.1 FM serving the Makona River Region.`
+          : 'Connect with trusted pastors and churches across the Makona River Region. Partner churches of Kioo Radio 98.1 FM in Liberia, Sierra Leone, and Guinea.'
+        }
+      />
+      
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-kioo-primary to-kioo-secondary text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -378,6 +389,27 @@ const ChurchPartners = () => {
           </div>
         </div>
       </section>
+
+      {/* Featured Partner Banner (if shared directly) */}
+      {featuredPartner && (
+        <section className="bg-blue-50 border-b border-blue-200 py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                <span className="text-blue-600 text-xl">👤</span>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-blue-900">
+                  Featured: {featuredPartner.pastorName}
+                </h2>
+                <p className="text-blue-700 text-sm">
+                  {featuredPartner.churchName}, {featuredPartner.city}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Partners Grid */}
       <section className="py-8">
