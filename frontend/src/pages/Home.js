@@ -84,7 +84,7 @@ const Home = () => {
                   to="/church-partners"
                   className="px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-kioo-primary transition-all duration-200"
                 >
-                  <span>⛪ Churches</span>
+                  <span>⛪ Partner Churches</span>
                 </Link>
 
                 <Link 
