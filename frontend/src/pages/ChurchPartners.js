@@ -164,10 +164,10 @@ const ChurchPartners = () => {
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors ${
+      className={`flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-200 ${
         disabled 
-          ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-          : className
+          ? 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-sm' 
+          : `${className} transform hover:scale-105 active:scale-95`
       }`}
     >
       {children}
