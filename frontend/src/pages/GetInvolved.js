@@ -416,7 +416,7 @@ const GetInvolved = () => {
             </Link>
             
             <a
-              href="tel:+2311234567890"
+              href="tel:+2317783837O3"
               className="bg-kioo-secondary text-white p-6 rounded-xl hover:bg-kioo-primary transition-colors"
             >
               <div className="text-3xl mb-3">📞</div>
