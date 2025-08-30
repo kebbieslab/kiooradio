@@ -274,7 +274,7 @@ const Contact = () => {
                 <h3 className="text-lg font-bold text-kioo-dark mb-4">⚡ Quick Actions</h3>
                 <div className="space-y-3">
                   <a
-                    href="tel:+2311234567890"
+                    href="tel:+2317783837O3"
                     className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <span className="text-xl">📞</span>
