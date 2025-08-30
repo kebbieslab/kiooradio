@@ -11,6 +11,7 @@ import Donate from "./pages/Donate";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ProgramsLineup from "./pages/ProgramsLineup";
+import ChurchPartners from "./pages/ChurchPartners";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
