@@ -63,7 +63,19 @@ const ChurchPartners = () => {
 
   useEffect(() => {
     fetchPartners();
-  }, []);
+    
+    // Check for partner parameter in URL for direct sharing
+    const urlParams = new URLSearchParams(location.search);
+    const partnerParam = urlParams.get('partner');
+    if (partnerParam && partners.length > 0) {
+      const featured = partners.find(p => p.id === partnerParam);
+      if (featured) {
+        setFeaturedPartner(featured);
+        setSelectedCountry(featured.country);
+        setSelectedCity(featured.city);
+      }
+    }
+  }, [location.search, partners]);
 
   useEffect(() => {
     filterPartners();
