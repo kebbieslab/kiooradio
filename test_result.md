@@ -124,6 +124,21 @@ User requested specific improvements to the Kioo Radio website:
         - working: true
           agent: "testing"
           comment: "Comprehensive backend API testing completed successfully. All 18 endpoints tested and working: GET /api/programs (returns program schedule data), GET /api/impact-stories (with featured_only parameter), GET /api/news (returns news articles), POST /api/donations (handles donation submissions), plus radio status, coverage areas, contact endpoints. All CRUD operations verified, data persistence confirmed, proper response formats validated. Backend is fully functional and ready for production use."
+        - working: true
+          agent: "testing"
+          comment: "Newsletter signup endpoint testing completed successfully. POST /api/newsletter-signup accepts email and adminEmail fields, stores data correctly in MongoDB with proper timestamps and UUIDs. All 5 test signups verified in database with correct admin_email field set to 'admin@proudlyliberian.com'. Endpoint returns proper success response with message and email confirmation. Validation working correctly - returns 422 for missing required fields. Minor: No email format validation implemented but core functionality works perfectly."
+
+  - task: "Newsletter signup functionality"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Newsletter signup endpoint fully tested and working. Endpoint accepts POST requests with email and adminEmail fields, stores data properly in database with correct adminEmail set to 'admin@proudlyliberian.com', returns proper success response. Database verification shows 5 newsletter signups stored correctly with timestamps and UUIDs. All validation tests passed including proper 422 errors for missing fields."
 
 ## frontend:
   - task: "Update navigation from Church Partners to Churches"
