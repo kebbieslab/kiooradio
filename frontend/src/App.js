@@ -14,6 +14,7 @@ import ProgramsLineup from "./pages/ProgramsLineup";
 import ChurchPartners from "./pages/ChurchPartners";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const STREAM_URL = process.env.REACT_APP_STREAM_URL || "https://radio.galcom.org/?station=VOXRadio";
 
 function App() {
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
