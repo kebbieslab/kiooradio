@@ -103,11 +103,11 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-User reported several issues with the Kioo Radio website that need to be fixed:
-1. Remove specific banners from home page: "3 Nations Coverage Area", "English & French", "98.1 FM Crystal Clear", "24/7 Broadcasting"
-2. Fix TTB and Your Network of Praise partner logos not displaying in the partners strip
-3. Change Galcom Canada logo color/visibility for better contrast
-4. Fix non-working streaming link in the audio player
+User requested specific improvements to the Kioo Radio website:
+1. Change "Church Partners" to "Churches" in the navigation and page title
+2. Add new cities to dropdown filters: Liberia (Kolahun, Kakata, Monrovia), Sierra Leone (Kailahun, Bo), Guinea (N'Zérékoré, Kissidougou)
+3. Create blank picture templates for Sierra Leone and Guinea cities using same frames as Foya
+4. Work on other general improvements to enhance user experience
 
 ## backend:
   - task: "Backend API endpoints"
