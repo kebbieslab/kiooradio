@@ -102,7 +102,7 @@ const ChurchPartners = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              ⛪ Churches
+              ⛪ Partner Churches
             </h1>
             <div className="max-w-4xl mx-auto">
               <p className="text-lg lg:text-xl text-green-100 leading-relaxed">
