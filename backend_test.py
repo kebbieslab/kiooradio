@@ -219,6 +219,7 @@ class KiooRadioAPITester:
         self.test_news_endpoints()
         self.test_donations_endpoints()
         self.test_contact_endpoints()
+        self.test_newsletter_signup_endpoint()
         
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
