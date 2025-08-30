@@ -368,134 +368,148 @@ const ChurchPartners = () => {
           
           {filteredPartners.length === 0 ? (
             <div className="text-center py-12">
-              {selectedCountry === 'Liberia' ? (
-                <div>
-                  <div className="text-6xl mb-4">⛪</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No partners found</h3>
-                  <p className="text-gray-600">Try adjusting your search or filters.</p>
-                </div>
-              ) : (
-                <div>
-                  <div className="text-6xl mb-4">🚧</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {selectedCountry === 'Guinea' ? 'Liste des églises partenaires bientôt disponible' : 'Partner churches list coming soon'}
-                  </h3>
-                  <p className="text-gray-600">
-                    {selectedCountry === 'Guinea' 
-                      ? `Nous travaillons pour nous connecter avec les églises en ${selectedCountry}.`
-                      : `We're working to connect with churches in ${selectedCountry}.`
-                    }
-                  </p>
-                </div>
-              )}
+              <div>
+                <div className="text-6xl mb-4">🚧</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  {selectedCountry === 'Guinea' ? 'Liste des églises partenaires bientôt disponible' : 'Partner churches list coming soon'}
+                </h3>
+                <p className="text-gray-600">
+                  {selectedCountry === 'Guinea' 
+                    ? `Nous travaillons pour nous connecter avec les églises en ${selectedCountry}.`
+                    : `We're working to connect with churches in ${selectedCountry}.`
+                  }
+                </p>
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredPartners.map((partner, index) => (
                 <div
                   key={partner.id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4 sm:p-6 border border-gray-200"
+                  className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
                 >
                   
-                  {/* Pastor Photo or Placeholder */}
-                  <div className="text-center mb-4">
+                  {/* Pastor Photo - Bigger with responsive dimensions */}
+                  <div className="relative">
                     {partner.photoUrl ? (
                       <img
                         src={partner.photoUrl}
-                        alt={`${partner.pastorName}`}
-                        className="w-20 h-20 rounded-full mx-auto object-cover"
+                        alt={`Pastor ${partner.pastorName}`}
+                        className="w-full object-cover aspect-[4/3] md:h-80 sm:h-64 h-56"
                         loading="lazy"
+                        style={{ minHeight: '14rem' }}
                       />
                     ) : (
-                      <div className="w-20 h-20 bg-kioo-primary rounded-full mx-auto flex items-center justify-center">
-                        <span className="text-white text-2xl">👤</span>
+                      <div className="w-full aspect-[4/3] md:h-80 sm:h-64 h-56 bg-gradient-to-br from-kioo-primary to-kioo-secondary flex items-center justify-center relative">
+                        <div className="text-center">
+                          <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span className="text-white text-2xl font-bold">
+                              {getInitials(partner.pastorName)}
+                            </span>
+                          </div>
+                          <p className="text-white text-sm opacity-75">Photo placeholder</p>
+                        </div>
+                        {partner.isPlaceholder && (
+                          <div className="absolute top-3 right-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs">
+                            Coming Soon
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
 
-                  {/* Pastor Name */}
-                  <h3 className="text-lg font-bold text-kioo-dark text-center mb-2">
-                    {partner.pastorName}
-                  </h3>
-
-                  {/* Church Name */}
-                  <p className="text-kioo-primary font-medium text-center mb-3">
-                    {partner.churchName}
-                  </p>
-
-                  {/* Location */}
-                  <p className="text-gray-600 text-sm text-center mb-4">
-                    {partner.city}, {partner.country}
-                  </p>
-
-                  {/* On Kioo Radio */}
-                  <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                    <p className="text-sm text-gray-700">
-                      <strong>On Kioo Radio:</strong>{' '}
-                      {partner.onAirDaysTimes || 'To be announced'}
-                    </p>
-                  </div>
-
-                  {/* Contact Buttons */}
-                  <div className="space-y-3">
+                  {/* Card Content */}
+                  <div className="p-6">
                     
-                    {/* Phone and WhatsApp */}
-                    {partner.consentToDisplayContact && (partner.contactPhone || partner.whatsAppNumber) ? (
-                      <div className="flex gap-2">
-                        {partner.contactPhone && (
-                          <a
-                            href={`tel:${formatPhoneNumber(partner.contactPhone)}`}
-                            className="flex-1 bg-kioo-primary text-white text-center py-2 px-3 rounded-lg hover:bg-kioo-secondary transition-colors text-sm font-medium"
-                          >
-                            📞 Call
-                          </a>
-                        )}
-                        {partner.whatsAppNumber && (
-                          <a
-                            href={`https://wa.me/${partner.whatsAppNumber.replace(/\D/g, '')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1 bg-green-500 text-white text-center py-2 px-3 rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
-                          >
-                            💬 WhatsApp
-                          </a>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-center py-2 px-3 bg-gray-100 rounded-lg">
-                        <span className="text-sm text-gray-600">Contact: Coming soon</span>
-                      </div>
-                    )}
+                    {/* Pastor Name */}
+                    <h3 className="text-xl font-bold text-kioo-dark mb-2 leading-tight">
+                      {partner.pastorName}
+                    </h3>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-2">
-                      <button
+                    {/* Church Name */}
+                    <p className="text-kioo-primary font-semibold mb-3 leading-tight">
+                      {partner.churchName}
+                    </p>
+
+                    {/* Location */}
+                    <p className="text-gray-600 text-sm mb-4 flex items-center">
+                      📍 {partner.city}, {partner.country}
+                    </p>
+
+                    {/* On Air Schedule */}
+                    <div className="bg-gray-50 rounded-lg p-3 mb-6">
+                      <p className="text-sm text-gray-700">
+                        <strong>On Kioo Radio:</strong>{' '}
+                        {partner.onAirDaysTimes || 'Schedule to be announced'}
+                      </p>
+                    </div>
+
+                    {/* Unified Action Bar - 4 buttons */}
+                    <div className="grid grid-cols-2 gap-2">
+                      
+                      {/* Call Button */}
+                      <ActionButton
+                        onClick={() => handleCall(partner)}
+                        disabled={!partner.contactPhone || partner.isPlaceholder}
+                        className="bg-blue-500 text-white hover:bg-blue-600"
+                        title={partner.contactPhone ? `Call ${partner.pastorName}` : 'Phone number coming soon'}
+                      >
+                        📞 Call
+                      </ActionButton>
+
+                      {/* WhatsApp Button (Station Number) */}
+                      <ActionButton
+                        onClick={() => handleWhatsApp(partner)}
+                        disabled={!STATION_SETTINGS.stationWhatsAppNumber}
+                        className="bg-green-500 text-white hover:bg-green-600"
+                        title={`WhatsApp Kioo Radio about ${partner.pastorName}`}
+                      >
+                        💬 WhatsApp
+                      </ActionButton>
+
+                      {/* Share Button */}
+                      <ActionButton
                         onClick={() => handleShare(partner)}
-                        className="flex-1 bg-gray-200 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
+                        disabled={false}
+                        className="bg-purple-500 text-white hover:bg-purple-600"
+                        title="Share partner church"
                       >
                         🔗 Share
-                      </button>
-                      <button
+                      </ActionButton>
+
+                      {/* Ask Question Button */}
+                      <ActionButton
                         onClick={() => handleAskQuestion(partner)}
-                        className="flex-1 bg-kioo-secondary text-white py-2 px-3 rounded-lg hover:bg-kioo-primary transition-colors text-sm font-medium"
+                        disabled={false}
+                        className="bg-orange-500 text-white hover:bg-orange-600"
+                        title={`Ask question about ${partner.pastorName}`}
                       >
                         ❓ Ask Question
-                      </button>
-                    </div>
-                  </div>
+                      </ActionButton>
 
-                  {/* Notes (if any) */}
-                  {partner.notes && (
-                    <div className="mt-3 pt-3 border-t border-gray-200">
-                      <p className="text-xs text-gray-600">{partner.notes}</p>
                     </div>
-                  )}
+
+                    {/* Notes (if any) */}
+                    {partner.notes && !partner.isPlaceholder && (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <p className="text-xs text-gray-600 italic">{partner.notes}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
       </section>
+
+      {/* Contact Modal */}
+      <ContactModal 
+        isOpen={showContactModal}
+        onClose={() => {setShowContactModal(false); setSelectedPartner(null);}}
+        partner={selectedPartner}
+      />
+      
     </div>
   );
 };
