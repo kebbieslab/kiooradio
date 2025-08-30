@@ -341,7 +341,15 @@ async def get_church_partners(country: Optional[str] = None, city: Optional[str]
     
     partners.sort(key=sort_key)
     
-    return [ChurchPartner(**partner) for partner in partners]
+    # Convert MongoDB documents to ChurchPartner objects
+    result = []
+    for partner in partners:
+        # Convert MongoDB _id to string and remove it
+        if '_id' in partner:
+            del partner['_id']
+        result.append(ChurchPartner(**partner))
+    
+    return result
 
 @api_router.post("/church-partners", response_model=ChurchPartner)
 async def create_church_partner(partner: ChurchPartnerCreate):
