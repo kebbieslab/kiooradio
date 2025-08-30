@@ -318,7 +318,7 @@ const Contact = () => {
                 </p>
                 <div className="space-y-2">
                   <a
-                    href="tel:+2311234567890"
+                    href="tel:+2317783837O3"
                     className="block bg-red-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors"
                   >
                     📞 Emergency Line
