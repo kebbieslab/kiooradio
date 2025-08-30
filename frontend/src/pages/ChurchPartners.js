@@ -201,7 +201,7 @@ const ChurchPartners = () => {
                 <div>
                   <div className="text-6xl mb-4">🚧</div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {selectedCountry === 'Guinea' ? 'Liste des églises bientôt disponible' : 'Churches list coming soon'}
+                    {selectedCountry === 'Guinea' ? 'Liste des églises partenaires bientôt disponible' : 'Partner churches list coming soon'}
                   </h3>
                   <p className="text-gray-600">
                     {selectedCountry === 'Guinea' 
