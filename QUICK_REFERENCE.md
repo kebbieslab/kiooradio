@@ -4,7 +4,7 @@
 
 ### ✅ Add New Radio Program
 ```bash
-curl -X POST "https://radio-streaming-3.preview.emergentagent.com/api/programs" \
+curl -X POST "https://radio-geo-detect.preview.emergentagent.com/api/programs" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Your Program Name",
@@ -20,7 +20,7 @@ curl -X POST "https://radio-streaming-3.preview.emergentagent.com/api/programs" 
 
 ### ✅ Add News Update
 ```bash
-curl -X POST "https://radio-streaming-3.preview.emergentagent.com/api/news" \
+curl -X POST "https://radio-geo-detect.preview.emergentagent.com/api/news" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "News Title",
@@ -32,7 +32,7 @@ curl -X POST "https://radio-streaming-3.preview.emergentagent.com/api/news" \
 
 ### ✅ Add Impact Story
 ```bash
-curl -X POST "https://radio-streaming-3.preview.emergentagent.com/api/impact-stories" \
+curl -X POST "https://radio-geo-detect.preview.emergentagent.com/api/impact-stories" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Story Title",
@@ -58,19 +58,19 @@ tail -f /var/log/supervisor/backend.*.log
 ## 📊 View Current Data
 ```bash
 # View all programs
-curl "https://radio-streaming-3.preview.emergentagent.com/api/programs"
+curl "https://radio-geo-detect.preview.emergentagent.com/api/programs"
 
 # View donation total  
-curl "https://radio-streaming-3.preview.emergentagent.com/api/donations/total"
+curl "https://radio-geo-detect.preview.emergentagent.com/api/donations/total"
 
 # View all news
-curl "https://radio-streaming-3.preview.emergentagent.com/api/news"
+curl "https://radio-geo-detect.preview.emergentagent.com/api/news"
 ```
 
 ## 📱 Website URLs
-- **Live Site**: https://radio-streaming-3.preview.emergentagent.com
-- **API Docs**: https://radio-streaming-3.preview.emergentagent.com/docs (Coming soon)
-- **API Root**: https://radio-streaming-3.preview.emergentagent.com/api/
+- **Live Site**: https://radio-geo-detect.preview.emergentagent.com
+- **API Docs**: https://radio-geo-detect.preview.emergentagent.com/docs (Coming soon)
+- **API Root**: https://radio-geo-detect.preview.emergentagent.com/api/
 
 ## 🎛️ Valid Values
 
@@ -96,5 +96,5 @@ sudo supervisorctl status
 tail -n 20 /var/log/supervisor/backend.err.log
 
 # Test if API is responding
-curl "https://radio-streaming-3.preview.emergentagent.com/api/"
+curl "https://radio-geo-detect.preview.emergentagent.com/api/"
 ```

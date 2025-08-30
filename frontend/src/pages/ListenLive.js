@@ -225,7 +225,7 @@ const ListenLive = () => {
                   📱 Share
                 </button>
                 <a
-                  href="https://wa.me/?text=Listen%20to%20Kioo%20Radio%2098.1%20FM%20-%20The%20Gift%20of%20Good%20News%20https://radio-streaming-3.preview.emergentagent.com/listen-live"
+                  href="https://wa.me/?text=Listen%20to%20Kioo%20Radio%2098.1%20FM%20-%20The%20Gift%20of%20Good%20News%20https://radio-geo-detect.preview.emergentagent.com/listen-live"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white hover:text-green-200 transition-colors"

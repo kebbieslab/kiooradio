@@ -131,7 +131,7 @@ Your comprehensive partners logo strip has been successfully added to the Kioo R
 
 ## 🚀 **LIVE WEBSITE**
 
-**URL:** https://radio-streaming-3.preview.emergentagent.com  
+**URL:** https://radio-geo-detect.preview.emergentagent.com  
 **Status:** ✅ **FULLY OPERATIONAL** with scrolling partners strip
 
 **Features Working:**

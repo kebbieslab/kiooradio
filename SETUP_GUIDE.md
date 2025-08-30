@@ -5,8 +5,8 @@
 Your Kioo Radio website is **fully functional** and includes:
 
 ### ✅ Live Website
-- **URL**: https://radio-streaming-3.preview.emergentagent.com
-- **Backend API**: https://radio-streaming-3.preview.emergentagent.com/api
+- **URL**: https://radio-geo-detect.preview.emergentagent.com
+- **Backend API**: https://radio-geo-detect.preview.emergentagent.com/api
 - **Status**: ✅ Operational with sample data
 
 ### ✅ Management Tools Created
@@ -47,7 +47,7 @@ python admin_interface.py
 ### Method 3: Direct API Calls
 ```bash
 # Example: Add new program
-curl -X POST "https://radio-streaming-3.preview.emergentagent.com/api/programs" \
+curl -X POST "https://radio-geo-detect.preview.emergentagent.com/api/programs" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Evening Devotions",
@@ -224,7 +224,7 @@ sudo supervisorctl status
 sudo supervisorctl restart all
 
 # Test API
-curl "https://radio-streaming-3.preview.emergentagent.com/api/"
+curl "https://radio-geo-detect.preview.emergentagent.com/api/"
 ```
 
 ### Forms Not Working:
@@ -233,7 +233,7 @@ curl "https://radio-streaming-3.preview.emergentagent.com/api/"
 tail -n 20 /var/log/supervisor/backend.err.log
 
 # Test API endpoint
-curl -X POST "https://radio-streaming-3.preview.emergentagent.com/api/contact" \
+curl -X POST "https://radio-geo-detect.preview.emergentagent.com/api/contact" \
   -H "Content-Type: application/json" \
   -d '{"name":"Test","email":"test@test.com","subject":"Test","message":"Test"}'
 ```
@@ -261,7 +261,7 @@ sudo supervisorctl restart mongodb
 
 ### Testing:
 - **Backend Tests**: `python /app/backend_test.py`
-- **Manual Testing**: Browse https://radio-streaming-3.preview.emergentagent.com
+- **Manual Testing**: Browse https://radio-geo-detect.preview.emergentagent.com
 
 ## 🎯 Next Steps
 
