@@ -262,7 +262,7 @@ const ListenLive = () => {
             <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6 text-center">
               <div className="text-3xl mb-3">📞</div>
               <h3 className="text-white font-semibold mb-2">Call In</h3>
-              <p className="text-green-100 text-sm">+231 123 456 7890</p>
+              <p className="text-green-100 text-sm">+231 77 838 3703</p>
             </div>
           </div>
         </div>
