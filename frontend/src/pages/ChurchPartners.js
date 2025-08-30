@@ -200,8 +200,15 @@ const ChurchPartners = () => {
               ) : (
                 <div>
                   <div className="text-6xl mb-4">🚧</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Churches list coming soon</h3>
-                  <p className="text-gray-600">We're working to connect with churches in {selectedCountry}.</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {selectedCountry === 'Guinea' ? 'Liste des églises bientôt disponible' : 'Churches list coming soon'}
+                  </h3>
+                  <p className="text-gray-600">
+                    {selectedCountry === 'Guinea' 
+                      ? `Nous travaillons pour nous connecter avec les églises en ${selectedCountry}.`
+                      : `We're working to connect with churches in ${selectedCountry}.`
+                    }
+                  </p>
                 </div>
               )}
             </div>
