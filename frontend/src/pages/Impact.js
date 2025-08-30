@@ -288,7 +288,7 @@ const Impact = () => {
                 💬 Share Your Story
               </a>
               <a
-                href="tel:+2317783837O3"
+                href="tel:+231778383703"
                 className="bg-white bg-opacity-20 backdrop-blur-sm text-white border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-kioo-primary transition-all"
               >
                 📞 Call Us Live
