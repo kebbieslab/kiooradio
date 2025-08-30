@@ -322,6 +322,63 @@ async def newsletter_signup(signup: NewsletterSignupCreate):
     
     return {"message": "Successfully subscribed to newsletter", "email": signup.email}
 
+# Church Partners endpoints
+@api_router.get("/church-partners", response_model=List[ChurchPartner])
+async def get_church_partners(country: Optional[str] = None, city: Optional[str] = None, published_only: bool = True):
+    query = {}
+    if country:
+        query["country"] = country
+    if city:
+        query["city"] = city
+    if published_only:
+        query["isPublished"] = True
+    
+    partners = await db.church_partners.find(query).to_list(1000)
+    
+    # Sort by sortOrder if provided, then by pastorName
+    def sort_key(partner):
+        return (partner.get("sortOrder", 9999), partner.get("pastorName", ""))
+    
+    partners.sort(key=sort_key)
+    
+    return [ChurchPartner(**partner) for partner in partners]
+
+@api_router.post("/church-partners", response_model=ChurchPartner)
+async def create_church_partner(partner: ChurchPartnerCreate):
+    partner_dict = partner.dict()
+    partner_obj = ChurchPartner(**partner_dict)
+    await db.church_partners.insert_one(partner_obj.dict())
+    return partner_obj
+
+@api_router.get("/church-partners/{partner_id}", response_model=ChurchPartner)
+async def get_church_partner(partner_id: str):
+    partner = await db.church_partners.find_one({"id": partner_id})
+    if not partner:
+        raise HTTPException(status_code=404, detail="Church partner not found")
+    return ChurchPartner(**partner)
+
+@api_router.put("/church-partners/{partner_id}", response_model=ChurchPartner)
+async def update_church_partner(partner_id: str, partner: ChurchPartnerCreate):
+    partner_dict = partner.dict()
+    partner_dict["id"] = partner_id
+    
+    result = await db.church_partners.replace_one(
+        {"id": partner_id}, 
+        partner_dict
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Church partner not found")
+    
+    return ChurchPartner(**partner_dict)
+
+@api_router.delete("/church-partners/{partner_id}")
+async def delete_church_partner(partner_id: str):
+    result = await db.church_partners.delete_one({"id": partner_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Church partner not found")
+    return {"message": "Church partner deleted successfully"}
+
 # Coverage areas endpoint
 @api_router.get("/coverage")
 async def get_coverage_areas():
