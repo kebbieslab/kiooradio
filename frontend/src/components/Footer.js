@@ -46,7 +46,7 @@ const Footer = () => {
 
   const socialLinks = [
     { name: 'Facebook', icon: '📘', url: 'https://facebook.com/kiooradio' },
-    { name: 'WhatsApp', icon: '💬', url: 'https://wa.me/+2317783837O3' },
+    { name: 'WhatsApp', icon: '💬', url: 'https://wa.me/+231778383703' },
     { name: 'YouTube', icon: '📺', url: 'https://youtube.com/@kiooradio' },
     { name: 'Email', icon: '✉️', url: 'mailto:info@kiooradio.org' },
   ];
