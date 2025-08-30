@@ -324,7 +324,7 @@ const Contact = () => {
                     📞 Emergency Line
                   </a>
                   <a
-                    href="https://wa.me/+2311234567890?text=EMERGENCY"
+                    href="https://wa.me/+2317783837O3?text=EMERGENCY"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block bg-green-600 text-white text-center py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors"
