@@ -108,7 +108,7 @@ const ChurchPartners = () => {
               <p className="text-lg lg:text-xl text-green-100 leading-relaxed">
                 We work with trusted pastors and churches across the Makona River Region. 
                 Find their details and connect directly for prayer, counseling, or questions. 
-                Broadcast times will be added soon.
+                Broadcast times will be added soon. Check our <a href="/programs-lineup" className="text-white underline hover:text-green-200 font-semibold">Programs Lineup</a> for current schedule.
               </p>
             </div>
           </div>
