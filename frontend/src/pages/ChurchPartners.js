@@ -444,14 +444,14 @@ const ChurchPartners = () => {
                       </p>
                     </div>
 
-                    {/* Unified Action Bar - 4 buttons */}
+                    {/* Unified Action Bar - 4 buttons with nice green theme */}
                     <div className="grid grid-cols-2 gap-2">
                       
                       {/* Call Button */}
                       <ActionButton
                         onClick={() => handleCall(partner)}
                         disabled={!partner.contactPhone || partner.isPlaceholder}
-                        className="bg-blue-500 text-white hover:bg-blue-600"
+                        className="bg-emerald-500 text-white hover:bg-emerald-600 shadow-md"
                         title={partner.contactPhone ? `Call ${partner.pastorName}` : 'Phone number coming soon'}
                       >
                         📞 Call
@@ -461,7 +461,7 @@ const ChurchPartners = () => {
                       <ActionButton
                         onClick={() => handleWhatsApp(partner)}
                         disabled={!STATION_SETTINGS.stationWhatsAppNumber}
-                        className="bg-green-500 text-white hover:bg-green-600"
+                        className="bg-green-500 text-white hover:bg-green-600 shadow-md"
                         title={`WhatsApp Kioo Radio about ${partner.pastorName}`}
                       >
                         💬 WhatsApp
@@ -471,7 +471,7 @@ const ChurchPartners = () => {
                       <ActionButton
                         onClick={() => handleShare(partner)}
                         disabled={false}
-                        className="bg-purple-500 text-white hover:bg-purple-600"
+                        className="bg-teal-500 text-white hover:bg-teal-600 shadow-md"
                         title="Share partner church"
                       >
                         🔗 Share
@@ -481,7 +481,7 @@ const ChurchPartners = () => {
                       <ActionButton
                         onClick={() => handleAskQuestion(partner)}
                         disabled={false}
-                        className="bg-orange-500 text-white hover:bg-orange-600"
+                        className="bg-lime-600 text-white hover:bg-lime-700 shadow-md"
                         title={`Ask question about ${partner.pastorName}`}
                       >
                         ❓ Ask Question
