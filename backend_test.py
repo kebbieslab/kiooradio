@@ -208,6 +208,93 @@ class KiooRadioAPITester:
         }
         self.run_test("Newsletter Signup (Missing AdminEmail)", "POST", "newsletter-signup", 422, data=invalid_data2)
 
+    def test_church_partners_endpoints(self):
+        """Test church partners endpoints with specific focus on Monrovia, Liberia"""
+        print("\n=== TESTING CHURCH PARTNERS ENDPOINTS ===")
+        
+        # Test get all church partners
+        success, all_partners = self.run_test("Get All Church Partners", "GET", "church-partners", 200)
+        if success:
+            print(f"   Total partners in database: {len(all_partners)}")
+        
+        # Test filtering by country only
+        success, liberia_partners = self.run_test("Get Liberia Partners", "GET", "church-partners", 200, params={"country": "Liberia"})
+        if success:
+            print(f"   Partners in Liberia: {len(liberia_partners)}")
+        
+        # Test filtering by country and city - MAIN TEST FOR MONROVIA
+        success, monrovia_partners = self.run_test("Get Monrovia Partners", "GET", "church-partners", 200, params={"country": "Liberia", "city": "Monrovia"})
+        
+        if success:
+            print(f"   Partners in Monrovia, Liberia: {len(monrovia_partners)}")
+            
+            # Verify specific pastors are included
+            pastor_names = [partner.get('pastorName', '') for partner in monrovia_partners]
+            expected_pastors = [
+                "Rev. Henry SN Powoe",
+                "Bishop Robert Bimba", 
+                "Apostle David Fatorma",
+                "Rev. Dr Joseph Bannah"
+            ]
+            
+            found_pastors = []
+            missing_pastors = []
+            
+            for expected_pastor in expected_pastors:
+                if expected_pastor in pastor_names:
+                    found_pastors.append(expected_pastor)
+                    print(f"✅ Found expected pastor: {expected_pastor}")
+                else:
+                    missing_pastors.append(expected_pastor)
+                    print(f"❌ Missing expected pastor: {expected_pastor}")
+            
+            if len(found_pastors) == len(expected_pastors):
+                print(f"✅ All {len(expected_pastors)} expected pastors found in Monrovia")
+            else:
+                print(f"⚠️  Found {len(found_pastors)}/{len(expected_pastors)} expected pastors")
+                self.failed_tests.append(f"Monrovia Partners - Missing pastors: {missing_pastors}")
+            
+            # Verify data structure
+            if monrovia_partners:
+                sample_partner = monrovia_partners[0]
+                required_fields = ['pastorName', 'churchName', 'country', 'city', 'isPublished']
+                missing_fields = [field for field in required_fields if field not in sample_partner]
+                
+                if not missing_fields:
+                    print(f"✅ Partner data structure contains all required fields")
+                else:
+                    print(f"❌ Missing required fields in partner data: {missing_fields}")
+                    self.failed_tests.append(f"Partner Data Structure - Missing fields: {missing_fields}")
+        
+        # Test filtering by other cities
+        self.run_test("Get Foya Partners", "GET", "church-partners", 200, params={"country": "Liberia", "city": "Foya"})
+        self.run_test("Get Kakata Partners", "GET", "church-partners", 200, params={"country": "Liberia", "city": "Kakata"})
+        
+        # Test filtering by other countries
+        self.run_test("Get Sierra Leone Partners", "GET", "church-partners", 200, params={"country": "Sierra Leone"})
+        self.run_test("Get Guinea Partners", "GET", "church-partners", 200, params={"country": "Guinea"})
+        
+        # Test published_only parameter
+        self.run_test("Get Published Partners Only", "GET", "church-partners", 200, params={"published_only": True})
+        
+        # Test create church partner
+        partner_data = {
+            "pastorName": "Test Pastor",
+            "churchName": "Test Church",
+            "country": "Liberia",
+            "city": "Monrovia",
+            "altCityNames": [],
+            "onAirDaysTimes": "Sunday 10:00 AM",
+            "contactPhone": "+231-123-456-789",
+            "whatsAppNumber": "+231-123-456-789",
+            "consentToDisplayContact": True,
+            "notes": "Test church for API verification",
+            "photoUrl": None,
+            "isPublished": True,
+            "sortOrder": 1
+        }
+        self.run_test("Create Church Partner", "POST", "church-partners", 200, data=partner_data)
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Kioo Radio API Tests...")
@@ -220,6 +307,7 @@ class KiooRadioAPITester:
         self.test_donations_endpoints()
         self.test_contact_endpoints()
         self.test_newsletter_signup_endpoint()
+        self.test_church_partners_endpoints()  # Add the new test
         
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
