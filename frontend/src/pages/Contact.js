@@ -53,7 +53,7 @@ const Contact = () => {
     {
       icon: '📞',
       title: 'Phone',
-      details: '+231 123 456 7890',
+      details: '+231 77 838 3703',
       subtitle: 'Call us 24/7',
       action: 'tel:+2311234567890'
     },
