@@ -15,9 +15,9 @@ const ChurchPartners = () => {
   const countries = ['Liberia', 'Sierra Leone', 'Guinea'];
   
   const cities = {
-    'Liberia': ['all', 'Foya'],
-    'Sierra Leone': ['all', 'Koindu'],
-    'Guinea': ['all', 'Guéckédou']
+    'Liberia': ['all', 'Foya', 'Kolahun', 'Kakata', 'Monrovia'],
+    'Sierra Leone': ['all', 'Koindu', 'Kailahun', 'Bo'],
+    'Guinea': ['all', 'Guéckédou', 'N\'Zérékoré', 'Kissidougou']
   };
 
   useEffect(() => {
