@@ -160,6 +160,38 @@ class NewsletterSignupCreate(BaseModel):
     email: str
     adminEmail: str
 
+class ChurchPartner(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    pastorName: str
+    churchName: str
+    country: str  # Liberia, Sierra Leone, Guinea
+    city: str
+    altCityNames: List[str] = []
+    onAirDaysTimes: Optional[str] = None
+    contactPhone: Optional[str] = None
+    whatsAppNumber: Optional[str] = None
+    consentToDisplayContact: bool = False
+    notes: Optional[str] = None
+    photoUrl: Optional[str] = None
+    isPublished: bool = True
+    sortOrder: Optional[int] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class ChurchPartnerCreate(BaseModel):
+    pastorName: str
+    churchName: str
+    country: str
+    city: str
+    altCityNames: List[str] = []
+    onAirDaysTimes: Optional[str] = None
+    contactPhone: Optional[str] = None
+    whatsAppNumber: Optional[str] = None
+    consentToDisplayContact: bool = False
+    notes: Optional[str] = None
+    photoUrl: Optional[str] = None
+    isPublished: bool = True
+    sortOrder: Optional[int] = None
+
 # Routes
 @api_router.get("/")
 async def root():
