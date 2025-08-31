@@ -9,7 +9,6 @@ const MajorGifts = ({ isStandalonePage = false }) => {
   const [settings, setSettings] = useState(null);
   const [paymentSettings, setPaymentSettings] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [maskedFields, setMaskedFields] = useState({});
 
   // Pledge form state
   const [pledgeForm, setPledgeForm] = useState({
