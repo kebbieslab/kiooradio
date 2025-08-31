@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 const Header = ({ setIsPlayerVisible }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState('en');
+  const [dropdownOpen, setDropdownOpen] = useState(null);
   const location = useLocation();
 
   // Reduced navigation - About moved right after Home
