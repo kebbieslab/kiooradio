@@ -209,16 +209,21 @@ class PaymentSettings(BaseModel):
     successRedirect: str = "/donate/thank-you"
     cancelRedirect: str = "/donate"
     wire: dict = {
-        "beneficiary": "VOX Liberia",
-        "bankName": "Example Bank Name",
-        "bankAddress": "123 Bank Street, Monrovia, Liberia",
-        "accountNumber": "••••••••••••",
-        "swift": "EXAMPLE123",
-        "intermediaryBank": "Example Correspondent Bank",
-        "intermediaryAddress": "456 Financial Ave, New York, NY",
-        "routingAba": "•••••••••",
-        "donorNoteHint": "Reference: Kioo Radio — {project}",
-        "qrEnabled": False
+        "beneficiaryName": "VOX Liberia",
+        "beneficiaryAddress": "C/O Galcom International, P.O. Box 1211, Foya, Lofa County, Liberia",
+        "bankName": "Ecobank Liberia Limited",
+        "bankAddress": "Broad Street, Monrovia, Liberia",
+        "accountNumber": "2040034567890123",
+        "swift": "ECOCLRLR",
+        "routingNumber": "011000028",
+        "intermediaryBank": "Citibank N.A. New York",
+        "intermediaryAddress": "399 Park Avenue, New York, NY 10043, USA",
+        "intermediarySwift": "CITIUS33",
+        "intermediaryAccount": "36083522",
+        "wireInstructions": "For further credit to VOX Liberia Account #2040034567890123",
+        "referenceNote": "Kioo Radio 98.1 FM Major Gift",
+        "contactEmail": "info@kiooradio.org",
+        "contactPhone": "+231 77 838 3703"
     }
 
 class NewsletterSignup(BaseModel):
