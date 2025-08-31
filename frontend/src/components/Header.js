@@ -13,7 +13,16 @@ const Header = ({ setIsPlayerVisible }) => {
     { name: 'Programs', nameKey: 'navPrograms', path: '/programs', icon: '📅' },
     { name: 'Partner Churches', nameKey: 'navChurches', path: '/church-partners', icon: '⛪' },
     { name: 'Impact', nameKey: 'navImpact', path: '/impact', icon: '💝' },
-    { name: 'Donate', nameKey: 'navDonate', path: '/donate', icon: '💖' },
+    { 
+      name: 'Donate', 
+      nameKey: 'navDonate', 
+      path: '/donate', 
+      icon: '💖',
+      dropdown: [
+        { name: 'General Giving', path: '/donate', icon: '💝' },
+        { name: 'Major Gifts', path: '/donate/major-gifts', icon: '🎁' }
+      ]
+    },
   ];
 
   // Language system initialization
