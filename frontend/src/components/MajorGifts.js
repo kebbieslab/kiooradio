@@ -444,55 +444,272 @@ END:VCALENDAR`;
                   <div>
                     <h3 className="text-2xl font-semibold mb-4">Bank Transfer / Wire Instructions</h3>
                     <p className="text-gray-600 mb-6">
-                      International bank fees may apply. Please email your transfer advice so we can confirm.
+                      Please use the following banking details for your wire transfer. International bank fees may apply. 
+                      Please email your transfer advice to <a href={`mailto:${paymentSettings.wire.contactEmail}`} className="text-kioo-primary underline">{paymentSettings.wire.contactEmail}</a> so we can confirm receipt.
                     </p>
 
-                    <div className="space-y-4">
-                      {Object.entries(paymentSettings.wire).map(([key, value]) => {
-                        if (key === 'qrEnabled' || key === 'donorNoteHint') return null;
-                        
-                        const isSensitive = key.includes('account') || key.includes('swift') || key.includes('routing');
-                        const displayValue = isSensitive && maskedFields[key] ? formatMaskedValue(value) : value;
-                        
-                        return (
-                          <div key={key} className="bg-gray-50 rounded-lg p-4">
-                            <div className="flex justify-between items-center">
-                              <div className="flex-1">
-                                <label className="block text-sm font-medium text-gray-700 capitalize mb-1">
-                                  {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                                </label>
-                                <span className="text-lg font-mono">{displayValue}</span>
-                              </div>
-                              
-                              <div className="flex space-x-2">
-                                {isSensitive && (
-                                  <button
-                                    onClick={() => toggleMask(key)}
-                                    className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
-                                  >
-                                    {maskedFields[key] ? '👁️ Show' : '🔒 Hide'}
-                                  </button>
-                                )}
-                                
-                                <button
-                                  onClick={() => copyToClipboard(value, key)}
-                                  className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
-                                >
-                                  📋 Copy
-                                </button>
-                              </div>
-                            </div>
+                    {/* Beneficiary Information */}
+                    <div className="mb-8 bg-kioo-primary/5 rounded-lg p-6 border-l-4 border-kioo-primary">
+                      <h4 className="text-lg font-semibold text-kioo-primary mb-4">📋 Beneficiary Information</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Beneficiary Name</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg">{paymentSettings.wire.beneficiaryName}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.beneficiaryName, 'Beneficiary Name')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
                           </div>
-                        );
-                      })}
-
-                      {paymentSettings.wire.donorNoteHint && (
-                        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                          <p className="text-sm text-yellow-700">
-                            <strong>Reference Note:</strong> {paymentSettings.wire.donorNoteHint}
-                          </p>
                         </div>
-                      )}
+                        
+                        <div className="md:col-span-1">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Beneficiary Address</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-sm">{paymentSettings.wire.beneficiaryAddress}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.beneficiaryAddress, 'Beneficiary Address')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Receiving Bank Information */}
+                    <div className="mb-8 bg-blue-50 rounded-lg p-6 border-l-4 border-blue-500">
+                      <h4 className="text-lg font-semibold text-blue-700 mb-4">🏦 Receiving Bank Details</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg">{paymentSettings.wire.bankName}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.bankName, 'Bank Name')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Bank Address</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-sm">{paymentSettings.wire.bankAddress}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.bankAddress, 'Bank Address')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg font-bold text-kioo-primary">{paymentSettings.wire.accountNumber}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.accountNumber, 'Account Number')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">SWIFT Code</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg font-bold text-blue-600">{paymentSettings.wire.swift}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.swift, 'SWIFT Code')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Intermediary Bank Information */}
+                    <div className="mb-8 bg-purple-50 rounded-lg p-6 border-l-4 border-purple-500">
+                      <h4 className="text-lg font-semibold text-purple-700 mb-4">🔗 Intermediary Bank (For International Wires)</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Intermediary Bank Name</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg">{paymentSettings.wire.intermediaryBank}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.intermediaryBank, 'Intermediary Bank')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Intermediary Address</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-sm">{paymentSettings.wire.intermediaryAddress}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.intermediaryAddress, 'Intermediary Address')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Intermediary SWIFT</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg font-bold text-purple-600">{paymentSettings.wire.intermediarySwift}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.intermediarySwift, 'Intermediary SWIFT')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Intermediary Account</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg">{paymentSettings.wire.intermediaryAccount}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.intermediaryAccount, 'Intermediary Account')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Wire Instructions */}
+                    <div className="mb-8 bg-yellow-50 rounded-lg p-6 border-l-4 border-yellow-400">
+                      <h4 className="text-lg font-semibold text-yellow-800 mb-4">📝 Wire Instructions</h4>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">For Further Credit To</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg">{paymentSettings.wire.wireInstructions}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.wireInstructions, 'Wire Instructions')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Reference Note (Include in wire)</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <span className="font-mono text-lg text-kioo-primary font-semibold">{paymentSettings.wire.referenceNote}</span>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.referenceNote, 'Reference Note')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Contact Information */}
+                    <div className="bg-green-50 rounded-lg p-6 border-l-4 border-green-500">
+                      <h4 className="text-lg font-semibold text-green-700 mb-4">📞 Contact Information</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Email for Transfer Confirmation</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <a href={`mailto:${paymentSettings.wire.contactEmail}`} className="font-mono text-lg text-blue-600 hover:underline">{paymentSettings.wire.contactEmail}</a>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.contactEmail, 'Email')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Phone for Questions</label>
+                          <div className="flex items-center justify-between bg-white rounded-lg p-3 border">
+                            <a href={`tel:${paymentSettings.wire.contactPhone}`} className="font-mono text-lg text-blue-600 hover:underline">{paymentSettings.wire.contactPhone}</a>
+                            <button
+                              onClick={() => copyToClipboard(paymentSettings.wire.contactPhone, 'Phone')}
+                              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors"
+                            >
+                              📋 Copy
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Important Notes */}
+                    <div className="mt-6 bg-gray-50 rounded-lg p-4">
+                      <h5 className="font-semibold text-gray-800 mb-2">📌 Important Notes:</h5>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        <li>• International bank fees may apply and are typically deducted from the transfer amount</li>
+                        <li>• Please email your wire transfer advice/confirmation to ensure we can track your gift</li>
+                        <li>• Include the reference note exactly as shown above for proper credit</li>
+                        <li>• Processing time is typically 1-3 business days for international wires</li>
+                        <li>• Contact us if you have any questions about the wire transfer process</li>
+                      </ul>
+                    </div>
+
+                    {/* Copy All Information Button */}
+                    <div className="mt-6 text-center">
+                      <button
+                        onClick={() => {
+                          const allInfo = `
+Wire Transfer Information for VOX Liberia / Kioo Radio 98.1 FM
+
+BENEFICIARY INFORMATION:
+Name: ${paymentSettings.wire.beneficiaryName}
+Address: ${paymentSettings.wire.beneficiaryAddress}
+
+RECEIVING BANK:
+Bank: ${paymentSettings.wire.bankName}
+Address: ${paymentSettings.wire.bankAddress}
+Account Number: ${paymentSettings.wire.accountNumber}
+SWIFT Code: ${paymentSettings.wire.swift}
+
+INTERMEDIARY BANK (International):
+Bank: ${paymentSettings.wire.intermediaryBank}
+Address: ${paymentSettings.wire.intermediaryAddress}
+SWIFT Code: ${paymentSettings.wire.intermediarySwift}
+Account: ${paymentSettings.wire.intermediaryAccount}
+
+WIRE INSTRUCTIONS:
+${paymentSettings.wire.wireInstructions}
+
+REFERENCE: ${paymentSettings.wire.referenceNote}
+
+CONTACT:
+Email: ${paymentSettings.wire.contactEmail}
+Phone: ${paymentSettings.wire.contactPhone}
+                          `;
+                          copyToClipboard(allInfo, 'Complete Wire Information');
+                        }}
+                        className="bg-kioo-primary text-white py-3 px-8 rounded-lg font-semibold hover:bg-kioo-secondary transition-colors"
+                      >
+                        📄 Copy All Wire Information
+                      </button>
                     </div>
                   </div>
                 )}
