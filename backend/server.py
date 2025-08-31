@@ -374,7 +374,66 @@ async def get_contact_messages():
     messages = await db.contact_messages.find().sort("created_at", -1).to_list(1000)
     return [ContactMessage(**message) for message in messages]
 
-# Station Settings endpoints
+# Major Gifts endpoints
+@api_router.get("/major-gifts-settings")
+async def get_major_gifts_settings():
+    """Get major gifts settings for calendar, documents, etc."""
+    # In real implementation, this would come from database
+    settings = MajorGiftsSettings()
+    return settings
+
+@api_router.put("/major-gifts-settings")
+async def update_major_gifts_settings(settings: MajorGiftsSettings):
+    """Update major gifts settings (admin only in real app)"""
+    # In real implementation, this would update the database
+    return {"message": "Major gifts settings updated successfully", "settings": settings}
+
+@api_router.get("/payment-settings")
+async def get_payment_settings():
+    """Get payment settings for Direct Liberia, wire transfers, etc."""
+    # In real implementation, this would come from database
+    settings = PaymentSettings()
+    return settings
+
+@api_router.put("/payment-settings") 
+async def update_payment_settings(settings: PaymentSettings):
+    """Update payment settings (admin only in real app)"""
+    # In real implementation, this would update the database
+    return {"message": "Payment settings updated successfully", "settings": settings}
+
+@api_router.post("/pledges")
+async def create_pledge(pledge: MajorGiftPledgeCreate):
+    """Create a new major gift pledge"""
+    try:
+        # Create pledge document
+        pledge_doc = MajorGiftPledge(**pledge.model_dump())
+        
+        # Insert into database
+        result = await db.major_gift_pledges.insert_one(pledge_doc.model_dump())
+        
+        # Send email notification (in real app, this would send actual email)
+        print(f"New major gift pledge received: {pledge.name} - ${pledge.amount}")
+        
+        return {
+            "message": "Pledge created successfully",
+            "pledgeId": pledge_doc.id,
+            "status": "success"
+        }
+    except Exception as e:
+        print(f"Error creating pledge: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create pledge")
+
+@api_router.get("/pledges")
+async def get_pledges():
+    """Get all major gift pledges (admin only)"""
+    try:
+        pledges = await db.major_gift_pledges.find().to_list(1000)
+        return pledges
+    except Exception as e:
+        print(f"Error fetching pledges: {e}")
+        return []
+
+# Station Settings endpoints (updated)
 @api_router.get("/station-settings")
 async def get_station_settings():
     """Get station settings for WhatsApp number, email, etc."""
