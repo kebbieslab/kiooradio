@@ -168,6 +168,59 @@ class RadioStatus(BaseModel):
     next_program: Optional[str] = None
     listener_count: int = 0
 
+class MajorGiftPledge(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    phone: Optional[str] = None
+    amount: float
+    designation: str  # Solar, Studios, Programming, "Where most needed"
+    pledgeDate: str
+    message: Optional[str] = None
+    status: str = "new"  # new, contacted, fulfilled
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MajorGiftPledgeCreate(BaseModel):
+    name: str
+    email: str
+    phone: Optional[str] = None
+    amount: float
+    designation: str
+    pledgeDate: str
+    message: Optional[str] = None
+
+class MajorGiftsSettings(BaseModel):
+    calUrl: Optional[str] = ""
+    caseForSupportUrl: Optional[str] = ""
+    impactBriefUrl: Optional[str] = ""
+    budgetOverviewUrl: Optional[str] = ""
+    namingOpportunities: List[str] = [
+        "Studio Naming — $25,000+",
+        "Transmitter Room — $15,000+", 
+        "Solar Array — $35,000+",
+        "Youth Programming — $10,000+",
+        "Cross-Border Outreach — $20,000+"
+    ]
+
+class PaymentSettings(BaseModel):
+    directLiberiaEmbedType: str = "iframe"
+    directLiberiaEmbedCode: str = ""
+    directLiberiaFallbackUrl: str = ""
+    successRedirect: str = "/donate/thank-you"
+    cancelRedirect: str = "/donate"
+    wire: dict = {
+        "beneficiary": "VOX Liberia",
+        "bankName": "Example Bank Name",
+        "bankAddress": "123 Bank Street, Monrovia, Liberia",
+        "accountNumber": "••••••••••••",
+        "swift": "EXAMPLE123",
+        "intermediaryBank": "Example Correspondent Bank",
+        "intermediaryAddress": "456 Financial Ave, New York, NY",
+        "routingAba": "•••••••••",
+        "donorNoteHint": "Reference: Kioo Radio — {project}",
+        "qrEnabled": False
+    }
+
 class NewsletterSignup(BaseModel):
     email: str
     adminEmail: str
