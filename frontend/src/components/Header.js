@@ -105,18 +105,55 @@ const Header = ({ setIsPlayerVisible }) => {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
               {navigation.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${
-                    isActive(item.path)
-                      ? 'bg-kioo-primary text-white shadow-lg transform scale-105'
-                      : 'text-gray-700 hover:bg-kioo-primary hover:text-white hover:shadow-md hover:scale-105'
-                  }`}
-                >
-                  <span className="text-xs">{item.icon}</span>
-                  <span data-i18n={item.nameKey}>{item.name}</span>
-                </Link>
+                <div key={item.path} className="relative">
+                  {item.dropdown ? (
+                    <div
+                      className="relative"
+                      onMouseEnter={() => setDropdownOpen(item.path)}
+                      onMouseLeave={() => setDropdownOpen(null)}
+                    >
+                      <Link
+                        to={item.path}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${
+                          isActive(item.path)
+                            ? 'bg-kioo-primary text-white shadow-lg transform scale-105'
+                            : 'text-gray-700 hover:bg-kioo-primary hover:text-white hover:shadow-md hover:scale-105'
+                        }`}
+                      >
+                        <span className="text-xs">{item.icon}</span>
+                        <span data-i18n={item.nameKey}>{item.name}</span>
+                        <span className="text-xs">▼</span>
+                      </Link>
+                      
+                      {dropdownOpen === item.path && (
+                        <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                          {item.dropdown.map((dropdownItem) => (
+                            <Link
+                              key={dropdownItem.path}
+                              to={dropdownItem.path}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-kioo-primary hover:text-white transition-colors"
+                            >
+                              <span className="text-xs mr-2">{dropdownItem.icon}</span>
+                              {dropdownItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.path}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${
+                        isActive(item.path)
+                          ? 'bg-kioo-primary text-white shadow-lg transform scale-105'
+                          : 'text-gray-700 hover:bg-kioo-primary hover:text-white hover:shadow-md hover:scale-105'
+                      }`}
+                    >
+                      <span className="text-xs">{item.icon}</span>
+                      <span data-i18n={item.nameKey}>{item.name}</span>
+                    </Link>
+                  )}
+                </div>
               ))}
             </nav>
 
