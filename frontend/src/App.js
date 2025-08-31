@@ -97,6 +97,7 @@ function App() {
             <Route path="/programs" element={<Programs />} />
             <Route path="/impact" element={<Impact />} />
             <Route path="/donate" element={<Donate />} />
+            <Route path="/donate/major-gifts" element={<MajorGiftsPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/programs-lineup" element={<ProgramsLineup />} />
