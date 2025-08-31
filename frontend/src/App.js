@@ -9,6 +9,7 @@ import ListenLive from "./pages/ListenLive";
 import Programs from "./pages/Programs";
 import Impact from "./pages/Impact";
 import Donate from "./pages/Donate";
+import MajorGiftsPage from "./pages/MajorGiftsPage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import ProgramsLineup from "./pages/ProgramsLineup";
