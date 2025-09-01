@@ -717,15 +717,24 @@ async def delete_church_partner(partner_id: str):
 # About Page Settings endpoints
 @api_router.get("/about-page-settings")
 async def get_about_page_settings():
-    """Get About page settings for vision story, timeline, and documents"""
+    """Get About page settings for vision story, timeline, and documents with preview images"""
     try:
-        # In a real implementation, this would come from database
-        # For now, return default settings
+        # Get base settings
         settings = AboutPageSettings()
+        
+        # Generate document previews
+        preview_urls = await generate_document_previews()
+        
+        # Update settings with preview images
+        settings.radioProjectPreviewImages = preview_urls["radioProjectPreviewImages"]
+        settings.maruRadioProposalPreviewImages = preview_urls["maruRadioProposalPreviewImages"]
+        
         return settings
     except Exception as e:
         print(f"Error fetching about page settings: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch about page settings")
+        # Return settings without previews if there's an error
+        settings = AboutPageSettings()
+        return settings
 
 @api_router.put("/about-page-settings")
 async def update_about_page_settings(settings: AboutPageSettings):
