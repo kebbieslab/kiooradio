@@ -77,7 +77,7 @@ const About = () => {
             </h2>
             <div className="max-w-4xl mx-auto text-left">
               <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-8 mt-2">
-                The vision to establish Kioo Radio came in 2005 when Joseph Kebbie was at Media Village, a media school of YWMA in Cape Town. 
+                The vision to establish Kioo Radio came in 2005 when Joseph Kebbie was at Media Village, a media school of YWAM in Cape Town. 
                 God placed a burden on his heart: 
                 <em className="text-kioo-primary font-semibold"> "Return to Liberia and start a radio station to reach my people."</em> 
                 Originally, God wanted us to start with the Kissi radio station, but He led us to establish Vox Radio first in 2017 in a shipping container. 
