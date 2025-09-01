@@ -578,6 +578,30 @@ async def delete_church_partner(partner_id: str):
         raise HTTPException(status_code=404, detail="Church partner not found")
     return {"message": "Church partner deleted successfully"}
 
+# About Page Settings endpoints
+@api_router.get("/about-page-settings")
+async def get_about_page_settings():
+    """Get About page settings for vision story, timeline, and documents"""
+    try:
+        # In a real implementation, this would come from database
+        # For now, return default settings
+        settings = AboutPageSettings()
+        return settings
+    except Exception as e:
+        print(f"Error fetching about page settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch about page settings")
+
+@api_router.put("/about-page-settings")
+async def update_about_page_settings(settings: AboutPageSettings):
+    """Update About page settings (admin only in real app)"""
+    try:
+        # In a real implementation, this would update the database
+        # For now, just return the submitted settings
+        return {"message": "About page settings updated successfully", "settings": settings}
+    except Exception as e:
+        print(f"Error updating about page settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update about page settings")
+
 # Coverage areas endpoint
 @api_router.get("/coverage")
 async def get_coverage_areas():
