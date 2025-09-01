@@ -103,11 +103,13 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-User requested specific improvements to the Kioo Radio website:
-1. Change "Church Partners" to "Churches" in the navigation and page title
-2. Add new cities to dropdown filters: Liberia (Kolahun, Kakata, Monrovia), Sierra Leone (Kailahun, Bo), Guinea (N'Zérékoré, Kissidougou)
-3. Create blank picture templates for Sierra Leone and Guinea cities using same frames as Foya
-4. Work on other general improvements to enhance user experience
+About Page Vision Story + Document Viewer Enhancement:
+1. Add "The Vision (2005)" section with Joseph Kebbie's Cape Town story
+2. Add "From Vision to Launch" mini-timeline section  
+3. Add "Who Are the Kissi? (Our Heartland)" section explaining the Kissi people
+4. Add "Document Viewer" section with Radio Project11.ppt (Office Web Viewer) and maru_radio_proposal.PDF (PDF.js)
+5. Make all new content editable through CMS (Settings → About Page)
+6. Preserve existing About page content
 
 ## backend:
   - task: "Backend API endpoints"
@@ -127,6 +129,21 @@ User requested specific improvements to the Kioo Radio website:
         - working: true
           agent: "testing"
           comment: "Newsletter signup endpoint testing completed successfully. POST /api/newsletter-signup accepts email and adminEmail fields, stores data correctly in MongoDB with proper timestamps and UUIDs. All 5 test signups verified in database with correct admin_email field set to 'admin@proudlyliberian.com'. Endpoint returns proper success response with message and email confirmation. Validation working correctly - returns 422 for missing required fields. Minor: No email format validation implemented but core functionality works perfectly."
+        - working: true
+          agent: "main"
+          comment: "Added new About page settings endpoint. Backend now includes AboutPageSettings model with vision content, timeline items, Kissi people information, and document URLs. API endpoint GET /api/about-page-settings returns proper data structure. Manual testing confirmed endpoint works correctly."
+
+  - task: "About Page Settings API endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Created new AboutPageSettings Pydantic model with vision story content, timeline data, Kissi people information, and document URLs. Added GET /api/about-page-settings and PUT /api/about-page-settings endpoints. Manual curl test confirmed endpoint returns proper JSON response with all required fields."
 
   - task: "Newsletter signup functionality"
     implemented: true
