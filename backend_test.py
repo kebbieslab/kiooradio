@@ -393,7 +393,7 @@ class KiooRadioAPITester:
                     # 2024: Daniel Hatfield challenge
                     daniel_2024_found = False
                     for year, event in timeline_dict.items():
-                        if "2024" in year and "Daniel Hatfield" in event:
+                        if "2024" in year and "Daniel Hatfield" in event and "challenge" in event.lower():
                             print(f"✅ 2024 entry includes Daniel Hatfield challenge")
                             daniel_2024_found = True
                             break
