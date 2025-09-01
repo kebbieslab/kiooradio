@@ -208,6 +208,31 @@ class PaymentSettings(BaseModel):
     directLiberiaFallbackUrl: str = ""
     successRedirect: str = "/donate/thank-you"
     cancelRedirect: str = "/donate"
+
+class AboutPageSettings(BaseModel):
+    # Vision 2005 section
+    visionTitle: str = "The Vision (2005)"
+    visionContent: str = """In 2005, while studying at Cape Peninsula University of Technology in Cape Town, South Africa, God placed a burden on Joseph Kebbie's heart. The vision was clear: "Return to Liberia and start a radio station to reach my people." This divine calling began with Vox Radio, which has grown to serve over 3.2 million people across 8 counties in Liberia. Now, Kioo Radio emerges as the fulfillment of this expanded vision—a beacon of hope specifically for the Makona River Region, where the borders of Liberia, Sierra Leone, and Guinea meet."""
+    
+    # Timeline section
+    timelineTitle: str = "From Vision to Launch"
+    timelineItems: List[dict] = [
+        {"year": "2005", "event": "Vision received in Cape Town: Start a radio station in Liberia"},
+        {"year": "2006", "event": "Vox Radio established, beginning with local community programming"},
+        {"year": "2010-2020", "event": "Vox Radio expands to reach 3.2M+ people across 8 counties"},
+        {"year": "2023", "event": "Burden grows for the Makona River Region - tri-border communities"},
+        {"year": "2024", "event": "Broadcasting license approved for Kioo Radio extension"},
+        {"year": "2024", "event": "Studio construction and equipment installation begins in Foya"},
+        {"year": "2025", "event": "Official launch scheduled for November 13, 2025"}
+    ]
+    
+    # Kissi people section
+    kissiTitle: str = "Who Are the Kissi? (Our Heartland)"
+    kissiContent: str = """The Kissi people are a proud West African ethnic group primarily inhabiting the mountainous regions where Liberia, Sierra Leone, and Guinea converge. Known for their rich cultural heritage, agricultural expertise, and strong family values, the Kissi have maintained their traditions while adapting to modern challenges. Their language, also called Kissi, serves as a unifying force across national borders. Kioo Radio is named with deep respect for this community—"Kioo" meaning "mirror" in Kissi—reflecting our mission to be a clear reflection of God's love and truth to this region. The station serves not only the Kissi people but all communities in this tri-border area, broadcasting in multiple languages to reach every heart with the Gospel message."""
+    
+    # Document URLs
+    radioProjectPptUrl: str = "https://customer-assets.emergentagent.com/job_radio-geo-detect/artifacts/aja36zyu_Radio%20Project11.ppt"
+    maruRadioProposalPdfUrl: str = "https://customer-assets.emergentagent.com/job_radio-geo-detect/artifacts/r6bt039z_maru_radio_proposal.PDF"
     wire: dict = {
         "beneficiaryName": "VOX Liberia",
         "beneficiaryAddress": "C/O Galcom International, P.O. Box 1211, Foya, Lofa County, Liberia",
