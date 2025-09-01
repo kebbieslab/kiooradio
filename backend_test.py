@@ -298,8 +298,8 @@ class KiooRadioAPITester:
         self.run_test("Create Church Partner", "POST", "church-partners", 200, data=partner_data)
 
     def test_about_page_settings_endpoints(self):
-        """Test About page settings endpoints - CRITICAL for Kioo Radio website"""
-        print("\n=== TESTING ABOUT PAGE SETTINGS ENDPOINTS ===")
+        """Test About page settings endpoints with CRITICAL VERIFICATION POINTS for timeline and content corrections"""
+        print("\n=== TESTING ABOUT PAGE SETTINGS ENDPOINTS WITH CORRECTIONS ===")
         
         # Test GET /api/about-page-settings
         success, settings_data = self.run_test("Get About Page Settings", "GET", "about-page-settings", 200)
@@ -312,7 +312,8 @@ class KiooRadioAPITester:
                 'visionTitle', 'visionContent',
                 'timelineTitle', 'timelineItems', 
                 'kissiTitle', 'kissiContent',
-                'radioProjectPptUrl', 'maruRadioProposalPdfUrl'
+                'radioProjectPptUrl', 'maruRadioProposalPdfUrl',
+                'radioProjectPreviewImages', 'maruRadioProposalPreviewImages'
             ]
             
             missing_fields = []
@@ -328,53 +329,143 @@ class KiooRadioAPITester:
             else:
                 print(f"✅ All required fields present in About page settings")
             
-            # Verify Vision 2005 section content
-            if 'visionTitle' in settings_data and 'visionContent' in settings_data:
-                vision_title = settings_data['visionTitle']
+            # CRITICAL VERIFICATION 1: Vision content corrections
+            print(f"\n🔍 CRITICAL VERIFICATION 1: Vision Content Corrections")
+            if 'visionContent' in settings_data:
                 vision_content = settings_data['visionContent']
                 
-                if "Vision (2005)" in vision_title:
-                    print(f"✅ Vision title contains expected text")
+                # Check for "Media Village, a media school of YWMA" (not Cape Peninsula University)
+                if "Media Village, a media school of YWMA" in vision_content:
+                    print(f"✅ Vision content correctly mentions 'Media Village, a media school of YWMA'")
                 else:
-                    print(f"❌ Vision title unexpected: {vision_title}")
+                    print(f"❌ Vision content should mention 'Media Village, a media school of YWMA' instead of Cape Peninsula University")
+                    self.failed_tests.append("Vision content - Should mention Media Village, not Cape Peninsula University")
                 
-                if "Joseph Kebbie" in vision_content and "Cape Town" in vision_content:
-                    print(f"✅ Vision content contains Joseph Kebbie's Cape Town story")
+                # Check that Vox Radio started in 2017 (not 2006)
+                if "Vox Radio first in 2017" in vision_content:
+                    print(f"✅ Vision content correctly states Vox Radio started in 2017")
                 else:
-                    print(f"❌ Vision content missing expected elements")
-                    self.failed_tests.append("About Page Settings - Vision content missing Joseph Kebbie Cape Town story")
+                    print(f"❌ Vision content should state Vox Radio started in 2017")
+                    self.failed_tests.append("Vision content - Should state Vox Radio started in 2017")
+                
+                # Check for Elmer H. Schmidt Christian Broadcasting Fund grant information
+                if "Elmer H. Schmidt Christian Broadcasting Fund" in vision_content:
+                    print(f"✅ Vision content includes Elmer H. Schmidt Christian Broadcasting Fund grant information")
+                else:
+                    print(f"❌ Vision content should include Elmer H. Schmidt Christian Broadcasting Fund grant information")
+                    self.failed_tests.append("Vision content - Missing Elmer H. Schmidt grant information")
+                
+                # Check story explains God originally wanted Kissi radio first
+                if "Originally, God wanted us to first start the Kissi radio station" in vision_content:
+                    print(f"✅ Vision content explains God originally wanted Kissi radio first")
+                else:
+                    print(f"❌ Vision content should explain God originally wanted Kissi radio first")
+                    self.failed_tests.append("Vision content - Should explain God's original vision for Kissi radio first")
             
-            # Verify timeline section
+            # CRITICAL VERIFICATION 2: Timeline accuracy verification
+            print(f"\n🔍 CRITICAL VERIFICATION 2: Timeline Accuracy")
             if 'timelineItems' in settings_data:
                 timeline_items = settings_data['timelineItems']
                 if isinstance(timeline_items, list):
                     print(f"✅ Timeline items is a list with {len(timeline_items)} items")
                     
-                    # Check for expected 7 timeline items (2005-2025)
-                    if len(timeline_items) == 7:
-                        print(f"✅ Timeline has expected 7 items")
-                        
-                        # Verify timeline spans 2005-2025
-                        years = [item.get('year', '') for item in timeline_items if isinstance(item, dict)]
-                        if '2005' in years and '2025' in years:
-                            print(f"✅ Timeline spans from 2005 to 2025 as expected")
-                        else:
-                            print(f"❌ Timeline doesn't span expected years. Found years: {years}")
+                    # Check specific timeline entries
+                    timeline_dict = {item.get('year', ''): item.get('event', '') for item in timeline_items if isinstance(item, dict)}
+                    
+                    # 2005: Vision received in Cape Town
+                    if '2005' in timeline_dict and "Vision received in Cape Town" in timeline_dict['2005']:
+                        print(f"✅ 2005 entry correctly mentions Vision received in Cape Town")
                     else:
-                        print(f"❌ Timeline has {len(timeline_items)} items, expected 7")
-                        self.failed_tests.append(f"About Page Settings - Timeline has {len(timeline_items)} items, expected 7")
+                        print(f"❌ 2005 entry should mention Vision received in Cape Town")
+                        self.failed_tests.append("Timeline 2005 - Should mention Vision received in Cape Town")
+                    
+                    # 2017: Vox Radio established in shipping container
+                    vox_2017_found = False
+                    for year, event in timeline_dict.items():
+                        if "2017" in year and "Vox Radio established" in event and "shipping container" in event:
+                            print(f"✅ 2017 entry correctly mentions Vox Radio established in shipping container")
+                            vox_2017_found = True
+                            break
+                    if not vox_2017_found:
+                        print(f"❌ 2017 entry should mention Vox Radio established in shipping container")
+                        self.failed_tests.append("Timeline 2017 - Should mention Vox Radio established in shipping container")
+                    
+                    # 2024: Daniel Hatfield challenge
+                    daniel_2024_found = False
+                    for year, event in timeline_dict.items():
+                        if "2024" in year and "Daniel Hatfield" in event:
+                            print(f"✅ 2024 entry includes Daniel Hatfield challenge")
+                            daniel_2024_found = True
+                            break
+                    if not daniel_2024_found:
+                        print(f"❌ 2024 should include Daniel Hatfield challenge entry")
+                        self.failed_tests.append("Timeline 2024 - Should include Daniel Hatfield challenge")
+                    
+                    # 2024: Elmer H. Schmidt grant information
+                    grant_2024_found = False
+                    for year, event in timeline_dict.items():
+                        if "2024" in year and "Elmer H. Schmidt Christian Broadcasting Fund" in event:
+                            print(f"✅ 2024 entry includes Elmer H. Schmidt grant information")
+                            grant_2024_found = True
+                            break
+                    if not grant_2024_found:
+                        print(f"❌ 2024 should include Elmer H. Schmidt grant information")
+                        self.failed_tests.append("Timeline 2024 - Should include Elmer H. Schmidt grant information")
+                    
+                    # 2025: License, construction, launch
+                    launch_2025_found = False
+                    for year, event in timeline_dict.items():
+                        if "2025" in year and ("launch" in event.lower() or "construction" in event.lower() or "license" in event.lower()):
+                            print(f"✅ 2025 entries include license, construction, or launch information")
+                            launch_2025_found = True
+                            break
+                    if not launch_2025_found:
+                        print(f"❌ 2025 should include license, construction, or launch information")
+                        self.failed_tests.append("Timeline 2025 - Should include license, construction, or launch information")
+                    
                 else:
                     print(f"❌ Timeline items is not a list: {type(timeline_items)}")
                     self.failed_tests.append("About Page Settings - Timeline items is not a list")
             
-            # Verify Kissi people section
+            # CRITICAL VERIFICATION 3: Kissi content corrections
+            print(f"\n🔍 CRITICAL VERIFICATION 3: Kissi Content Corrections")
             if 'kissiContent' in settings_data:
                 kissi_content = settings_data['kissiContent']
-                if "Kissi people" in kissi_content and "cultural" in kissi_content.lower():
-                    print(f"✅ Kissi content explains cultural significance")
+                
+                # Check that "Kissi" means "Gift" not "Mirror"
+                if '"Kissi" meaning "Gift"' in kissi_content:
+                    print(f"✅ Kissi content correctly states 'Kissi' means 'Gift'")
                 else:
-                    print(f"❌ Kissi content missing cultural explanation")
-                    self.failed_tests.append("About Page Settings - Kissi content missing cultural significance")
+                    print(f"❌ Kissi content should state 'Kissi' means 'Gift' not 'Mirror'")
+                    self.failed_tests.append("Kissi content - Should state Kissi means Gift, not Mirror")
+                
+                # Check for cultural heritage explanation
+                if "cultural heritage" in kissi_content.lower():
+                    print(f"✅ Kissi content explains cultural heritage")
+                else:
+                    print(f"❌ Kissi content should explain cultural heritage")
+                    self.failed_tests.append("Kissi content - Should explain cultural heritage")
+            
+            # CRITICAL VERIFICATION 4: Document preview functionality
+            print(f"\n🔍 CRITICAL VERIFICATION 4: Document Preview Functionality")
+            
+            # Check radioProjectPreviewImages array has 3 placeholder images
+            if 'radioProjectPreviewImages' in settings_data:
+                ppt_previews = settings_data['radioProjectPreviewImages']
+                if isinstance(ppt_previews, list) and len(ppt_previews) == 3:
+                    print(f"✅ radioProjectPreviewImages array has 3 placeholder images")
+                else:
+                    print(f"❌ radioProjectPreviewImages should have 3 placeholder images, found {len(ppt_previews) if isinstance(ppt_previews, list) else 'not a list'}")
+                    self.failed_tests.append(f"Document previews - radioProjectPreviewImages should have 3 images, found {len(ppt_previews) if isinstance(ppt_previews, list) else 'not a list'}")
+            
+            # Check maruRadioProposalPreviewImages array has PDF thumbnail images
+            if 'maruRadioProposalPreviewImages' in settings_data:
+                pdf_previews = settings_data['maruRadioProposalPreviewImages']
+                if isinstance(pdf_previews, list) and len(pdf_previews) >= 2:
+                    print(f"✅ maruRadioProposalPreviewImages array has {len(pdf_previews)} PDF thumbnail images")
+                else:
+                    print(f"❌ maruRadioProposalPreviewImages should have at least 2 PDF thumbnails, found {len(pdf_previews) if isinstance(pdf_previews, list) else 'not a list'}")
+                    self.failed_tests.append(f"Document previews - maruRadioProposalPreviewImages should have at least 2 images, found {len(pdf_previews) if isinstance(pdf_previews, list) else 'not a list'}")
             
             # Verify document URLs
             if 'radioProjectPptUrl' in settings_data and 'maruRadioProposalPdfUrl' in settings_data:
@@ -429,6 +520,57 @@ class KiooRadioAPITester:
         success, verify_settings = self.run_test("Verify Settings After Update", "GET", "about-page-settings", 200)
         if success:
             print(f"✅ Settings endpoint still accessible after update operation")
+
+    def test_static_file_serving(self):
+        """Test static file serving for document thumbnails"""
+        print("\n=== TESTING STATIC FILE SERVING FOR THUMBNAILS ===")
+        
+        # First get the about page settings to get preview image URLs
+        success, settings_data = self.run_test("Get Settings for Static File Testing", "GET", "about-page-settings", 200)
+        
+        if success and 'maruRadioProposalPreviewImages' in settings_data:
+            pdf_previews = settings_data['maruRadioProposalPreviewImages']
+            
+            if isinstance(pdf_previews, list) and len(pdf_previews) > 0:
+                # Test accessing the first PDF thumbnail
+                first_thumbnail_url = pdf_previews[0]
+                if first_thumbnail_url.startswith('/api/static/thumbnails/'):
+                    # Extract the path after /api/
+                    thumbnail_path = first_thumbnail_url.replace('/api/', '')
+                    
+                    # Test static file serving
+                    success, _ = self.run_test("Access PDF Thumbnail", "GET", thumbnail_path, 200)
+                    if success:
+                        print(f"✅ Static file serving works for PDF thumbnails")
+                    else:
+                        print(f"❌ Static file serving failed for PDF thumbnails")
+                        self.failed_tests.append("Static file serving - PDF thumbnail access failed")
+                else:
+                    print(f"❌ Thumbnail URL format incorrect: {first_thumbnail_url}")
+            else:
+                print(f"❌ No PDF preview images found to test static file serving")
+        
+        if success and 'radioProjectPreviewImages' in settings_data:
+            ppt_previews = settings_data['radioProjectPreviewImages']
+            
+            if isinstance(ppt_previews, list) and len(ppt_previews) > 0:
+                # Test accessing the first PowerPoint thumbnail
+                first_thumbnail_url = ppt_previews[0]
+                if first_thumbnail_url.startswith('/api/static/thumbnails/'):
+                    # Extract the path after /api/
+                    thumbnail_path = first_thumbnail_url.replace('/api/', '')
+                    
+                    # Test static file serving
+                    success, _ = self.run_test("Access PowerPoint Thumbnail", "GET", thumbnail_path, 200)
+                    if success:
+                        print(f"✅ Static file serving works for PowerPoint thumbnails")
+                    else:
+                        print(f"❌ Static file serving failed for PowerPoint thumbnails")
+                        self.failed_tests.append("Static file serving - PowerPoint thumbnail access failed")
+                else:
+                    print(f"❌ Thumbnail URL format incorrect: {first_thumbnail_url}")
+            else:
+                print(f"❌ No PowerPoint preview images found to test static file serving")
 
     def run_all_tests(self):
         """Run all API tests"""
