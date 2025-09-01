@@ -1,6 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const About = () => {
+  const [aboutSettings, setAboutSettings] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch About page settings
+  useEffect(() => {
+    const fetchAboutSettings = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/about-page-settings`);
+        if (response.ok) {
+          const data = await response.json();
+          setAboutSettings(data);
+        }
+      } catch (error) {
+        console.error('Error fetching about settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAboutSettings();
+  }, []);
+
   const teamMembers = [
     {
       name: 'Rev. Samuel Johnson',
