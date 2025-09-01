@@ -16,7 +16,7 @@ const PartnersStrip = () => {
     {
       "name": "Community Foundation of the North State",
       "logo": "community-foundation.webp", 
-      "url": "https://cfns.org"
+      "url": "https://cfnorthstate.org"
     },
     {
       "name": "Galcom USA",
