@@ -103,13 +103,13 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-About Page Vision Story + Document Viewer Enhancement:
-1. Add "The Vision (2005)" section with Joseph Kebbie's Cape Town story
-2. Add "From Vision to Launch" mini-timeline section  
-3. Add "Who Are the Kissi? (Our Heartland)" section explaining the Kissi people
-4. Add "Document Viewer" section with Radio Project11.ppt (Office Web Viewer) and maru_radio_proposal.PDF (PDF.js)
-5. Make all new content editable through CMS (Settings → About Page)
-6. Preserve existing About page content
+About Page Vision Story + Document Viewer Enhancement with Corrections:
+1. TIMELINE CORRECTIONS: Vox Radio started in 2017 in shipping container, expanded in 2024 to 3.2M+ people with Elmer H. Schmidt Christian Broadcasting Fund grant
+2. CONTENT CORRECTIONS: "Kissi" means "Gift" not "Mirror", change Cape Peninsula University to "Media Village, a media school of YWMA"
+3. STORY CORRECTION: God originally wanted Kissi radio station first, but led to start Vox Radio first in 2017
+4. VIDEO LAYOUT: Display both videos side by side in two boxes
+5. DOCUMENT PREVIEWS: Generate preview images from PowerPoint and PDF documents
+6. Make all content editable through CMS (Settings → About Page)
 
 ## backend:
   - task: "Backend API endpoints"
