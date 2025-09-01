@@ -440,7 +440,8 @@ class KiooRadioAPITester:
         self.test_donations_endpoints()
         self.test_contact_endpoints()
         self.test_newsletter_signup_endpoint()
-        self.test_church_partners_endpoints()  # Add the new test
+        self.test_church_partners_endpoints()
+        self.test_about_page_settings_endpoints()  # CRITICAL: Test About page settings API
         
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
