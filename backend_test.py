@@ -24,6 +24,8 @@ class KiooRadioAPITester:
                 response = requests.get(url, headers=headers, params=params, timeout=10)
             elif method == 'POST':
                 response = requests.post(url, json=data, headers=headers, timeout=10)
+            elif method == 'PUT':
+                response = requests.put(url, json=data, headers=headers, timeout=10)
 
             success = response.status_code == expected_status
             if success:
