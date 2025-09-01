@@ -251,6 +251,120 @@ class AboutPageSettings(BaseModel):
     # Document URLs
     radioProjectPptUrl: str = "https://customer-assets.emergentagent.com/job_radio-geo-detect/artifacts/aja36zyu_Radio%20Project11.ppt"
     maruRadioProposalPdfUrl: str = "https://customer-assets.emergentagent.com/job_radio-geo-detect/artifacts/r6bt039z_maru_radio_proposal.PDF"
+    
+    # Preview image URLs (generated dynamically)
+    radioProjectPreviewImages: List[str] = []
+    maruRadioProposalPreviewImages: List[str] = []
+
+# Document processing functions
+async def download_file_from_url(url: str, timeout: int = 30) -> bytes:
+    """Download file from URL with proper error handling."""
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, timeout=aiohttp.ClientTimeout(total=timeout)) as response:
+                if response.status == 200:
+                    return await response.read()
+                else:
+                    raise HTTPException(
+                        status_code=400, 
+                        detail=f"Failed to download file from {url}: HTTP {response.status}"
+                    )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Download failed: {str(e)}")
+
+def generate_pdf_thumbnails(pdf_bytes: bytes, max_pages: int = 3) -> List[bytes]:
+    """Generate thumbnail images from PDF pages."""
+    thumbnails = []
+    
+    try:
+        # Open PDF from bytes
+        doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+        
+        # Set matrix for high quality output (300 DPI)
+        mat = fitz.Matrix(2.0, 2.0)  # 2x scale for better quality
+        
+        page_count = min(len(doc), max_pages)
+        
+        for page_num in range(page_count):
+            page = doc[page_num]
+            
+            # Create pixmap with high quality
+            pix = page.get_pixmap(matrix=mat, alpha=False)
+            
+            # Convert to PIL Image for thumbnail processing
+            img_data = pix.tobytes("png")
+            img = Image.open(io.BytesIO(img_data))
+            
+            # Create thumbnail while maintaining aspect ratio
+            img.thumbnail((400, 300), Image.Resampling.LANCZOS)
+            
+            # Convert back to bytes
+            thumbnail_bytes = io.BytesIO()
+            img.save(thumbnail_bytes, format='PNG', optimize=True, quality=90)
+            thumbnails.append(thumbnail_bytes.getvalue())
+        
+        doc.close()
+        
+    except Exception as e:
+        print(f"Error generating PDF thumbnails: {e}")
+        
+    return thumbnails
+
+async def generate_document_previews():
+    """Generate preview images for both documents."""
+    try:
+        # Generate cache keys
+        ppt_cache_key = hashlib.md5("radio_project_ppt".encode()).hexdigest()
+        pdf_cache_key = hashlib.md5("maru_radio_proposal_pdf".encode()).hexdigest()
+        
+        preview_urls = {
+            "radioProjectPreviewImages": [],
+            "maruRadioProposalPreviewImages": []
+        }
+        
+        # Process PDF document
+        try:
+            pdf_url = "https://customer-assets.emergentagent.com/job_radio-geo-detect/artifacts/r6bt039z_maru_radio_proposal.PDF"
+            pdf_bytes = await download_file_from_url(pdf_url)
+            pdf_thumbnails = generate_pdf_thumbnails(pdf_bytes, max_pages=3)
+            
+            for i, thumbnail_data in enumerate(pdf_thumbnails):
+                filename = f"pdf_{pdf_cache_key}_page_{i+1}.png"
+                filepath = THUMBNAILS_DIR / filename
+                
+                # Save thumbnail
+                async with aiofiles.open(filepath, 'wb') as f:
+                    await f.write(thumbnail_data)
+                
+                preview_urls["maruRadioProposalPreviewImages"].append(f"/api/static/thumbnails/{filename}")
+                
+        except Exception as e:
+            print(f"Error processing PDF: {e}")
+        
+        # For PowerPoint, we'll create a placeholder preview for now
+        # since Aspose.Slides requires a license
+        try:
+            # Create placeholder preview images for PowerPoint
+            for i in range(3):
+                placeholder_img = Image.new('RGB', (400, 300), color=(240, 240, 240))
+                # Add text to placeholder
+                filename = f"ppt_{ppt_cache_key}_slide_{i+1}.png"
+                filepath = THUMBNAILS_DIR / filename
+                
+                placeholder_img.save(filepath, format='PNG', optimize=True)
+                preview_urls["radioProjectPreviewImages"].append(f"/api/static/thumbnails/{filename}")
+                
+        except Exception as e:
+            print(f"Error creating PowerPoint placeholders: {e}")
+        
+        return preview_urls
+        
+    except Exception as e:
+        print(f"Error in generate_document_previews: {e}")
+        return {
+            "radioProjectPreviewImages": [],
+            "maruRadioProposalPreviewImages": []
+        }
     wire: dict = {
         "beneficiaryName": "VOX Liberia",
         "beneficiaryAddress": "C/O Galcom International, P.O. Box 1211, Foya, Lofa County, Liberia",
