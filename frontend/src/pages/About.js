@@ -51,15 +51,6 @@ const About = () => {
     }
   ];
 
-  const milestones = [
-    { year: '2006', event: 'Vision received in Cape Town while studying Video and Radio Production' },
-    { year: '2006+', event: 'Vox Radio established, now reaching 3.2M+ people in 8 counties' },
-    { year: '2024', event: 'Broadcasting license approved for Kioo Radio extension' },
-    { year: '2024', event: 'Studio construction and equipment installation in Foya' },
-    { year: '2024', event: 'Multi-language programming development begins' },
-    { year: '2025', event: 'Official launch scheduled for November 13, 2025' }
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       
@@ -84,8 +75,8 @@ const About = () => {
             <h2 className="text-3xl lg:text-4xl font-bold text-kioo-dark mb-6">
               ✨ The God-Given Call
             </h2>
-            <div className="max-w-4xl mx-auto">
-              <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-8">
+            <div className="max-w-4xl mx-auto text-left">
+              <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-8 mt-2">
                 The vision to establish Kioo Radio came in 2005 when Joseph Kebbie was at Media Village, a media school of YWMA in Cape Town. 
                 God placed a burden on his heart: 
                 <em className="text-kioo-primary font-semibold"> "Return to Liberia and start a radio station to reach my people."</em> 
@@ -99,7 +90,7 @@ const About = () => {
           {/* Videos Side by Side */}
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             {/* Vimeo Video */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               <div className="relative bg-gray-100 rounded-lg overflow-hidden">
                 <div style={{padding: '56.25% 0 0 0', position: 'relative'}}>
                   <iframe 
@@ -112,7 +103,7 @@ const About = () => {
                   ></iframe>
                 </div>
               </div>
-              <div className="p-4">
+              <div className="p-6">
                 <p className="text-center text-sm text-gray-600 italic">
                   "A Refugee's Story: Joseph Kebbie" - The testimony of God's calling
                 </p>
@@ -120,7 +111,7 @@ const About = () => {
             </div>
 
             {/* YouTube Video */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
               <div className="relative bg-gray-100 rounded-lg overflow-hidden">
                 <div className="relative" style={{paddingBottom: '56.25%', height: 0}}>
                   <iframe 
@@ -134,10 +125,126 @@ const About = () => {
                   ></iframe>
                 </div>
               </div>
-              <div className="p-4">
+              <div className="p-6">
                 <p className="text-center text-sm text-gray-600 italic">
                   "Christian Leaders Request for a Radio Station" - The prayers of God's people
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* From Vision to Launch Timeline - Moved directly after videos */}
+      {!loading && aboutSettings && (
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-kioo-dark mb-4">
+                🚀 {aboutSettings.timelineTitle}
+              </h2>
+              <p className="text-xl text-gray-600">The journey from divine vision to radio reality</p>
+            </div>
+
+            <div className="space-y-8">
+              {aboutSettings.timelineItems.map((item, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="flex-shrink-0 w-20 text-center">
+                    <div className="bg-kioo-primary text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+                      <span className="text-sm font-bold">{item.year}</span>
+                    </div>
+                  </div>
+                  <div className="ml-6 flex-grow">
+                    <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-kioo-primary">
+                      <p className="text-gray-800">{item.event}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Vision Documents Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-kioo-dark mb-4">
+              📄 Vision Documents
+            </h2>
+            <p className="text-xl text-gray-600">Historical documents and project proposals</p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Radio Project Presentation Card */}
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="p-6 border-b">
+                <h3 className="text-xl font-semibold text-kioo-dark mb-2">Radio Project Presentation</h3>
+                <p className="text-gray-600 mb-4">Click to download the original PowerPoint.</p>
+              </div>
+              
+              <div className="p-6">
+                <a 
+                  href="/assets/docs/Radio Project11.ppt"
+                  download
+                  className="block group"
+                >
+                  <div className="relative overflow-hidden rounded-lg mb-4">
+                    <img
+                      src="/assets/images/radioproject11.jpg"
+                      alt="Radio Project Presentation Thumbnail"
+                      className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-kioo-primary text-white px-4 py-2 rounded-lg font-semibold">
+                        📥 Download PPT
+                      </div>
+                    </div>
+                  </div>
+                </a>
+                
+                <div className="text-center">
+                  <a 
+                    href="/assets/docs/Radio Project11.ppt"
+                    download
+                    className="inline-flex items-center text-kioo-primary hover:text-kioo-secondary font-medium text-lg"
+                  >
+                    📥 Download PowerPoint ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Maru Radio Proposal PDF Viewer */}
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="p-6 border-b">
+                <h3 className="text-xl font-semibold text-kioo-dark mb-2">Maru Radio Proposal</h3>
+                <p className="text-gray-600">Detailed project proposal and implementation plan</p>
+              </div>
+              
+              <div className="relative">
+                <iframe
+                  src="/assets/docs/maru_radio_proposal.PDF"
+                  width="100%"
+                  style={{ height: '70vh', minHeight: '500px' }}
+                  className="border-0"
+                  title="Maru Radio Proposal (PDF viewer)"
+                  tabIndex="0"
+                  aria-label="Maru Radio Proposal PDF viewer with zoom and navigation controls"
+                ></iframe>
+              </div>
+              
+              <div className="p-6 bg-gray-50 border-t">
+                <div className="text-center">
+                  <a 
+                    href="/assets/docs/maru_radio_proposal.PDF"
+                    download
+                    className="inline-flex items-center bg-kioo-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-kioo-secondary transition-colors"
+                  >
+                    📥 Download PDF
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -151,21 +258,21 @@ const About = () => {
             📻 Our Mission
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6">
               <div className="text-3xl mb-4">📖</div>
               <h3 className="text-xl font-semibold mb-3">Gospel Teaching</h3>
               <p className="text-green-100">
                 Bringing Bible-based teaching and discipleship in local languages across the Makona River Region
               </p>
             </div>
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6">
               <div className="text-3xl mb-4">🤝</div>
               <h3 className="text-xl font-semibold mb-3">Community Unity</h3>
               <p className="text-green-100">
                 Fostering peace, health education, and social development across Liberia, Sierra Leone, and Guinea
               </p>
             </div>
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-6">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-6">
               <div className="text-3xl mb-4">🗣️</div>
               <h3 className="text-xl font-semibold mb-3">Multilingual Ministry</h3>
               <p className="text-green-100">
@@ -188,7 +295,7 @@ const About = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
+              <div key={index} className="bg-gray-50 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
                 <div className="w-20 h-20 bg-kioo-primary rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-white text-2xl">👤</span>
                 </div>
@@ -196,33 +303,6 @@ const About = () => {
                 <p className="text-kioo-primary font-medium mb-2">{member.role}</p>
                 <p className="text-gray-600 text-sm mb-2">{member.bio}</p>
                 <p className="text-xs text-gray-500">{member.location}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Timeline Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-kioo-dark mb-4">📅 Our Journey</h2>
-            <p className="text-xl text-gray-600">Key milestones in God's faithfulness</p>
-          </div>
-
-          <div className="space-y-8">
-            {milestones.map((milestone, index) => (
-              <div key={index} className="flex items-center">
-                <div className="flex-shrink-0 w-20 text-center">
-                  <div className="bg-kioo-primary text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
-                    <span className="text-sm font-bold">{milestone.year}</span>
-                  </div>
-                </div>
-                <div className="ml-6 flex-grow">
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
-                    <p className="text-gray-800">{milestone.event}</p>
-                  </div>
-                </div>
               </div>
             ))}
           </div>
@@ -252,191 +332,6 @@ const About = () => {
           </div>
         </div>
       </section>
-
-      {/* The Vision (2005) Section */}
-      {!loading && aboutSettings && (
-        <section className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-kioo-dark mb-6">
-                🎯 {aboutSettings.visionTitle}
-              </h2>
-              <div className="max-w-3xl mx-auto">
-                <p className="text-lg lg:text-xl text-gray-700 leading-relaxed">
-                  {aboutSettings.visionContent}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* From Vision to Launch Timeline */}
-      {!loading && aboutSettings && (
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-kioo-dark mb-4">
-                🚀 {aboutSettings.timelineTitle}
-              </h2>
-              <p className="text-xl text-gray-600">The journey from divine vision to radio reality</p>
-            </div>
-
-            <div className="space-y-8">
-              {aboutSettings.timelineItems.map((item, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="flex-shrink-0 w-20 text-center">
-                    <div className="bg-kioo-primary text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
-                      <span className="text-sm font-bold">{item.year}</span>
-                    </div>
-                  </div>
-                  <div className="ml-6 flex-grow">
-                    <div className="bg-white rounded-lg p-6 shadow-sm border-l-4 border-kioo-primary">
-                      <p className="text-gray-800">{item.event}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Who Are the Kissi Section */}
-      {!loading && aboutSettings && (
-        <section className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold text-kioo-dark mb-6">
-                🏔️ {aboutSettings.kissiTitle}
-              </h2>
-              <div className="max-w-3xl mx-auto">
-                <p className="text-lg lg:text-xl text-gray-700 leading-relaxed">
-                  {aboutSettings.kissiContent}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Document Viewer Section */}
-      {!loading && aboutSettings && (
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-kioo-dark mb-4">
-                📄 Project Documents
-              </h2>
-              <p className="text-xl text-gray-600">Historical documents and project proposals</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* PowerPoint Document */}
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="p-6 border-b">
-                  <h3 className="text-xl font-semibold text-kioo-dark mb-2">Radio Project Presentation</h3>
-                  <p className="text-gray-600">Original project proposal and vision documentation</p>
-                </div>
-                
-                {/* Preview Images */}
-                {aboutSettings.radioProjectPreviewImages && aboutSettings.radioProjectPreviewImages.length > 0 ? (
-                  <div className="p-4">
-                    <div className="grid grid-cols-1 gap-3 mb-4">
-                      {aboutSettings.radioProjectPreviewImages.slice(0, 3).map((previewUrl, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={`${process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL}${previewUrl}`}
-                            alt={`PowerPoint Slide ${index + 1}`}
-                            className="w-full h-32 object-cover rounded border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-                            onClick={() => window.open(aboutSettings.radioProjectPptUrl, '_blank')}
-                          />
-                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                            Slide {index + 1}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="h-96 bg-gray-100 flex items-center justify-center">
-                    <iframe
-                      src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(aboutSettings.radioProjectPptUrl)}`}
-                      width="100%"
-                      height="100%"
-                      frameBorder="0"
-                      title="Radio Project Presentation"
-                      className="w-full h-full"
-                    ></iframe>
-                  </div>
-                )}
-                
-                <div className="p-4 bg-gray-50">
-                  <a 
-                    href={aboutSettings.radioProjectPptUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-kioo-primary hover:text-kioo-secondary font-medium"
-                  >
-                    📥 Download PowerPoint ↗
-                  </a>
-                </div>
-              </div>
-
-              {/* PDF Document */}
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="p-6 border-b">
-                  <h3 className="text-xl font-semibold text-kioo-dark mb-2">Maru Radio Proposal</h3>
-                  <p className="text-gray-600">Detailed project proposal and implementation plan</p>
-                </div>
-                
-                {/* Preview Images */}
-                {aboutSettings.maruRadioProposalPreviewImages && aboutSettings.maruRadioProposalPreviewImages.length > 0 ? (
-                  <div className="p-4">
-                    <div className="grid grid-cols-1 gap-3 mb-4">
-                      {aboutSettings.maruRadioProposalPreviewImages.slice(0, 3).map((previewUrl, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={`${process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL}${previewUrl}`}
-                            alt={`PDF Page ${index + 1}`}
-                            className="w-full h-32 object-cover rounded border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
-                            onClick={() => window.open(aboutSettings.maruRadioProposalPdfUrl, '_blank')}
-                          />
-                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                            Page {index + 1}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="h-96 bg-gray-100">
-                    <iframe
-                      src={`${aboutSettings.maruRadioProposalPdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                      width="100%"
-                      height="100%"
-                      frameBorder="0"
-                      title="Maru Radio Proposal"
-                      className="w-full h-full"
-                    ></iframe>
-                  </div>
-                )}
-                
-                <div className="p-4 bg-gray-50">
-                  <a 
-                    href={aboutSettings.maruRadioProposalPdfUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-kioo-primary hover:text-kioo-secondary font-medium"
-                  >
-                    📥 Download PDF ↗
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
     </div>
   );
