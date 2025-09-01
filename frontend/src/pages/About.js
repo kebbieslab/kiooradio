@@ -77,79 +77,69 @@ const About = () => {
         </div>
       </section>
 
-      {/* The God-Given Call Section */}
+      {/* The God-Given Call Section with Videos */}
       <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl lg:text-4xl font-bold text-kioo-dark mb-6">
               ✨ The God-Given Call
             </h2>
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-8">
-                The vision to establish Kioo Radio came in 2006 when Joseph Kebbie was in Cape Town studying Video and Radio Production. 
+                The vision to establish Kioo Radio came in 2005 when Joseph Kebbie was at Media Village, a media school of YWMA in Cape Town. 
                 God placed a burden on his heart: 
                 <em className="text-kioo-primary font-semibold"> "Return to Liberia and start a radio station to reach my people."</em> 
-                This vision started with Vox Radio, which now broadcasts to over 3.2 million people in 8 counties in Liberia. 
-                Kioo Radio is the extension of this calling - a gift of light for the Makona River Region.
+                Originally, God wanted us to start with the Kissi radio station, but He led us to establish Vox Radio first in 2017 in a shipping container. 
+                Vox Radio now serves over 3.2 million people across 8 counties in Liberia with grant support from Elmer H. Schmidt Christian Broadcasting Fund. 
+                Kioo Radio is the fulfillment of God's original vision - a gift of light for the Makona River Region.
               </p>
             </div>
           </div>
 
-          {/* Vimeo Video Embed - Responsive */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="relative bg-gray-100 rounded-lg overflow-hidden shadow-lg">
-              <div style={{padding: '56.25% 0 0 0', position: 'relative'}}>
-                <iframe 
-                  src="https://player.vimeo.com/video/222424083?badge=0&autopause=0&player_id=0&app_id=58479"
-                  frameBorder="0"
-                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
-                  title="A Refugee's Story: Joseph Kebbie"
-                ></iframe>
+          {/* Videos Side by Side */}
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            {/* Vimeo Video */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <div className="relative bg-gray-100 rounded-lg overflow-hidden">
+                <div style={{padding: '56.25% 0 0 0', position: 'relative'}}>
+                  <iframe 
+                    src="https://player.vimeo.com/video/222424083?badge=0&autopause=0&player_id=0&app_id=58479"
+                    frameBorder="0"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
+                    title="A Refugee's Story: Joseph Kebbie"
+                  ></iframe>
+                </div>
+              </div>
+              <div className="p-4">
+                <p className="text-center text-sm text-gray-600 italic">
+                  "A Refugee's Story: Joseph Kebbie" - The testimony of God's calling
+                </p>
               </div>
             </div>
-            <p className="text-center text-sm text-gray-600 mt-4 italic">
-              "A Refugee's Story: Joseph Kebbie" - The testimony of God's calling
-            </p>
-          </div>
-        </div>
-      </section>
 
-      {/* The Cry of the People Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-kioo-dark mb-6">
-              🙏 The Cry of the People
-            </h2>
-            <div className="max-w-3xl mx-auto">
-              <p className="text-lg lg:text-xl text-gray-700 leading-relaxed mb-8">
-                Christian leaders across Liberia, Sierra Leone, and Guinea prayed for a station that could bring the Gospel, 
-                discipleship, and community programs in the languages of their heart. 
-                <strong className="text-kioo-primary"> Kioo Radio is the answer to those prayers.</strong>
-              </p>
-            </div>
-          </div>
-
-          {/* YouTube Video Embed - Responsive */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="relative bg-gray-100 rounded-lg overflow-hidden shadow-lg">
-              <div className="relative" style={{paddingBottom: '56.25%', height: 0}}>
-                <iframe 
-                  src="https://www.youtube.com/embed/E32TvugxsWs?si=F_FirykTExa69MXl"
-                  title="Christian Leaders Request for a Radio Station"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                  style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
-                ></iframe>
+            {/* YouTube Video */}
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              <div className="relative bg-gray-100 rounded-lg overflow-hidden">
+                <div className="relative" style={{paddingBottom: '56.25%', height: 0}}>
+                  <iframe 
+                    src="https://www.youtube.com/embed/E32TvugxsWs?si=F_FirykTExa69MXl"
+                    title="Christian Leaders Request for a Radio Station"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                    style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
+                  ></iframe>
+                </div>
+              </div>
+              <div className="p-4">
+                <p className="text-center text-sm text-gray-600 italic">
+                  "Christian Leaders Request for a Radio Station" - The prayers of God's people
+                </p>
               </div>
             </div>
-            <p className="text-center text-sm text-gray-600 mt-4 italic">
-              "Christian Leaders Request for a Radio Station" - The prayers of God's people
-            </p>
           </div>
         </div>
       </section>
