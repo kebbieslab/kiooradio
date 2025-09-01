@@ -22,6 +22,15 @@ import hashlib
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Create directories for document processing
+TEMP_DIR = ROOT_DIR / "temp"
+THUMBNAILS_DIR = ROOT_DIR / "static" / "thumbnails"
+CACHE_DIR = ROOT_DIR / "cache"
+
+# Create directories if they don't exist
+for directory in [TEMP_DIR, THUMBNAILS_DIR, CACHE_DIR]:
+    directory.mkdir(parents=True, exist_ok=True)
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
