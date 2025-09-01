@@ -241,22 +241,14 @@ About Page Vision Story + Document Viewer Enhancement:
 
 ## test_plan:
   current_focus:
-    - "Church Partners API endpoint for Monrovia filtering"
-    - "Enhanced Churches page functionality"
-    - "Mobile responsiveness improvements"
-    - "French language support for Guinea"
+    - "About Page Settings API endpoint"
+    - "Document viewer functionality"
+    - "API data fetching and rendering"
+    - "Responsive design for new sections"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 ## agent_communication:
     - agent: "main"
-      message: "Starting systematic fixes for reported issues - identified banner locations and partner logo files"
-    - agent: "testing"
-      message: "Backend API testing completed successfully. All 18 endpoints tested and working perfectly including the specifically requested endpoints: GET /api/programs, GET /api/impact-stories (with featured_only parameter), GET /api/news, and POST /api/donations. Backend is fully functional and ready. Frontend testing should be prioritized next to address the reported UI issues."
-    - agent: "main"
-      message: "Successfully implemented all requested improvements: 1) Changed navigation from 'Church Partners' to 'Churches' 2) Added new cities to dropdowns (Kolahun, Kakata, Monrovia for Liberia; Kailahun, Bo for Sierra Leone; N'Zérékoré, Kissidougou for Guinea) 3) Created 22 blank church templates across all new cities 4) Added Churches button to homepage hero section 5) Enhanced mobile responsiveness 6) Added French language support for Guinea cities 7) Added Programs Lineup link to Churches page"
-    - agent: "testing"
-      message: "Newsletter signup endpoint testing completed successfully. All requirements verified: 1) POST /api/newsletter-signup accepts email and adminEmail fields ✅ 2) Data properly stored in MongoDB database ✅ 3) adminEmail field correctly set to 'admin@proudlyliberian.com' ✅ 4) Endpoint returns proper success response ✅ 5) Database contains 5 newsletter signups from testing ✅. Comprehensive testing performed using both Python requests and curl. All validation working correctly with proper 422 errors for missing fields. Backend newsletter functionality is fully operational."
-    - agent: "testing"
-      message: "Church Partners endpoint testing completed successfully for Monrovia, Liberia. CRITICAL BUG FIXED: Resolved sorting error that was preventing results from being returned. The endpoint now correctly returns 12 partners for Monrovia including all expected pastors: Rev. Henry SN Powoe ✅, Bishop Robert Bimba ✅, Apostle David Fatorma ✅, Rev. Dr Joseph Bannah ✅. Database properly populated with 64 total partners. Filtering by country=Liberia&city=Monrovia works perfectly. All 31 comprehensive API tests passed including church partners CRUD operations. The frontend issue of showing 0 partners was caused by the backend sorting bug which is now resolved."
+      message: "Successfully completed About page enhancement with all 4 requested sections: 1) The Vision (2005) - Joseph Kebbie's Cape Town story, 2) From Vision to Launch timeline with 7 milestones, 3) Who Are the Kissi section explaining cultural significance, 4) Document Viewer with Office Web Viewer for PPT and direct PDF display. All sections are API-driven and ready for CMS integration. Backend includes new AboutPageSettings model and endpoints. Frontend fetches data dynamically with proper loading states. Visual confirmation shows all sections rendering correctly with responsive design."
