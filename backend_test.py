@@ -382,19 +382,23 @@ class KiooRadioAPITester:
                     print(f"✅ Timeline items is a list with {len(timeline_items)} items")
                     
                     # Check specific timeline entries
-                    timeline_dict = {item.get('year', ''): item.get('event', '') for item in timeline_items if isinstance(item, dict)}
+                    # Note: Don't use dict comprehension as it overwrites duplicate years
                     
                     # 2005: Vision received in Cape Town
-                    if '2005' in timeline_dict and "Vision received in Cape Town" in timeline_dict['2005']:
-                        print(f"✅ 2005 entry correctly mentions Vision received in Cape Town")
-                    else:
+                    vision_2005_found = False
+                    for item in timeline_items:
+                        if isinstance(item, dict) and '2005' in item.get('year', '') and "Vision received in Cape Town" in item.get('event', ''):
+                            print(f"✅ 2005 entry correctly mentions Vision received in Cape Town")
+                            vision_2005_found = True
+                            break
+                    if not vision_2005_found:
                         print(f"❌ 2005 entry should mention Vision received in Cape Town")
                         self.failed_tests.append("Timeline 2005 - Should mention Vision received in Cape Town")
                     
                     # 2017: Vox Radio established in shipping container
                     vox_2017_found = False
-                    for year, event in timeline_dict.items():
-                        if "2017" in year and "Vox Radio established" in event and "shipping container" in event:
+                    for item in timeline_items:
+                        if isinstance(item, dict) and "2017" in item.get('year', '') and "Vox Radio established" in item.get('event', '') and "shipping container" in item.get('event', ''):
                             print(f"✅ 2017 entry correctly mentions Vox Radio established in shipping container")
                             vox_2017_found = True
                             break
@@ -404,8 +408,8 @@ class KiooRadioAPITester:
                     
                     # 2024: Daniel Hatfield challenge
                     daniel_2024_found = False
-                    for year, event in timeline_dict.items():
-                        if "2024" in year and "Daniel Hatfield" in event and ("challenge" in event.lower() or "challenged" in event.lower()):
+                    for item in timeline_items:
+                        if isinstance(item, dict) and "2024" in item.get('year', '') and "Daniel Hatfield" in item.get('event', '') and ("challenge" in item.get('event', '').lower() or "challenged" in item.get('event', '').lower()):
                             print(f"✅ 2024 entry includes Daniel Hatfield challenge")
                             daniel_2024_found = True
                             break
@@ -415,8 +419,8 @@ class KiooRadioAPITester:
                     
                     # 2024: Elmer H. Schmidt grant information
                     grant_2024_found = False
-                    for year, event in timeline_dict.items():
-                        if "2024" in year and "Elmer H. Schmidt Christian Broadcasting Fund" in event:
+                    for item in timeline_items:
+                        if isinstance(item, dict) and "2024" in item.get('year', '') and "Elmer H. Schmidt Christian Broadcasting Fund" in item.get('event', ''):
                             print(f"✅ 2024 entry includes Elmer H. Schmidt grant information")
                             grant_2024_found = True
                             break
@@ -426,8 +430,8 @@ class KiooRadioAPITester:
                     
                     # 2025: License, construction, launch
                     launch_2025_found = False
-                    for year, event in timeline_dict.items():
-                        if "2025" in year and ("launch" in event.lower() or "construction" in event.lower() or "license" in event.lower()):
+                    for item in timeline_items:
+                        if isinstance(item, dict) and "2025" in item.get('year', '') and ("launch" in item.get('event', '').lower() or "construction" in item.get('event', '').lower() or "license" in item.get('event', '').lower()):
                             print(f"✅ 2025 entries include license, construction, or launch information")
                             launch_2025_found = True
                             break
