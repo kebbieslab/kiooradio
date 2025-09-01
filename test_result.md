@@ -244,7 +244,6 @@ About Page Vision Story + Document Viewer Enhancement:
 
 ## test_plan:
   current_focus:
-    - "About Page Settings API endpoint"
     - "Document viewer functionality"
     - "API data fetching and rendering"
     - "Responsive design for new sections"
