@@ -39,6 +39,10 @@ db = client[os.environ['DB_NAME']]
 # Create the main app without a prefix
 app = FastAPI(title="Kioo Radio API", version="1.0.0")
 
+# Serve static files for thumbnails
+from fastapi.staticfiles import StaticFiles
+app.mount("/api/static", StaticFiles(directory=ROOT_DIR / "static"), name="static")
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
