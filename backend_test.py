@@ -585,7 +585,8 @@ class KiooRadioAPITester:
         self.test_contact_endpoints()
         self.test_newsletter_signup_endpoint()
         self.test_church_partners_endpoints()
-        self.test_about_page_settings_endpoints()  # CRITICAL: Test About page settings API
+        self.test_about_page_settings_endpoints()  # CRITICAL: Test About page settings API with corrections
+        self.test_static_file_serving()  # CRITICAL: Test document thumbnail serving
         
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
