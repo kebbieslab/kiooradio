@@ -263,6 +263,145 @@ const About = () => {
         </div>
       </section>
 
+      {/* The Vision (2005) Section */}
+      {!loading && aboutSettings && (
+        <section className="py-16 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-kioo-dark mb-6">
+                🎯 {aboutSettings.visionTitle}
+              </h2>
+              <div className="max-w-3xl mx-auto">
+                <p className="text-lg lg:text-xl text-gray-700 leading-relaxed">
+                  {aboutSettings.visionContent}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* From Vision to Launch Timeline */}
+      {!loading && aboutSettings && (
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-kioo-dark mb-4">
+                🚀 {aboutSettings.timelineTitle}
+              </h2>
+              <p className="text-xl text-gray-600">The journey from divine vision to radio reality</p>
+            </div>
+
+            <div className="space-y-8">
+              {aboutSettings.timelineItems.map((item, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="flex-shrink-0 w-20 text-center">
+                    <div className="bg-kioo-primary text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+                      <span className="text-sm font-bold">{item.year}</span>
+                    </div>
+                  </div>
+                  <div className="ml-6 flex-grow">
+                    <div className="bg-white rounded-lg p-6 shadow-sm border-l-4 border-kioo-primary">
+                      <p className="text-gray-800">{item.event}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Who Are the Kissi Section */}
+      {!loading && aboutSettings && (
+        <section className="py-16 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-kioo-dark mb-6">
+                🏔️ {aboutSettings.kissiTitle}
+              </h2>
+              <div className="max-w-3xl mx-auto">
+                <p className="text-lg lg:text-xl text-gray-700 leading-relaxed">
+                  {aboutSettings.kissiContent}
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Document Viewer Section */}
+      {!loading && aboutSettings && (
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-kioo-dark mb-4">
+                📄 Project Documents
+              </h2>
+              <p className="text-xl text-gray-600">Historical documents and project proposals</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* PowerPoint Document */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="p-6 border-b">
+                  <h3 className="text-xl font-semibold text-kioo-dark mb-2">Radio Project Presentation</h3>
+                  <p className="text-gray-600">Original project proposal and vision documentation</p>
+                </div>
+                <div className="h-96 bg-gray-100 flex items-center justify-center">
+                  <iframe
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(aboutSettings.radioProjectPptUrl)}`}
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    title="Radio Project Presentation"
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+                <div className="p-4 bg-gray-50">
+                  <a 
+                    href={aboutSettings.radioProjectPptUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-kioo-primary hover:text-kioo-secondary font-medium"
+                  >
+                    📥 Download PowerPoint ↗
+                  </a>
+                </div>
+              </div>
+
+              {/* PDF Document */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="p-6 border-b">
+                  <h3 className="text-xl font-semibold text-kioo-dark mb-2">Maru Radio Proposal</h3>
+                  <p className="text-gray-600">Detailed project proposal and implementation plan</p>
+                </div>
+                <div className="h-96 bg-gray-100">
+                  <iframe
+                    src={`${aboutSettings.maruRadioProposalPdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    title="Maru Radio Proposal"
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+                <div className="p-4 bg-gray-50">
+                  <a 
+                    href={aboutSettings.maruRadioProposalPdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-kioo-primary hover:text-kioo-secondary font-medium"
+                  >
+                    📥 Download PDF ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
     </div>
   );
 };
