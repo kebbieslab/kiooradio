@@ -348,16 +348,39 @@ const About = () => {
                   <h3 className="text-xl font-semibold text-kioo-dark mb-2">Radio Project Presentation</h3>
                   <p className="text-gray-600">Original project proposal and vision documentation</p>
                 </div>
-                <div className="h-96 bg-gray-100 flex items-center justify-center">
-                  <iframe
-                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(aboutSettings.radioProjectPptUrl)}`}
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    title="Radio Project Presentation"
-                    className="w-full h-full"
-                  ></iframe>
-                </div>
+                
+                {/* Preview Images */}
+                {aboutSettings.radioProjectPreviewImages && aboutSettings.radioProjectPreviewImages.length > 0 ? (
+                  <div className="p-4">
+                    <div className="grid grid-cols-1 gap-3 mb-4">
+                      {aboutSettings.radioProjectPreviewImages.slice(0, 3).map((previewUrl, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={`${process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL}${previewUrl}`}
+                            alt={`PowerPoint Slide ${index + 1}`}
+                            className="w-full h-32 object-cover rounded border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+                            onClick={() => window.open(aboutSettings.radioProjectPptUrl, '_blank')}
+                          />
+                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                            Slide {index + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-96 bg-gray-100 flex items-center justify-center">
+                    <iframe
+                      src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(aboutSettings.radioProjectPptUrl)}`}
+                      width="100%"
+                      height="100%"
+                      frameBorder="0"
+                      title="Radio Project Presentation"
+                      className="w-full h-full"
+                    ></iframe>
+                  </div>
+                )}
+                
                 <div className="p-4 bg-gray-50">
                   <a 
                     href={aboutSettings.radioProjectPptUrl}
@@ -376,16 +399,39 @@ const About = () => {
                   <h3 className="text-xl font-semibold text-kioo-dark mb-2">Maru Radio Proposal</h3>
                   <p className="text-gray-600">Detailed project proposal and implementation plan</p>
                 </div>
-                <div className="h-96 bg-gray-100">
-                  <iframe
-                    src={`${aboutSettings.maruRadioProposalPdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    title="Maru Radio Proposal"
-                    className="w-full h-full"
-                  ></iframe>
-                </div>
+                
+                {/* Preview Images */}
+                {aboutSettings.maruRadioProposalPreviewImages && aboutSettings.maruRadioProposalPreviewImages.length > 0 ? (
+                  <div className="p-4">
+                    <div className="grid grid-cols-1 gap-3 mb-4">
+                      {aboutSettings.maruRadioProposalPreviewImages.slice(0, 3).map((previewUrl, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={`${process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL}${previewUrl}`}
+                            alt={`PDF Page ${index + 1}`}
+                            className="w-full h-32 object-cover rounded border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+                            onClick={() => window.open(aboutSettings.maruRadioProposalPdfUrl, '_blank')}
+                          />
+                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+                            Page {index + 1}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="h-96 bg-gray-100">
+                    <iframe
+                      src={`${aboutSettings.maruRadioProposalPdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                      width="100%"
+                      height="100%"
+                      frameBorder="0"
+                      title="Maru Radio Proposal"
+                      className="w-full h-full"
+                    ></iframe>
+                  </div>
+                )}
+                
                 <div className="p-4 bg-gray-50">
                   <a 
                     href={aboutSettings.maruRadioProposalPdfUrl}
