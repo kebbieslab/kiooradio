@@ -32,21 +32,33 @@ class KiooRadioAPITester:
                 self.tests_passed += 1
                 print(f"✅ Passed - Status: {response.status_code}")
                 try:
-                    response_data = response.json()
-                    if isinstance(response_data, dict) and len(response_data) <= 3:
-                        print(f"   Response: {response_data}")
-                    elif isinstance(response_data, list):
-                        print(f"   Response: List with {len(response_data)} items")
+                    # Check if response is JSON
+                    if 'application/json' in response.headers.get('content-type', ''):
+                        response_data = response.json()
+                        if isinstance(response_data, dict) and len(response_data) <= 3:
+                            print(f"   Response: {response_data}")
+                        elif isinstance(response_data, list):
+                            print(f"   Response: List with {len(response_data)} items")
+                        else:
+                            print(f"   Response: {str(response_data)[:100]}...")
+                        return success, response_data
                     else:
-                        print(f"   Response: {str(response_data)[:100]}...")
+                        # Handle binary/image responses
+                        content_type = response.headers.get('content-type', '')
+                        if 'image' in content_type:
+                            print(f"   Response: Binary image data ({len(response.content)} bytes)")
+                        else:
+                            print(f"   Response: {response.text[:100]}...")
+                        return success, {}
                 except:
                     print(f"   Response: {response.text[:100]}...")
+                    return success, {}
             else:
                 self.failed_tests.append(f"{name} - Expected {expected_status}, got {response.status_code}")
                 print(f"❌ Failed - Expected {expected_status}, got {response.status_code}")
                 print(f"   Response: {response.text[:200]}...")
 
-            return success, response.json() if success and response.text else {}
+            return success, {}
 
         except Exception as e:
             self.failed_tests.append(f"{name} - Error: {str(e)}")
