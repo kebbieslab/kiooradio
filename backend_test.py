@@ -295,6 +295,139 @@ class KiooRadioAPITester:
         }
         self.run_test("Create Church Partner", "POST", "church-partners", 200, data=partner_data)
 
+    def test_about_page_settings_endpoints(self):
+        """Test About page settings endpoints - CRITICAL for Kioo Radio website"""
+        print("\n=== TESTING ABOUT PAGE SETTINGS ENDPOINTS ===")
+        
+        # Test GET /api/about-page-settings
+        success, settings_data = self.run_test("Get About Page Settings", "GET", "about-page-settings", 200)
+        
+        if success:
+            print(f"✅ About page settings endpoint accessible")
+            
+            # Verify required fields are present
+            required_fields = [
+                'visionTitle', 'visionContent',
+                'timelineTitle', 'timelineItems', 
+                'kissiTitle', 'kissiContent',
+                'radioProjectPptUrl', 'maruRadioProposalPdfUrl'
+            ]
+            
+            missing_fields = []
+            for field in required_fields:
+                if field not in settings_data:
+                    missing_fields.append(field)
+                else:
+                    print(f"✅ Found required field: {field}")
+            
+            if missing_fields:
+                print(f"❌ Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"About Page Settings - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ All required fields present in About page settings")
+            
+            # Verify Vision 2005 section content
+            if 'visionTitle' in settings_data and 'visionContent' in settings_data:
+                vision_title = settings_data['visionTitle']
+                vision_content = settings_data['visionContent']
+                
+                if "Vision (2005)" in vision_title:
+                    print(f"✅ Vision title contains expected text")
+                else:
+                    print(f"❌ Vision title unexpected: {vision_title}")
+                
+                if "Joseph Kebbie" in vision_content and "Cape Town" in vision_content:
+                    print(f"✅ Vision content contains Joseph Kebbie's Cape Town story")
+                else:
+                    print(f"❌ Vision content missing expected elements")
+                    self.failed_tests.append("About Page Settings - Vision content missing Joseph Kebbie Cape Town story")
+            
+            # Verify timeline section
+            if 'timelineItems' in settings_data:
+                timeline_items = settings_data['timelineItems']
+                if isinstance(timeline_items, list):
+                    print(f"✅ Timeline items is a list with {len(timeline_items)} items")
+                    
+                    # Check for expected 7 timeline items (2005-2025)
+                    if len(timeline_items) == 7:
+                        print(f"✅ Timeline has expected 7 items")
+                        
+                        # Verify timeline spans 2005-2025
+                        years = [item.get('year', '') for item in timeline_items if isinstance(item, dict)]
+                        if '2005' in years and '2025' in years:
+                            print(f"✅ Timeline spans from 2005 to 2025 as expected")
+                        else:
+                            print(f"❌ Timeline doesn't span expected years. Found years: {years}")
+                    else:
+                        print(f"❌ Timeline has {len(timeline_items)} items, expected 7")
+                        self.failed_tests.append(f"About Page Settings - Timeline has {len(timeline_items)} items, expected 7")
+                else:
+                    print(f"❌ Timeline items is not a list: {type(timeline_items)}")
+                    self.failed_tests.append("About Page Settings - Timeline items is not a list")
+            
+            # Verify Kissi people section
+            if 'kissiContent' in settings_data:
+                kissi_content = settings_data['kissiContent']
+                if "Kissi people" in kissi_content and "cultural" in kissi_content.lower():
+                    print(f"✅ Kissi content explains cultural significance")
+                else:
+                    print(f"❌ Kissi content missing cultural explanation")
+                    self.failed_tests.append("About Page Settings - Kissi content missing cultural significance")
+            
+            # Verify document URLs
+            if 'radioProjectPptUrl' in settings_data and 'maruRadioProposalPdfUrl' in settings_data:
+                ppt_url = settings_data['radioProjectPptUrl']
+                pdf_url = settings_data['maruRadioProposalPdfUrl']
+                
+                if ppt_url and "Radio%20Project11.ppt" in ppt_url:
+                    print(f"✅ PowerPoint document URL points to correct file")
+                else:
+                    print(f"❌ PowerPoint URL incorrect: {ppt_url}")
+                
+                if pdf_url and "maru_radio_proposal.PDF" in pdf_url:
+                    print(f"✅ PDF document URL points to correct file")
+                else:
+                    print(f"❌ PDF URL incorrect: {pdf_url}")
+            
+            # Verify no null values in default settings
+            null_fields = [field for field, value in settings_data.items() if value is None]
+            if null_fields:
+                print(f"❌ Found null values in fields: {null_fields}")
+                self.failed_tests.append(f"About Page Settings - Null values in: {null_fields}")
+            else:
+                print(f"✅ No null values in default settings")
+        
+        # Test PUT /api/about-page-settings (simulate CMS functionality)
+        updated_settings = {
+            "visionTitle": "Updated Vision (2005)",
+            "visionContent": "Updated vision content for testing CMS functionality",
+            "timelineTitle": "Updated Timeline Title",
+            "timelineItems": [
+                {"year": "2005", "event": "Updated test event"},
+                {"year": "2025", "event": "Updated launch event"}
+            ],
+            "kissiTitle": "Updated Kissi Title",
+            "kissiContent": "Updated Kissi content for testing",
+            "radioProjectPptUrl": "https://example.com/test.ppt",
+            "maruRadioProposalPdfUrl": "https://example.com/test.pdf"
+        }
+        
+        success, update_response = self.run_test("Update About Page Settings", "PUT", "about-page-settings", 200, data=updated_settings)
+        
+        if success:
+            print(f"✅ About page settings update endpoint working")
+            
+            # Verify response contains success message
+            if "message" in update_response:
+                print(f"✅ Update response contains success message")
+            else:
+                print(f"❌ Update response missing success message")
+        
+        # Test GET again to verify structure is still intact after PUT
+        success, verify_settings = self.run_test("Verify Settings After Update", "GET", "about-page-settings", 200)
+        if success:
+            print(f"✅ Settings endpoint still accessible after update operation")
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Kioo Radio API Tests...")
