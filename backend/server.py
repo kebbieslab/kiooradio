@@ -221,8 +221,9 @@ class AboutPageSettings(BaseModel):
         {"year": "2006", "event": "Vox Radio established, beginning with local community programming"},
         {"year": "2010-2020", "event": "Vox Radio expands to reach 3.2M+ people across 8 counties"},
         {"year": "2023", "event": "Burden grows for the Makona River Region - tri-border communities"},
-        {"year": "2024", "event": "Broadcasting license approved for Kioo Radio extension"},
-        {"year": "2024", "event": "Studio construction and equipment installation begins in Foya"},
+        {"year": "2024", "event": "Daniel Hatfield challenged me to trust God to begin Kioo Radio"},
+        {"year": "2025", "event": "Broadcasting license approved for Kioo Radio extension"},
+        {"year": "2025", "event": "Studio construction and equipment installation begins in Foya"},
         {"year": "2025", "event": "Official launch scheduled for November 13, 2025"}
     ]
     
