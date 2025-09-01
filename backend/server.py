@@ -11,6 +11,14 @@ import uuid
 from datetime import datetime, time
 from enum import Enum
 
+# New imports for document processing
+import fitz  # PyMuPDF
+import io
+from PIL import Image
+import aiohttp
+import aiofiles
+import hashlib
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
