@@ -135,39 +135,8 @@ const About = () => {
         </div>
       </section>
 
-      {/* From Vision to Launch Timeline - Moved directly after videos */}
-      {!loading && aboutSettings && (
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-kioo-dark mb-4">
-                🚀 {aboutSettings.timelineTitle}
-              </h2>
-              <p className="text-xl text-gray-600">The journey from divine vision to radio reality</p>
-            </div>
-
-            <div className="space-y-8">
-              {aboutSettings.timelineItems.map((item, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="flex-shrink-0 w-20 text-center">
-                    <div className="bg-kioo-primary text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
-                      <span className="text-sm font-bold">{item.year}</span>
-                    </div>
-                  </div>
-                  <div className="ml-6 flex-grow">
-                    <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-kioo-primary">
-                      <p className="text-gray-800">{item.event}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Vision Documents Section */}
-      <section className="py-16 bg-white">
+      {/* Vision Documents Section - Moved above timeline */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-kioo-dark mb-4">
@@ -276,6 +245,37 @@ const About = () => {
           </div>
         </div>
       </section>
+
+      {/* From Vision to Launch Timeline - Now below Vision Documents */}
+      {!loading && aboutSettings && (
+        <section className="py-16 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-kioo-dark mb-4">
+                🚀 {aboutSettings.timelineTitle}
+              </h2>
+              <p className="text-xl text-gray-600">The journey from divine vision to radio reality</p>
+            </div>
+
+            <div className="space-y-8">
+              {aboutSettings.timelineItems.map((item, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="flex-shrink-0 w-20 text-center">
+                    <div className="bg-kioo-primary text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto">
+                      <span className="text-sm font-bold">{item.year}</span>
+                    </div>
+                  </div>
+                  <div className="ml-6 flex-grow">
+                    <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-kioo-primary">
+                      <p className="text-gray-800">{item.event}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Mission Statement Section */}
       <section className="py-16 bg-kioo-primary text-white">
