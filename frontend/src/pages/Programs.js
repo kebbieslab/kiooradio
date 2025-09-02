@@ -170,6 +170,50 @@ const Programs = () => {
 
   // Language options
   const languages = ['all', 'English', 'French', 'Kissi', 'Fula', 'Mandingo', 'Gbandi', 'Mixed'];
+  
+  // Live Broadcast Days filter options
+  const days = ['all', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const countries = ['all', 'liberia', 'sierra_leone', 'guinea'];
+  const broadcastTypes = ['all', 'live', 'pre-recorded', 'rotation'];
+
+  // Filter Live Broadcast Schedule
+  const getFilteredBroadcastSchedule = () => {
+    if (!liveBroadcastSchedule) return null;
+    
+    let filteredSchedule = { ...liveBroadcastSchedule.weeklySchedule };
+    
+    // Filter by selected day
+    if (selectedDay !== 'all') {
+      filteredSchedule = { [selectedDay]: filteredSchedule[selectedDay] };
+    }
+    
+    return {
+      ...liveBroadcastSchedule,
+      weeklySchedule: filteredSchedule
+    };
+  };
+
+  // Get filtered country schedules
+  const getFilteredCountrySchedules = () => {
+    if (!liveBroadcastSchedule) return [];
+    
+    let filtered = liveBroadcastSchedule.countrySchedules;
+    
+    // Filter by selected country
+    if (selectedCountry !== 'all') {
+      const countryName = selectedCountry === 'sierra_leone' ? 'Sierra Leone' : 
+                         selectedCountry === 'liberia' ? 'Liberia' : 'Guinea';
+      filtered = filtered.filter(country => country.country === countryName);
+    }
+    
+    return filtered;
+  };
+
+  // Check if a day/country combination matches the broadcast type filter
+  const matchesBroadcastTypeFilter = (status) => {
+    if (selectedBroadcastType === 'all') return true;
+    return status === selectedBroadcastType;
+  };
 
   useEffect(() => {
     let schedule = [];
