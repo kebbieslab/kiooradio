@@ -814,6 +814,15 @@ async def get_media_videos():
                 "description": "Presidential support for Kioo Radio's mission in Liberia",
                 "order": 3,
                 "featured": True
+            },
+            {
+                "id": "video-4",
+                "title": "Foya City Mayor Hon. Josiah Saahkeh endorses Kioo Radio",
+                "youtubeUrl": "https://youtu.be/1flOExdkaDU",
+                "language": "en", 
+                "description": "Local government support from Foya City Mayor for Kioo Radio",
+                "order": 4,
+                "featured": True
             }
         ]
         return default_videos
