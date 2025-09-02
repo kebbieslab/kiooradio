@@ -959,6 +959,193 @@ async def get_live_broadcast_schedule():
         print(f"Error fetching live broadcast schedule: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch live broadcast schedule")
 
+class TestimonyLog(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date: str
+    name: Optional[str] = None
+    location: str
+    program: str
+    summary: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class CallLog(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date: str
+    time: str
+    phone: Optional[str] = None
+    summary: str
+    category: str  # Testimony, Question, Complaint, Prayer Request
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Dashboard endpoints
+@api_router.get("/dashboard/weather")
+async def get_dashboard_weather():
+    """Get weather data for broadcast areas"""
+    try:
+        # Mock weather data - in production, integrate with OpenWeatherMap API
+        weather_data = {
+            "Foya, Liberia": {
+                "temperature": 28,
+                "condition": "Partly Cloudy",
+                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+            },
+            "Koindu, Sierra Leone": {
+                "temperature": 26,
+                "condition": "Sunny",
+                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+            },
+            "Guéckédou, Guinea": {
+                "temperature": 25,
+                "condition": "Overcast",
+                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+            },
+            "Kissidougou, Guinea": {
+                "temperature": 27,
+                "condition": "Sunny",
+                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+            }
+        }
+        return weather_data
+    except Exception as e:
+        print(f"Error fetching weather data: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch weather data")
+
+@api_router.get("/dashboard/schedule")
+async def get_dashboard_schedule():
+    """Get weekly program schedule"""
+    try:
+        # Mock schedule data
+        schedule_data = [
+            {"day": "Monday", "time": "06:00", "program": "Morning Devotion", "presenter": "Rev. Samuel"},
+            {"day": "Monday", "time": "08:00", "program": "Kissi News", "presenter": "Marie Camara"},
+            {"day": "Monday", "time": "10:00", "program": "Community Talk", "presenter": "Emmanuel Koroma"},
+            {"day": "Tuesday", "time": "06:00", "program": "Morning Devotion", "presenter": "Rev. Samuel"},
+            {"day": "Tuesday", "time": "08:00", "program": "French Gospel Hour", "presenter": "Pasteur Jean"},
+            {"day": "Tuesday", "time": "10:00", "program": "Health Education", "presenter": "Dr. Fatima"},
+            {"day": "Wednesday", "time": "06:00", "program": "Morning Devotion", "presenter": "Rev. Samuel"},
+            {"day": "Wednesday", "time": "08:00", "program": "Guinea Connection", "presenter": "Amadou Diallo"},
+            {"day": "Wednesday", "time": "10:00", "program": "Bible Study", "presenter": "Pastor John"},
+            {"day": "Thursday", "time": "06:00", "program": "Morning Devotion", "presenter": "Rev. Samuel"},
+            {"day": "Thursday", "time": "08:00", "program": "Community Forum", "presenter": "Sarah Williams"},
+            {"day": "Thursday", "time": "10:00", "program": "Music & Praise", "presenter": "Choir Leader"},
+            {"day": "Friday", "time": "06:00", "program": "Morning Devotion", "presenter": "Rev. Samuel"},
+            {"day": "Friday", "time": "08:00", "program": "Sierra Leone Hour", "presenter": "Moses Kargbo"},
+            {"day": "Friday", "time": "10:00", "program": "Youth Forum", "presenter": "David Kolleh"},
+            {"day": "Saturday", "time": "08:00", "program": "Family Time", "presenter": "Mrs. Johnson"},
+            {"day": "Saturday", "time": "10:00", "program": "Traditional Music", "presenter": "Cultural Team"},
+            {"day": "Sunday", "time": "08:00", "program": "Sunday Service", "presenter": "Various Pastors"},
+            {"day": "Sunday", "time": "14:00", "program": "Gospel Hour", "presenter": "Rev. Samuel"}
+        ]
+        return schedule_data
+    except Exception as e:
+        print(f"Error fetching schedule: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch schedule")
+
+@api_router.get("/dashboard/presenters")
+async def get_dashboard_presenters():
+    """Get presenters by country"""
+    try:
+        presenters_data = {
+            "liberia": [
+                {
+                    "name": "Rev. Samuel Johnson",
+                    "programs": ["Morning Devotion", "Gospel Hour"],
+                    "schedule": "Daily 6:00 AM, Sunday 2:00 PM"
+                },
+                {
+                    "name": "Sarah Williams",
+                    "programs": ["Community Forum", "Women's Hour"],
+                    "schedule": "Thursday 8:00 AM, Friday 3:00 PM"
+                },
+                {
+                    "name": "David Kolleh",
+                    "programs": ["Youth Forum", "Sports Talk"],
+                    "schedule": "Friday 10:00 AM, Saturday 4:00 PM"
+                }
+            ],
+            "sierra_leone": [
+                {
+                    "name": "Emmanuel Koroma",
+                    "programs": ["Community Talk", "Technical Hour"],
+                    "schedule": "Monday 10:00 AM, Wednesday 3:00 PM"
+                },
+                {
+                    "name": "Moses Kargbo",
+                    "programs": ["Sierra Leone Hour", "Cultural Show"],
+                    "schedule": "Friday 8:00 AM, Saturday 1:00 PM"
+                },
+                {
+                    "name": "Rev. Philip Tamba Kamara",
+                    "programs": ["Sunday Service", "Bible Study"],
+                    "schedule": "Sunday 8:00 AM (rotation), Tuesday 7:00 PM"
+                }
+            ],
+            "guinea": [
+                {
+                    "name": "Marie Camara",
+                    "programs": ["Kissi News", "Community Outreach"],
+                    "schedule": "Monday 8:00 AM, Thursday 2:00 PM"
+                },
+                {
+                    "name": "Amadou Diallo",
+                    "programs": ["Guinea Connection", "French Hour"],
+                    "schedule": "Wednesday 8:00 AM, Saturday 10:00 AM"
+                },
+                {
+                    "name": "Pasteur Jean",
+                    "programs": ["French Gospel Hour", "Prayer Meeting"],
+                    "schedule": "Tuesday 8:00 AM, Thursday 6:00 PM"
+                }
+            ]
+        }
+        return presenters_data
+    except Exception as e:
+        print(f"Error fetching presenters: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch presenters")
+
+@api_router.post("/dashboard/testimony")
+async def submit_testimony(testimony: TestimonyLog):
+    """Submit a testimony log"""
+    try:
+        # In production, save to database
+        # For now, just return success
+        return {"message": "Testimony logged successfully", "id": testimony.id}
+    except Exception as e:
+        print(f"Error submitting testimony: {e}")
+        raise HTTPException(status_code=500, detail="Failed to submit testimony")
+
+@api_router.post("/dashboard/call-log")
+async def submit_call_log(call: CallLog):
+    """Submit a call log"""
+    try:
+        # In production, save to database
+        # For now, just return success
+        return {"message": "Call logged successfully", "id": call.id}
+    except Exception as e:
+        print(f"Error submitting call log: {e}")
+        raise HTTPException(status_code=500, detail="Failed to submit call log")
+
+@api_router.get("/dashboard/export")
+async def export_dashboard_data():
+    """Export all dashboard data as CSV"""
+    try:
+        # Mock export data - in production, fetch from database
+        csv_content = """Type,Date,Time,Location,Program,Name,Phone,Category,Summary
+Testimony,2024-09-01,,Foya,Morning Devotion,John Doe,,,"God healed my family"
+Call,2024-09-01,08:30,,Community Forum,,+231-77-123456,Prayer Request,"Please pray for my sick mother"
+Testimony,2024-09-02,,Koindu,French Hour,Marie,,,"Testimony about answered prayer"
+Call,2024-09-02,14:15,,Bible Study,,+232-88-987654,Question,"Question about baptism"
+"""
+        
+        return Response(
+            content=csv_content,
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=kioo-radio-dashboard.csv"}
+        )
+    except Exception as e:
+        print(f"Error exporting data: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export data")
+
 # Coverage areas endpoint
 @api_router.get("/coverage")
 async def get_coverage_areas():
