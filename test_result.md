@@ -103,141 +103,91 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-About Page Vision Story + Document Viewer Enhancement with Corrections:
-1. TIMELINE CORRECTIONS: Vox Radio started in 2017 in shipping container, expanded in 2024 to 3.2M+ people with Elmer H. Schmidt Christian Broadcasting Fund grant
-2. CONTENT CORRECTIONS: "Kissi" means "Gift" not "Mirror", change Cape Peninsula University to "Media Village, a media school of YWMA"
-3. STORY CORRECTION: God originally wanted Kissi radio station first, but led to start Vox Radio first in 2017
-4. VIDEO LAYOUT: Display both videos side by side in two boxes
-5. DOCUMENT PREVIEWS: Generate preview images from PowerPoint and PDF documents
-6. Make all content editable through CMS (Settings → About Page)
+Presenters Dashboard Development - Phase 1 & 2 Implementation:
+1. PHASE 1: Add route to make dashboard accessible at /kioo-presenters-dashboard-1981 ✅ COMPLETED
+2. PHASE 2: Core Dashboard Features Implementation:
+   - Weather Dashboard with real API integration using Open-Meteo (free, no API key) ✅ COMPLETED  
+   - Language Toggle EN/FR with local storage persistence ✅ COMPLETED
+   - Weekly Program Schedule display ✅ COMPLETED
+   - Presenter Rotation by Country display ✅ COMPLETED
+   - Testimony Logging Form ✅ COMPLETED
+   - Call Logging Form ✅ COMPLETED
+   - Data Export functionality ✅ COMPLETED
+   - Weather auto-refresh every 15 minutes ✅ COMPLETED
 
 ## backend:
-  - task: "Backend API endpoints"
-    implemented: true
-    working: true
-    file: "/app/backend/server.py"
-    stuck_count: 0
-    priority: "medium"
-    needs_retesting: false
-    status_history:
-        - working: true
-          agent: "main"
-          comment: "Backend endpoints appear functional based on previous testing"
-        - working: true
-          agent: "testing"
-          comment: "Comprehensive backend API testing completed successfully. All 18 endpoints tested and working: GET /api/programs (returns program schedule data), GET /api/impact-stories (with featured_only parameter), GET /api/news (returns news articles), POST /api/donations (handles donation submissions), plus radio status, coverage areas, contact endpoints. All CRUD operations verified, data persistence confirmed, proper response formats validated. Backend is fully functional and ready for production use."
-        - working: true
-          agent: "testing"
-          comment: "Newsletter signup endpoint testing completed successfully. POST /api/newsletter-signup accepts email and adminEmail fields, stores data correctly in MongoDB with proper timestamps and UUIDs. All 5 test signups verified in database with correct admin_email field set to 'admin@proudlyliberian.com'. Endpoint returns proper success response with message and email confirmation. Validation working correctly - returns 422 for missing required fields. Minor: No email format validation implemented but core functionality works perfectly."
-        - working: true
-          agent: "main"
-          comment: "Added new About page settings endpoint. Backend now includes AboutPageSettings model with vision content, timeline items, Kissi people information, and document URLs. API endpoint GET /api/about-page-settings returns proper data structure. Manual testing confirmed endpoint works correctly."
-
-  - task: "About Page Settings API endpoint"
+  - task: "Dashboard Weather API integration"
     implemented: true
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "main"
-          comment: "Created new AboutPageSettings Pydantic model with vision story content, timeline data, Kissi people information, and document URLs. Added GET /api/about-page-settings and PUT /api/about-page-settings endpoints. Manual curl test confirmed endpoint returns proper JSON response with all required fields."
-        - working: true
-          agent: "main"
-          comment: "COMPREHENSIVE UPDATE COMPLETED: Successfully implemented all corrections and enhancements to About page. 1) Updated timeline to show Vox Radio started in 2017 in shipping container, expanded in 2024 with Elmer H. Schmidt Christian Broadcasting Fund grant support. 2) Corrected content: 'Kissi' means 'Gift' not 'Mirror', changed to 'Media Village, a media school of YWMA' instead of Cape Peninsula University. 3) Updated story to reflect God's original vision for Kissi radio first, but led to start Vox Radio first in 2017. 4) Redesigned video layout to display both videos side by side in grid format. 5) Implemented document preview generation using PyMuPDF for PDF thumbnails and placeholder system for PowerPoint. 6) All content is API-driven and ready for CMS editing. Visual confirmation shows all sections rendering correctly with updated information."
-        - working: true
-          agent: "testing"
-          comment: "CRITICAL VERIFICATION COMPLETED: About Page Settings API endpoint thoroughly tested with all corrections verified. ✅ TIMELINE ACCURACY: Confirmed Vox Radio started in 2017 (not 2006), 2024 entries include both Daniel Hatfield challenge and Elmer H. Schmidt Christian Broadcasting Fund grant information, timeline spans 2005-2025 correctly. ✅ CONTENT CORRECTIONS: Vision content correctly mentions 'Media Village, a media school of YWMA' (not Cape Peninsula University), Kissi content states 'Gift' not 'Mirror', story explains God originally wanted Kissi radio first but led to Vox Radio first in 2017. ✅ DOCUMENT PREVIEW FUNCTIONALITY: radioProjectPreviewImages array has 3 placeholder images, maruRadioProposalPreviewImages array has 2 PDF thumbnail images, thumbnail files exist in /app/backend/static/thumbnails/, static file serving works at /api/static/thumbnails/ URLs. All 37 backend API tests passed including comprehensive About page settings verification."
+          comment: "Successfully integrated Open-Meteo weather API for real weather data. Added comprehensive error handling with fallback to 'Weather unavailable' message. API fetches data for Foya (Liberia), Koindu (Sierra Leone), Guéckédou (Guinea), and Kissidougou (Guinea) using accurate coordinates. Weather conditions mapped from WMO codes to readable descriptions."
 
-  - task: "Newsletter signup functionality"
+  - task: "Dashboard API endpoints"
     implemented: true
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
-          agent: "testing"
-          comment: "Newsletter signup endpoint fully tested and working. Endpoint accepts POST requests with email and adminEmail fields, stores data properly in database with correct adminEmail set to 'admin@proudlyliberian.com', returns proper success response. Database verification shows 5 newsletter signups stored correctly with timestamps and UUIDs. All validation tests passed including proper 422 errors for missing fields."
-
-  - task: "Church Partners API endpoint for Monrovia filtering"
-    implemented: true
-    working: true
-    file: "/app/backend/server.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: false
-          agent: "testing"
-          comment: "Initial testing revealed critical sorting bug in church-partners endpoint. Error: '<' not supported between instances of 'int' and 'NoneType' caused by sortOrder comparison. Fixed by properly handling None values in sort_key function."
-        - working: true
-          agent: "testing"
-          comment: "Church Partners endpoint fully tested and working correctly. Fixed critical sorting bug that was preventing results from being returned. Endpoint now properly returns 12 partners for Monrovia, Liberia including all expected pastors: Rev. Henry SN Powoe, Bishop Robert Bimba, Apostle David Fatorma, and Rev. Dr Joseph Bannah. Filtering by country=Liberia and city=Monrovia works perfectly. Database contains 64 total partners (40 in Liberia, 12 in Monrovia). All CRUD operations tested successfully. Data structure validation confirmed with all required fields present."
+          agent: "main"
+          comment: "All dashboard endpoints functional: /api/dashboard/weather (real weather data), /api/dashboard/schedule (program schedule), /api/dashboard/presenters (by country), /api/dashboard/testimony (POST), /api/dashboard/call-log (POST), /api/dashboard/export (CSV export). Ready for testing."
 
 ## frontend:
-  - task: "About Page Vision (2005) section"
+  - task: "Dashboard Route Addition"
     implemented: true
     working: true
-    file: "/app/frontend/src/pages/About.js"
+    file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "main"
-          comment: "Successfully implemented The Vision (2005) section with Joseph Kebbie's Cape Town story. Section displays properly with responsive design and fetches content from backend API. Visual confirmation via screenshot shows proper rendering."
+          comment: "Successfully added /kioo-presenters-dashboard-1981 route to App.js. Dashboard is now accessible and loading correctly with proper routing."
 
-  - task: "From Vision to Launch timeline section"
+  - task: "Dashboard Weather Integration"
     implemented: true
     working: true
-    file: "/app/frontend/src/pages/About.js"
+    file: "/app/frontend/src/pages/PresentersDashboard.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "main"
-          comment: "Successfully implemented timeline section with 7 milestone events from 2005-2025. Timeline displays with circular indicators and proper chronological layout. Visual confirmation shows good responsive design and data rendering from API."
+          comment: "Weather integration working perfectly. Real weather data displayed for all 4 cities with current temperatures and conditions. Auto-refresh implemented every 15 minutes. Visual confirmation shows accurate weather: Foya 22°C Slight rain showers, Koindu 24°C Thunderstorm, Guéckédou 23°C Overcast, Kissidougou 22°C Overcast."
 
-  - task: "Who Are the Kissi section"
+  - task: "Dashboard Bilingual Support"
     implemented: true
     working: true
-    file: "/app/frontend/src/pages/About.js"
+    file: "/app/frontend/src/pages/PresentersDashboard.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "main"
-          comment: "Successfully implemented Kissi people section explaining their cultural heritage and significance to Kioo Radio. Content displays properly with mountain emoji and clear typography. Content is fetched from backend settings API."
+          comment: "Bilingual functionality working excellently. Language toggle switches between EN/FR dynamically without page reload. Local storage persistence working. All UI elements translate correctly: titles, navigation tabs, form labels, buttons. Tested both English and French interfaces - all translations accurate."
 
-  - task: "Document Viewer section"
+  - task: "Dashboard Navigation and Forms"
     implemented: true
     working: true
-    file: "/app/frontend/src/pages/About.js"
+    file: "/app/frontend/src/pages/PresentersDashboard.js"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "main"
-          comment: "Successfully implemented document viewer section with both PowerPoint and PDF viewers. Office Web Viewer properly displays Radio Project11.ppt on left side, direct PDF display for maru_radio_proposal.PDF on right side. Both documents have download links and proper responsive grid layout. Visual confirmation shows documents loading correctly."
-
-  - task: "About page API integration"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/pages/About.js"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: true
-          agent: "main"
-          comment: "Successfully integrated About page with backend API. Component fetches settings from /api/about-page-settings endpoint, handles loading states, and renders dynamic content. All new sections are data-driven and ready for CMS editing capability."
+          comment: "All dashboard sections working: Weather (real API data), Schedule (comprehensive program table), Presenters by Country (3-column layout for Liberia/Sierra Leone/Guinea), Testimony Form (date/name/location/program/summary), Call Log Form (date/time/phone/category/summary). Forms have proper auto-filled dates and validation. Export button present and functional."
 
 ## metadata:
   created_by: "main_agent"
