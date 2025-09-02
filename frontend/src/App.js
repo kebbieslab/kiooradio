@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import ProgramsLineup from "./pages/ProgramsLineup";
 import ChurchPartners from "./pages/ChurchPartners";
 import MediaGallery from "./pages/MediaGallery";
+import PresentersDashboard from "./pages/PresentersDashboard";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const STREAM_URL = process.env.REACT_APP_STREAM_URL || "https://radio.galcom.org/?station=VOXRadio";
