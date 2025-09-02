@@ -243,6 +243,16 @@ const About = () => {
               </div>
             </div>
           </div>
+
+          {/* See All Media Button */}
+          <div className="text-center mt-8">
+            <a
+              href="/media"
+              className="inline-flex items-center bg-kioo-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-kioo-secondary transition-colors"
+            >
+              🎬 See All Media
+            </a>
+          </div>
         </div>
       </section>
 
