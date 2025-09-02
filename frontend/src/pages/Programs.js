@@ -11,6 +11,12 @@ const Programs = () => {
   const [programs, setPrograms] = useState([]);
   const [schedule, setSchedule] = useState({});
   const [liveBroadcastSchedule, setLiveBroadcastSchedule] = useState(null);
+  
+  // Live Broadcast Days filters
+  const [selectedDay, setSelectedDay] = useState('all');
+  const [selectedCountry, setSelectedCountry] = useState('all');
+  const [selectedBroadcastType, setSelectedBroadcastType] = useState('all');
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
