@@ -902,6 +902,63 @@ async def update_media_settings(settings: MediaSettings):
         print(f"Error updating media settings: {e}")
         raise HTTPException(status_code=500, detail="Failed to update media settings")
 
+class LiveBroadcastSchedule(BaseModel):
+    country: str
+    liveDays: List[str]
+    preRecordedDays: List[str]
+    specialNote: str
+    colorCode: str
+
+# Live Broadcast Schedule endpoints
+@api_router.get("/live-broadcast-schedule")
+async def get_live_broadcast_schedule():
+    """Get live broadcast schedule based on Weekly_Live_vs_Pre-Recorded_Rotation"""
+    try:
+        # Weekly schedule data
+        weekly_schedule = {
+            "monday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "pre-recorded"},
+            "tuesday": {"liberia": "live", "sierra_leone": "live", "guinea": "pre-recorded"},
+            "wednesday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "live"},
+            "thursday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "pre-recorded"},
+            "friday": {"liberia": "live", "sierra_leone": "live", "guinea": "pre-recorded"},
+            "saturday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "live"},
+            "sunday": {"liberia": "live", "sierra_leone": "rotation", "guinea": "rotation", "note": "Sunday service rotates weekly between all three countries"}
+        }
+        
+        # Country summary data
+        country_schedules = [
+            {
+                "country": "Liberia",
+                "liveDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                "preRecordedDays": [],
+                "specialNote": "Always anchor & daily presence",
+                "colorCode": "green"
+            },
+            {
+                "country": "Sierra Leone", 
+                "liveDays": ["Tuesday", "Friday"],
+                "preRecordedDays": ["Monday", "Wednesday", "Thursday", "Saturday"],
+                "specialNote": "Sunday live if in rotation",
+                "colorCode": "blue"
+            },
+            {
+                "country": "Guinea",
+                "liveDays": ["Wednesday", "Saturday"], 
+                "preRecordedDays": ["Monday", "Tuesday", "Thursday", "Friday"],
+                "specialNote": "Sunday live if in rotation",
+                "colorCode": "gold"
+            }
+        ]
+        
+        return {
+            "weeklySchedule": weekly_schedule,
+            "countrySchedules": country_schedules,
+            "introText": "Because of cross-border travel distances, not every team can be live in Foya every day. To ensure fairness and inclusion, each country has specific live days, while pre-recorded programs fill the gaps. Here is our official weekly live broadcast rotation."
+        }
+    except Exception as e:
+        print(f"Error fetching live broadcast schedule: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch live broadcast schedule")
+
 # Coverage areas endpoint
 @api_router.get("/coverage")
 async def get_coverage_areas():
