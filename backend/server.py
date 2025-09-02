@@ -825,12 +825,12 @@ async def get_media_videos():
 async def get_media_photos():
     """Get all media photos ordered by order field"""
     try:
-        # Return default photos for now - in real implementation would come from database
+        # Updated with real photos from user uploads
         default_photos = [
             {
                 "id": "photo-1",
                 "title": "Kioo Radio Studio Construction",
-                "imageUrl": "/assets/images/studio-construction.jpg",
+                "imageUrl": "/assets/images/gallery/studio-construction.jpg",
                 "alt": "Construction of Kioo Radio studio in Foya",
                 "caption": "Building the future of Christian broadcasting in the Makona River Region",
                 "location": "Foya, Lofa County, Liberia",
@@ -840,7 +840,7 @@ async def get_media_photos():
             {
                 "id": "photo-2",
                 "title": "Community Gathering",
-                "imageUrl": "/assets/images/community-gathering.jpg", 
+                "imageUrl": "/assets/images/gallery/community-gathering.jpg", 
                 "alt": "Community members gathered for radio station blessing",
                 "caption": "Local church leaders and community members pray for Kioo Radio",
                 "location": "Betche Hill, Foya",
@@ -850,12 +850,22 @@ async def get_media_photos():
             {
                 "id": "photo-3",
                 "title": "Broadcasting Equipment",
-                "imageUrl": "/assets/images/broadcasting-equipment.jpg",
+                "imageUrl": "/assets/images/gallery/broadcasting-equipment.jpg",
                 "alt": "Professional radio broadcasting equipment",
                 "caption": "State-of-the-art equipment ready to serve the tri-border region",
                 "location": "Kioo Radio Studio",
                 "featured": True,
                 "order": 3
+            },
+            {
+                "id": "photo-4",
+                "title": "Radio Tower",
+                "imageUrl": "/assets/images/gallery/radio-tower.jpg",
+                "alt": "Kioo Radio transmission tower",
+                "caption": "The tower that will broadcast hope across the Makona River Region",
+                "location": "Foya, Lofa County, Liberia",
+                "featured": False,
+                "order": 4
             }
         ]
         return default_photos
