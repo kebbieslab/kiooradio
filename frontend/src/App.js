@@ -103,6 +103,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/programs-lineup" element={<ProgramsLineup />} />
             <Route path="/church-partners" element={<ChurchPartners />} />
+            <Route path="/media" element={<MediaGallery />} />
           </Routes>
         </main>
 
