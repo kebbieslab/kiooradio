@@ -827,6 +827,10 @@ class KiooRadioAPITester:
         self.test_about_page_settings_endpoints()  # CRITICAL: Test About page settings API with corrections
         self.test_static_file_serving()  # CRITICAL: Test document thumbnail serving
         
+        # CRITICAL: Test Presenters Dashboard API endpoints
+        self.test_dashboard_weather_api()  # PRIMARY FOCUS: Weather API integration
+        self.test_dashboard_endpoints()    # Test all dashboard endpoints comprehensively
+        
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
         print(f"Tests passed: {self.tests_passed}/{self.tests_run}")
