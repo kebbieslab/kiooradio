@@ -781,6 +781,108 @@ async def update_about_page_settings(settings: AboutPageSettings):
         print(f"Error updating about page settings: {e}")
         raise HTTPException(status_code=500, detail="Failed to update about page settings")
 
+# Media endpoints
+@api_router.get("/media/videos")
+async def get_media_videos():
+    """Get all media videos ordered by order field"""
+    try:
+        # Return default videos for now - in real implementation would come from database
+        default_videos = [
+            {
+                "id": "video-1",
+                "title": "From Calling to Airwaves: The Vision Behind Kioo Radio 98.1FM",
+                "youtubeUrl": "https://youtu.be/qdYg94D1hn0",
+                "language": "en",
+                "description": "The inspiring story of God's calling to establish Kioo Radio",
+                "order": 1,
+                "featured": True
+            },
+            {
+                "id": "video-2", 
+                "title": "De l'appel aux ondes : la vision à l'origine de Kioo Radio 98.1FM (French Version)",
+                "youtubeUrl": "https://youtu.be/4DaV2C2M074",
+                "language": "fr",
+                "description": "L'histoire inspirante de l'appel de Dieu à établir Kioo Radio",
+                "order": 2,
+                "featured": True
+            },
+            {
+                "id": "video-3",
+                "title": "From Capitol to Betche Hill, Foya: President Joseph N. Boakai, Sr. Supports Kioo Radio", 
+                "youtubeUrl": "https://youtu.be/KmH0jOBGEe8",
+                "language": "en",
+                "description": "Presidential support for Kioo Radio's mission in Liberia",
+                "order": 3,
+                "featured": True
+            }
+        ]
+        return default_videos
+    except Exception as e:
+        print(f"Error fetching media videos: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch media videos")
+
+@api_router.get("/media/photos")
+async def get_media_photos():
+    """Get all media photos ordered by order field"""
+    try:
+        # Return default photos for now - in real implementation would come from database
+        default_photos = [
+            {
+                "id": "photo-1",
+                "title": "Kioo Radio Studio Construction",
+                "imageUrl": "/assets/images/studio-construction.jpg",
+                "alt": "Construction of Kioo Radio studio in Foya",
+                "caption": "Building the future of Christian broadcasting in the Makona River Region",
+                "location": "Foya, Lofa County, Liberia",
+                "featured": True,
+                "order": 1
+            },
+            {
+                "id": "photo-2",
+                "title": "Community Gathering",
+                "imageUrl": "/assets/images/community-gathering.jpg", 
+                "alt": "Community members gathered for radio station blessing",
+                "caption": "Local church leaders and community members pray for Kioo Radio",
+                "location": "Betche Hill, Foya",
+                "featured": True,
+                "order": 2
+            },
+            {
+                "id": "photo-3",
+                "title": "Broadcasting Equipment",
+                "imageUrl": "/assets/images/broadcasting-equipment.jpg",
+                "alt": "Professional radio broadcasting equipment",
+                "caption": "State-of-the-art equipment ready to serve the tri-border region",
+                "location": "Kioo Radio Studio",
+                "featured": True,
+                "order": 3
+            }
+        ]
+        return default_photos
+    except Exception as e:
+        print(f"Error fetching media photos: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch media photos")
+
+@api_router.get("/media/settings")
+async def get_media_settings():
+    """Get media settings for display configuration"""
+    try:
+        settings = MediaSettings()
+        return settings
+    except Exception as e:
+        print(f"Error fetching media settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch media settings")
+
+@api_router.put("/media/settings")
+async def update_media_settings(settings: MediaSettings):
+    """Update media settings (admin only in real app)"""
+    try:
+        # In real implementation, this would update the database
+        return {"message": "Media settings updated successfully", "settings": settings}
+    except Exception as e:
+        print(f"Error updating media settings: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update media settings")
+
 # Coverage areas endpoint
 @api_router.get("/coverage")
 async def get_coverage_areas():
