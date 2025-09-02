@@ -562,129 +562,295 @@ Generated on: ${new Date().toLocaleString()}
               </div>
             </div>
 
-            {/* Weekly Schedule Grid */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-semibold text-kioo-dark mb-6 text-center">Weekly Schedule</h3>
-              <div className="overflow-x-auto">
-                <div className="grid grid-cols-7 gap-2 min-w-full">
-                  {Object.entries(liveBroadcastSchedule.weeklySchedule).map(([day, countries]) => (
-                    <div key={day} className="text-center">
-                      <div className="font-semibold text-gray-800 mb-2 capitalize text-sm lg:text-base">
-                        {day.charAt(0).toUpperCase() + day.slice(1)}
-                      </div>
-                      <div className="space-y-1">
-                        {/* Liberia */}
-                        <div className={`p-2 rounded text-xs lg:text-sm font-medium ${
-                          countries.liberia === 'live' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          🇱🇷 {countries.liberia === 'live' ? 'Live' : 'Pre-rec'}
-                        </div>
-                        {/* Sierra Leone */}
-                        <div className={`p-2 rounded text-xs lg:text-sm font-medium ${
-                          countries.sierra_leone === 'live' ? 'bg-blue-100 text-blue-800' : 
-                          countries.sierra_leone === 'rotation' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          🇸🇱 {countries.sierra_leone === 'live' ? 'Live' : countries.sierra_leone === 'rotation' ? 'Rotation' : 'Pre-rec'}
-                        </div>
-                        {/* Guinea */}
-                        <div className={`p-2 rounded text-xs lg:text-sm font-medium ${
-                          countries.guinea === 'live' ? 'bg-yellow-100 text-yellow-800' : 
-                          countries.guinea === 'rotation' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'
-                        }`}>
-                          🇬🇳 {countries.guinea === 'live' ? 'Live' : countries.guinea === 'rotation' ? 'Rotation' : 'Pre-rec'}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+            {/* Live Broadcast Type Legend */}
+            <div className="mb-8 bg-gray-50 rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-kioo-dark mb-4 text-center">Broadcast Status Legend</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-green-500 rounded"></div>
+                  <span className="text-sm">Live Broadcasting</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-gray-400 rounded"></div>
+                  <span className="text-sm">Pre-recorded</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-purple-500 rounded"></div>
+                  <span className="text-sm">Sunday Rotation</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                  <span className="text-sm">Country Specific</span>
                 </div>
               </div>
             </div>
+
+            {/* Filter Controls */}
+            <div className="mb-8 bg-white border rounded-lg p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-kioo-dark mb-4">Filter Options</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                
+                {/* Day Filter */}
+                <div>
+                  <label htmlFor="day-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                    Filter by Day:
+                  </label>
+                  <select
+                    id="day-filter"
+                    value={selectedDay}
+                    onChange={(e) => setSelectedDay(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+                  >
+                    <option value="all">All Days</option>
+                    {days.slice(1).map(day => (
+                      <option key={day} value={day}>
+                        {day.charAt(0).toUpperCase() + day.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Country Filter */}
+                <div>
+                  <label htmlFor="country-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                    Filter by Country:
+                  </label>
+                  <select
+                    id="country-filter"
+                    value={selectedCountry}
+                    onChange={(e) => setSelectedCountry(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+                  >
+                    <option value="all">All Countries</option>
+                    <option value="liberia">🇱🇷 Liberia</option>
+                    <option value="sierra_leone">🇸🇱 Sierra Leone</option>
+                    <option value="guinea">🇬🇳 Guinea</option>
+                  </select>
+                </div>
+
+                {/* Broadcast Type Filter */}
+                <div>
+                  <label htmlFor="broadcast-type-filter" className="block text-sm font-medium text-gray-700 mb-2">
+                    Filter by Type:
+                  </label>
+                  <select
+                    id="broadcast-type-filter"
+                    value={selectedBroadcastType}
+                    onChange={(e) => setSelectedBroadcastType(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+                  >
+                    <option value="all">All Types</option>
+                    <option value="live">Live Only</option>
+                    <option value="pre-recorded">Pre-recorded Only</option>
+                    <option value="rotation">Sunday Rotation</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Active Filters Display */}
+              {(selectedDay !== 'all' || selectedCountry !== 'all' || selectedBroadcastType !== 'all') && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="text-sm text-gray-600">Active filters:</span>
+                  {selectedDay !== 'all' && (
+                    <span className="bg-kioo-primary text-white px-2 py-1 rounded text-xs">
+                      Day: {selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}
+                    </span>
+                  )}
+                  {selectedCountry !== 'all' && (
+                    <span className="bg-kioo-primary text-white px-2 py-1 rounded text-xs">
+                      Country: {selectedCountry === 'sierra_leone' ? 'Sierra Leone' : 
+                               selectedCountry === 'liberia' ? 'Liberia' : 'Guinea'}
+                    </span>
+                  )}
+                  {selectedBroadcastType !== 'all' && (
+                    <span className="bg-kioo-primary text-white px-2 py-1 rounded text-xs">
+                      Type: {selectedBroadcastType}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => {
+                      setSelectedDay('all');
+                      setSelectedCountry('all');
+                      setSelectedBroadcastType('all');
+                    }}
+                    className="text-xs text-red-600 hover:text-red-800 underline"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Weekly Schedule Grid */}
+            {(() => {
+              const filteredSchedule = getFilteredBroadcastSchedule();
+              const scheduleEntries = Object.entries(filteredSchedule.weeklySchedule);
+              
+              return (
+                <div className="mb-12">
+                  <h3 className="text-2xl font-semibold text-kioo-dark mb-6 text-center">
+                    Weekly Schedule 
+                    {selectedDay !== 'all' && ` - ${selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}`}
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <div className={`grid gap-2 min-w-full ${scheduleEntries.length === 1 ? 'grid-cols-1 max-w-sm mx-auto' : 'grid-cols-7'}`}>
+                      {scheduleEntries.map(([day, countries]) => (
+                        <div key={day} className="text-center">
+                          <div className="font-semibold text-gray-800 mb-2 capitalize text-sm lg:text-base">
+                            {day.charAt(0).toUpperCase() + day.slice(1)}
+                          </div>
+                          <div className="space-y-1">
+                            {/* Liberia */}
+                            {(selectedCountry === 'all' || selectedCountry === 'liberia') && 
+                             (matchesBroadcastTypeFilter(countries.liberia)) && (
+                              <div className={`p-2 rounded text-xs lg:text-sm font-medium ${
+                                countries.liberia === 'live' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                🇱🇷 {countries.liberia === 'live' ? 'Live' : 'Pre-rec'}
+                              </div>
+                            )}
+                            {/* Sierra Leone */}
+                            {(selectedCountry === 'all' || selectedCountry === 'sierra_leone') && 
+                             (matchesBroadcastTypeFilter(countries.sierra_leone)) && (
+                              <div className={`p-2 rounded text-xs lg:text-sm font-medium ${
+                                countries.sierra_leone === 'live' ? 'bg-blue-100 text-blue-800' : 
+                                countries.sierra_leone === 'rotation' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                🇸🇱 {countries.sierra_leone === 'live' ? 'Live' : countries.sierra_leone === 'rotation' ? 'Rotation' : 'Pre-rec'}
+                              </div>
+                            )}
+                            {/* Guinea */}
+                            {(selectedCountry === 'all' || selectedCountry === 'guinea') && 
+                             (matchesBroadcastTypeFilter(countries.guinea)) && (
+                              <div className={`p-2 rounded text-xs lg:text-sm font-medium ${
+                                countries.guinea === 'live' ? 'bg-yellow-100 text-yellow-800' : 
+                                countries.guinea === 'rotation' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                🇬🇳 {countries.guinea === 'live' ? 'Live' : countries.guinea === 'rotation' ? 'Rotation' : 'Pre-rec'}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Country Summary Table */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-semibold text-kioo-dark mb-6 text-center">Country Summary</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full bg-white rounded-lg shadow-md overflow-hidden">
-                  <thead className="bg-kioo-primary text-white">
-                    <tr>
-                      <th className="px-6 py-4 text-left font-semibold">Country</th>
-                      <th className="px-6 py-4 text-left font-semibold">Live Days</th>
-                      <th className="px-6 py-4 text-left font-semibold">Pre-recorded Days</th>
-                      <th className="px-6 py-4 text-left font-semibold">Special Note</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {liveBroadcastSchedule.countrySchedules.map((country, index) => (
-                      <tr key={country.country} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className={`w-4 h-4 rounded-full mr-3 ${
-                              country.colorCode === 'green' ? 'bg-green-500' :
-                              country.colorCode === 'blue' ? 'bg-blue-500' : 'bg-yellow-500'
-                            }`}></div>
-                            <span className="font-medium text-gray-900">
-                              {country.country === 'Liberia' ? '🇱🇷' : country.country === 'Sierra Leone' ? '🇸🇱' : '🇬🇳'} {country.country}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-gray-700">
-                          {country.liveDays.length === 7 ? 'Daily (Mon–Sun)' : country.liveDays.join(', ')}
-                        </td>
-                        <td className="px-6 py-4 text-gray-700">
-                          {country.preRecordedDays.length === 0 ? '—' : country.preRecordedDays.join(', ')}
-                        </td>
-                        <td className="px-6 py-4 text-gray-600 text-sm">
-                          {country.specialNote}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            {(() => {
+              const filteredCountries = getFilteredCountrySchedules();
+              
+              return filteredCountries.length > 0 && (
+                <div className="mb-12">
+                  <h3 className="text-2xl font-semibold text-kioo-dark mb-6 text-center">
+                    Country Summary
+                    {selectedCountry !== 'all' && ` - ${selectedCountry === 'sierra_leone' ? 'Sierra Leone' : 
+                                                       selectedCountry === 'liberia' ? 'Liberia' : 'Guinea'}`}
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full bg-white rounded-lg shadow-md overflow-hidden">
+                      <thead className="bg-kioo-primary text-white">
+                        <tr>
+                          <th className="px-6 py-4 text-left font-semibold">Country</th>
+                          <th className="px-6 py-4 text-left font-semibold">Live Days</th>
+                          <th className="px-6 py-4 text-left font-semibold">Pre-recorded Days</th>
+                          <th className="px-6 py-4 text-left font-semibold">Special Note</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredCountries.map((country, index) => (
+                          <tr key={country.country} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center">
+                                <div className={`w-4 h-4 rounded-full mr-3 ${
+                                  country.colorCode === 'green' ? 'bg-green-500' :
+                                  country.colorCode === 'blue' ? 'bg-blue-500' : 'bg-yellow-500'
+                                }`}></div>
+                                <span className="font-medium text-gray-900">
+                                  {country.country === 'Liberia' ? '🇱🇷' : country.country === 'Sierra Leone' ? '🇸🇱' : '🇬🇳'} {country.country}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-gray-700">
+                              {country.liveDays.length === 7 ? 'Daily (Mon–Sun)' : country.liveDays.join(', ')}
+                            </td>
+                            <td className="px-6 py-4 text-gray-700">
+                              {country.preRecordedDays.length === 0 ? '—' : country.preRecordedDays.join(', ')}
+                            </td>
+                            <td className="px-6 py-4 text-gray-600 text-sm">
+                              {country.specialNote}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Visual Country Cards */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Liberia Card */}
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-                <div className="text-center">
-                  <div className="text-4xl mb-3">🇱🇷</div>
-                  <h4 className="text-lg font-semibold text-green-800 mb-2">Liberia</h4>
-                  <div className="text-green-700 font-medium mb-2">Live every day</div>
-                  <div className="text-sm text-green-600">Mon–Sun</div>
-                </div>
-              </div>
+            {(() => {
+              const filteredCountries = getFilteredCountrySchedules();
+              
+              return (
+                <div className={`grid gap-6 ${
+                  filteredCountries.length === 1 ? 'md:grid-cols-1 max-w-sm mx-auto' :
+                  filteredCountries.length === 2 ? 'md:grid-cols-2' :
+                  'md:grid-cols-2 lg:grid-cols-4'
+                }`}>
+                  {/* Liberia Card */}
+                  {(selectedCountry === 'all' || selectedCountry === 'liberia') && (
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">🇱🇷</div>
+                        <h4 className="text-lg font-semibold text-green-800 mb-2">Liberia</h4>
+                        <div className="text-green-700 font-medium mb-2">Live every day</div>
+                        <div className="text-sm text-green-600">Mon–Sun</div>
+                      </div>
+                    </div>
+                  )}
 
-              {/* Sierra Leone Card */}
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-                <div className="text-center">
-                  <div className="text-4xl mb-3">🇸🇱</div>
-                  <h4 className="text-lg font-semibold text-blue-800 mb-2">Sierra Leone</h4>
-                  <div className="text-blue-700 font-medium mb-2">Live on Tue & Fri</div>
-                  <div className="text-sm text-blue-600">Tuesday, Friday</div>
-                </div>
-              </div>
+                  {/* Sierra Leone Card */}
+                  {(selectedCountry === 'all' || selectedCountry === 'sierra_leone') && (
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">🇸🇱</div>
+                        <h4 className="text-lg font-semibold text-blue-800 mb-2">Sierra Leone</h4>
+                        <div className="text-blue-700 font-medium mb-2">Live on Tue & Fri</div>
+                        <div className="text-sm text-blue-600">Tuesday, Friday</div>
+                      </div>
+                    </div>
+                  )}
 
-              {/* Guinea Card */}
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 border border-yellow-200">
-                <div className="text-center">
-                  <div className="text-4xl mb-3">🇬🇳</div>
-                  <h4 className="text-lg font-semibold text-yellow-800 mb-2">Guinea</h4>
-                  <div className="text-yellow-700 font-medium mb-2">Live on Wed & Sat</div>
-                  <div className="text-sm text-yellow-600">Wednesday, Saturday</div>
-                </div>
-              </div>
+                  {/* Guinea Card */}
+                  {(selectedCountry === 'all' || selectedCountry === 'guinea') && (
+                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 border border-yellow-200">
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">🇬🇳</div>
+                        <h4 className="text-lg font-semibold text-yellow-800 mb-2">Guinea</h4>
+                        <div className="text-yellow-700 font-medium mb-2">Live on Wed & Sat</div>
+                        <div className="text-sm text-yellow-600">Wednesday, Saturday</div>
+                      </div>
+                    </div>
+                  )}
 
-              {/* Sunday Service Card */}
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-                <div className="text-center">
-                  <div className="text-4xl mb-3">⛪</div>
-                  <h4 className="text-lg font-semibold text-purple-800 mb-2">Sunday Live Service</h4>
-                  <div className="text-purple-700 font-medium mb-2">Rotates weekly</div>
-                  <div className="text-sm text-purple-600">All three countries</div>
+                  {/* Sunday Service Card */}
+                  {selectedDay === 'all' || selectedDay === 'sunday' ? (
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+                      <div className="text-center">
+                        <div className="text-4xl mb-3">⛪</div>
+                        <h4 className="text-lg font-semibold text-purple-800 mb-2">Sunday Live Service</h4>
+                        <div className="text-purple-700 font-medium mb-2">Rotates weekly</div>
+                        <div className="text-sm text-purple-600">All three countries</div>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* Color Legend */}
             <div className="mt-8 bg-gray-50 rounded-lg p-6">
