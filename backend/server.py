@@ -210,6 +210,41 @@ class MajorGiftPledgeCreate(BaseModel):
     pledgeDate: str
     message: Optional[str] = None
 
+class MediaVideo(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    youtubeUrl: str
+    language: str = "en"  # en/fr
+    description: Optional[str] = None
+    publishedAt: Optional[datetime] = None
+    order: int = 1
+    featured: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MediaPhoto(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    imageUrl: str
+    alt: str
+    caption: Optional[str] = None
+    credit: Optional[str] = None
+    takenAt: Optional[datetime] = None
+    location: Optional[str] = None  # county/city
+    language: Optional[str] = "en"  # en/fr/optional
+    featured: bool = False
+    order: int = 1
+    consentToPublish: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MediaSettings(BaseModel):
+    mediaPromoEnabled: bool = True
+    videoEmbedPrivacy: str = "youtube-nocookie"
+    lightbox: str = "photoswipe"
+    photoPlaceholderStrategy: str = "lqip-blur"
+    maxColumnsDesktop: int = 3
+
 class MajorGiftsSettings(BaseModel):
     calUrl: Optional[str] = ""
     caseForSupportUrl: Optional[str] = ""
