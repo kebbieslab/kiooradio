@@ -10,18 +10,21 @@ const Programs = () => {
   const [filteredPrograms, setFilteredPrograms] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [schedule, setSchedule] = useState({});
+  const [liveBroadcastSchedule, setLiveBroadcastSchedule] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [programsRes, scheduleRes] = await Promise.all([
+        const [programsRes, scheduleRes, liveScheduleRes] = await Promise.all([
           axios.get(`${API}/programs`),
-          axios.get(`${API}/programs/schedule`)
+          axios.get(`${API}/programs/schedule`),
+          axios.get(`${API}/live-broadcast-schedule`)
         ]);
         
         setPrograms(programsRes.data);
         setSchedule(scheduleRes.data);
+        setLiveBroadcastSchedule(liveScheduleRes.data);
       } catch (error) {
         console.error('Error fetching programs:', error);
         // Fall back to static data if API is not available
