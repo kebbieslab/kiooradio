@@ -37,6 +37,7 @@ const Footer = () => {
     'Quick Links': [
       { name: 'Listen Live', nameKey: 'navListen', path: '/listen-live' },
       { name: 'Programs', nameKey: 'navPrograms', path: '/programs' },
+      { name: 'Media Gallery', nameKey: 'navMedia', path: '/media' },
       { name: 'Impact Stories', nameKey: 'navImpact', path: '/impact' },
       { name: 'About Us', nameKey: 'navAbout', path: '/about' },
     ],
