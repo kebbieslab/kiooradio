@@ -980,35 +980,81 @@ class CallLog(BaseModel):
 # Dashboard endpoints
 @api_router.get("/dashboard/weather")
 async def get_dashboard_weather():
-    """Get weather data for broadcast areas"""
+    """Get weather data for broadcast areas using Open-Meteo API"""
     try:
-        # Mock weather data - in production, integrate with OpenWeatherMap API
-        weather_data = {
-            "Foya, Liberia": {
-                "temperature": 28,
-                "condition": "Partly Cloudy",
-                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
-            },
-            "Koindu, Sierra Leone": {
-                "temperature": 26,
-                "condition": "Sunny",
-                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
-            },
-            "Guéckédou, Guinea": {
-                "temperature": 25,
-                "condition": "Overcast",
-                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
-            },
-            "Kissidougou, Guinea": {
-                "temperature": 27,
-                "condition": "Sunny",
-                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
-            }
+        import aiohttp
+        
+        # City coordinates
+        cities = {
+            "Foya, Liberia": {"lat": 8.3580, "lon": -10.2049},
+            "Koindu, Sierra Leone": {"lat": 8.2804, "lon": -10.6514},
+            "Guéckédou, Guinea": {"lat": 8.5674, "lon": -10.1330},
+            "Kissidougou, Guinea": {"lat": 9.1885, "lon": -10.0996}
         }
+        
+        weather_data = {}
+        
+        async with aiohttp.ClientSession() as session:
+            for city_name, coords in cities.items():
+                try:
+                    # Open-Meteo API call
+                    url = f"https://api.open-meteo.com/v1/forecast?latitude={coords['lat']}&longitude={coords['lon']}&current_weather=true&timezone=GMT"
+                    
+                    async with session.get(url, timeout=10) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            current = data.get("current_weather", {})
+                            
+                            # Map weather codes to conditions (WMO Weather interpretation codes)
+                            weather_code = current.get("weathercode", 0)
+                            condition_map = {
+                                0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+                                45: "Fog", 48: "Depositing rime fog", 51: "Light drizzle", 53: "Moderate drizzle",
+                                55: "Dense drizzle", 56: "Light freezing drizzle", 57: "Dense freezing drizzle",
+                                61: "Slight rain", 63: "Moderate rain", 65: "Heavy rain", 66: "Light freezing rain",
+                                67: "Heavy freezing rain", 71: "Slight snow", 73: "Moderate snow", 75: "Heavy snow",
+                                77: "Snow grains", 80: "Slight rain showers", 81: "Moderate rain showers",
+                                82: "Violent rain showers", 85: "Slight snow showers", 86: "Heavy snow showers",
+                                95: "Thunderstorm", 96: "Thunderstorm with hail", 99: "Thunderstorm with heavy hail"
+                            }
+                            
+                            condition = condition_map.get(weather_code, "Unknown")
+                            temperature = round(current.get("temperature", 0))
+                            
+                            weather_data[city_name] = {
+                                "temperature": temperature,
+                                "condition": condition,
+                                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+                            }
+                        else:
+                            # Fallback data if API fails
+                            weather_data[city_name] = {
+                                "temperature": "N/A",
+                                "condition": "Weather unavailable",
+                                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+                            }
+                except Exception as city_error:
+                    print(f"Error fetching weather for {city_name}: {city_error}")
+                    # Fallback data for this city
+                    weather_data[city_name] = {
+                        "temperature": "N/A",
+                        "condition": "Weather unavailable",
+                        "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+                    }
+        
         return weather_data
     except Exception as e:
         print(f"Error fetching weather data: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch weather data")
+        # Return fallback data for all cities
+        fallback_data = {}
+        cities = ["Foya, Liberia", "Koindu, Sierra Leone", "Guéckédou, Guinea", "Kissidougou, Guinea"]
+        for city in cities:
+            fallback_data[city] = {
+                "temperature": "N/A",
+                "condition": "Weather unavailable", 
+                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+            }
+        return fallback_data
 
 @api_router.get("/dashboard/schedule")
 async def get_dashboard_schedule():
