@@ -73,7 +73,29 @@ const PresentersDashboard = () => {
       }
     };
 
+    // Initial fetch
     fetchDashboardData();
+    
+    // Set up weather refresh every 15 minutes (900000ms)
+    const weatherInterval = setInterval(() => {
+      const fetchWeatherOnly = async () => {
+        try {
+          const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+          const weatherRes = await fetch(`${backendUrl}/api/dashboard/weather`);
+          if (weatherRes.ok) {
+            const weather = await weatherRes.json();
+            setWeatherData(weather);
+            console.log('Weather data refreshed:', new Date().toLocaleTimeString());
+          }
+        } catch (error) {
+          console.error('Error refreshing weather data:', error);
+        }
+      };
+      fetchWeatherOnly();
+    }, 900000); // 15 minutes
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(weatherInterval);
   }, []);
 
   // Translations
