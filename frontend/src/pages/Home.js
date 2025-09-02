@@ -99,6 +99,61 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Media Gallery Promo Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-kioo-primary to-kioo-secondary rounded-2xl overflow-hidden shadow-lg">
+            <div className="grid md:grid-cols-2 gap-0">
+              {/* Content */}
+              <div className="p-8 lg:p-12 text-white">
+                <h2 className="text-3xl font-bold mb-4">🎬 Media Gallery</h2>
+                <p className="text-green-100 text-lg mb-6 leading-relaxed">
+                  Discover the inspiring journey of Kioo Radio through videos and photos. 
+                  Watch our story unfold from divine calling to broadcasting reality across the Makona River Region.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link
+                    to="/media"
+                    className="bg-white text-kioo-primary px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center justify-center"
+                  >
+                    📹 Watch & Photos
+                  </Link>
+                  <Link
+                    to="/media#videos"
+                    className="border-2 border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-kioo-primary transition-colors inline-flex items-center justify-center"
+                  >
+                    ▶️ View Videos
+                  </Link>
+                </div>
+              </div>
+
+              {/* Visual */}
+              <div className="relative bg-gradient-to-br from-kioo-secondary to-kioo-primary p-8 lg:p-12 flex items-center justify-center">
+                <div className="grid grid-cols-2 gap-4 opacity-80">
+                  {/* Video thumbnails mockup */}
+                  <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+                    <div className="text-3xl mb-2">▶️</div>
+                    <div className="text-sm text-green-100">Vision Story</div>
+                  </div>
+                  <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+                    <div className="text-3xl mb-2">📹</div>
+                    <div className="text-sm text-green-100">French Version</div>
+                  </div>
+                  <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+                    <div className="text-3xl mb-2">📸</div>
+                    <div className="text-sm text-green-100">Photo Gallery</div>
+                  </div>
+                  <div className="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+                    <div className="text-3xl mb-2">🎤</div>
+                    <div className="text-sm text-green-100">Behind Scenes</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Coverage & Impact Section - Updated for Makona River Region */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
