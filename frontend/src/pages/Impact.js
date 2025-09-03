@@ -286,9 +286,6 @@ const Impact = () => {
                 <span className="en-text">Our signal reaches over 500,000 people.</span>
                 <span className="fr-text hidden">Notre signal atteint plus de 500 000 personnes.</span>
               </p>
-              <div className="mt-4 bg-gray-200 rounded-full h-3">
-                <div className="bg-kioo-secondary h-3 rounded-full transition-all duration-1000" style={{ width: '70%' }}></div>
-              </div>
             </article>
 
             {/* Guéckédou – N'Zérékoré corridor: Guinea */}
