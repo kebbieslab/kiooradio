@@ -27,3 +27,6 @@ aiofiles
 PyMuPDF
 Pillow
 aiohttp
+smtplib
+email-mime-text
+email-mime-multipart
