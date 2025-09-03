@@ -417,15 +417,88 @@ const PresentersDashboard = () => {
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <h1 className="text-xl font-bold">{t[language].title}</h1>
           
-          {/* Language Toggle */}
-          <div className="flex items-center space-x-2">
-            <span className="text-sm">{t[language].language}:</span>
-            <button
-              onClick={toggleLanguage}
-              className="bg-white bg-opacity-20 px-3 py-1 rounded text-sm font-medium hover:bg-opacity-30"
-            >
-              {language === 'en' ? '🇫🇷 Français' : '🇬🇧 English'}
-            </button>
+          <div className="flex items-center space-x-4">
+            {/* Notification Bell */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setShowNotifications(!showNotifications);
+                  if (!showNotifications) {
+                    markNotificationsAsRead();
+                  }
+                }}
+                className="relative bg-white bg-opacity-20 p-2 rounded-full hover:bg-opacity-30 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+              
+              {/* Notification Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 top-12 w-80 bg-white rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+                  <div className="p-4 border-b border-gray-200">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-medium text-gray-900">{t[language].notifications}</h3>
+                      {notifications.length > 0 && (
+                        <button
+                          onClick={markNotificationsAsRead}
+                          className="text-sm text-green-600 hover:text-green-700"
+                        >
+                          {t[language].markAllRead}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.slice(0, 10).map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`p-4 border-b border-gray-100 hover:bg-gray-50 ${
+                            !notification.read ? 'bg-blue-50' : ''
+                          }`}
+                        >
+                          <div className="flex items-start">
+                            <div className="mr-3 text-lg">
+                              {notification.type === 'testimony' ? '📝' : '📞'}
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium text-gray-900">
+                                {notification.message}
+                              </div>
+                              <div className="text-xs text-gray-500 mt-1">
+                                {new Date(notification.timestamp).toLocaleString()}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-gray-500">
+                        {t[language].noNotifications}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Language Toggle */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm">{t[language].language}:</span>
+              <button
+                onClick={toggleLanguage}
+                className="bg-white bg-opacity-20 px-3 py-1 rounded text-sm font-medium hover:bg-opacity-30"
+              >
+                {language === 'en' ? '🇫🇷 Français' : '🇬🇧 English'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
