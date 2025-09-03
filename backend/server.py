@@ -1152,12 +1152,74 @@ async def get_dashboard_presenters():
         print(f"Error fetching presenters: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch presenters")
 
+# Email notification function
+async def send_email_notification(subject: str, content: str, recipient: str = "kiooradiohq@gmail.com"):
+    """Send email notification for dashboard submissions"""
+    try:
+        # Email configuration (in production, these should be environment variables)
+        smtp_server = "smtp.gmail.com"
+        smtp_port = 587
+        sender_email = "noreply@kiooradio.org"  # This should be configured properly
+        sender_password = ""  # This should be set via environment variable
+        
+        # Create message
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = recipient
+        message["Subject"] = subject
+        
+        # Add body to email
+        message.attach(MIMEText(content, "plain"))
+        
+        # Note: Email sending is commented out for now since we don't have SMTP credentials
+        # In production, you would uncomment this and set proper SMTP credentials
+        """
+        # Create SMTP session
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()  # Enable TLS encryption
+        server.login(sender_email, sender_password)
+        text = message.as_string()
+        server.sendmail(sender_email, recipient, text)
+        server.quit()
+        """
+        
+        # For now, just log the email that would be sent
+        print(f"📧 EMAIL NOTIFICATION TO {recipient}:")
+        print(f"Subject: {subject}")
+        print(f"Content: {content}")
+        print("="*50)
+        
+        return True
+    except Exception as e:
+        print(f"Error sending email notification: {e}")
+        return False
+
 @api_router.post("/dashboard/testimony")
 async def submit_testimony(testimony: TestimonyLog):
     """Submit a testimony log"""
     try:
         # In production, save to database
         # For now, just return success
+        
+        # Send email notification
+        subject = f"New Testimony Submission - Kioo Radio Dashboard"
+        content = f"""
+New testimony has been submitted to the Kioo Radio Presenters Dashboard:
+
+Date: {testimony.date}
+Name: {testimony.name or 'Anonymous'}
+Location: {testimony.location}
+Program: {testimony.program}
+Summary: {testimony.summary}
+
+Submitted at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+---
+Kioo Radio Presenters Dashboard
+        """
+        
+        await send_email_notification(subject, content)
+        
         return {"message": "Testimony logged successfully", "id": testimony.id}
     except Exception as e:
         print(f"Error submitting testimony: {e}")
