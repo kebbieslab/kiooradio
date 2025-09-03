@@ -283,7 +283,13 @@ const PresentersDashboard = () => {
       
       // Export
       exportData: 'Exporter les Données',
-      noData: 'Aucune donnée à exporter'
+      noData: 'Aucune donnée à exporter',
+      
+      // Notifications
+      notifications: 'Notifications',
+      newSubmission: 'Nouvelle Soumission',
+      noNotifications: 'Aucune notification',
+      markAllRead: 'Marquer tout comme lu'
     }
   };
 
