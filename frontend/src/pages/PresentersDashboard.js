@@ -340,9 +340,9 @@ const PresentersDashboard = () => {
             {[
               { key: 'weather', label: t[language].weather },
               { key: 'social', label: t[language].social },
-              { key: 'submissions', label: t[language].submissions },
               { key: 'testimony', label: t[language].testimony },
-              { key: 'calls', label: t[language].calls }
+              { key: 'calls', label: t[language].calls },
+              { key: 'submissions', label: t[language].submissions }
             ].map((section) => (
               <button
                 key={section.key}
