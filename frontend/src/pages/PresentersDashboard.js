@@ -32,6 +32,12 @@ const PresentersDashboard = () => {
   useEffect(() => {
     const savedLanguage = localStorage.getItem('kioo-dashboard-language') || 'en';
     setLanguage(savedLanguage);
+    
+    // Load submitted data from localStorage
+    const savedTestimonies = JSON.parse(localStorage.getItem('kioo-testimonies') || '[]');
+    const savedCalls = JSON.parse(localStorage.getItem('kioo-calls') || '[]');
+    setSubmittedTestimonies(savedTestimonies);
+    setSubmittedCalls(savedCalls);
   }, []);
 
   // Save language preference
