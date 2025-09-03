@@ -52,144 +52,209 @@ const Impact = () => {
         </div>
       </section>
 
-      {/* Impact Metrics - Creative Design */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-        {/* Background Decoration */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-kioo-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-kioo-secondary rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-kioo-accent rounded-full blur-3xl"></div>
+      {/* Impact Metrics - Infographic Style */}
+      <section className="py-20 bg-gradient-to-r from-kioo-primary via-kioo-secondary to-kioo-accent relative overflow-hidden">
+        {/* Radio Wave Animation Background */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div className="w-96 h-96 border border-white rounded-full animate-ping animation-delay-0"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 border border-white rounded-full animate-ping animation-delay-1000"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 border border-white rounded-full animate-ping animation-delay-2000"></div>
+          </div>
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Header */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-kioo-dark mb-4">Our Impact by Numbers</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Broadcasting hope and transformation across West Africa</p>
+            <div className="inline-flex items-center space-x-3 bg-white/20 backdrop-blur-sm rounded-full px-8 py-3 mb-6">
+              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+              <span className="text-white font-semibold">LIVE BROADCASTING</span>
+              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+            </div>
+            <h2 className="text-5xl font-bold text-white mb-4">Reaching West Africa</h2>
+            <p className="text-xl text-white/90 max-w-2xl mx-auto">Every number tells a story of hope, connection, and transformation</p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Countries Reached */}
-            <div className="group relative">
-              <div className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-kioo-primary/10 to-transparent rounded-bl-full"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-kioo-primary/5 to-transparent rounded-tr-full"></div>
-                
-                {/* Icon Container */}
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-kioo-primary to-kioo-primary/80 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">🌍</span>
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+          {/* Main Statistics Display */}
+          <div className="relative">
+            {/* Central Hub */}
+            <div className="flex justify-center mb-12">
+              <div className="relative">
+                <div className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/30">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
+                    <span className="text-3xl">📻</span>
                   </div>
                 </div>
-                
-                {/* Content */}
-                <div className="relative">
-                  <h3 className="text-4xl font-bold text-kioo-dark mb-2 group-hover:text-kioo-primary transition-colors duration-300">3</h3>
-                  <p className="text-gray-600 font-medium">Countries Reached</p>
-                  <div className="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-kioo-primary to-kioo-primary/70 rounded-full transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-1000"></div>
-                  </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                  <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
                 </div>
               </div>
             </div>
+            
+            {/* Statistics Grid */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              
+              {/* Countries Stat */}
+              <div className="relative group">
+                {/* Connecting Line */}
+                <div className="hidden lg:block absolute top-0 left-1/2 w-px h-16 bg-white/30 transform -translate-x-1/2 -translate-y-16"></div>
+                
+                <div className="text-center transform group-hover:scale-105 transition-transform duration-300">
+                  {/* Hexagon Shape */}
+                  <div className="relative mx-auto w-24 h-24 mb-6">
+                    <div className="absolute inset-0 bg-white/20 backdrop-blur-sm transform rotate-45 rounded-lg border border-white/30"></div>
+                    <div className="absolute inset-2 bg-white rounded-lg transform rotate-45 flex items-center justify-center">
+                      <span className="text-2xl transform -rotate-45">🌍</span>
+                    </div>
+                  </div>
+                  
+                  {/* Counter */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-6xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">3</h3>
+                    <p className="text-white/90 font-medium text-lg">Countries</p>
+                    <p className="text-white/70 text-sm mt-2">Liberia • Sierra Leone • Guinea</p>
+                    
+                    {/* Progress Ring */}
+                    <div className="mt-4 mx-auto w-16 h-16 relative">
+                      <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeOpacity="0.2" strokeWidth="4"/>
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" 
+                                strokeDasharray="176" strokeDashoffset="0" 
+                                className="transition-all duration-2000 group-hover:stroke-dashoffset-44"/>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">100%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            {/* People in Coverage */}
-            <div className="group relative">
-              <div className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-kioo-secondary/10 to-transparent rounded-bl-full"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-kioo-secondary/5 to-transparent rounded-tr-full"></div>
+              {/* People Stat */}
+              <div className="relative group">
+                <div className="hidden lg:block absolute top-0 left-1/2 w-px h-16 bg-white/30 transform -translate-x-1/2 -translate-y-16"></div>
                 
-                {/* Icon Container */}
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-kioo-secondary to-kioo-secondary/80 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">👥</span>
+                <div className="text-center transform group-hover:scale-105 transition-transform duration-300">
+                  <div className="relative mx-auto w-24 h-24 mb-6">
+                    <div className="absolute inset-0 bg-white/20 backdrop-blur-sm transform rotate-45 rounded-lg border border-white/30"></div>
+                    <div className="absolute inset-2 bg-white rounded-lg transform rotate-45 flex items-center justify-center">
+                      <span className="text-2xl transform -rotate-45">👥</span>
+                    </div>
                   </div>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                  </div>
-                </div>
-                
-                {/* Content */}
-                <div className="relative">
-                  <h3 className="text-4xl font-bold text-kioo-dark mb-2 group-hover:text-kioo-secondary transition-colors duration-300">3M+</h3>
-                  <p className="text-gray-600 font-medium">People in Coverage</p>
-                  <div className="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-kioo-secondary to-kioo-secondary/70 rounded-full transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 delay-200"></div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-6xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">3M+</h3>
+                    <p className="text-white/90 font-medium text-lg">People Reached</p>
+                    <p className="text-white/70 text-sm mt-2">Daily broadcast coverage</p>
+                    
+                    <div className="mt-4 mx-auto w-16 h-16 relative">
+                      <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeOpacity="0.2" strokeWidth="4"/>
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" 
+                                strokeDasharray="176" strokeDashoffset="35" 
+                                className="transition-all duration-2000 group-hover:stroke-dashoffset-18"/>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">80%</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* 24/7 Broadcasting */}
-            <div className="group relative">
-              <div className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-kioo-accent/10 to-transparent rounded-bl-full"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-kioo-accent/5 to-transparent rounded-tr-full"></div>
+              {/* Broadcasting Stat */}
+              <div className="relative group">
+                <div className="hidden lg:block absolute top-0 left-1/2 w-px h-16 bg-white/30 transform -translate-x-1/2 -translate-y-16"></div>
                 
-                {/* Icon Container */}
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-kioo-accent to-kioo-accent/80 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">📻</span>
+                <div className="text-center transform group-hover:scale-105 transition-transform duration-300">
+                  <div className="relative mx-auto w-24 h-24 mb-6">
+                    <div className="absolute inset-0 bg-white/20 backdrop-blur-sm transform rotate-45 rounded-lg border border-white/30"></div>
+                    <div className="absolute inset-2 bg-white rounded-lg transform rotate-45 flex items-center justify-center">
+                      <span className="text-2xl transform -rotate-45">⏰</span>
+                    </div>
                   </div>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                  </div>
-                </div>
-                
-                {/* Content */}
-                <div className="relative">
-                  <h3 className="text-4xl font-bold text-kioo-dark mb-2 group-hover:text-kioo-accent transition-colors duration-300">24/7</h3>
-                  <p className="text-gray-600 font-medium">Broadcasting</p>
-                  <div className="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-kioo-accent to-kioo-accent/70 rounded-full transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 delay-400"></div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-6xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">24/7</h3>
+                    <p className="text-white/90 font-medium text-lg">Broadcasting</p>
+                    <p className="text-white/70 text-sm mt-2">Non-stop programming</p>
+                    
+                    <div className="mt-4 mx-auto w-16 h-16 relative">
+                      <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeOpacity="0.2" strokeWidth="4"/>
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" 
+                                strokeDasharray="176" strokeDashoffset="0" 
+                                className="transition-all duration-2000 group-hover:stroke-dashoffset-0"/>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">24/7</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Languages */}
-            <div className="group relative">
-              <div className="bg-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 relative overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-500/10 to-transparent rounded-bl-full"></div>
-                <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-green-500/5 to-transparent rounded-tr-full"></div>
+              {/* Languages Stat */}
+              <div className="relative group">
+                <div className="hidden lg:block absolute top-0 left-1/2 w-px h-16 bg-white/30 transform -translate-x-1/2 -translate-y-16"></div>
                 
-                {/* Icon Container */}
-                <div className="relative mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <span className="text-2xl">🎙️</span>
+                <div className="text-center transform group-hover:scale-105 transition-transform duration-300">
+                  <div className="relative mx-auto w-24 h-24 mb-6">
+                    <div className="absolute inset-0 bg-white/20 backdrop-blur-sm transform rotate-45 rounded-lg border border-white/30"></div>
+                    <div className="absolute inset-2 bg-white rounded-lg transform rotate-45 flex items-center justify-center">
+                      <span className="text-2xl transform -rotate-45">🎙️</span>
+                    </div>
                   </div>
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                  </div>
-                </div>
-                
-                {/* Content */}
-                <div className="relative">
-                  <h3 className="text-4xl font-bold text-kioo-dark mb-2 group-hover:text-green-600 transition-colors duration-300">6</h3>
-                  <p className="text-gray-600 font-medium">Languages</p>
-                  <div className="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 delay-600"></div>
+                  
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-6xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">6</h3>
+                    <p className="text-white/90 font-medium text-lg">Languages</p>
+                    <p className="text-white/70 text-sm mt-2">Multilingual programming</p>
+                    
+                    <div className="mt-4 mx-auto w-16 h-16 relative">
+                      <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeOpacity="0.2" strokeWidth="4"/>
+                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" 
+                                strokeDasharray="176" strokeDashoffset="88" 
+                                className="transition-all duration-2000 group-hover:stroke-dashoffset-44"/>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">6+</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          {/* Bottom Accent */}
-          <div className="mt-16 text-center">
-            <div className="inline-flex items-center space-x-2 bg-white/50 backdrop-blur-sm rounded-full px-8 py-4 border border-white/20">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-gray-600 font-medium">Broadcasting Live Now</span>
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            
+            {/* Bottom Status Bar */}
+            <div className="mt-16 flex justify-center">
+              <div className="bg-white/10 backdrop-blur-sm rounded-full px-12 py-4 border border-white/20 flex items-center space-x-6">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-white font-medium">ON AIR</span>
+                </div>
+                <div className="w-px h-6 bg-white/30"></div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div>
+                  <span className="text-white font-medium">FM 98.1</span>
+                </div>
+                <div className="w-px h-6 bg-white/30"></div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-purple-400 rounded-full animate-pulse"></div>
+                  <span className="text-white font-medium">STREAMING</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+        
+        {/* Custom CSS for animation delays */}
+        <style jsx>{`
+          .animation-delay-0 { animation-delay: 0s; }
+          .animation-delay-1000 { animation-delay: 1s; }
+          .animation-delay-2000 { animation-delay: 2s; }
+        `}</style>
       </section>
 
       {/* Coverage Areas - Updated per specifications */}
