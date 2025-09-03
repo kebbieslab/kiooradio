@@ -39,9 +39,83 @@ const PresentersDashboard = () => {
     // Load submitted data from localStorage
     const savedTestimonies = JSON.parse(localStorage.getItem('kioo-testimonies') || '[]');
     const savedCalls = JSON.parse(localStorage.getItem('kioo-calls') || '[]');
+    const savedNotifications = JSON.parse(localStorage.getItem('kioo-notifications') || '[]');
+    
     setSubmittedTestimonies(savedTestimonies);
     setSubmittedCalls(savedCalls);
+    setNotifications(savedNotifications);
+    setUnreadCount(savedNotifications.filter(n => !n.read).length);
+    
+    // Request permission for browser notifications
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
   }, []);
+
+  // Notification functions
+  const addNotification = (type, message, details) => {
+    const notification = {
+      id: Date.now().toString(),
+      type, // 'testimony' or 'call'
+      message,
+      details,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+    
+    const updatedNotifications = [notification, ...notifications];
+    setNotifications(updatedNotifications);
+    setUnreadCount(prev => prev + 1);
+    localStorage.setItem('kioo-notifications', JSON.stringify(updatedNotifications));
+    
+    // Show browser notification if permission granted
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Kioo Radio Dashboard', {
+        body: message,
+        icon: '/favicon.ico',
+        badge: '/favicon.ico'
+      });
+    }
+    
+    // Show toast notification
+    showToast(message, type);
+  };
+
+  const showToast = (message, type) => {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `fixed top-20 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg text-white transform transition-transform duration-300 translate-x-full ${
+      type === 'testimony' ? 'bg-green-600' : 'bg-blue-600'
+    }`;
+    toast.innerHTML = `
+      <div class="flex items-center">
+        <div class="mr-3 text-xl">${type === 'testimony' ? '📝' : '📞'}</div>
+        <div class="flex-1">
+          <div class="font-medium">New ${type === 'testimony' ? 'Testimony' : 'Call Log'}</div>
+          <div class="text-sm opacity-90">${message}</div>
+        </div>
+        <button class="ml-3 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()">×</button>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      toast.classList.add('translate-x-full');
+      setTimeout(() => toast.remove(), 300);
+    }, 5000);
+  };
+
+  const markNotificationsAsRead = () => {
+    const updatedNotifications = notifications.map(n => ({ ...n, read: true }));
+    setNotifications(updatedNotifications);
+    setUnreadCount(0);
+    localStorage.setItem('kioo-notifications', JSON.stringify(updatedNotifications));
+  };
 
   // Save language preference
   const toggleLanguage = () => {
