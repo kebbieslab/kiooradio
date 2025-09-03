@@ -7,6 +7,8 @@ const PresentersDashboard = () => {
   const [weatherData, setWeatherData] = useState({});
   const [programSchedule, setProgramSchedule] = useState([]);
   const [presenters, setPresenters] = useState({});
+  const [submittedTestimonies, setSubmittedTestimonies] = useState([]);
+  const [submittedCalls, setSubmittedCalls] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Form states
