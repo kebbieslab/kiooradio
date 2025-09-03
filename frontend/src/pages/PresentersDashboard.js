@@ -427,76 +427,78 @@ const PresentersDashboard = () => {
           </div>
         )}
 
-        {/* Schedule Section */}
-        {activeSection === 'schedule' && (
+        {/* Submissions Section */}
+        {activeSection === 'submissions' && (
           <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">{t[language].schedule}</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-2">{t[language].day}</th>
-                    <th className="text-left p-2">{t[language].time}</th>
-                    <th className="text-left p-2">{t[language].program}</th>
-                    <th className="text-left p-2">{t[language].presenter}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {programSchedule.map((item, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="p-2">{item.day}</td>
-                      <td className="p-2">{item.time}</td>
-                      <td className="p-2">{item.program}</td>
-                      <td className="p-2">{item.presenter}</td>
-                    </tr>
+            <h2 className="text-lg font-semibold mb-6">{t[language].submissions}</h2>
+            
+            {/* Testimonies */}
+            <div className="mb-8">
+              <h3 className="text-lg font-medium mb-4 text-green-600">📝 {t[language].testimonies}</h3>
+              {submittedTestimonies.length > 0 ? (
+                <div className="space-y-4">
+                  {submittedTestimonies.slice(0, 5).map((testimony) => (
+                    <div key={testimony.id} className="border rounded-lg p-4 bg-gray-50">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="font-medium text-gray-900">
+                          {testimony.name || 'Anonymous'} - {testimony.location}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {t[language].submittedOn} {new Date(testimony.submittedAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-600 mb-2">
+                        <strong>Program:</strong> {testimony.program}
+                      </div>
+                      <div className="text-sm text-gray-800">
+                        {testimony.summary}
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                  {submittedTestimonies.length > 5 && (
+                    <div className="text-center text-sm text-gray-500">
+                      ... and {submittedTestimonies.length - 5} more testimonies
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  {t[language].noSubmissions}
+                </div>
+              )}
             </div>
-          </div>
-        )}
 
-        {/* Presenters Section */}
-        {activeSection === 'presenters' && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">{t[language].presenters}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              {/* Liberia */}
-              <div className="border rounded p-4">
-                <h3 className="font-medium mb-3 text-green-600">🇱🇷 {t[language].liberia}</h3>
-                {presenters.liberia && presenters.liberia.map((presenter, index) => (
-                  <div key={index} className="mb-3 p-3 bg-gray-50 rounded">
-                    <div className="font-medium">{presenter.name}</div>
-                    <div className="text-sm text-gray-600">{presenter.programs.join(', ')}</div>
-                    <div className="text-xs text-gray-500">{presenter.schedule}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Sierra Leone */}
-              <div className="border rounded p-4">
-                <h3 className="font-medium mb-3 text-blue-600">🇸🇱 {t[language].sierraLeone}</h3>
-                {presenters.sierra_leone && presenters.sierra_leone.map((presenter, index) => (
-                  <div key={index} className="mb-3 p-3 bg-gray-50 rounded">
-                    <div className="font-medium">{presenter.name}</div>
-                    <div className="text-sm text-gray-600">{presenter.programs.join(', ')}</div>
-                    <div className="text-xs text-gray-500">{presenter.schedule}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Guinea */}
-              <div className="border rounded p-4">
-                <h3 className="font-medium mb-3 text-yellow-600">🇬🇳 {t[language].guinea}</h3>
-                {presenters.guinea && presenters.guinea.map((presenter, index) => (
-                  <div key={index} className="mb-3 p-3 bg-gray-50 rounded">
-                    <div className="font-medium">{presenter.name}</div>
-                    <div className="text-sm text-gray-600">{presenter.programs.join(', ')}</div>
-                    <div className="text-xs text-gray-500">{presenter.schedule}</div>
-                  </div>
-                ))}
-              </div>
+            {/* Call Logs */}
+            <div>
+              <h3 className="text-lg font-medium mb-4 text-blue-600">📞 {t[language].callLogs}</h3>
+              {submittedCalls.length > 0 ? (
+                <div className="space-y-4">
+                  {submittedCalls.slice(0, 5).map((call) => (
+                    <div key={call.id} className="border rounded-lg p-4 bg-gray-50">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="font-medium text-gray-900">
+                          {call.category} - {call.phone || 'No phone number'}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {t[language].submittedOn} {new Date(call.submittedAt).toLocaleDateString()} at {call.time}
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-800">
+                        {call.summary}
+                      </div>
+                    </div>
+                  ))}
+                  {submittedCalls.length > 5 && (
+                    <div className="text-center text-sm text-gray-500">
+                      ... and {submittedCalls.length - 5} more call logs
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center text-gray-500 py-8">
+                  {t[language].noSubmissions}
+                </div>
+              )}
             </div>
           </div>
         )}
