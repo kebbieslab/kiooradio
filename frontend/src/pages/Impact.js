@@ -64,17 +64,6 @@ const Impact = () => {
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-3 bg-white/20 backdrop-blur-sm rounded-full px-8 py-3 mb-6">
-              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-              <span className="text-white font-semibold">LIVE BROADCASTING</span>
-              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-            </div>
-            <h2 className="text-5xl font-bold text-white mb-4">Reaching West Africa</h2>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto">Every number tells a story of hope, connection, and transformation</p>
-          </div>
-          
           {/* Main Statistics Display */}
           <div className="relative">
             {/* Central Hub */}
