@@ -209,13 +209,26 @@ const PresentersDashboard = () => {
     e.preventDefault();
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      // Create testimony with timestamp
+      const testimonyWithId = {
+        ...testimonyForm,
+        id: Date.now().toString(),
+        submittedAt: new Date().toISOString()
+      };
+      
       const response = await fetch(`${backendUrl}/api/dashboard/testimony`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(testimonyForm)
+        body: JSON.stringify(testimonyWithId)
       });
 
       if (response.ok) {
+        // Add to local state and localStorage
+        const updatedTestimonies = [testimonyWithId, ...submittedTestimonies];
+        setSubmittedTestimonies(updatedTestimonies);
+        localStorage.setItem('kioo-testimonies', JSON.stringify(updatedTestimonies));
+        
         alert(t[language].testimonySuccess);
         setTestimonyForm({
           date: new Date().toISOString().split('T')[0],
