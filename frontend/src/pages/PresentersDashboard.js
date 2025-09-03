@@ -306,6 +306,10 @@ const PresentersDashboard = () => {
         setSubmittedTestimonies(updatedTestimonies);
         localStorage.setItem('kioo-testimonies', JSON.stringify(updatedTestimonies));
         
+        // Add notification
+        const message = `New testimony from ${testimonyWithId.name || 'Anonymous'} in ${testimonyWithId.location}`;
+        addNotification('testimony', message, testimonyWithId);
+        
         alert(t[language].testimonySuccess);
         setTestimonyForm({
           date: new Date().toISOString().split('T')[0],
