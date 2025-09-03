@@ -304,25 +304,6 @@ const Impact = () => {
               </p>
             </article>
           </div>
-          
-          <div className="text-center">
-            <div className="bg-kioo-primary text-white rounded-xl p-6">
-              <div className="grid md:grid-cols-3 gap-6">
-                <div>
-                  <div className="text-2xl font-bold">3M+ People</div>
-                  <div className="text-green-100 text-sm">Total Reach</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold">150+ Miles</div>
-                  <div className="text-green-100 text-sm">Signal Range</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold">Kissi, English, French, Mandingo, Fula & Gbandi +</div>
-                  <div className="text-green-100 text-sm">Languages</div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
