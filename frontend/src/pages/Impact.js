@@ -270,9 +270,6 @@ const Impact = () => {
                 <span className="en-text">Estimated 400,000 people within our coverage area.</span>
                 <span className="fr-text hidden">Environ 400 000 personnes couvertes.</span>
               </p>
-              <div className="mt-4 bg-gray-200 rounded-full h-3">
-                <div className="bg-kioo-primary h-3 rounded-full transition-all duration-1000" style={{ width: '85%' }}></div>
-              </div>
             </article>
 
             {/* Koindu, Kailahun District: Sierra Leone */}
