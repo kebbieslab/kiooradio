@@ -415,7 +415,7 @@ const PresentersDashboard = () => {
               <div className="border rounded p-4">
                 <h3 className="font-medium mb-3">Facebook</h3>
                 <a
-                  href="https://www.facebook.com/kiooradio"
+                  href="http://facebook.com/kiooradio/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-block bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600"
