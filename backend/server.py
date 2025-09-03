@@ -1231,6 +1231,26 @@ async def submit_call_log(call: CallLog):
     try:
         # In production, save to database
         # For now, just return success
+        
+        # Send email notification
+        subject = f"New Call Log Entry - Kioo Radio Dashboard"
+        content = f"""
+New phone call has been logged in the Kioo Radio Presenters Dashboard:
+
+Date: {call.date}
+Time: {call.time}
+Phone Number: {call.phone or 'Not provided'}
+Category: {call.category}
+Summary: {call.summary}
+
+Submitted at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+---
+Kioo Radio Presenters Dashboard
+        """
+        
+        await send_email_notification(subject, content)
+        
         return {"message": "Call logged successfully", "id": call.id}
     except Exception as e:
         print(f"Error submitting call log: {e}")
