@@ -230,7 +230,13 @@ const PresentersDashboard = () => {
       
       // Export
       exportData: 'Export Data',
-      noData: 'No data to export'
+      noData: 'No data to export',
+      
+      // Notifications
+      notifications: 'Notifications',
+      newSubmission: 'New Submission',
+      noNotifications: 'No notifications',
+      markAllRead: 'Mark all as read'
     },
     fr: {
       title: 'Tableau de Bord des Présentateurs Kioo Radio',
