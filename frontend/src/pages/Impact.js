@@ -82,35 +82,35 @@ const Impact = () => {
             </div>
             
             {/* Statistics Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               
               {/* Countries Stat */}
               <div className="relative group">
                 {/* Connecting Line */}
-                <div className="hidden lg:block absolute top-0 left-1/2 w-px h-16 bg-white/30 transform -translate-x-1/2 -translate-y-16"></div>
+                <div className="hidden lg:block absolute top-0 left-1/2 w-px h-12 bg-white/30 transform -translate-x-1/2 -translate-y-12"></div>
                 
                 <div className="text-center transform group-hover:scale-105 transition-transform duration-300">
                   {/* Hexagon Shape */}
-                  <div className="relative mx-auto w-24 h-24 mb-6">
+                  <div className="relative mx-auto w-16 h-16 mb-4">
                     <div className="absolute inset-0 bg-white/20 backdrop-blur-sm transform rotate-45 rounded-lg border border-white/30"></div>
                     <div className="absolute inset-2 bg-white rounded-lg transform rotate-45 flex items-center justify-center">
-                      <span className="text-2xl transform -rotate-45">🌍</span>
+                      <span className="text-lg transform -rotate-45">🌍</span>
                     </div>
                   </div>
                   
                   {/* Counter */}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <h3 className="text-6xl font-bold text-white mb-2 group-hover:scale-110 transition-transform duration-300">3</h3>
-                    <p className="text-white/90 font-medium text-lg">Countries</p>
-                    <p className="text-white/70 text-sm mt-2">Liberia • Sierra Leone • Guinea</p>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <h3 className="text-4xl font-bold text-white mb-1 group-hover:scale-110 transition-transform duration-300">3</h3>
+                    <p className="text-white/90 font-medium text-base">Countries</p>
+                    <p className="text-white/70 text-xs mt-1">Liberia • Sierra Leone • Guinea</p>
                     
                     {/* Progress Ring */}
-                    <div className="mt-4 mx-auto w-16 h-16 relative">
-                      <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
-                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeOpacity="0.2" strokeWidth="4"/>
-                        <circle cx="32" cy="32" r="28" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" 
-                                strokeDasharray="176" strokeDashoffset="0" 
-                                className="transition-all duration-2000 group-hover:stroke-dashoffset-44"/>
+                    <div className="mt-3 mx-auto w-12 h-12 relative">
+                      <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 48 48">
+                        <circle cx="24" cy="24" r="20" fill="none" stroke="white" strokeOpacity="0.2" strokeWidth="3"/>
+                        <circle cx="24" cy="24" r="20" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" 
+                                strokeDasharray="126" strokeDashoffset="0" 
+                                className="transition-all duration-2000 group-hover:stroke-dashoffset-32"/>
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center">
                         <span className="text-white text-xs font-bold">100%</span>
