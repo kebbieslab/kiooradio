@@ -433,8 +433,8 @@ const Impact = () => {
               <p className="text-lg text-gray-600">Real testimonies from our listeners</p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {impactStories.map((story) => (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {impactStories.slice(0, 4).map((story) => (
                 <div key={story.id} className="impact-card p-6 rounded-xl card-hover">
                   <div className="flex items-start space-x-4 mb-4">
                     <div className="w-12 h-12 bg-kioo-primary rounded-full flex items-center justify-center flex-shrink-0">
