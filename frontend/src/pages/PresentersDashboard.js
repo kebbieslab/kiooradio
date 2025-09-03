@@ -318,8 +318,7 @@ const PresentersDashboard = () => {
             {[
               { key: 'weather', label: t[language].weather },
               { key: 'social', label: t[language].social },
-              { key: 'schedule', label: t[language].schedule },
-              { key: 'presenters', label: t[language].presenters },
+              { key: 'submissions', label: t[language].submissions },
               { key: 'testimony', label: t[language].testimony },
               { key: 'calls', label: t[language].calls }
             ].map((section) => (
