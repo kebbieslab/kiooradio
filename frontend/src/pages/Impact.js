@@ -7,6 +7,7 @@ const API = `${BACKEND_URL}/api`;
 const Impact = () => {
   const [impactStories, setImpactStories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showMapModal, setShowMapModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
