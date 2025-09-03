@@ -1153,14 +1153,22 @@ async def get_dashboard_presenters():
         raise HTTPException(status_code=500, detail="Failed to fetch presenters")
 
 # Email notification function
-async def send_email_notification(subject: str, content: str, recipient: str = "kiooradiohq@gmail.com"):
+async def send_email_notification(subject: str, content: str, recipient: str = None):
     """Send email notification for dashboard submissions"""
     try:
-        # Email configuration (in production, these should be environment variables)
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        sender_email = "noreply@kiooradio.org"  # This should be configured properly
-        sender_password = ""  # This should be set via environment variable
+        # Get email configuration from environment variables
+        smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.environ.get('SMTP_PORT', '587'))
+        sender_email = os.environ.get('SENDER_EMAIL')
+        sender_password = os.environ.get('SENDER_PASSWORD')
+        default_recipient = os.environ.get('RECIPIENT_EMAIL', 'kiooradiohq@gmail.com')
+        
+        if not recipient:
+            recipient = default_recipient
+            
+        if not sender_email or not sender_password:
+            print("❌ SMTP credentials not configured in environment variables")
+            return False
         
         # Create message
         message = MIMEMultipart()
@@ -1171,9 +1179,9 @@ async def send_email_notification(subject: str, content: str, recipient: str = "
         # Add body to email
         message.attach(MIMEText(content, "plain"))
         
-        # Note: Email sending is commented out for now since we don't have SMTP credentials
-        # In production, you would uncomment this and set proper SMTP credentials
-        """
+        # Send email using SMTP
+        print(f"📧 Sending email notification to {recipient}...")
+        
         # Create SMTP session
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()  # Enable TLS encryption
@@ -1181,17 +1189,18 @@ async def send_email_notification(subject: str, content: str, recipient: str = "
         text = message.as_string()
         server.sendmail(sender_email, recipient, text)
         server.quit()
-        """
         
-        # For now, just log the email that would be sent
-        print(f"📧 EMAIL NOTIFICATION TO {recipient}:")
+        print(f"✅ Email sent successfully to {recipient}")
         print(f"Subject: {subject}")
-        print(f"Content: {content}")
-        print("="*50)
         
         return True
     except Exception as e:
-        print(f"Error sending email notification: {e}")
+        print(f"❌ Error sending email notification: {e}")
+        # Fallback: log the email content
+        print(f"📧 EMAIL NOTIFICATION (FALLBACK LOG) TO {recipient}:")
+        print(f"Subject: {subject}")
+        print(f"Content: {content}")
+        print("="*50)
         return False
 
 @api_router.post("/dashboard/testimony")
