@@ -348,6 +348,10 @@ const PresentersDashboard = () => {
         setSubmittedCalls(updatedCalls);
         localStorage.setItem('kioo-calls', JSON.stringify(updatedCalls));
         
+        // Add notification
+        const message = `New ${callWithId.category.toLowerCase()} call logged at ${callWithId.time}`;
+        addNotification('call', message, callWithId);
+        
         alert(t[language].callSuccess);
         setCallForm({
           date: new Date().toISOString().split('T')[0],
