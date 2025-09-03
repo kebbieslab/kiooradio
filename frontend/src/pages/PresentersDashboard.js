@@ -9,6 +9,9 @@ const PresentersDashboard = () => {
   const [presenters, setPresenters] = useState({});
   const [submittedTestimonies, setSubmittedTestimonies] = useState([]);
   const [submittedCalls, setSubmittedCalls] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Form states
