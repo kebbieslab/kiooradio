@@ -247,13 +247,26 @@ const PresentersDashboard = () => {
     e.preventDefault();
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      
+      // Create call log with timestamp
+      const callWithId = {
+        ...callForm,
+        id: Date.now().toString(),
+        submittedAt: new Date().toISOString()
+      };
+      
       const response = await fetch(`${backendUrl}/api/dashboard/call-log`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(callForm)
+        body: JSON.stringify(callWithId)
       });
 
       if (response.ok) {
+        // Add to local state and localStorage
+        const updatedCalls = [callWithId, ...submittedCalls];
+        setSubmittedCalls(updatedCalls);
+        localStorage.setItem('kioo-calls', JSON.stringify(updatedCalls));
+        
         alert(t[language].callSuccess);
         setCallForm({
           date: new Date().toISOString().split('T')[0],
