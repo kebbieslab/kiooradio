@@ -302,9 +302,6 @@ const Impact = () => {
                 <span className="en-text">The most populous region in our coverage area, with over 2.1 million people.</span>
                 <span className="fr-text hidden">La région la plus peuplée de notre couverture, avec plus de 2,1 millions de personnes.</span>
               </p>
-              <div className="mt-4 bg-gray-200 rounded-full h-3">
-                <div className="bg-kioo-accent h-3 rounded-full transition-all duration-1000" style={{ width: '90%' }}></div>
-              </div>
             </article>
           </div>
           
