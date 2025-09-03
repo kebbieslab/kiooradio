@@ -68,15 +68,15 @@ const Impact = () => {
           {/* Main Statistics Display */}
           <div className="relative">
             {/* Central Hub */}
-            <div className="flex justify-center mb-12">
+            <div className="flex justify-center mb-8">
               <div className="relative">
-                <div className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/30">
-                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
-                    <span className="text-3xl">📻</span>
+                <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-3 border-white/30">
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                    <span className="text-2xl">📻</span>
                   </div>
                 </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                  <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+                <div className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 </div>
               </div>
             </div>
