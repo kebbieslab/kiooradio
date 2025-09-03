@@ -106,8 +106,7 @@ const PresentersDashboard = () => {
       title: 'Kioo Radio Presenters Dashboard',
       language: 'Language',
       weather: 'Current Weather',
-      schedule: 'Weekly Program Schedule',
-      presenters: 'Presenters by Country',
+      submissions: 'Recent Submissions',
       testimony: 'Submit Testimony',
       calls: 'Log a Phone Call',
       export: 'Download as Excel',
@@ -118,11 +117,11 @@ const PresentersDashboard = () => {
       condition: 'Condition',
       updated: 'Updated',
       
-      // Schedule
-      day: 'Day',
-      time: 'Time',
-      program: 'Program',
-      presenter: 'Presenter',
+      // Submissions
+      testimonies: 'Recent Testimonies',
+      callLogs: 'Recent Phone Calls',
+      noSubmissions: 'No submissions yet',
+      submittedOn: 'Submitted on',
       
       // Forms
       date: 'Date',
@@ -142,11 +141,6 @@ const PresentersDashboard = () => {
         'Prayer Request': 'Prayer Request'
       },
       
-      // Countries
-      liberia: 'Liberia',
-      sierraLeone: 'Sierra Leone',
-      guinea: 'Guinea',
-      
       // Success messages
       testimonySuccess: 'Testimony logged successfully!',
       callSuccess: 'Phone call logged successfully!',
@@ -159,8 +153,7 @@ const PresentersDashboard = () => {
       title: 'Tableau de Bord des Présentateurs Kioo Radio',
       language: 'Langue',
       weather: 'Météo Actuelle',
-      schedule: 'Horaire des Programmes',
-      presenters: 'Présentateurs par Pays',
+      submissions: 'Soumissions Récentes',
       testimony: 'Soumettre un Témoignage',
       calls: 'Journal d\'Appel',
       export: 'Télécharger en Excel',
@@ -171,11 +164,11 @@ const PresentersDashboard = () => {
       condition: 'Condition',
       updated: 'Mis à jour',
       
-      // Schedule
-      day: 'Jour',
-      time: 'Heure',
-      program: 'Programme',
-      presenter: 'Présentateur',
+      // Submissions
+      testimonies: 'Témoignages Récents',
+      callLogs: 'Appels Téléphoniques Récents',
+      noSubmissions: 'Aucune soumission pour le moment',
+      submittedOn: 'Soumis le',
       
       // Forms
       date: 'Date',
@@ -194,11 +187,6 @@ const PresentersDashboard = () => {
         'Complaint': 'Plainte',
         'Prayer Request': 'Demande de Prière'
       },
-      
-      // Countries
-      liberia: 'Libéria',
-      sierraLeone: 'Sierra Leone',
-      guinea: 'Guinée',
       
       // Success messages
       testimonySuccess: 'Témoignage enregistré avec succès!',
