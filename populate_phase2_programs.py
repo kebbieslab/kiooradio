@@ -36,7 +36,7 @@ async def populate_programs():
     # WEEKDAY SCHEDULE (Monday-Friday) - Phase 2 Modified
     weekday_programs = []
     
-    # Daily programs that repeat Monday-Friday - REFINED PHASE 2
+    # Daily programs that repeat Monday-Friday - REFINED PHASE 2 + Pastoral Enhancements
     weekday_schedule = [
         {"time": "00:00", "end_time": "00:30", "title": "Music & Reflection", "language": "english", "type": "music"},
         {"time": "00:30", "end_time": "01:00", "title": "Community Announcements", "language": "english", "type": "community"},
@@ -60,8 +60,8 @@ async def populate_programs():
         {"time": "08:00", "end_time": "08:30", "title": "Through the Bible (TTB)", "language": "kissi", "type": "bible_teaching"},
         {"time": "08:30", "end_time": "09:00", "title": "Community Programming", "language": "kissi", "type": "community"},
         {"time": "09:00", "end_time": "10:00", "title": "VNA French Satellite Feed", "language": "french", "type": "satellite"},
-        {"time": "10:00", "end_time": "10:30", "title": "Music & Reflection", "language": "french", "type": "music"},
-        {"time": "10:30", "end_time": "11:00", "title": "Women & Family Hour", "language": "english", "type": "community"},
+        {"time": "10:00", "end_time": "10:30", "title": "Pastor's Corner - Liberia", "language": "english", "type": "sermon", "new_program": True},
+        {"time": "10:30", "end_time": "11:00", "title": "Spot Light English", "language": "english", "type": "educational", "new_program": True},
         {"time": "11:00", "end_time": "11:30", "title": "Community Announcements", "language": "english", "type": "community"},
         {"time": "11:30", "end_time": "12:00", "title": "Music & Reflection", "language": "english", "type": "music"},
         {"time": "12:00", "end_time": "12:30", "title": "Through the Bible (TTB)", "language": "kissi", "type": "bible_teaching"},
@@ -69,8 +69,8 @@ async def populate_programs():
         {"time": "13:00", "end_time": "13:30", "title": "Community Announcements", "language": "kissi", "type": "community"},
         {"time": "13:30", "end_time": "14:00", "title": "Phone-in Program", "language": "kissi", "type": "interactive"},
         {"time": "14:00", "end_time": "14:30", "title": "Through the Bible (TTB)", "language": "french", "type": "bible_teaching"},
-        {"time": "14:30", "end_time": "15:00", "title": "Health & Wellness", "language": "french", "type": "community"},
-        {"time": "15:00", "end_time": "15:30", "title": "Community Announcements", "language": "french", "type": "community"},
+        {"time": "14:30", "end_time": "15:00", "title": "Pastor's Corner - Sierra Leone", "language": "english", "type": "sermon", "new_program": True},
+        {"time": "15:00", "end_time": "15:30", "title": "Hope & Care Outreach", "language": "mixed", "type": "outreach", "new_program": True},
         {"time": "15:30", "end_time": "16:00", "title": "Music & Reflection", "language": "french", "type": "music"},
         # REFINEMENT: Mandingo Christian Teaching
         {"time": "16:00", "end_time": "16:30", "title": "Christian Teaching", "language": "mandingo", "type": "christian_teaching"},
@@ -80,16 +80,16 @@ async def populate_programs():
         {"time": "17:30", "end_time": "18:00", "title": "Community Programming", "language": "fula", "type": "community"},
         # REFINEMENT: Evening News & Roundup made hourly
         {"time": "18:00", "end_time": "19:00", "title": "Evening News & Roundup", "language": "mixed", "type": "community"},
-        {"time": "19:00", "end_time": "19:30", "title": "Music & Reflection", "language": "english", "type": "music"},
+        {"time": "19:00", "end_time": "19:30", "title": "Pastor's Corner - Guinea", "language": "french", "type": "sermon", "new_program": True},
         {"time": "19:30", "end_time": "20:00", "title": "Community Announcements", "language": "english", "type": "community"},
         {"time": "20:00", "end_time": "20:30", "title": "Community Programming", "language": "kissi", "type": "community"},
         {"time": "20:30", "end_time": "21:00", "title": "Phone-in Program", "language": "kissi", "type": "interactive"},
         {"time": "21:00", "end_time": "21:30", "title": "Through the Bible (TTB)", "language": "english", "type": "bible_teaching"},
-        {"time": "21:30", "end_time": "22:00", "title": "Evening Worship & Reflection", "language": "english", "type": "devotional"},
+        {"time": "21:30", "end_time": "22:00", "title": "Pastor's Corner - Multi-Country", "language": "mixed", "type": "sermon", "new_program": True},
         {"time": "22:00", "end_time": "22:30", "title": "Through the Bible (TTB)", "language": "french", "type": "bible_teaching"},  # Last TTB at 10pm
         {"time": "22:30", "end_time": "23:00", "title": "Community Announcements", "language": "mixed", "type": "community"},
         {"time": "23:00", "end_time": "23:30", "title": "Music & Reflection", "language": "mixed", "type": "music"},
-        {"time": "23:30", "end_time": "00:00", "title": "Hope & Care Outreach", "language": "mixed", "type": "community"}
+        {"time": "23:30", "end_time": "00:00", "title": "Evening Devotional", "language": "mixed", "type": "devotional"}
     ]
     
     # Create weekday programs (Monday-Friday) + Renaissance on Friday
