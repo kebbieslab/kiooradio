@@ -139,7 +139,7 @@ class KiooRadioAPITester:
                 print(f"❌ 'La Vie Chez Nous' program not found")
                 self.failed_tests.append("New French Programs - 'La Vie Chez Nous' not found")
             
-            # Check for "Renaissance" - Friday 15:00-15:30 (30 minutes)
+            # Check for "Renaissance" - Friday 15:00-16:00 (60 minutes - UPDATED from 30 to 60)
             renaissance_programs = [p for p in programs if 'renaissance' in p.get('title', '').lower()]
             if renaissance_programs:
                 renaissance_program = renaissance_programs[0]
