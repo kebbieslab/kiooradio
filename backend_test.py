@@ -88,8 +88,19 @@ class KiooRadioAPITester:
         if success:
             print(f"✅ Programs endpoint accessible, found {len(programs)} programs")
             
+            # CRITICAL VERIFICATION 0: Total program count should be 291
+            print(f"\n🔍 CRITICAL VERIFICATION 0: Total Program Count")
+            expected_total = 291
+            actual_total = len(programs)
+            
+            if actual_total == expected_total:
+                print(f"✅ Total program count matches expected: {actual_total} programs")
+            else:
+                print(f"❌ Total program count mismatch: expected {expected_total}, found {actual_total}")
+                self.failed_tests.append(f"Phase 2 Programs - Total count mismatch: expected {expected_total}, found {actual_total}")
+            
             # CRITICAL VERIFICATION 1: Check for new program entries mentioned in Phase 2
-            print(f"\n🔍 CRITICAL VERIFICATION 1: New Program Entries")
+            print(f"\n🔍 CRITICAL VERIFICATION 1: New Phase 2 Programs")
             expected_new_programs = [
                 "Makona Talk Show",
                 "Guidelines", 
@@ -119,7 +130,32 @@ class KiooRadioAPITester:
             if missing_programs:
                 self.failed_tests.append(f"Phase 2 Programs - Missing new programs: {missing_programs}")
             else:
-                print(f"✅ All {len(expected_new_programs)} new programs found")
+                print(f"✅ All {len(expected_new_programs)} new Phase 2 programs found")
+            
+            # CRITICAL VERIFICATION 1.1: Specific verification for Makona Talk Show (3 hours Saturday)
+            makona_programs = [p for p in programs if 'makona talk show' in p.get('title', '').lower()]
+            if makona_programs:
+                makona_program = makona_programs[0]
+                if makona_program.get('day_of_week', '').lower() == 'saturday':
+                    print(f"✅ Makona Talk Show correctly scheduled on Saturday")
+                    if makona_program.get('duration_minutes', 0) >= 180:  # 3 hours = 180 minutes
+                        print(f"✅ Makona Talk Show has correct duration: {makona_program.get('duration_minutes')} minutes")
+                    else:
+                        print(f"❌ Makona Talk Show duration incorrect: {makona_program.get('duration_minutes')} minutes (should be 180+)")
+                        self.failed_tests.append(f"Makona Talk Show - Duration should be 180+ minutes, found {makona_program.get('duration_minutes')}")
+                else:
+                    print(f"❌ Makona Talk Show not on Saturday: {makona_program.get('day_of_week')}")
+                    self.failed_tests.append(f"Makona Talk Show - Should be on Saturday, found on {makona_program.get('day_of_week')}")
+            
+            # CRITICAL VERIFICATION 1.2: Verify Truth for Life has both English and French versions
+            truth_programs = [p for p in programs if 'truth for life' in p.get('title', '').lower()]
+            if truth_programs:
+                languages_found = set(p.get('language', '').lower() for p in truth_programs)
+                if 'english' in languages_found and 'french' in languages_found:
+                    print(f"✅ Truth for Life found in both English and French")
+                else:
+                    print(f"❌ Truth for Life missing languages: expected English & French, found {languages_found}")
+                    self.failed_tests.append(f"Truth for Life - Should have English & French versions, found {languages_found}")
             
             # CRITICAL VERIFICATION 2: TTB adjustments - removed from Fula/Mandingo and weekends
             print(f"\n🔍 CRITICAL VERIFICATION 2: TTB Adjustments")
@@ -153,8 +189,25 @@ class KiooRadioAPITester:
                     self.failed_tests.append(f"TTB Adjustments - Still on weekends: {weekend_ttb}")
                 else:
                     print(f"✅ TTB correctly removed from weekends")
+                
+                # Verify TTB is still present in English/French/Kissi on weekdays
+                weekday_ttb_languages = set()
+                for program in ttb_programs:
+                    day = program.get('day_of_week', '').lower()
+                    if day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
+                        weekday_ttb_languages.add(program.get('language', '').lower())
+                
+                expected_ttb_languages = {'english', 'french', 'kissi'}
+                found_ttb_languages = weekday_ttb_languages.intersection(expected_ttb_languages)
+                
+                if found_ttb_languages:
+                    print(f"✅ TTB still present in weekday languages: {found_ttb_languages}")
+                else:
+                    print(f"❌ TTB missing from expected weekday languages: {expected_ttb_languages}")
+                    self.failed_tests.append(f"TTB Adjustments - Missing from weekday languages: {expected_ttb_languages}")
             else:
-                print(f"⚠️  No TTB programs found in current schedule")
+                print(f"❌ No TTB programs found - this is unexpected for Phase 2")
+                self.failed_tests.append("TTB Adjustments - No TTB programs found at all")
         
         # Test get programs schedule
         success, schedule = self.run_test("Get Programs Schedule", "GET", "programs/schedule", 200)
