@@ -1689,6 +1689,291 @@ class KiooRadioAPITester:
             # If it returns 200 instead of 422, it means validation is not strict
             print(f"⚠️  Call log validation may be lenient (accepts incomplete data)")
 
+    def test_pastoral_enhancements_verification(self):
+        """CRITICAL TEST: Verify all pastoral enhancements as requested in review"""
+        print("\n=== CRITICAL VERIFICATION: PASTORAL ENHANCEMENTS ===")
+        print("Testing: Hope & Care Outreach, Pastor Sermon Slots, Evangelist Billy Bimba Programs, Renaissance")
+        
+        # Get all programs first
+        success, all_programs = self.run_test("Get All Programs for Pastoral Verification", "GET", "programs", 200)
+        
+        if not success:
+            print("❌ Failed to get programs for pastoral verification")
+            return
+        
+        print(f"✅ Retrieved {len(all_programs)} total programs for verification")
+        
+        # VERIFICATION 1: Check total program count should be 284
+        expected_total = 284
+        actual_total = len(all_programs)
+        
+        if actual_total == expected_total:
+            print(f"✅ Total program count correct: {actual_total} programs")
+        else:
+            print(f"⚠️  Total program count: expected {expected_total}, found {actual_total}")
+            if actual_total > expected_total:
+                print(f"   Note: {actual_total - expected_total} extra programs found")
+            else:
+                print(f"   Note: {expected_total - actual_total} programs missing")
+        
+        # VERIFICATION 2: Hope & Care Outreach - Daily Monday-Friday (15:00-15:30)
+        print(f"\n🔍 DETAILED VERIFICATION: Hope & Care Outreach")
+        hope_care_programs = [p for p in all_programs if 'hope' in p.get('title', '').lower() and 'care' in p.get('title', '').lower() and 'outreach' in p.get('title', '').lower()]
+        
+        if hope_care_programs:
+            print(f"✅ FOUND: {len(hope_care_programs)} Hope & Care Outreach programs")
+            
+            # Expected: 5 programs (Monday-Friday)
+            expected_count = 5
+            if len(hope_care_programs) == expected_count:
+                print(f"✅ Correct number of Hope & Care Outreach programs: {len(hope_care_programs)}")
+            else:
+                print(f"❌ Wrong number of Hope & Care Outreach programs: expected {expected_count}, found {len(hope_care_programs)}")
+                self.failed_tests.append(f"Hope & Care Outreach - Wrong count: expected {expected_count}, found {len(hope_care_programs)}")
+            
+            # Verify each program's attributes
+            expected_days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+            found_days = []
+            
+            for program in hope_care_programs:
+                title = program.get('title', '')
+                day = program.get('day_of_week', '').lower()
+                start_time = program.get('start_time', '')
+                duration = program.get('duration_minutes', 0)
+                category = program.get('category', '').lower()
+                
+                print(f"\n   📋 Program: {title}")
+                print(f"      Day: {day}")
+                print(f"      Time: {start_time}")
+                print(f"      Duration: {duration} minutes")
+                print(f"      Category: {category}")
+                
+                # Track found days
+                if day in expected_days:
+                    found_days.append(day)
+                
+                # Verify attributes
+                checks = [
+                    ("Day", day in expected_days, f"Should be weekday (Monday-Friday), found {day}"),
+                    ("Start Time", start_time == '15:00', f"Should be 15:00 (moved from nighttime), found {start_time}"),
+                    ("Duration", duration == 30, f"Should be 30 minutes, found {duration}"),
+                    ("Category", category == 'outreach', f"Should be outreach type, found {category}")
+                ]
+                
+                for check_name, condition, error_msg in checks:
+                    if condition:
+                        print(f"      ✅ {check_name}: Correct")
+                    else:
+                        print(f"      ❌ {check_name}: {error_msg}")
+                        self.failed_tests.append(f"Hope & Care Outreach ({day}) - {error_msg}")
+            
+            # Verify all weekdays are covered
+            missing_days = [day for day in expected_days if day not in found_days]
+            if missing_days:
+                print(f"\n❌ Missing Hope & Care Outreach programs for days: {missing_days}")
+                self.failed_tests.append(f"Hope & Care Outreach - Missing days: {missing_days}")
+            else:
+                print(f"\n✅ Hope & Care Outreach programs found for all weekdays (Monday-Friday)")
+        else:
+            print(f"❌ CRITICAL ERROR: No 'Hope & Care Outreach' programs found")
+            self.failed_tests.append("CRITICAL - Hope & Care Outreach programs not found in database")
+        
+        # VERIFICATION 3: Four Pastor Sermon Slots (30 minutes each) from 3 countries
+        print(f"\n🔍 DETAILED VERIFICATION: Pastor Sermon Slots")
+        pastor_corner_programs = [p for p in all_programs if 'pastor' in p.get('title', '').lower() and 'corner' in p.get('title', '').lower()]
+        
+        if pastor_corner_programs:
+            print(f"✅ FOUND: {len(pastor_corner_programs)} Pastor's Corner programs")
+            
+            # Expected: 4 programs
+            expected_count = 4
+            if len(pastor_corner_programs) == expected_count:
+                print(f"✅ Correct number of Pastor's Corner programs: {len(pastor_corner_programs)}")
+            else:
+                print(f"❌ Wrong number of Pastor's Corner programs: expected {expected_count}, found {len(pastor_corner_programs)}")
+                self.failed_tests.append(f"Pastor's Corner - Wrong count: expected {expected_count}, found {len(pastor_corner_programs)}")
+            
+            # Expected slots with their details
+            expected_slots = [
+                {"country": "liberia", "time": "10:00", "language": "english"},
+                {"country": "sierra leone", "time": "14:30", "language": "english"},
+                {"country": "guinea", "time": "19:00", "language": "french"},
+                {"country": "multi-country", "time": "21:30", "language": "mixed"}
+            ]
+            
+            for program in pastor_corner_programs:
+                title = program.get('title', '')
+                start_time = program.get('start_time', '')
+                duration = program.get('duration_minutes', 0)
+                language = program.get('language', '').lower()
+                
+                print(f"\n   📋 Program: {title}")
+                print(f"      Time: {start_time}")
+                print(f"      Duration: {duration} minutes")
+                print(f"      Language: {language}")
+                
+                # Verify duration is 30 minutes
+                if duration == 30:
+                    print(f"      ✅ Duration: Correct (30 minutes)")
+                else:
+                    print(f"      ❌ Duration: Should be 30 minutes, found {duration}")
+                    self.failed_tests.append(f"Pastor's Corner ({title}) - Wrong duration: expected 30, found {duration}")
+                
+                # Check if this matches any expected slot
+                matching_slot = None
+                for slot in expected_slots:
+                    if start_time == slot["time"] and language == slot["language"]:
+                        matching_slot = slot
+                        break
+                
+                if matching_slot:
+                    print(f"      ✅ Matches expected slot: {matching_slot['country']} at {matching_slot['time']}")
+                else:
+                    print(f"      ❌ Does not match any expected slot")
+                    self.failed_tests.append(f"Pastor's Corner ({title}) - Does not match expected slots")
+        else:
+            print(f"❌ CRITICAL ERROR: No 'Pastor's Corner' programs found")
+            self.failed_tests.append("CRITICAL - Pastor's Corner programs not found in database")
+        
+        # VERIFICATION 4: Evangelist Billy Bimba Weekly Programs
+        print(f"\n🔍 DETAILED VERIFICATION: Evangelist Billy Bimba Programs")
+        billy_bimba_programs = [p for p in all_programs if 'billy bimba' in p.get('title', '').lower()]
+        
+        if billy_bimba_programs:
+            print(f"✅ FOUND: {len(billy_bimba_programs)} Evangelist Billy Bimba programs")
+            
+            # Expected: 2 programs (Saturday English Hour, Sunday Kissi Hour)
+            expected_count = 2
+            if len(billy_bimba_programs) == expected_count:
+                print(f"✅ Correct number of Billy Bimba programs: {len(billy_bimba_programs)}")
+            else:
+                print(f"❌ Wrong number of Billy Bimba programs: expected {expected_count}, found {len(billy_bimba_programs)}")
+                self.failed_tests.append(f"Billy Bimba - Wrong count: expected {expected_count}, found {len(billy_bimba_programs)}")
+            
+            # Check for Saturday English Hour (10:00-11:00, English, 60 minutes)
+            saturday_program = None
+            sunday_program = None
+            
+            for program in billy_bimba_programs:
+                day = program.get('day_of_week', '').lower()
+                if day == 'saturday':
+                    saturday_program = program
+                elif day == 'sunday':
+                    sunday_program = program
+            
+            # Verify Saturday English Hour
+            if saturday_program:
+                print(f"\n   📋 Saturday Program: {saturday_program.get('title')}")
+                checks = [
+                    ("Day", saturday_program.get('day_of_week', '').lower() == 'saturday', "Should be Saturday"),
+                    ("Start Time", saturday_program.get('start_time') == '10:00', f"Should be 10:00, found {saturday_program.get('start_time')}"),
+                    ("Duration", saturday_program.get('duration_minutes') == 60, f"Should be 60 minutes, found {saturday_program.get('duration_minutes')}"),
+                    ("Language", saturday_program.get('language', '').lower() == 'english', f"Should be English, found {saturday_program.get('language')}")
+                ]
+                
+                for check_name, condition, error_msg in checks:
+                    if condition:
+                        print(f"      ✅ {check_name}: Correct")
+                    else:
+                        print(f"      ❌ {check_name}: {error_msg}")
+                        self.failed_tests.append(f"Billy Bimba Saturday - {error_msg}")
+            else:
+                print(f"❌ Saturday Billy Bimba program not found")
+                self.failed_tests.append("Billy Bimba - Saturday English Hour not found")
+            
+            # Verify Sunday Kissi Hour
+            if sunday_program:
+                print(f"\n   📋 Sunday Program: {sunday_program.get('title')}")
+                checks = [
+                    ("Day", sunday_program.get('day_of_week', '').lower() == 'sunday', "Should be Sunday"),
+                    ("Start Time", sunday_program.get('start_time') == '06:00', f"Should be 06:00, found {sunday_program.get('start_time')}"),
+                    ("Duration", sunday_program.get('duration_minutes') == 60, f"Should be 60 minutes, found {sunday_program.get('duration_minutes')}"),
+                    ("Language", sunday_program.get('language', '').lower() == 'kissi', f"Should be Kissi, found {sunday_program.get('language')}")
+                ]
+                
+                for check_name, condition, error_msg in checks:
+                    if condition:
+                        print(f"      ✅ {check_name}: Correct")
+                    else:
+                        print(f"      ❌ {check_name}: {error_msg}")
+                        self.failed_tests.append(f"Billy Bimba Sunday - {error_msg}")
+            else:
+                print(f"❌ Sunday Billy Bimba program not found")
+                self.failed_tests.append("Billy Bimba - Sunday Kissi Hour not found")
+        else:
+            print(f"❌ CRITICAL ERROR: No 'Evangelist Billy Bimba' programs found")
+            self.failed_tests.append("CRITICAL - Evangelist Billy Bimba programs not found in database")
+        
+        # VERIFICATION 5: Renaissance Program (Friday 16:30-17:30, French, 1 hour)
+        print(f"\n🔍 DETAILED VERIFICATION: Renaissance Program")
+        renaissance_programs = [p for p in all_programs if 'renaissance' in p.get('title', '').lower()]
+        
+        if renaissance_programs:
+            renaissance = renaissance_programs[0]
+            print(f"✅ FOUND: {renaissance.get('title')}")
+            
+            # Check all attributes
+            checks = [
+                ("Day", renaissance.get('day_of_week', '').lower(), 'friday'),
+                ("Start Time", renaissance.get('start_time'), '16:30'),
+                ("Duration", renaissance.get('duration_minutes'), 60),
+                ("Language", renaissance.get('language', '').lower(), 'french')
+            ]
+            
+            all_correct = True
+            for check_name, actual, expected in checks:
+                if actual == expected:
+                    print(f"   ✅ {check_name}: {actual}")
+                else:
+                    print(f"   ❌ {check_name}: expected {expected}, found {actual}")
+                    self.failed_tests.append(f"Renaissance - {check_name} incorrect: expected {expected}, found {actual}")
+                    all_correct = False
+            
+            if all_correct:
+                print(f"✅ Renaissance: ALL ATTRIBUTES CORRECT")
+            else:
+                print(f"❌ Renaissance: Some attributes incorrect")
+        else:
+            print(f"❌ CRITICAL ERROR: 'Renaissance' program NOT FOUND")
+            self.failed_tests.append("CRITICAL - Renaissance program not found in database")
+        
+        # VERIFICATION 6: Count New Phase 2 programs (should be 53)
+        print(f"\n🔍 VERIFICATION: New Phase 2 Program Count")
+        
+        # Look for programs that might be Phase 2 (new programs)
+        phase2_indicators = [
+            'hope', 'care', 'outreach', 'pastor', 'corner', 'billy bimba', 'renaissance',
+            'makona talk show', 'guidelines', 'love & faith', 'daily sermon', 'truth for life', 
+            'la vie chez nous', 'spot light english'
+        ]
+        
+        phase2_programs = []
+        for program in all_programs:
+            title_lower = program.get('title', '').lower()
+            for indicator in phase2_indicators:
+                if indicator in title_lower:
+                    phase2_programs.append(program.get('title'))
+                    break
+        
+        print(f"✅ Found {len(phase2_programs)} identifiable Phase 2 programs")
+        
+        # Expected: 53 Phase 2 programs
+        expected_phase2_count = 53
+        if len(phase2_programs) >= expected_phase2_count:
+            print(f"✅ Phase 2 program count meets expectation: {len(phase2_programs)} >= {expected_phase2_count}")
+        else:
+            print(f"❌ Phase 2 program count below expectation: {len(phase2_programs)} < {expected_phase2_count}")
+            self.failed_tests.append(f"Phase 2 Count - Expected at least {expected_phase2_count}, found {len(phase2_programs)}")
+        
+        # Final summary for pastoral enhancements
+        print(f"\n📊 PASTORAL ENHANCEMENTS VERIFICATION SUMMARY:")
+        print(f"   Total Programs: {len(all_programs)}")
+        print(f"   Hope & Care Outreach: {'✅ FOUND' if hope_care_programs else '❌ MISSING'} ({len(hope_care_programs) if hope_care_programs else 0}/5)")
+        print(f"   Pastor's Corner: {'✅ FOUND' if pastor_corner_programs else '❌ MISSING'} ({len(pastor_corner_programs) if pastor_corner_programs else 0}/4)")
+        print(f"   Billy Bimba Programs: {'✅ FOUND' if billy_bimba_programs else '❌ MISSING'} ({len(billy_bimba_programs) if billy_bimba_programs else 0}/2)")
+        print(f"   Renaissance: {'✅ FOUND' if renaissance_programs else '❌ MISSING'}")
+        print(f"   Phase 2 Programs: {len(phase2_programs)}/53")
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Kioo Radio API Tests...")
