@@ -194,7 +194,7 @@ async def populate_programs():
             "updated_at": datetime.now().isoformat()
         })
     
-    # SUNDAY SCHEDULE - Phase 2 Modified (TTB removed from weekends)
+    # SUNDAY SCHEDULE - Phase 2 Modified (TTB removed from weekends) + La Vie Chez Nous
     sunday_schedule = [
         {"time": "00:00", "end_time": "01:00", "title": "Music & Reflection", "language": "english", "type": "music"},
         {"time": "01:00", "end_time": "02:00", "title": "Music & Reflection", "language": "english", "type": "music"},
@@ -211,7 +211,8 @@ async def populate_programs():
         {"time": "10:00", "end_time": "12:00", "title": "Live Partner Church Service", "language": "mixed", "type": "live_service"},
         {"time": "12:00", "end_time": "13:00", "title": "Post-Service Reflection", "language": "mixed", "type": "devotional"},
         {"time": "13:00", "end_time": "14:00", "title": "Community Programming", "language": "french", "type": "community"},
-        {"time": "14:00", "end_time": "15:00", "title": "Community Programming", "language": "french", "type": "community"},
+        # NEW PROGRAM: La Vie Chez Nous (French program on Sunday 14:00-15:00)
+        {"time": "14:00", "end_time": "15:00", "title": "La Vie Chez Nous", "language": "french", "type": "talk_show", "new_program": True},
         {"time": "15:00", "end_time": "16:00", "title": "Community Programming", "language": "mandingo", "type": "community"},
         {"time": "16:00", "end_time": "17:00", "title": "Community Programming", "language": "mandingo", "type": "community"},
         {"time": "17:00", "end_time": "18:00", "title": "Community Programming", "language": "fula", "type": "community"},
