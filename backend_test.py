@@ -215,8 +215,8 @@ class KiooRadioAPITester:
         if success:
             print(f"✅ Programs schedule endpoint accessible")
             
-            # CRITICAL VERIFICATION 3: Schedule data integrity
-            print(f"\n🔍 CRITICAL VERIFICATION 3: Schedule Data Integrity")
+            # CRITICAL VERIFICATION 3: Complete Schedule Coverage
+            print(f"\n🔍 CRITICAL VERIFICATION 3: Complete Schedule Coverage")
             
             if isinstance(schedule, dict):
                 days_found = list(schedule.keys())
@@ -229,12 +229,49 @@ class KiooRadioAPITester:
                 else:
                     print(f"✅ Schedule contains all 7 days of the week")
                 
-                # Check each day has programs
-                for day, day_programs in schedule.items():
-                    if isinstance(day_programs, list) and len(day_programs) > 0:
-                        print(f"✅ {day.title()} has {len(day_programs)} programs")
+                # Check specific program counts per day as mentioned in review request
+                expected_counts = {
+                    'monday': 49, 'tuesday': 49, 'wednesday': 49, 'thursday': 49, 'friday': 49,
+                    'saturday': 22, 'sunday': 24
+                }
+                
+                for day, expected_count in expected_counts.items():
+                    if day in schedule:
+                        day_programs = schedule[day]
+                        actual_count = len(day_programs) if isinstance(day_programs, list) else 0
+                        
+                        if actual_count == expected_count:
+                            print(f"✅ {day.title()} has correct program count: {actual_count}")
+                        else:
+                            print(f"❌ {day.title()} program count mismatch: expected {expected_count}, found {actual_count}")
+                            self.failed_tests.append(f"Schedule Coverage - {day} expected {expected_count} programs, found {actual_count}")
                     else:
-                        print(f"⚠️  {day.title()} has no programs scheduled")
+                        print(f"❌ {day.title()} missing from schedule")
+                        self.failed_tests.append(f"Schedule Coverage - {day} missing")
+                
+                # Verify Saturday includes Makona Talk Show
+                if 'saturday' in schedule:
+                    saturday_programs = schedule['saturday']
+                    makona_found = any('makona talk show' in p.get('title', '').lower() for p in saturday_programs)
+                    if makona_found:
+                        print(f"✅ Saturday schedule includes Makona Talk Show")
+                    else:
+                        print(f"❌ Saturday schedule missing Makona Talk Show")
+                        self.failed_tests.append("Schedule Coverage - Saturday missing Makona Talk Show")
+                
+                # Verify Sunday includes Truth for Life in French
+                if 'sunday' in schedule:
+                    sunday_programs = schedule['sunday']
+                    truth_french_found = any(
+                        'truth for life' in p.get('title', '').lower() and 
+                        p.get('language', '').lower() == 'french' 
+                        for p in sunday_programs
+                    )
+                    if truth_french_found:
+                        print(f"✅ Sunday schedule includes Truth for Life in French")
+                    else:
+                        print(f"❌ Sunday schedule missing Truth for Life in French")
+                        self.failed_tests.append("Schedule Coverage - Sunday missing Truth for Life in French")
             else:
                 print(f"❌ Schedule data is not in expected dictionary format")
                 self.failed_tests.append("Schedule Integrity - Invalid data format")
