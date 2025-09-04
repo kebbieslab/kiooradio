@@ -239,7 +239,7 @@ async def populate_programs():
             "updated_at": datetime.now().isoformat()
         })
     
-    # SUNDAY SCHEDULE - Phase 2 Modified (TTB removed from weekends) + La Vie Chez Nous
+    # SUNDAY SCHEDULE - Phase 2 Modified + Billy Bimba Kissi Program (TTB removed from weekends) + La Vie Chez Nous
     sunday_schedule = [
         {"time": "00:00", "end_time": "01:00", "title": "Music & Reflection", "language": "english", "type": "music"},
         {"time": "01:00", "end_time": "02:00", "title": "Music & Reflection", "language": "english", "type": "music"},
@@ -247,7 +247,7 @@ async def populate_programs():
         {"time": "03:00", "end_time": "04:00", "title": "Community Programming", "language": "french", "type": "community"},
         {"time": "04:00", "end_time": "05:00", "title": "Music & Reflection", "language": "french", "type": "music"},
         {"time": "05:00", "end_time": "06:00", "title": "Morning Devotional & Prayer", "language": "english", "type": "devotional"},
-        {"time": "06:00", "end_time": "07:00", "title": "Pre-Service Programming", "language": "english", "type": "community"},
+        {"time": "06:00", "end_time": "07:00", "title": "Evangelist Billy Bimba - Kissi Hour", "language": "kissi", "type": "sermon", "new_program": True},
         # PHASE 2 NEW PROGRAM: Truth for Life (Sunday French version)
         {"time": "07:00", "end_time": "07:30", "title": "Truth for Life", "language": "french", "type": "bible_teaching", "new_program": True},
         {"time": "07:30", "end_time": "08:00", "title": "Daily Sermon", "language": "english", "type": "sermon", "new_program": True},
