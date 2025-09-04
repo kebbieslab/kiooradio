@@ -92,7 +92,7 @@ async def populate_programs():
         {"time": "23:30", "end_time": "00:00", "title": "Hope & Care Outreach", "language": "mixed", "type": "community"}
     ]
     
-    # Create weekday programs (Monday-Friday)
+    # Create weekday programs (Monday-Friday) + Renaissance on Friday
     for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
         for program in weekday_schedule:
             # SPECIAL CASE: Replace Monday 19:00-20:00 with Gbandi Language Hour
@@ -118,6 +118,27 @@ async def populate_programs():
                 continue
             elif day == 'monday' and program["time"] == "19:30":
                 # Skip this slot as it's covered by Gbandi Language Hour
+                continue
+            
+            # SPECIAL CASE: Add Renaissance on Friday 15:00-15:30 (replacing Community Announcements)
+            elif day == 'friday' and program["time"] == "15:00":
+                weekday_programs.append({
+                    "id": str(uuid.uuid4()),
+                    "title": "Renaissance",
+                    "description": "Renaissance - Friday French program",
+                    "host": "French Program Host",
+                    "language": "french",
+                    "category": "talk_show",
+                    "day_of_week": day,
+                    "start_time": program["time"],
+                    "end_time": "15:30",
+                    "duration": 30,
+                    "is_live": True,
+                    "is_recurring": True,
+                    "new_program": True,
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat()
+                })
                 continue
             
             duration = 30 if program["time"] != "09:00" and program["time"] != "18:00" else (60 if program["time"] == "09:00" else 60)  # VNA French and Evening News are 60 mins
