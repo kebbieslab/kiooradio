@@ -498,7 +498,38 @@ async def get_programs(language: Optional[ProgramLanguage] = None, day: Optional
         filter_dict["day_of_week"] = day
     
     programs = await db.programs.find(filter_dict).sort("start_time", 1).to_list(1000)
-    return [Program(**program) for program in programs]
+    
+    # Convert database programs to API format, handling data inconsistencies
+    converted_programs = []
+    for program in programs:
+        try:
+            # Remove MongoDB _id field
+            if '_id' in program:
+                del program['_id']
+            
+            # Handle duration field mapping
+            if 'duration' in program and 'duration_minutes' not in program:
+                program['duration_minutes'] = program['duration']
+            elif 'duration_minutes' not in program:
+                program['duration_minutes'] = 30  # Default duration
+            
+            # Remove extra fields that aren't in the Program model
+            extra_fields = ['duration', 'end_time', 'is_recurring', 'new_program', 'updated_at']
+            for field in extra_fields:
+                if field in program:
+                    del program[field]
+            
+            # Convert datetime strings to datetime objects if needed
+            if 'created_at' in program and isinstance(program['created_at'], str):
+                from datetime import datetime
+                program['created_at'] = datetime.fromisoformat(program['created_at'].replace('Z', '+00:00'))
+            
+            converted_programs.append(Program(**program))
+        except Exception as e:
+            print(f"Error converting program {program.get('id', 'unknown')}: {e}")
+            continue
+    
+    return converted_programs
 
 @api_router.get("/programs/schedule")
 async def get_schedule():
