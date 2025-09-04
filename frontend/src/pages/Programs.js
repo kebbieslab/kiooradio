@@ -260,7 +260,7 @@ const Programs = () => {
     { "Day": "Monday", "Time": "19:00-20:00", "Program": "Gbandi Language Hour", "Language": "Gbandi", "Type": "Community" },
     { "Day": "Wednesday", "Time": "20:00-21:00", "Program": "Youth Connect Special", "Language": "English", "Type": "Youth/Community" },
     { "Day": "Friday", "Time": "18:00-19:00", "Program": "Women's Empowerment Hour", "Language": "Mixed", "Type": "Community" },
-    { "Day": "Saturday", "Time": "06:00-09:00", "Program": "Makona Talk Show", "Language": "English", "Type": "Interactive", "description": "All 3 countries meeting to discuss issues faced by our people - Highly interactive" }
+    { "Day": "Saturday", "Time": "06:00-09:00", "Program": "Makona Talk Show", "Language": "English, French & Kissi", "Type": "Interactive", "description": "All 3 countries meeting to discuss issues faced by our people - Highly interactive" }
   ];
 
   // Color mapping for program types
