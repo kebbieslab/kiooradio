@@ -350,14 +350,25 @@ const Programs = () => {
     else if (activeTab === 'saturday') schedule = saturdaySchedule;
     else if (activeTab === 'sunday') schedule = sundaySchedule;
 
-    if (selectedLanguage === 'all') {
-      setFilteredPrograms(schedule);
-    } else {
-      setFilteredPrograms(schedule.filter(program => 
+    // Apply both language and type filters
+    let filtered = schedule;
+    
+    // Filter by language
+    if (selectedLanguage !== 'all') {
+      filtered = filtered.filter(program => 
         program.Language.toLowerCase().includes(selectedLanguage.toLowerCase())
-      ));
+      );
     }
-  }, [activeTab, selectedLanguage]);
+    
+    // Filter by type
+    if (selectedType !== 'all') {
+      filtered = filtered.filter(program => 
+        program.Type === selectedType
+      );
+    }
+    
+    setFilteredPrograms(filtered);
+  }, [activeTab, selectedLanguage, selectedType]);
 
   const getCurrentSchedule = () => {
     if (activeTab === 'weekday') return weekdaySchedule;
