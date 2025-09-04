@@ -151,7 +151,7 @@ const Programs = () => {
     fetchData();
   }, []);
 
-  // Complete schedule data - Updated with Phase 2 REFINED modifications
+  // Complete schedule data - Updated with Phase 2 PASTORAL ENHANCEMENTS
   const weekdaySchedule = [
     { "Start Time": "00:00", "End Time": "00:30", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
     { "Start Time": "00:30", "End Time": "01:00", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
@@ -174,7 +174,7 @@ const Programs = () => {
     { "Start Time": "08:00", "End Time": "08:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
     { "Start Time": "08:30", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "09:00", "End Time": "10:00", "Program": "VNA French Satellite Feed", "Language": "French", "Type": "Satellite" },
-    { "Start Time": "10:00", "End Time": "10:30", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
+    { "Start Time": "10:00", "End Time": "10:30", "Program": "Pastor's Corner - Liberia", "Language": "English", "Type": "Sermon", "highlight": true },
     { "Start Time": "10:30", "End Time": "11:00", "Program": "Spot Light English", "Language": "English", "Type": "Educational", "highlight": true },
     { "Start Time": "11:00", "End Time": "11:30", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
     { "Start Time": "11:30", "End Time": "12:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
@@ -183,23 +183,24 @@ const Programs = () => {
     { "Start Time": "13:00", "End Time": "13:30", "Program": "Community Announcements", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "13:30", "End Time": "14:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
     { "Start Time": "14:00", "End Time": "14:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
-    { "Start Time": "14:30", "End Time": "15:00", "Program": "Health & Wellness", "Language": "French", "Type": "Community" },
-    { "Start Time": "15:00", "End Time": "16:00", "Program": "Renaissance", "Language": "French", "Type": "Interactive", "highlight": true },
+    { "Start Time": "14:30", "End Time": "15:00", "Program": "Pastor's Corner - Sierra Leone", "Language": "English", "Type": "Sermon", "highlight": true },
+    { "Start Time": "15:00", "End Time": "15:30", "Program": "Hope & Care Outreach", "Language": "Mixed", "Type": "Outreach", "highlight": true },
+    { "Start Time": "15:30", "End Time": "16:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
     { "Start Time": "16:00", "End Time": "16:30", "Program": "Christian Teaching", "Language": "Mandingo", "Type": "Bible Teaching", "highlight": true },
     { "Start Time": "16:30", "End Time": "17:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
     { "Start Time": "17:00", "End Time": "17:30", "Program": "Christian Teaching", "Language": "Fula", "Type": "Bible Teaching", "highlight": true },
     { "Start Time": "17:30", "End Time": "18:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
     { "Start Time": "18:00", "End Time": "19:00", "Program": "Evening News & Roundup", "Language": "Mixed", "Type": "Community" },
-    { "Start Time": "19:00", "End Time": "19:30", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "19:00", "End Time": "19:30", "Program": "Pastor's Corner - Guinea", "Language": "French", "Type": "Sermon", "highlight": true },
     { "Start Time": "19:30", "End Time": "20:00", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
     { "Start Time": "20:00", "End Time": "20:30", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "20:30", "End Time": "21:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
     { "Start Time": "21:00", "End Time": "21:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "21:30", "End Time": "22:00", "Program": "Evening Worship & Reflection", "Language": "English", "Type": "Devotional" },
+    { "Start Time": "21:30", "End Time": "22:00", "Program": "Pastor's Corner - Multi-Country", "Language": "Mixed", "Type": "Sermon", "highlight": true },
     { "Start Time": "22:00", "End Time": "22:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
     { "Start Time": "22:30", "End Time": "23:00", "Program": "Community Announcements", "Language": "Mixed", "Type": "Community" },
     { "Start Time": "23:00", "End Time": "23:30", "Program": "Music & Reflection", "Language": "Mixed", "Type": "Music" },
-    { "Start Time": "23:30", "End Time": "00:00", "Program": "Hope & Care Outreach", "Language": "Mixed", "Type": "Community" }
+    { "Start Time": "23:30", "End Time": "00:00", "Program": "Evening Devotional", "Language": "Mixed", "Type": "Devotional" }
   ];
 
   const saturdaySchedule = [
