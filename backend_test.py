@@ -479,6 +479,197 @@ class KiooRadioAPITester:
         }
         self.run_test("Create Program", "POST", "programs", 200, data=program_data)
 
+    def test_new_french_programs_verification(self):
+        """CRITICAL TEST: Verify the two new French programs added to Kioo Radio schedule"""
+        print("\n=== CRITICAL VERIFICATION: NEW FRENCH PROGRAMS ===")
+        print("Testing: 'La Vie Chez Nous' (Sunday 14:00-15:00) and 'Renaissance' (Friday 15:00-15:30)")
+        
+        # Get all programs first
+        success, all_programs = self.run_test("Get All Programs for French Verification", "GET", "programs", 200)
+        
+        if not success:
+            print("❌ Failed to get programs for French verification")
+            return
+        
+        print(f"✅ Retrieved {len(all_programs)} total programs for verification")
+        
+        # VERIFICATION 1: Check total program count should be 285
+        expected_total = 285
+        actual_total = len(all_programs)
+        
+        if actual_total == expected_total:
+            print(f"✅ Total program count correct: {actual_total} programs")
+        else:
+            print(f"⚠️  Total program count: expected {expected_total}, found {actual_total}")
+            if actual_total > expected_total:
+                print(f"   Note: {actual_total - expected_total} extra programs found")
+            else:
+                print(f"   Note: {expected_total - actual_total} programs missing")
+        
+        # VERIFICATION 2: Count French programs
+        french_programs = [p for p in all_programs if p.get('language', '').lower() == 'french']
+        print(f"✅ Found {len(french_programs)} French programs total")
+        
+        # VERIFICATION 3: Detailed verification of La Vie Chez Nous
+        print(f"\n🔍 DETAILED VERIFICATION: La Vie Chez Nous")
+        la_vie_programs = [p for p in all_programs if 'la vie chez nous' in p.get('title', '').lower()]
+        
+        if la_vie_programs:
+            la_vie = la_vie_programs[0]
+            print(f"✅ FOUND: {la_vie.get('title')}")
+            
+            # Check all attributes
+            checks = [
+                ("Day", la_vie.get('day_of_week', '').lower(), 'sunday'),
+                ("Start Time", la_vie.get('start_time'), '14:00'),
+                ("Duration", la_vie.get('duration_minutes'), 60),
+                ("Language", la_vie.get('language', '').lower(), 'french')
+            ]
+            
+            all_correct = True
+            for check_name, actual, expected in checks:
+                if actual == expected:
+                    print(f"   ✅ {check_name}: {actual}")
+                else:
+                    print(f"   ❌ {check_name}: expected {expected}, found {actual}")
+                    self.failed_tests.append(f"La Vie Chez Nous - {check_name} incorrect: expected {expected}, found {actual}")
+                    all_correct = False
+            
+            if all_correct:
+                print(f"✅ La Vie Chez Nous: ALL ATTRIBUTES CORRECT")
+            else:
+                print(f"❌ La Vie Chez Nous: Some attributes incorrect")
+        else:
+            print(f"❌ CRITICAL ERROR: 'La Vie Chez Nous' program NOT FOUND")
+            self.failed_tests.append("CRITICAL - La Vie Chez Nous program not found in database")
+        
+        # VERIFICATION 4: Detailed verification of Renaissance
+        print(f"\n🔍 DETAILED VERIFICATION: Renaissance")
+        renaissance_programs = [p for p in all_programs if 'renaissance' in p.get('title', '').lower()]
+        
+        if renaissance_programs:
+            renaissance = renaissance_programs[0]
+            print(f"✅ FOUND: {renaissance.get('title')}")
+            
+            # Check all attributes
+            checks = [
+                ("Day", renaissance.get('day_of_week', '').lower(), 'friday'),
+                ("Start Time", renaissance.get('start_time'), '15:00'),
+                ("Duration", renaissance.get('duration_minutes'), 30),
+                ("Language", renaissance.get('language', '').lower(), 'french')
+            ]
+            
+            all_correct = True
+            for check_name, actual, expected in checks:
+                if actual == expected:
+                    print(f"   ✅ {check_name}: {actual}")
+                else:
+                    print(f"   ❌ {check_name}: expected {expected}, found {actual}")
+                    self.failed_tests.append(f"Renaissance - {check_name} incorrect: expected {expected}, found {actual}")
+                    all_correct = False
+            
+            if all_correct:
+                print(f"✅ Renaissance: ALL ATTRIBUTES CORRECT")
+            else:
+                print(f"❌ Renaissance: Some attributes incorrect")
+        else:
+            print(f"❌ CRITICAL ERROR: 'Renaissance' program NOT FOUND")
+            self.failed_tests.append("CRITICAL - Renaissance program not found in database")
+        
+        # VERIFICATION 5: Test French language filtering
+        print(f"\n🔍 VERIFICATION: French Language Filtering")
+        success, french_filtered = self.run_test("French Language Filter Test", "GET", "programs", 200, params={"language": "french"})
+        
+        if success:
+            french_titles = [p.get('title', '').lower() for p in french_filtered]
+            
+            la_vie_in_filter = any('la vie chez nous' in title for title in french_titles)
+            renaissance_in_filter = any('renaissance' in title for title in french_titles)
+            
+            if la_vie_in_filter and renaissance_in_filter:
+                print(f"✅ Both new French programs appear in French language filter")
+            else:
+                if not la_vie_in_filter:
+                    print(f"❌ La Vie Chez Nous missing from French filter")
+                    self.failed_tests.append("French Filter - La Vie Chez Nous not found")
+                if not renaissance_in_filter:
+                    print(f"❌ Renaissance missing from French filter")
+                    self.failed_tests.append("French Filter - Renaissance not found")
+        
+        # VERIFICATION 6: Test day filtering
+        print(f"\n🔍 VERIFICATION: Day Filtering")
+        
+        # Test Sunday filter for La Vie Chez Nous
+        success, sunday_programs = self.run_test("Sunday Filter Test", "GET", "programs", 200, params={"day": "sunday"})
+        if success:
+            sunday_titles = [p.get('title', '').lower() for p in sunday_programs]
+            if any('la vie chez nous' in title for title in sunday_titles):
+                print(f"✅ La Vie Chez Nous appears in Sunday filter")
+            else:
+                print(f"❌ La Vie Chez Nous missing from Sunday filter")
+                self.failed_tests.append("Sunday Filter - La Vie Chez Nous not found")
+        
+        # Test Friday filter for Renaissance
+        success, friday_programs = self.run_test("Friday Filter Test", "GET", "programs", 200, params={"day": "friday"})
+        if success:
+            friday_titles = [p.get('title', '').lower() for p in friday_programs]
+            if any('renaissance' in title for title in friday_titles):
+                print(f"✅ Renaissance appears in Friday filter")
+            else:
+                print(f"❌ Renaissance missing from Friday filter")
+                self.failed_tests.append("Friday Filter - Renaissance not found")
+        
+        # VERIFICATION 7: Test schedule endpoint includes both programs
+        print(f"\n🔍 VERIFICATION: Schedule Endpoint")
+        success, schedule_data = self.run_test("Schedule Endpoint Test", "GET", "programs/schedule", 200)
+        
+        if success:
+            # Check Sunday schedule for La Vie Chez Nous
+            if 'sunday' in schedule_data:
+                sunday_schedule = schedule_data['sunday']
+                sunday_titles = [p.get('title', '').lower() for p in sunday_schedule]
+                if any('la vie chez nous' in title for title in sunday_titles):
+                    print(f"✅ La Vie Chez Nous in Sunday schedule")
+                else:
+                    print(f"❌ La Vie Chez Nous missing from Sunday schedule")
+                    self.failed_tests.append("Schedule - La Vie Chez Nous not in Sunday schedule")
+            
+            # Check Friday schedule for Renaissance
+            if 'friday' in schedule_data:
+                friday_schedule = schedule_data['friday']
+                friday_titles = [p.get('title', '').lower() for p in friday_schedule]
+                if any('renaissance' in title for title in friday_titles):
+                    print(f"✅ Renaissance in Friday schedule")
+                else:
+                    print(f"❌ Renaissance missing from Friday schedule")
+                    self.failed_tests.append("Schedule - Renaissance not in Friday schedule")
+        
+        # VERIFICATION 8: Count Phase 2 programs
+        print(f"\n🔍 VERIFICATION: Phase 2 Program Count")
+        
+        # Look for programs that might be Phase 2 (new programs)
+        # This is based on the review request mentioning 24 new Phase 2 programs
+        phase2_indicators = ['makona talk show', 'guidelines', 'love & faith', 'daily sermon', 'truth for life', 'la vie chez nous', 'renaissance']
+        
+        phase2_programs = []
+        for program in all_programs:
+            title_lower = program.get('title', '').lower()
+            for indicator in phase2_indicators:
+                if indicator in title_lower:
+                    phase2_programs.append(program.get('title'))
+                    break
+        
+        print(f"✅ Found {len(phase2_programs)} identifiable Phase 2 programs:")
+        for program in phase2_programs:
+            print(f"   - {program}")
+        
+        # Final summary for French programs
+        print(f"\n📊 FRENCH PROGRAMS VERIFICATION SUMMARY:")
+        print(f"   Total Programs: {len(all_programs)}")
+        print(f"   French Programs: {len(french_programs)}")
+        print(f"   La Vie Chez Nous: {'✅ FOUND' if la_vie_programs else '❌ MISSING'}")
+        print(f"   Renaissance: {'✅ FOUND' if renaissance_programs else '❌ MISSING'}")
+
     def test_live_broadcast_schedule_endpoint(self):
         """Test live broadcast schedule endpoint - PHASE 2 CRITICAL"""
         print("\n=== TESTING LIVE BROADCAST SCHEDULE ENDPOINT ===")
