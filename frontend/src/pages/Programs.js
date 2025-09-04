@@ -614,7 +614,7 @@ Generated on: ${new Date().toLocaleString()}
       <section className="py-8 bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h3 className="text-lg font-semibold text-kioo-dark mb-4 text-center">Program Type Legend</h3>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-blue-500 rounded"></div>
               <span className="text-sm">Bible Teaching</span>
@@ -654,6 +654,14 @@ Generated on: ${new Date().toLocaleString()}
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-lime-500 rounded"></div>
               <span className="text-sm">Youth Programs</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-rose-500 rounded"></div>
+              <span className="text-sm">Outreach</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-cyan-500 rounded"></div>
+              <span className="text-sm">Educational</span>
             </div>
           </div>
         </div>
