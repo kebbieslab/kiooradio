@@ -336,19 +336,25 @@ class KiooRadioAPITester:
                         print(f"❌ Saturday schedule missing Makona Talk Show")
                         self.failed_tests.append("Schedule Coverage - Saturday missing Makona Talk Show")
                 
-                # Verify Sunday includes Truth for Life in French
+                # Verify Sunday includes La Vie Chez Nous (new French program)
                 if 'sunday' in schedule:
                     sunday_programs = schedule['sunday']
-                    truth_french_found = any(
-                        'truth for life' in p.get('title', '').lower() and 
-                        p.get('language', '').lower() == 'french' 
-                        for p in sunday_programs
-                    )
-                    if truth_french_found:
-                        print(f"✅ Sunday schedule includes Truth for Life in French")
+                    la_vie_found = any('la vie chez nous' in p.get('title', '').lower() for p in sunday_programs)
+                    if la_vie_found:
+                        print(f"✅ Sunday schedule includes La Vie Chez Nous (new French program)")
                     else:
-                        print(f"❌ Sunday schedule missing Truth for Life in French")
-                        self.failed_tests.append("Schedule Coverage - Sunday missing Truth for Life in French")
+                        print(f"❌ Sunday schedule missing La Vie Chez Nous (new French program)")
+                        self.failed_tests.append("Schedule Coverage - Sunday missing La Vie Chez Nous")
+                
+                # Verify Friday includes Renaissance (new French program)
+                if 'friday' in schedule:
+                    friday_programs = schedule['friday']
+                    renaissance_found = any('renaissance' in p.get('title', '').lower() for p in friday_programs)
+                    if renaissance_found:
+                        print(f"✅ Friday schedule includes Renaissance (new French program)")
+                    else:
+                        print(f"❌ Friday schedule missing Renaissance (new French program)")
+                        self.failed_tests.append("Schedule Coverage - Friday missing Renaissance")
             else:
                 print(f"❌ Schedule data is not in expected dictionary format")
                 self.failed_tests.append("Schedule Integrity - Invalid data format")
