@@ -120,25 +120,28 @@ async def populate_programs():
                 # Skip this slot as it's covered by Gbandi Language Hour
                 continue
             
-            # SPECIAL CASE: Add Renaissance on Friday 15:00-15:30 (replacing Community Announcements)
+            # SPECIAL CASE: Add Renaissance on Friday 15:00-16:00 (replacing Community Announcements + Music)
             elif day == 'friday' and program["time"] == "15:00":
                 weekday_programs.append({
                     "id": str(uuid.uuid4()),
                     "title": "Renaissance",
-                    "description": "Renaissance - Friday French program",
+                    "description": "Renaissance - Friday French program (1 hour)",
                     "host": "French Program Host",
                     "language": "french",
                     "category": "talk_show",
                     "day_of_week": day,
                     "start_time": program["time"],
-                    "end_time": "15:30",
-                    "duration": 30,
+                    "end_time": "16:00",
+                    "duration": 60,  # 1 hour
                     "is_live": True,
                     "is_recurring": True,
                     "new_program": True,
                     "created_at": datetime.now().isoformat(),
                     "updated_at": datetime.now().isoformat()
                 })
+                continue
+            # Skip the 15:30-16:00 slot on Friday as it's covered by Renaissance
+            elif day == 'friday' and program["time"] == "15:30":
                 continue
             
             duration = 30 if program["time"] != "09:00" and program["time"] != "18:00" else (60 if program["time"] == "09:00" else 60)  # VNA French and Evening News are 60 mins
