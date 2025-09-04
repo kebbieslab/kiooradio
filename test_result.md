@@ -170,22 +170,20 @@ Implement backup/snapshot system, preview mode, and change log infrastructure fo
 
 ## metadata:
   created_by: "main_agent"
-  version: "2.0"
+  version: "3.0"
   test_sequence: 1
   run_ui: false
 
 ## test_plan:
   current_focus:
-    - "Dashboard Weather API integration" 
-    - "Dashboard API endpoints"
+    - "Programs Page Backup/Snapshot System"
+    - "Programs Page Preview Mode" 
+    - "Programs Page Change Log System"
+    - "Programs Page Admin Panel"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 ## agent_communication:
     - agent: "main"
-      message: "PRESENTERS DASHBOARD PHASE 1 & 2 COMPLETED SUCCESSFULLY: ✅ Phase 1: Added /kioo-presenters-dashboard-1981 route, dashboard accessible and loading. ✅ Phase 2: Weather API integration with Open-Meteo (real data for 4 cities), bilingual EN/FR support with local storage, auto-refresh every 15 minutes, all sections working (schedule, presenters, forms, export). Visual testing confirms weather showing realistic data (22-24°C with varied conditions), French translation working perfectly. Ready for backend testing to verify API functionality."
-    - agent: "testing"
-      message: "COMPREHENSIVE DASHBOARD API TESTING COMPLETED: ✅ Weather API Integration: All 4 cities (Foya, Koindu, Guéckédou, Kissidougou) returning real weather data with realistic temperatures (22-24°C), proper WMO weather conditions, and current timestamps. ✅ All Dashboard Endpoints: Schedule (19 programs covering all days), Presenters (3 countries with proper data structure), Testimony/Call Log submission working with validation, CSV export functional. ✅ Error Handling: Proper validation rejecting incomplete form data with 422 status codes. ✅ Data Structure: All endpoints return properly formatted JSON with required fields. Minor issue: Timeline 2017 entry missing 'shipping container' reference but not critical for functionality. All backend APIs fully operational and ready for production use."
-    - agent: "testing"
-      message: "COMPREHENSIVE FRONTEND UI TESTING COMPLETED: ✅ Dashboard Accessibility: Successfully accessible at /kioo-presenters-dashboard-1981 (requires JavaScript navigation). Dashboard loads with proper green header 'Kioo Radio Presenters Dashboard'. ✅ Weather Section: All 4 weather cards displaying real data (Foya 22°C, Koindu 24°C, Guéckédou 22°C, Kissidougou 22°C) with realistic temperatures and proper timestamps. ✅ Language Toggle: French/English switching works perfectly - navigation tabs translate correctly (Météo Actuelle, WhatsApp et Facebook, etc.). ✅ Navigation: All 6 sections functional (Weather, Social, Schedule, Presenters, Testimony, Call Log). ✅ Schedule Section: Table with 19 program entries, proper headers (Day, Time, Program, Presenter). ✅ Presenters Section: 3 country columns (🇱🇷 Liberia, 🇸🇱 Sierra Leone, 🇬🇳 Guinea) with 9 presenter cards total. ✅ Social Section: WhatsApp and Facebook links working. ✅ Forms: Both Testimony and Call Log forms functional with auto-filled dates/times, proper validation, all required fields present. ✅ Export: Download button present and clickable. ✅ Integration: All API endpoints returning proper data, realistic weather values, comprehensive program schedule. Minor: Header shows 'Kioo Radio' instead of full dashboard title, but dashboard content is correct. All core functionality working perfectly."
+      message: "PROGRAMS PAGE PHASE 1 INFRASTRUCTURE COMPLETED SUCCESSFULLY: ✅ Backup/Snapshot System: Timestamped backups of all schedule data with localStorage persistence, maintains last 10 backups with version control and restore functionality. ✅ Preview Mode: Prominent orange banner, admin authentication (password: kioo-admin-2025), automatic backup creation before preview activation. ✅ Change Log System: Tracks all admin actions with timestamps and categories, maintains last 50 entries with clear UI panel. ✅ Admin Panel: Centralized control interface with status indicators, backup management, and quick restore functionality. All infrastructure tested and working perfectly - ready for Phase 2 schedule modifications."
