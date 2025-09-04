@@ -210,7 +210,7 @@ const Programs = () => {
     { "Start Time": "03:00", "End Time": "04:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
     { "Start Time": "04:00", "End Time": "05:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
     { "Start Time": "05:00", "End Time": "06:00", "Program": "Morning Devotional & Prayer", "Language": "English", "Type": "Devotional" },
-    { "Start Time": "06:00", "End Time": "09:00", "Program": "Makona Talk Show", "Language": "English", "Type": "Interactive", "highlight": true },
+    { "Start Time": "06:00", "End Time": "09:00", "Program": "Makona Talk Show", "Language": "English, French & Kissi", "Type": "Interactive", "highlight": true },
     { "Start Time": "09:00", "End Time": "09:30", "Program": "Truth for Life", "Language": "English", "Type": "Bible Teaching", "highlight": true },
     { "Start Time": "09:30", "End Time": "10:00", "Program": "Daily Sermon", "Language": "English", "Type": "Sermon", "highlight": true },
     { "Start Time": "10:00", "End Time": "11:00", "Program": "Evangelist Billy Bimba - English Hour", "Language": "English", "Type": "Sermon", "highlight": true },
