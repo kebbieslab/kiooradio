@@ -124,6 +124,9 @@ Implement backup/snapshot system, preview mode, and change log infrastructure fo
         - working: true
           agent: "testing"
           comment: "PHASE 2 REFINED SCHEDULE MODIFICATIONS FINAL VERIFICATION: ✅ All critical refinements successfully verified: 286 programs total (close to expected 285), TTB restrictions properly implemented (limited to 2x daily for English/French/Kissi, 6am-10pm window with minor violations at 22:00), Christian Teaching Programs correctly scheduled (Mandingo 16:00-16:30, Fula 17:00-17:30), Gbandi Language Hour on Monday 19:00-20:00, Evening News extended to 1 hour (18:00-19:00), Music Buffers: 49 30-minute programs distributed across 5 days. Database totals verified: Monday 48 (1 extra), Tuesday-Friday 48 each, Saturday 22, Sunday 24. Minor issues: 1 extra program total, 1 extra on Monday, 5 TTB programs at 22:00. All major requirements successfully implemented and backend APIs fully functional."
+        - working: true
+          agent: "testing"
+          comment: "NEW FRENCH PROGRAMS VERIFICATION COMPLETE ✅: Successfully verified both new French programs added to Kioo Radio schedule. 'La Vie Chez Nous' correctly scheduled Sunday 14:00-15:00 (60 minutes) in French language. 'Renaissance' correctly scheduled Friday 15:00-15:30 (30 minutes) in French language. Total program count: 286 programs (1 extra from expected 285). French programs total: 53. Both programs appear correctly in French language filter, day filters (Sunday/Friday), and structured schedule endpoint. All API endpoints (/api/programs, /api/programs?language=french, /api/programs?day=sunday, /api/programs?day=friday, /api/programs/schedule) working perfectly and include both new French programs. Phase 2 program identification found 22 programs including the new French additions. Backend APIs fully functional and ready for production use."
 
 ## frontend:
   - task: "Programs Page Backup/Snapshot System"
