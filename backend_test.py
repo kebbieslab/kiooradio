@@ -79,23 +79,159 @@ class KiooRadioAPITester:
         self.run_test("Coverage Areas", "GET", "coverage", 200)
 
     def test_programs_endpoints(self):
-        """Test programs-related endpoints"""
-        print("\n=== TESTING PROGRAMS ENDPOINTS ===")
+        """Test programs-related endpoints with PHASE 2 SCHEDULE MODIFICATIONS FOCUS"""
+        print("\n=== TESTING PROGRAMS ENDPOINTS - PHASE 2 SCHEDULE MODIFICATIONS ===")
         
         # Test get all programs
         success, programs = self.run_test("Get All Programs", "GET", "programs", 200)
         
+        if success:
+            print(f"✅ Programs endpoint accessible, found {len(programs)} programs")
+            
+            # CRITICAL VERIFICATION 1: Check for new program entries mentioned in Phase 2
+            print(f"\n🔍 CRITICAL VERIFICATION 1: New Program Entries")
+            expected_new_programs = [
+                "Makona Talk Show",
+                "Guidelines", 
+                "Love & Faith",
+                "Daily Sermon",
+                "Truth for Life"
+            ]
+            
+            program_titles = [program.get('title', '') for program in programs]
+            found_programs = []
+            missing_programs = []
+            
+            for expected_program in expected_new_programs:
+                # Check for exact match or partial match
+                found = False
+                for title in program_titles:
+                    if expected_program.lower() in title.lower():
+                        found_programs.append(expected_program)
+                        print(f"✅ Found new program: {expected_program} (as '{title}')")
+                        found = True
+                        break
+                
+                if not found:
+                    missing_programs.append(expected_program)
+                    print(f"❌ Missing new program: {expected_program}")
+            
+            if missing_programs:
+                self.failed_tests.append(f"Phase 2 Programs - Missing new programs: {missing_programs}")
+            else:
+                print(f"✅ All {len(expected_new_programs)} new programs found")
+            
+            # CRITICAL VERIFICATION 2: TTB adjustments - removed from Fula/Mandingo and weekends
+            print(f"\n🔍 CRITICAL VERIFICATION 2: TTB Adjustments")
+            ttb_programs = [program for program in programs if 'ttb' in program.get('title', '').lower() or 'through the bible' in program.get('title', '').lower()]
+            
+            if ttb_programs:
+                print(f"Found {len(ttb_programs)} TTB programs")
+                
+                # Check TTB is not in Fula/Mandingo languages
+                fula_mandingo_ttb = []
+                for program in ttb_programs:
+                    language = program.get('language', '').lower()
+                    if 'fula' in language or 'mandingo' in language:
+                        fula_mandingo_ttb.append(f"{program.get('title')} ({language})")
+                
+                if fula_mandingo_ttb:
+                    print(f"❌ TTB still found in Fula/Mandingo languages: {fula_mandingo_ttb}")
+                    self.failed_tests.append(f"TTB Adjustments - Still in Fula/Mandingo: {fula_mandingo_ttb}")
+                else:
+                    print(f"✅ TTB correctly removed from Fula/Mandingo languages")
+                
+                # Check TTB is not on weekends
+                weekend_ttb = []
+                for program in ttb_programs:
+                    day = program.get('day_of_week', '').lower()
+                    if day in ['saturday', 'sunday']:
+                        weekend_ttb.append(f"{program.get('title')} ({day})")
+                
+                if weekend_ttb:
+                    print(f"❌ TTB still found on weekends: {weekend_ttb}")
+                    self.failed_tests.append(f"TTB Adjustments - Still on weekends: {weekend_ttb}")
+                else:
+                    print(f"✅ TTB correctly removed from weekends")
+            else:
+                print(f"⚠️  No TTB programs found in current schedule")
+        
         # Test get programs schedule
-        self.run_test("Get Programs Schedule", "GET", "programs/schedule", 200)
+        success, schedule = self.run_test("Get Programs Schedule", "GET", "programs/schedule", 200)
         
-        # Test filtered programs
-        self.run_test("Get English Programs", "GET", "programs", 200, params={"language": "english"})
-        self.run_test("Get Monday Programs", "GET", "programs", 200, params={"day": "monday"})
+        if success:
+            print(f"✅ Programs schedule endpoint accessible")
+            
+            # CRITICAL VERIFICATION 3: Schedule data integrity
+            print(f"\n🔍 CRITICAL VERIFICATION 3: Schedule Data Integrity")
+            
+            if isinstance(schedule, dict):
+                days_found = list(schedule.keys())
+                expected_days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+                
+                missing_days = [day for day in expected_days if day not in days_found]
+                if missing_days:
+                    print(f"❌ Schedule missing days: {missing_days}")
+                    self.failed_tests.append(f"Schedule Integrity - Missing days: {missing_days}")
+                else:
+                    print(f"✅ Schedule contains all 7 days of the week")
+                
+                # Check each day has programs
+                for day, day_programs in schedule.items():
+                    if isinstance(day_programs, list) and len(day_programs) > 0:
+                        print(f"✅ {day.title()} has {len(day_programs)} programs")
+                    else:
+                        print(f"⚠️  {day.title()} has no programs scheduled")
+            else:
+                print(f"❌ Schedule data is not in expected dictionary format")
+                self.failed_tests.append("Schedule Integrity - Invalid data format")
         
-        # Test create program
+        # CRITICAL VERIFICATION 4: Language filtering functionality
+        print(f"\n🔍 CRITICAL VERIFICATION 4: Language Filtering")
+        
+        # Test each supported language
+        supported_languages = ["english", "french", "kissi", "krio"]
+        
+        for language in supported_languages:
+            success, filtered_programs = self.run_test(f"Get {language.title()} Programs", "GET", "programs", 200, params={"language": language})
+            
+            if success:
+                # Verify all returned programs are in the requested language
+                wrong_language_programs = []
+                for program in filtered_programs:
+                    if program.get('language', '').lower() != language:
+                        wrong_language_programs.append(f"{program.get('title')} ({program.get('language')})")
+                
+                if wrong_language_programs:
+                    print(f"❌ {language.title()} filter returned wrong language programs: {wrong_language_programs}")
+                    self.failed_tests.append(f"Language Filter - {language} returned wrong languages: {wrong_language_programs}")
+                else:
+                    print(f"✅ {language.title()} language filter working correctly ({len(filtered_programs)} programs)")
+        
+        # Test day filtering
+        print(f"\n🔍 Testing Day Filtering")
+        test_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        
+        for day in test_days:
+            success, day_programs = self.run_test(f"Get {day.title()} Programs", "GET", "programs", 200, params={"day": day})
+            
+            if success:
+                # Verify all returned programs are on the requested day
+                wrong_day_programs = []
+                for program in day_programs:
+                    if program.get('day_of_week', '').lower() != day:
+                        wrong_day_programs.append(f"{program.get('title')} ({program.get('day_of_week')})")
+                
+                if wrong_day_programs:
+                    print(f"❌ {day.title()} filter returned wrong day programs: {wrong_day_programs}")
+                    self.failed_tests.append(f"Day Filter - {day} returned wrong days: {wrong_day_programs}")
+                else:
+                    print(f"✅ {day.title()} day filter working correctly ({len(day_programs)} programs)")
+        
+        # Test create program (basic functionality)
         program_data = {
-            "title": "Test Program",
-            "description": "A test program for API testing",
+            "title": "Test Program - Phase 2",
+            "description": "A test program for Phase 2 API testing",
             "host": "Test Host",
             "language": "english",
             "category": "talk",
