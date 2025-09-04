@@ -165,6 +165,27 @@ async def populate_programs():
                 })
                 continue
             
+            # SPECIAL CASE: Add Renaissance on Friday 16:30-17:30 (replacing Community Programming in Mandingo slot)
+            elif day == 'friday' and program["time"] == "16:30" and program["language"] == "mandingo":
+                weekday_programs.append({
+                    "id": str(uuid.uuid4()),
+                    "title": "Renaissance",
+                    "description": "Renaissance - Friday French program (1 hour)",
+                    "host": "French Program Host",
+                    "language": "french",
+                    "category": "talk_show",
+                    "day_of_week": day,
+                    "start_time": program["time"],
+                    "end_time": "17:30",
+                    "duration": 60,
+                    "is_live": True,
+                    "is_recurring": True,
+                    "new_program": True,
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat()
+                })
+                continue
+            
             duration = 30 if program["time"] != "09:00" and program["time"] != "18:00" else (60 if program["time"] == "09:00" else 60)  # VNA French and Evening News are 60 mins
             weekday_programs.append({
                 "id": str(uuid.uuid4()),
