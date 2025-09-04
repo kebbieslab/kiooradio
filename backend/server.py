@@ -58,6 +58,7 @@ class ProgramLanguage(str, Enum):
     MIXED = "mixed"
     MANDINGO = "mandingo"
     FULA = "fula"
+    GBANDI = "gbandi"
 
 class ProgramCategory(str, Enum):
     NEWS = "news"
