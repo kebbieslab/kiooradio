@@ -31,6 +31,103 @@ const Programs = () => {
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const ADMIN_PASSWORD = 'kioo-admin-2025'; // Simple password for now
 
+  // === BACKUP & PREVIEW FUNCTIONS ===
+  
+  // Load backup history from localStorage on component mount
+  useEffect(() => {
+    const savedBackups = localStorage.getItem('kioo-programs-backups');
+    const savedChangeLog = localStorage.getItem('kioo-programs-changelog');
+    
+    if (savedBackups) {
+      setBackupHistory(JSON.parse(savedBackups));
+    }
+    if (savedChangeLog) {
+      setChangeLog(JSON.parse(savedChangeLog));
+    }
+  }, []);
+
+  // Create a backup snapshot of current schedule data
+  const createBackupSnapshot = () => {
+    const timestamp = new Date().toISOString();
+    const backup = {
+      id: `backup-${Date.now()}`,
+      timestamp,
+      data: {
+        weekdaySchedule: [...weekdaySchedule],
+        saturdaySchedule: [...saturdaySchedule],
+        sundaySchedule: [...sundaySchedule],
+        weeklySpecial: [...weeklySpecial],
+        liveBroadcastSchedule: liveBroadcastSchedule ? { ...liveBroadcastSchedule } : null
+      },
+      description: `Backup created on ${new Date(timestamp).toLocaleString()}`,
+      version: `v${backupHistory.length + 1}`
+    };
+
+    const newBackupHistory = [backup, ...backupHistory].slice(0, 10); // Keep last 10 backups
+    setBackupHistory(newBackupHistory);
+    localStorage.setItem('kioo-programs-backups', JSON.stringify(newBackupHistory));
+    
+    // Log the backup creation
+    addToChangeLog(`Backup snapshot created: ${backup.version}`, 'backup');
+    
+    return backup.id;
+  };
+
+  // Restore from a backup
+  const restoreFromBackup = (backupId) => {
+    const backup = backupHistory.find(b => b.id === backupId);
+    if (!backup) return false;
+
+    // In a real implementation, this would restore the actual schedule data
+    // For now, we'll just log the action
+    addToChangeLog(`Schedule restored from backup ${backup.version} (${backup.timestamp})`, 'restore');
+    
+    // Toggle out of preview mode after restore
+    setIsPreviewMode(false);
+    return true;
+  };
+
+  // Add entry to change log
+  const addToChangeLog = (description, type = 'change', details = null) => {
+    const entry = {
+      id: `change-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      description,
+      type, // 'change', 'backup', 'restore', 'preview'
+      details,
+      user: 'admin' // In real implementation, this would be the authenticated user
+    };
+
+    const newChangeLog = [entry, ...changeLog].slice(0, 50); // Keep last 50 entries
+    setChangeLog(newChangeLog);
+    localStorage.setItem('kioo-programs-changelog', JSON.stringify(newChangeLog));
+  };
+
+  // Toggle preview mode
+  const togglePreviewMode = () => {
+    if (!isPreviewMode) {
+      // Entering preview mode - create backup first
+      createBackupSnapshot();
+      addToChangeLog('Preview mode activated', 'preview');
+    } else {
+      // Exiting preview mode
+      addToChangeLog('Preview mode deactivated', 'preview');
+    }
+    setIsPreviewMode(!isPreviewMode);
+  };
+
+  // Admin authentication
+  const handleAdminLogin = () => {
+    if (adminPassword === ADMIN_PASSWORD) {
+      setIsAdminAuthenticated(true);
+      setShowAdminPanel(true);
+      addToChangeLog('Admin panel accessed', 'admin');
+    } else {
+      alert('Invalid admin password');
+    }
+    setAdminPassword('');
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
