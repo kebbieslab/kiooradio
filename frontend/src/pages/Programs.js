@@ -243,7 +243,7 @@ const Programs = () => {
     { "Start Time": "10:00", "End Time": "12:00", "Program": "Live Partner Church Service", "Language": "English/French/Mixed", "Type": "Live Service", "highlight": true },
     { "Start Time": "12:00", "End Time": "13:00", "Program": "Post-Service Reflection", "Language": "Mixed", "Type": "Devotional" },
     { "Start Time": "13:00", "End Time": "14:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
-    { "Start Time": "14:00", "End Time": "15:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
+    { "Start Time": "14:00", "End Time": "15:00", "Program": "La Vie Chez Nous", "Language": "French", "Type": "Interactive", "highlight": true },
     { "Start Time": "15:00", "End Time": "16:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
     { "Start Time": "16:00", "End Time": "17:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
     { "Start Time": "17:00", "End Time": "18:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
