@@ -88,16 +88,16 @@ class KiooRadioAPITester:
         if success:
             print(f"✅ Programs endpoint accessible, found {len(programs)} programs")
             
-            # CRITICAL VERIFICATION 0: Total program count should be 285 (REFINED Phase 2)
-            print(f"\n🔍 CRITICAL VERIFICATION 0: Total Program Count (REFINED Phase 2)")
-            expected_total = 285
+            # CRITICAL VERIFICATION 0: Total program count should be 284 (reduced by 1 due to combining two 30-min slots into one 60-min slot)
+            print(f"\n🔍 CRITICAL VERIFICATION 0: Total Program Count (Renaissance Duration Change)")
+            expected_total = 284
             actual_total = len(programs)
             
             if actual_total == expected_total:
                 print(f"✅ Total program count matches expected: {actual_total} programs")
             else:
                 print(f"❌ Total program count mismatch: expected {expected_total}, found {actual_total}")
-                self.failed_tests.append(f"Phase 2 Programs - Total count mismatch: expected {expected_total}, found {actual_total}")
+                self.failed_tests.append(f"Renaissance Duration Change - Total count mismatch: expected {expected_total}, found {actual_total}")
             
             # NEW CRITICAL VERIFICATION: Two New French Programs
             print(f"\n🔍 NEW CRITICAL VERIFICATION: Two New French Programs")
