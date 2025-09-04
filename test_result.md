@@ -187,8 +187,7 @@ Implement backup/snapshot system, preview mode, and change log infrastructure fo
     - "Programs Page Preview Mode" 
     - "Programs Page Change Log System"
     - "Programs Page Admin Panel"
-  stuck_tasks:
-    - "Programs API endpoints"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
