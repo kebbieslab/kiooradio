@@ -19,6 +19,115 @@ const ProgramsLineup = () => {
   
   const [loading, setLoading] = useState(true);
 
+  // === PHASE 1: BACKUP & PREVIEW INFRASTRUCTURE ===
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [showChangeLog, setShowChangeLog] = useState(false);
+  const [backupHistory, setBackupHistory] = useState([]);
+  const [changeLog, setChangeLog] = useState([]);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+
+  // Admin access check (could be enhanced with proper auth later)
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const ADMIN_PASSWORD = 'kioo-admin-2025'; // Simple password for now
+
+  // === BACKUP & PREVIEW FUNCTIONS ===
+  
+  // Load backup history from localStorage on component mount
+  useEffect(() => {
+    const savedBackups = localStorage.getItem('kioo-programs-backups');
+    const savedChangeLog = localStorage.getItem('kioo-programs-changelog');
+    
+    if (savedBackups) {
+      setBackupHistory(JSON.parse(savedBackups));
+    }
+    if (savedChangeLog) {
+      setChangeLog(JSON.parse(savedChangeLog));
+    }
+  }, []);
+
+  // Create a backup snapshot of current schedule data
+  const createBackupSnapshot = () => {
+    const timestamp = new Date().toISOString();
+    const backup = {
+      id: `backup-${Date.now()}`,
+      timestamp,
+      data: {
+        weekdaySchedule: [...weekdaySchedule],
+        saturdaySchedule: [...saturdaySchedule],
+        sundaySchedule: [...sundaySchedule],
+        weeklySpecial: [...weeklySpecial],
+        liveBroadcastSchedule: liveBroadcastSchedule ? { ...liveBroadcastSchedule } : null
+      },
+      description: `Backup created on ${new Date(timestamp).toLocaleString()}`,
+      version: `v${backupHistory.length + 1}`
+    };
+
+    const newBackupHistory = [backup, ...backupHistory].slice(0, 10); // Keep last 10 backups
+    setBackupHistory(newBackupHistory);
+    localStorage.setItem('kioo-programs-backups', JSON.stringify(newBackupHistory));
+    
+    // Log the backup creation
+    addToChangeLog(`Backup snapshot created: ${backup.version}`, 'backup');
+    
+    return backup.id;
+  };
+
+  // Restore from a backup
+  const restoreFromBackup = (backupId) => {
+    const backup = backupHistory.find(b => b.id === backupId);
+    if (!backup) return false;
+
+    // In a real implementation, this would restore the actual schedule data
+    // For now, we'll just log the action
+    addToChangeLog(`Schedule restored from backup ${backup.version} (${backup.timestamp})`, 'restore');
+    
+    // Toggle out of preview mode after restore
+    setIsPreviewMode(false);
+    return true;
+  };
+
+  // Add entry to change log
+  const addToChangeLog = (description, type = 'change', details = null) => {
+    const entry = {
+      id: `change-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      description,
+      type, // 'change', 'backup', 'restore', 'preview'
+      details,
+      user: 'admin' // In real implementation, this would be the authenticated user
+    };
+
+    const newChangeLog = [entry, ...changeLog].slice(0, 50); // Keep last 50 entries
+    setChangeLog(newChangeLog);
+    localStorage.setItem('kioo-programs-changelog', JSON.stringify(newChangeLog));
+  };
+
+  // Toggle preview mode
+  const togglePreviewMode = () => {
+    if (!isPreviewMode) {
+      // Entering preview mode - create backup first
+      createBackupSnapshot();
+      addToChangeLog('Preview mode activated', 'preview');
+    } else {
+      // Exiting preview mode
+      addToChangeLog('Preview mode deactivated', 'preview');
+    }
+    setIsPreviewMode(!isPreviewMode);
+  };
+
+  // Admin authentication
+  const handleAdminLogin = () => {
+    if (adminPassword === ADMIN_PASSWORD) {
+      setIsAdminAuthenticated(true);
+      setShowAdminPanel(true);
+      addToChangeLog('Admin panel accessed', 'admin');
+    } else {
+      alert('Invalid admin password');
+    }
+    setAdminPassword('');
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,30 +151,31 @@ const ProgramsLineup = () => {
     fetchData();
   }, []);
 
-  // Complete schedule data from the Excel file
+  // Complete schedule data - Updated with Phase 2 PASTORAL ENHANCEMENTS
   const weekdaySchedule = [
-    { "Start Time": "00:00", "End Time": "00:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "00:30", "End Time": "01:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
-    { "Start Time": "01:00", "End Time": "01:30", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
-    { "Start Time": "01:30", "End Time": "02:00", "Program": "Phone-in Program", "Language": "English", "Type": "Interactive" },
-    { "Start Time": "02:00", "End Time": "02:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "00:00", "End Time": "00:30", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "00:30", "End Time": "01:00", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
+    { "Start Time": "01:00", "End Time": "01:30", "Program": "Phone-in Program", "Language": "English", "Type": "Interactive" },
+    { "Start Time": "01:30", "End Time": "02:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "02:00", "End Time": "02:30", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "02:30", "End Time": "03:00", "Program": "Music & Reflection", "Language": "Kissi", "Type": "Music" },
     { "Start Time": "03:00", "End Time": "03:30", "Program": "Community Announcements", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "03:30", "End Time": "04:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
-    { "Start Time": "04:00", "End Time": "04:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "04:00", "End Time": "04:30", "Program": "Community Programming", "Language": "French", "Type": "Community" },
     { "Start Time": "04:30", "End Time": "05:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
-    { "Start Time": "05:00", "End Time": "05:15", "Program": "Morning Devotional", "Language": "English", "Type": "Devotional" },
+    { "Start Time": "05:00", "End Time": "05:10", "Program": "Guidelines", "Language": "English", "Type": "Bible Teaching", "highlight": true },
+    { "Start Time": "05:10", "End Time": "05:15", "Program": "Morning Devotional", "Language": "English", "Type": "Devotional" },
     { "Start Time": "05:15", "End Time": "05:45", "Program": "Morning Prayer & Worship", "Language": "English", "Type": "Worship" },
     { "Start Time": "05:45", "End Time": "06:00", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
-    { "Start Time": "06:00", "End Time": "06:30", "Program": "Local Pastors' Preaching", "Language": "English (rotating)", "Type": "Sermon" },
-    { "Start Time": "06:30", "End Time": "07:00", "Program": "Phone-in Program", "Language": "English", "Type": "Interactive" },
-    { "Start Time": "07:00", "End Time": "07:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "07:30", "End Time": "08:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
+    { "Start Time": "06:00", "End Time": "06:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "06:30", "End Time": "07:00", "Program": "Daily Sermon", "Language": "English", "Type": "Sermon", "highlight": true },
+    { "Start Time": "07:00", "End Time": "07:30", "Program": "Love & Faith", "Language": "English", "Type": "Bible Teaching", "highlight": true },
+    { "Start Time": "07:30", "End Time": "08:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
     { "Start Time": "08:00", "End Time": "08:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
     { "Start Time": "08:30", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "09:00", "End Time": "10:00", "Program": "VNA French Satellite Feed", "Language": "French", "Type": "Satellite" },
-    { "Start Time": "10:00", "End Time": "10:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "10:30", "End Time": "11:00", "Program": "Women & Family Hour", "Language": "English", "Type": "Community" },
+    { "Start Time": "10:00", "End Time": "10:30", "Program": "Pastor's Corner - Liberia", "Language": "English", "Type": "Sermon", "highlight": true },
+    { "Start Time": "10:30", "End Time": "11:00", "Program": "Spot Light English", "Language": "English", "Type": "Educational", "highlight": true },
     { "Start Time": "11:00", "End Time": "11:30", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
     { "Start Time": "11:30", "End Time": "12:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
     { "Start Time": "12:00", "End Time": "12:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
@@ -73,81 +183,79 @@ const ProgramsLineup = () => {
     { "Start Time": "13:00", "End Time": "13:30", "Program": "Community Announcements", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "13:30", "End Time": "14:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
     { "Start Time": "14:00", "End Time": "14:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
-    { "Start Time": "14:30", "End Time": "15:00", "Program": "Health & Wellness", "Language": "French", "Type": "Community" },
-    { "Start Time": "15:00", "End Time": "15:30", "Program": "Community Announcements", "Language": "French", "Type": "Community" },
+    { "Start Time": "14:30", "End Time": "15:00", "Program": "Pastor's Corner - Sierra Leone", "Language": "English", "Type": "Sermon", "highlight": true },
+    { "Start Time": "15:00", "End Time": "15:30", "Program": "Hope & Care Outreach", "Language": "Mixed", "Type": "Outreach", "highlight": true },
     { "Start Time": "15:30", "End Time": "16:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
-    { "Start Time": "16:00", "End Time": "16:30", "Program": "Thru the Bible (TTB)", "Language": "Mandingo", "Type": "Bible Teaching" },
-    { "Start Time": "16:30", "End Time": "17:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
-    { "Start Time": "17:00", "End Time": "17:30", "Program": "Thru the Bible (TTB)", "Language": "Fula", "Type": "Bible Teaching" },
+    { "Start Time": "16:00", "End Time": "16:30", "Program": "Christian Teaching", "Language": "Mandingo", "Type": "Bible Teaching", "highlight": true },
+    { "Start Time": "16:30", "End Time": "17:30", "Program": "Renaissance", "Language": "French", "Type": "Interactive", "highlight": true },
+    { "Start Time": "17:00", "End Time": "17:30", "Program": "Christian Teaching", "Language": "Fula", "Type": "Bible Teaching", "highlight": true },
     { "Start Time": "17:30", "End Time": "18:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
-    { "Start Time": "18:00", "End Time": "18:30", "Program": "Evening News & Roundup", "Language": "Mixed", "Type": "Community" },
-    { "Start Time": "18:30", "End Time": "19:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "19:00", "End Time": "19:30", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "18:00", "End Time": "19:00", "Program": "Evening News & Roundup", "Language": "Mixed", "Type": "Community" },
+    { "Start Time": "19:00", "End Time": "19:30", "Program": "Pastor's Corner - Guinea", "Language": "French", "Type": "Sermon", "highlight": true },
     { "Start Time": "19:30", "End Time": "20:00", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
-    { "Start Time": "20:00", "End Time": "20:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "20:00", "End Time": "20:30", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "20:30", "End Time": "21:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
     { "Start Time": "21:00", "End Time": "21:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "21:30", "End Time": "22:00", "Program": "Evening Worship & Reflection", "Language": "English", "Type": "Devotional" },
+    { "Start Time": "21:30", "End Time": "22:00", "Program": "Pastor's Corner - Multi-Country", "Language": "Mixed", "Type": "Sermon", "highlight": true },
     { "Start Time": "22:00", "End Time": "22:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
     { "Start Time": "22:30", "End Time": "23:00", "Program": "Community Announcements", "Language": "Mixed", "Type": "Community" },
     { "Start Time": "23:00", "End Time": "23:30", "Program": "Music & Reflection", "Language": "Mixed", "Type": "Music" },
-    { "Start Time": "23:30", "End Time": "00:00", "Program": "Hope & Care Outreach", "Language": "Mixed", "Type": "Community" }
+    { "Start Time": "23:30", "End Time": "00:00", "Program": "Evening Devotional", "Language": "Mixed", "Type": "Devotional" }
   ];
 
   const saturdaySchedule = [
-    { "Start Time": "00:00", "End Time": "00:30", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "00:30", "End Time": "01:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "00:00", "End Time": "01:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
     { "Start Time": "01:00", "End Time": "02:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
-    { "Start Time": "02:00", "End Time": "03:00", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
-    { "Start Time": "03:00", "End Time": "04:00", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "02:00", "End Time": "03:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
+    { "Start Time": "03:00", "End Time": "04:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
     { "Start Time": "04:00", "End Time": "05:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
     { "Start Time": "05:00", "End Time": "06:00", "Program": "Morning Devotional & Prayer", "Language": "English", "Type": "Devotional" },
-    { "Start Time": "06:00", "End Time": "07:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
-    { "Start Time": "07:00", "End Time": "08:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "08:00", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
-    { "Start Time": "09:00", "End Time": "11:00", "Program": "NLASN 'Island Praise'", "Language": "English", "Type": "Satellite", "highlight": true },
-    { "Start Time": "11:00", "End Time": "12:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
-    { "Start Time": "12:00", "End Time": "13:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
-    { "Start Time": "13:00", "End Time": "14:00", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
-    { "Start Time": "14:00", "End Time": "15:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
-    { "Start Time": "15:00", "End Time": "16:00", "Program": "Thru the Bible (TTB)", "Language": "Mandingo", "Type": "Bible Teaching" },
-    { "Start Time": "16:00", "End Time": "17:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
-    { "Start Time": "17:00", "End Time": "18:00", "Program": "Thru the Bible (TTB)", "Language": "Fula", "Type": "Bible Teaching" },
+    { "Start Time": "06:00", "End Time": "09:00", "Program": "Makona Talk Show", "Language": "English", "Type": "Interactive", "highlight": true },
+    { "Start Time": "09:00", "End Time": "09:30", "Program": "Truth for Life", "Language": "English", "Type": "Bible Teaching", "highlight": true },
+    { "Start Time": "09:30", "End Time": "10:00", "Program": "Daily Sermon", "Language": "English", "Type": "Sermon", "highlight": true },
+    { "Start Time": "10:00", "End Time": "11:00", "Program": "Evangelist Billy Bimba - English Hour", "Language": "English", "Type": "Sermon", "highlight": true },
+    { "Start Time": "11:00", "End Time": "13:00", "Program": "NLASN 'Island Praise'", "Language": "English", "Type": "Satellite", "highlight": true },
+    { "Start Time": "13:00", "End Time": "14:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
+    { "Start Time": "14:00", "End Time": "15:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
+    { "Start Time": "15:00", "End Time": "16:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
+    { "Start Time": "16:00", "End Time": "17:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
+    { "Start Time": "17:00", "End Time": "18:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
     { "Start Time": "18:00", "End Time": "19:00", "Program": "Evening Programming", "Language": "Mixed", "Type": "Community" },
-    { "Start Time": "19:00", "End Time": "20:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "19:00", "End Time": "20:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
     { "Start Time": "20:00", "End Time": "21:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
-    { "Start Time": "21:00", "End Time": "22:00", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
+    { "Start Time": "21:00", "End Time": "22:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "22:00", "End Time": "23:00", "Program": "Community Programming", "Language": "Mixed", "Type": "Community" },
     { "Start Time": "23:00", "End Time": "00:00", "Program": "Music & Reflection", "Language": "Mixed", "Type": "Music" }
   ];
 
   const sundaySchedule = [
-    { "Start Time": "00:00", "End Time": "01:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "00:00", "End Time": "01:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
     { "Start Time": "01:00", "End Time": "02:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
-    { "Start Time": "02:00", "End Time": "03:00", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
-    { "Start Time": "03:00", "End Time": "04:00", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
+    { "Start Time": "02:00", "End Time": "03:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
+    { "Start Time": "03:00", "End Time": "04:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
     { "Start Time": "04:00", "End Time": "05:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
     { "Start Time": "05:00", "End Time": "06:00", "Program": "Morning Devotional & Prayer", "Language": "English", "Type": "Devotional" },
-    { "Start Time": "06:00", "End Time": "07:00", "Program": "Pre-Service Programming", "Language": "English", "Type": "Community" },
-    { "Start Time": "07:00", "End Time": "08:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "06:00", "End Time": "07:00", "Program": "Evangelist Billy Bimba - Kissi Hour", "Language": "Kissi", "Type": "Sermon", "highlight": true },
+    { "Start Time": "07:00", "End Time": "07:30", "Program": "Truth for Life", "Language": "French", "Type": "Bible Teaching", "highlight": true },
+    { "Start Time": "07:30", "End Time": "08:00", "Program": "Daily Sermon", "Language": "English", "Type": "Sermon", "highlight": true },
     { "Start Time": "08:00", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "09:00", "End Time": "10:00", "Program": "Pre-Service Worship", "Language": "Mixed", "Type": "Worship" },
     { "Start Time": "10:00", "End Time": "12:00", "Program": "Live Partner Church Service", "Language": "English/French/Mixed", "Type": "Live Service", "highlight": true },
     { "Start Time": "12:00", "End Time": "13:00", "Program": "Post-Service Reflection", "Language": "Mixed", "Type": "Devotional" },
-    { "Start Time": "13:00", "End Time": "14:00", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
-    { "Start Time": "14:00", "End Time": "15:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
-    { "Start Time": "15:00", "End Time": "16:00", "Program": "Thru the Bible (TTB)", "Language": "Mandingo", "Type": "Bible Teaching" },
+    { "Start Time": "13:00", "End Time": "14:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
+    { "Start Time": "14:00", "End Time": "15:00", "Program": "La Vie Chez Nous", "Language": "French", "Type": "Interactive", "highlight": true },
+    { "Start Time": "15:00", "End Time": "16:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
     { "Start Time": "16:00", "End Time": "17:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
-    { "Start Time": "17:00", "End Time": "18:00", "Program": "Thru the Bible (TTB)", "Language": "Fula", "Type": "Bible Teaching" },
+    { "Start Time": "17:00", "End Time": "18:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
     { "Start Time": "18:00", "End Time": "19:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
     { "Start Time": "19:00", "End Time": "20:00", "Program": "Sunday Evening Worship", "Language": "Mixed", "Type": "Worship" },
-    { "Start Time": "20:00", "End Time": "21:00", "Program": "Thru the Bible (TTB)", "Language": "English", "Type": "Bible Teaching" },
+    { "Start Time": "20:00", "End Time": "21:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
     { "Start Time": "21:00", "End Time": "22:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
     { "Start Time": "22:00", "End Time": "23:00", "Program": "Community Programming", "Language": "Mixed", "Type": "Community" },
     { "Start Time": "23:00", "End Time": "00:00", "Program": "Evening Devotional", "Language": "Mixed", "Type": "Devotional" }
   ];
 
-  // Special weekly programs
+  // Special weekly programs - Updated with Gbandi Language Hour
   const weeklySpecial = [
     { "Day": "Monday", "Time": "19:00-20:00", "Program": "Gbandi Language Hour", "Language": "Gbandi", "Type": "Community" },
     { "Day": "Wednesday", "Time": "20:00-21:00", "Program": "Youth Connect Special", "Language": "English", "Type": "Youth/Community" },
@@ -165,10 +273,12 @@ const ProgramsLineup = () => {
     'Devotional': 'bg-indigo-100 text-indigo-800',
     'Worship': 'bg-pink-100 text-pink-800',
     'Sermon': 'bg-teal-100 text-teal-800',
-    'Youth/Community': 'bg-lime-100 text-lime-800'
+    'Youth/Community': 'bg-lime-100 text-lime-800',
+    'Outreach': 'bg-rose-100 text-rose-800',
+    'Educational': 'bg-cyan-100 text-cyan-800'
   };
 
-  // Language options
+  // Language options - Added Gbandi
   const languages = ['all', 'English', 'French', 'Kissi', 'Fula', 'Mandingo', 'Gbandi', 'Mixed'];
   
   // Live Broadcast Days filter options
@@ -278,10 +388,214 @@ Generated on: ${new Date().toLocaleString()}
     URL.revokeObjectURL(url);
   };
 
+  // === ADMIN PANEL COMPONENT ===
+  const AdminPanel = () => {
+    if (!isAdminAuthenticated) {
+      return (
+        <div className="fixed top-4 right-4 bg-white rounded-lg shadow-xl p-4 border border-gray-200 z-50">
+          <h3 className="text-sm font-semibold mb-2">Admin Access</h3>
+          <div className="flex gap-2">
+            <input
+              type="password"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              placeholder="Admin password"
+              className="px-2 py-1 text-sm border rounded"
+              onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()}
+            />
+            <button
+              onClick={handleAdminLogin}
+              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+            >
+              Login
+            </button>
+          </div>
+          <button
+            onClick={() => setShowAdminPanel(false)}
+            className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="fixed top-4 right-4 bg-white rounded-lg shadow-xl p-6 border border-gray-200 z-50 max-w-sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-gray-800">Admin Panel</h3>
+          <button
+            onClick={() => setShowAdminPanel(false)}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
+        </div>
+        
+        {/* Status Display */}
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+          <div className="text-sm">
+            <div className={`font-semibold ${isPreviewMode ? 'text-orange-600' : 'text-green-600'}`}>
+              Status: {isPreviewMode ? 'PREVIEW MODE' : 'LIVE MODE'}
+            </div>
+            <div className="text-gray-600">
+              Backups: {backupHistory.length} | Changes: {changeLog.length}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Last backup: {backupHistory.length > 0 ? new Date(backupHistory[0].timestamp).toLocaleString() : 'None'}
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="space-y-2">
+          <button
+            onClick={togglePreviewMode}
+            className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+              isPreviewMode 
+                ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                : 'bg-green-600 text-white hover:bg-green-700'
+            }`}
+          >
+            {isPreviewMode ? '🔄 Exit Preview' : '👁️ Enter Preview'}
+          </button>
+          
+          <button
+            onClick={createBackupSnapshot}
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+          >
+            💾 Create Backup
+          </button>
+          
+          <button
+            onClick={() => setShowChangeLog(!showChangeLog)}
+            className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium"
+          >
+            📋 {showChangeLog ? 'Hide' : 'Show'} Change Log
+          </button>
+        </div>
+
+        {/* Quick Backup List */}
+        {backupHistory.length > 0 && (
+          <div className="mt-4 border-t pt-4">
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Recent Backups</h4>
+            <div className="space-y-1 max-h-32 overflow-y-auto">
+              {backupHistory.slice(0, 3).map(backup => (
+                <div key={backup.id} className="flex justify-between items-center text-xs">
+                  <span className="text-gray-600">{backup.version}</span>
+                  <button
+                    onClick={() => restoreFromBackup(backup.id)}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    Restore
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // === CHANGE LOG COMPONENT ===
+  const ChangeLogPanel = () => {
+    if (!showChangeLog) return null;
+
+    return (
+      <div className="fixed bottom-4 right-4 bg-white rounded-lg shadow-xl p-6 border border-gray-200 z-40 max-w-md max-h-96 overflow-hidden">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-bold text-gray-800">Change Log</h3>
+          <button
+            onClick={() => setShowChangeLog(false)}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
+        </div>
+        
+        <div className="overflow-y-auto max-h-64 space-y-2">
+          {changeLog.length === 0 ? (
+            <p className="text-gray-500 text-sm">No changes recorded yet.</p>
+          ) : (
+            changeLog.map(entry => (
+              <div key={entry.id} className="p-3 bg-gray-50 rounded-lg">
+                <div className="flex justify-between items-start mb-1">
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                    entry.type === 'backup' ? 'bg-blue-100 text-blue-800' :
+                    entry.type === 'restore' ? 'bg-green-100 text-green-800' :
+                    entry.type === 'preview' ? 'bg-orange-100 text-orange-800' :
+                    entry.type === 'admin' ? 'bg-purple-100 text-purple-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {entry.type.toUpperCase()}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(entry.timestamp).toLocaleString()}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700">{entry.description}</p>
+                {entry.details && (
+                  <p className="text-xs text-gray-500 mt-1">{entry.details}</p>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+        
+        <div className="mt-4 pt-4 border-t">
+          <button
+            onClick={() => {
+              setChangeLog([]);
+              localStorage.removeItem('kioo-programs-changelog');
+            }}
+            className="text-xs text-red-600 hover:text-red-800"
+          >
+            Clear Change Log
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Admin Panel */}
+      {showAdminPanel && <AdminPanel />}
+      
+      {/* Change Log Panel */}
+      <ChangeLogPanel />
+
+      {/* Preview Mode Banner */}
+      {isPreviewMode && (
+        <div className="fixed top-0 left-0 right-0 bg-orange-600 text-white py-2 px-4 z-30">
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">⚠️</span>
+              <span className="font-semibold">PREVIEW MODE ACTIVE</span>
+              <span className="text-orange-200">- Changes are not live</span>
+            </div>
+            <button
+              onClick={togglePreviewMode}
+              className="bg-orange-700 hover:bg-orange-800 px-3 py-1 rounded text-sm font-medium"
+            >
+              Exit Preview
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Access Button */}
+      <button
+        onClick={() => setShowAdminPanel(true)}
+        className="fixed top-4 left-4 bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-900 z-40"
+        style={{ fontSize: '12px' }}
+      >
+        🔧 Admin
+      </button>
+
       {/* Header */}
-      <section className="bg-kioo-primary text-white py-16">
+      <section className={`bg-kioo-primary text-white py-16 ${isPreviewMode ? 'mt-12' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-6">
@@ -289,7 +603,7 @@ Generated on: ${new Date().toLocaleString()}
             </h1>
             <div className="max-w-4xl mx-auto text-left">
               <p className="text-lg lg:text-xl text-green-100 leading-relaxed">
-                Kioo Radio 98.1FM exists to serve the Makona River Region across Liberia, Sierra Leone, and Guinea with Christ-centered teaching, uplifting music, and community-focused programming. Our broadcast lineup reflects our commitment to daily Bible teaching in multiple languages (English, French, Kissi, Fula, Mandingo), along with weekly cultural programming (Gbandi), interactive phone-in shows, and live Sunday church services. This schedule will continue to evolve as we grow, ensuring that every community and language group in our coverage area is represented.
+                Kioo Radio 98.1FM exists to serve the Makona River Region across Liberia, Sierra Leone, and Guinea with Christ-centered teaching, uplifting music, and community-focused programming. Our broadcast lineup now features the exciting new "Makona Talk Show" every Saturday morning (3 hours), daily sermons and Bible teachings including "Love & Faith" and "Guidelines" programs, plus "Truth for Life" on weekends. We maintain our commitment to multilingual programming (English, French, Kissi) with enhanced community programming in Fula and Mandingo languages, interactive phone-in shows, and live Sunday church services.
               </p>
             </div>
           </div>
@@ -300,7 +614,7 @@ Generated on: ${new Date().toLocaleString()}
       <section className="py-8 bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h3 className="text-lg font-semibold text-kioo-dark mb-4 text-center">Program Type Legend</h3>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-blue-500 rounded"></div>
               <span className="text-sm">Bible Teaching</span>
@@ -340,6 +654,14 @@ Generated on: ${new Date().toLocaleString()}
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 bg-lime-500 rounded"></div>
               <span className="text-sm">Youth Programs</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-rose-500 rounded"></div>
+              <span className="text-sm">Outreach</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 bg-cyan-500 rounded"></div>
+              <span className="text-sm">Educational</span>
             </div>
           </div>
         </div>
