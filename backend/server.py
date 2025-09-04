@@ -62,9 +62,9 @@ class ProgramLanguage(str, Enum):
 
 class ProgramCategory(str, Enum):
     NEWS = "news"
-    MUSIC = "music"
     TALK = "talk"
-    RELIGIOUS = "religious"
+    MUSIC = "music"
+    EDUCATIONAL = "educational"
     YOUTH = "youth"
     FARMING = "farming"
     COMMUNITY = "community"
