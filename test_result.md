@@ -127,6 +127,9 @@ Implement backup/snapshot system, preview mode, and change log infrastructure fo
         - working: true
           agent: "testing"
           comment: "NEW FRENCH PROGRAMS VERIFICATION COMPLETE ✅: Successfully verified both new French programs added to Kioo Radio schedule. 'La Vie Chez Nous' correctly scheduled Sunday 14:00-15:00 (60 minutes) in French language. 'Renaissance' correctly scheduled Friday 15:00-15:30 (30 minutes) in French language. Total program count: 286 programs (1 extra from expected 285). French programs total: 53. Both programs appear correctly in French language filter, day filters (Sunday/Friday), and structured schedule endpoint. All API endpoints (/api/programs, /api/programs?language=french, /api/programs?day=sunday, /api/programs?day=friday, /api/programs/schedule) working perfectly and include both new French programs. Phase 2 program identification found 22 programs including the new French additions. Backend APIs fully functional and ready for production use."
+        - working: true
+          agent: "testing"
+          comment: "RENAISSANCE PROGRAM DURATION CHANGE VERIFICATION COMPLETE ✅: Successfully verified that Renaissance program has been updated from 30 minutes to 60 minutes duration. Program details confirmed: Title: 'Renaissance', Day: Friday, Time: 15:00-16:00 (60 minutes), Language: French. Total program count correctly reduced to 284 programs (reduced by 1 due to combining two 30-min slots into one 60-min slot). All API endpoints working perfectly: GET /api/programs shows Renaissance with duration_minutes=60, French language filter includes Renaissance, Friday day filter includes Renaissance, structured schedule endpoint shows Renaissance correctly. Change successfully implemented and verified through comprehensive backend testing."
 
 ## frontend:
   - task: "Programs Page Backup/Snapshot System"
