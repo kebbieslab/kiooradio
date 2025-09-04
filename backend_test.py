@@ -229,9 +229,9 @@ class KiooRadioAPITester:
                 else:
                     print(f"✅ Schedule contains all 7 days of the week")
                 
-                # Check specific program counts per day as mentioned in review request
+                # Check specific program counts per day as mentioned in REFINED Phase 2 review request
                 expected_counts = {
-                    'monday': 49, 'tuesday': 49, 'wednesday': 49, 'thursday': 49, 'friday': 49,
+                    'monday': 47, 'tuesday': 48, 'wednesday': 48, 'thursday': 48, 'friday': 48,
                     'saturday': 22, 'sunday': 24
                 }
                 
