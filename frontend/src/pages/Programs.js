@@ -175,7 +175,7 @@ const Programs = () => {
     { "Start Time": "08:30", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "09:00", "End Time": "10:00", "Program": "VNA French Satellite Feed", "Language": "French", "Type": "Satellite" },
     { "Start Time": "10:00", "End Time": "10:30", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
-    { "Start Time": "10:30", "End Time": "11:00", "Program": "Women & Family Hour", "Language": "English", "Type": "Community" },
+    { "Start Time": "10:30", "End Time": "11:00", "Program": "Spot Light English", "Language": "English", "Type": "Educational", "highlight": true },
     { "Start Time": "11:00", "End Time": "11:30", "Program": "Community Announcements", "Language": "English", "Type": "Community" },
     { "Start Time": "11:30", "End Time": "12:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
     { "Start Time": "12:00", "End Time": "12:30", "Program": "Thru the Bible (TTB)", "Language": "Kissi", "Type": "Bible Teaching" },
