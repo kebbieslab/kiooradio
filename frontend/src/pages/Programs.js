@@ -255,7 +255,7 @@ const Programs = () => {
     { "Start Time": "23:00", "End Time": "00:00", "Program": "Evening Devotional", "Language": "Mixed", "Type": "Devotional" }
   ];
 
-  // Special weekly programs
+  // Special weekly programs - Updated with Gbandi Language Hour
   const weeklySpecial = [
     { "Day": "Monday", "Time": "19:00-20:00", "Program": "Gbandi Language Hour", "Language": "Gbandi", "Type": "Community" },
     { "Day": "Wednesday", "Time": "20:00-21:00", "Program": "Youth Connect Special", "Language": "English", "Type": "Youth/Community" },
