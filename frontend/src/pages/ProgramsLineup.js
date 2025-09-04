@@ -7,6 +7,7 @@ const API = `${BACKEND_URL}/api`;
 const ProgramsLineup = () => {
   const [activeTab, setActiveTab] = useState('weekday');
   const [selectedLanguage, setSelectedLanguage] = useState('all');
+  const [selectedType, setSelectedType] = useState('all'); // New program type filter
   const [filteredPrograms, setFilteredPrograms] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [schedule, setSchedule] = useState({});
