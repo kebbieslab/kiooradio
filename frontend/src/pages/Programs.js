@@ -19,6 +19,18 @@ const Programs = () => {
   
   const [loading, setLoading] = useState(true);
 
+  // === PHASE 1: BACKUP & PREVIEW INFRASTRUCTURE ===
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [showChangeLog, setShowChangeLog] = useState(false);
+  const [backupHistory, setBackupHistory] = useState([]);
+  const [changeLog, setChangeLog] = useState([]);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+
+  // Admin access check (could be enhanced with proper auth later)
+  const [adminPassword, setAdminPassword] = useState('');
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const ADMIN_PASSWORD = 'kioo-admin-2025'; // Simple password for now
+
   useEffect(() => {
     const fetchData = async () => {
       try {
