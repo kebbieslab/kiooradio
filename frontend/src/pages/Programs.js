@@ -184,7 +184,7 @@ const Programs = () => {
     { "Start Time": "13:30", "End Time": "14:00", "Program": "Phone-in Program", "Language": "Kissi", "Type": "Interactive" },
     { "Start Time": "14:00", "End Time": "14:30", "Program": "Thru the Bible (TTB)", "Language": "French", "Type": "Bible Teaching" },
     { "Start Time": "14:30", "End Time": "15:00", "Program": "Health & Wellness", "Language": "French", "Type": "Community" },
-    { "Start Time": "15:00", "End Time": "15:30", "Program": "Community Announcements", "Language": "French", "Type": "Community" },
+    { "Start Time": "15:00", "End Time": "15:30", "Program": "Renaissance", "Language": "French", "Type": "Interactive", "highlight": true },
     { "Start Time": "15:30", "End Time": "16:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
     { "Start Time": "16:00", "End Time": "16:30", "Program": "Christian Teaching", "Language": "Mandingo", "Type": "Bible Teaching", "highlight": true },
     { "Start Time": "16:30", "End Time": "17:00", "Program": "Community Programming", "Language": "Mandingo", "Type": "Community" },
