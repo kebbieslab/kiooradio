@@ -88,9 +88,9 @@ class KiooRadioAPITester:
         if success:
             print(f"✅ Programs endpoint accessible, found {len(programs)} programs")
             
-            # CRITICAL VERIFICATION 0: Total program count should be 291
-            print(f"\n🔍 CRITICAL VERIFICATION 0: Total Program Count")
-            expected_total = 291
+            # CRITICAL VERIFICATION 0: Total program count should be 285 (REFINED Phase 2)
+            print(f"\n🔍 CRITICAL VERIFICATION 0: Total Program Count (REFINED Phase 2)")
+            expected_total = 285
             actual_total = len(programs)
             
             if actual_total == expected_total:
