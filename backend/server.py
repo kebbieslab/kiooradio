@@ -538,10 +538,35 @@ async def get_schedule():
     # Group by day of week
     schedule = {}
     for program in programs:
-        day = program["day_of_week"]
-        if day not in schedule:
-            schedule[day] = []
-        schedule[day].append(Program(**program))
+        try:
+            # Remove MongoDB _id field
+            if '_id' in program:
+                del program['_id']
+            
+            # Handle duration field mapping
+            if 'duration' in program and 'duration_minutes' not in program:
+                program['duration_minutes'] = program['duration']
+            elif 'duration_minutes' not in program:
+                program['duration_minutes'] = 30  # Default duration
+            
+            # Remove extra fields that aren't in the Program model
+            extra_fields = ['duration', 'end_time', 'is_recurring', 'new_program', 'updated_at']
+            for field in extra_fields:
+                if field in program:
+                    del program[field]
+            
+            # Convert datetime strings to datetime objects if needed
+            if 'created_at' in program and isinstance(program['created_at'], str):
+                from datetime import datetime
+                program['created_at'] = datetime.fromisoformat(program['created_at'].replace('Z', '+00:00'))
+            
+            day = program["day_of_week"]
+            if day not in schedule:
+                schedule[day] = []
+            schedule[day].append(Program(**program))
+        except Exception as e:
+            print(f"Error converting program {program.get('id', 'unknown')} for schedule: {e}")
+            continue
     
     return schedule
 
