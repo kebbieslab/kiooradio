@@ -109,7 +109,7 @@ Implement backup/snapshot system, preview mode, and change log infrastructure fo
 ## backend:
   - task: "Programs API endpoints"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
