@@ -179,11 +179,13 @@ Implement backup/snapshot system, preview mode, and change log infrastructure fo
 
 ## test_plan:
   current_focus:
+    - "Programs API endpoints"
     - "Programs Page Backup/Snapshot System"
     - "Programs Page Preview Mode" 
     - "Programs Page Change Log System"
     - "Programs Page Admin Panel"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Programs API endpoints"
   test_all: false
   test_priority: "high_first"
 
