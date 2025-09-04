@@ -356,8 +356,73 @@ class KiooRadioAPITester:
         # CRITICAL VERIFICATION 4: Language filtering functionality
         print(f"\n🔍 CRITICAL VERIFICATION 4: Language Filtering")
         
-        # Test each supported language
-        supported_languages = ["english", "french", "kissi", "krio"]
+        # Test French language filtering specifically for new programs
+        success, french_programs = self.run_test("Get French Programs", "GET", "programs", 200, params={"language": "french"})
+        
+        if success:
+            print(f"✅ French language filter working, found {len(french_programs)} French programs")
+            
+            # Verify both new French programs appear in French filter
+            french_titles = [p.get('title', '').lower() for p in french_programs]
+            
+            la_vie_in_french = any('la vie chez nous' in title for title in french_titles)
+            renaissance_in_french = any('renaissance' in title for title in french_titles)
+            
+            if la_vie_in_french:
+                print(f"✅ 'La Vie Chez Nous' appears in French language filter")
+            else:
+                print(f"❌ 'La Vie Chez Nous' missing from French language filter")
+                self.failed_tests.append("French Language Filter - 'La Vie Chez Nous' not found")
+            
+            if renaissance_in_french:
+                print(f"✅ 'Renaissance' appears in French language filter")
+            else:
+                print(f"❌ 'Renaissance' missing from French language filter")
+                self.failed_tests.append("French Language Filter - 'Renaissance' not found")
+            
+            # Verify all returned programs are actually French
+            wrong_language_programs = []
+            for program in french_programs:
+                if program.get('language', '').lower() != 'french':
+                    wrong_language_programs.append(f"{program.get('title')} ({program.get('language')})")
+            
+            if wrong_language_programs:
+                print(f"❌ French filter returned non-French programs: {wrong_language_programs}")
+                self.failed_tests.append(f"French Language Filter - Non-French programs: {wrong_language_programs}")
+            else:
+                print(f"✅ French language filter correctly returns only French programs")
+        
+        # Test day filtering for the new French programs
+        print(f"\n🔍 CRITICAL VERIFICATION 5: Day Filtering for New French Programs")
+        
+        # Test Sunday filtering (should include La Vie Chez Nous)
+        success, sunday_programs = self.run_test("Get Sunday Programs", "GET", "programs", 200, params={"day": "sunday"})
+        
+        if success:
+            sunday_titles = [p.get('title', '').lower() for p in sunday_programs]
+            la_vie_in_sunday = any('la vie chez nous' in title for title in sunday_titles)
+            
+            if la_vie_in_sunday:
+                print(f"✅ 'La Vie Chez Nous' appears in Sunday day filter")
+            else:
+                print(f"❌ 'La Vie Chez Nous' missing from Sunday day filter")
+                self.failed_tests.append("Sunday Day Filter - 'La Vie Chez Nous' not found")
+        
+        # Test Friday filtering (should include Renaissance)
+        success, friday_programs = self.run_test("Get Friday Programs", "GET", "programs", 200, params={"day": "friday"})
+        
+        if success:
+            friday_titles = [p.get('title', '').lower() for p in friday_programs]
+            renaissance_in_friday = any('renaissance' in title for title in friday_titles)
+            
+            if renaissance_in_friday:
+                print(f"✅ 'Renaissance' appears in Friday day filter")
+            else:
+                print(f"❌ 'Renaissance' missing from Friday day filter")
+                self.failed_tests.append("Friday Day Filter - 'Renaissance' not found")
+        
+        # Test other supported languages
+        supported_languages = ["english", "kissi", "krio"]
         
         for language in supported_languages:
             success, filtered_programs = self.run_test(f"Get {language.title()} Programs", "GET", "programs", 200, params={"language": language})
@@ -375,9 +440,9 @@ class KiooRadioAPITester:
                 else:
                     print(f"✅ {language.title()} language filter working correctly ({len(filtered_programs)} programs)")
         
-        # Test day filtering
-        print(f"\n🔍 Testing Day Filtering")
-        test_days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        # Test day filtering for all days
+        print(f"\n🔍 Testing Day Filtering for All Days")
+        test_days = ["monday", "tuesday", "wednesday", "thursday", "saturday"]  # Skip Friday and Sunday as already tested above
         
         for day in test_days:
             success, day_programs = self.run_test(f"Get {day.title()} Programs", "GET", "programs", 200, params={"day": day})
