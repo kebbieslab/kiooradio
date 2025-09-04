@@ -159,12 +159,12 @@ class KiooRadioAPITester:
                     print(f"❌ Renaissance wrong time: expected 15:00, found {renaissance_program.get('start_time')}")
                     self.failed_tests.append(f"Renaissance - Wrong time: expected 15:00, found {renaissance_program.get('start_time')}")
                 
-                # Verify duration (30 minutes)
-                if renaissance_program.get('duration_minutes') == 30:
-                    print(f"✅ Renaissance correct duration: 30 minutes")
+                # Verify duration (60 minutes - UPDATED from 30 to 60)
+                if renaissance_program.get('duration_minutes') == 60:
+                    print(f"✅ Renaissance correct duration: 60 minutes")
                 else:
-                    print(f"❌ Renaissance wrong duration: expected 30 minutes, found {renaissance_program.get('duration_minutes')}")
-                    self.failed_tests.append(f"Renaissance - Wrong duration: expected 30 minutes, found {renaissance_program.get('duration_minutes')}")
+                    print(f"❌ Renaissance wrong duration: expected 60 minutes, found {renaissance_program.get('duration_minutes')}")
+                    self.failed_tests.append(f"Renaissance - Wrong duration: expected 60 minutes, found {renaissance_program.get('duration_minutes')}")
                 
                 # Verify language (French)
                 if renaissance_program.get('language', '').lower() == 'french':
