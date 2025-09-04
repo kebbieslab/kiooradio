@@ -75,6 +75,7 @@ class ProgramCategory(str, Enum):
     LIVE_SERVICE = "live_service"
     SATELLITE = "satellite"
     SERMON = "sermon"
+    TALK_SHOW = "talk_show"
 
 class DayOfWeek(str, Enum):
     MONDAY = "monday"
