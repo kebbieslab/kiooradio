@@ -273,7 +273,9 @@ const Programs = () => {
     'Devotional': 'bg-indigo-100 text-indigo-800',
     'Worship': 'bg-pink-100 text-pink-800',
     'Sermon': 'bg-teal-100 text-teal-800',
-    'Youth/Community': 'bg-lime-100 text-lime-800'
+    'Youth/Community': 'bg-lime-100 text-lime-800',
+    'Outreach': 'bg-rose-100 text-rose-800',
+    'Educational': 'bg-cyan-100 text-cyan-800'
   };
 
   // Language options - Added Gbandi
