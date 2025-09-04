@@ -479,6 +479,200 @@ class KiooRadioAPITester:
         }
         self.run_test("Create Program", "POST", "programs", 200, data=program_data)
 
+    def test_spot_light_english_verification(self):
+        """CRITICAL TEST: Verify the new 'Spot Light English' daily program (Monday-Friday)"""
+        print("\n=== CRITICAL VERIFICATION: SPOT LIGHT ENGLISH DAILY PROGRAM ===")
+        print("Testing: 5 'Spot Light English' programs (Monday-Friday, 10:30-11:00, English, Educational)")
+        
+        # Get all programs first
+        success, all_programs = self.run_test("Get All Programs for Spot Light English Verification", "GET", "programs", 200)
+        
+        if not success:
+            print("❌ Failed to get programs for Spot Light English verification")
+            return
+        
+        print(f"✅ Retrieved {len(all_programs)} total programs for verification")
+        
+        # VERIFICATION 1: Check total program count should be 284
+        expected_total = 284
+        actual_total = len(all_programs)
+        
+        if actual_total == expected_total:
+            print(f"✅ Total program count correct: {actual_total} programs")
+        else:
+            print(f"⚠️  Total program count: expected {expected_total}, found {actual_total}")
+            if actual_total > expected_total:
+                print(f"   Note: {actual_total - expected_total} extra programs found")
+            else:
+                print(f"   Note: {expected_total - actual_total} programs missing")
+        
+        # VERIFICATION 2: Find all Spot Light English programs
+        print(f"\n🔍 DETAILED VERIFICATION: Spot Light English Programs")
+        spot_light_programs = [p for p in all_programs if 'spot light english' in p.get('title', '').lower()]
+        
+        if spot_light_programs:
+            print(f"✅ FOUND: {len(spot_light_programs)} Spot Light English programs")
+            
+            # Expected: 5 programs (Monday-Friday)
+            expected_count = 5
+            if len(spot_light_programs) == expected_count:
+                print(f"✅ Correct number of Spot Light English programs: {len(spot_light_programs)}")
+            else:
+                print(f"❌ Wrong number of Spot Light English programs: expected {expected_count}, found {len(spot_light_programs)}")
+                self.failed_tests.append(f"Spot Light English - Wrong count: expected {expected_count}, found {len(spot_light_programs)}")
+            
+            # Verify each program's attributes
+            expected_days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+            found_days = []
+            
+            for program in spot_light_programs:
+                title = program.get('title', '')
+                day = program.get('day_of_week', '').lower()
+                start_time = program.get('start_time', '')
+                duration = program.get('duration_minutes', 0)
+                language = program.get('language', '').lower()
+                category = program.get('category', '').lower()
+                
+                print(f"\n   📋 Program: {title}")
+                print(f"      Day: {day}")
+                print(f"      Time: {start_time}")
+                print(f"      Duration: {duration} minutes")
+                print(f"      Language: {language}")
+                print(f"      Category: {category}")
+                
+                # Track found days
+                if day in expected_days:
+                    found_days.append(day)
+                
+                # Verify attributes
+                checks = [
+                    ("Day", day in expected_days, f"Should be weekday (Monday-Friday), found {day}"),
+                    ("Start Time", start_time == '10:30', f"Should be 10:30, found {start_time}"),
+                    ("Duration", duration == 30, f"Should be 30 minutes, found {duration}"),
+                    ("Language", language == 'english', f"Should be English, found {language}"),
+                    ("Category", category == 'educational', f"Should be educational, found {category}")
+                ]
+                
+                for check_name, condition, error_msg in checks:
+                    if condition:
+                        print(f"      ✅ {check_name}: Correct")
+                    else:
+                        print(f"      ❌ {check_name}: {error_msg}")
+                        self.failed_tests.append(f"Spot Light English ({day}) - {error_msg}")
+            
+            # Verify all weekdays are covered
+            missing_days = [day for day in expected_days if day not in found_days]
+            if missing_days:
+                print(f"\n❌ Missing Spot Light English programs for days: {missing_days}")
+                self.failed_tests.append(f"Spot Light English - Missing days: {missing_days}")
+            else:
+                print(f"\n✅ Spot Light English programs found for all weekdays (Monday-Friday)")
+            
+            # Check for duplicates
+            duplicate_days = [day for day in found_days if found_days.count(day) > 1]
+            if duplicate_days:
+                print(f"❌ Duplicate Spot Light English programs found for days: {set(duplicate_days)}")
+                self.failed_tests.append(f"Spot Light English - Duplicate programs for days: {set(duplicate_days)}")
+            else:
+                print(f"✅ No duplicate Spot Light English programs found")
+                
+        else:
+            print(f"❌ CRITICAL ERROR: No 'Spot Light English' programs found")
+            self.failed_tests.append("CRITICAL - Spot Light English programs not found in database")
+        
+        # VERIFICATION 3: Test English language filtering includes Spot Light English
+        print(f"\n🔍 VERIFICATION: English Language Filtering")
+        success, english_programs = self.run_test("English Language Filter Test", "GET", "programs", 200, params={"language": "english"})
+        
+        if success:
+            english_titles = [p.get('title', '').lower() for p in english_programs]
+            spot_light_in_english = [title for title in english_titles if 'spot light english' in title]
+            
+            if len(spot_light_in_english) == 5:
+                print(f"✅ All 5 Spot Light English programs appear in English language filter")
+            else:
+                print(f"❌ Wrong number of Spot Light English programs in English filter: expected 5, found {len(spot_light_in_english)}")
+                self.failed_tests.append(f"English Filter - Expected 5 Spot Light English programs, found {len(spot_light_in_english)}")
+        
+        # VERIFICATION 4: Test weekday filtering includes Spot Light English
+        print(f"\n🔍 VERIFICATION: Weekday Filtering")
+        weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+        
+        for day in weekdays:
+            success, day_programs = self.run_test(f"{day.title()} Filter Test", "GET", "programs", 200, params={"day": day})
+            if success:
+                day_titles = [p.get('title', '').lower() for p in day_programs]
+                spot_light_in_day = any('spot light english' in title for title in day_titles)
+                
+                if spot_light_in_day:
+                    print(f"✅ Spot Light English appears in {day.title()} filter")
+                else:
+                    print(f"❌ Spot Light English missing from {day.title()} filter")
+                    self.failed_tests.append(f"{day.title()} Filter - Spot Light English not found")
+        
+        # VERIFICATION 5: Test schedule endpoint includes Spot Light English
+        print(f"\n🔍 VERIFICATION: Schedule Endpoint")
+        success, schedule_data = self.run_test("Schedule Endpoint Test", "GET", "programs/schedule", 200)
+        
+        if success:
+            weekday_schedule_count = 0
+            for day in weekdays:
+                if day in schedule_data:
+                    day_schedule = schedule_data[day]
+                    day_titles = [p.get('title', '').lower() for p in day_schedule]
+                    spot_light_in_schedule = any('spot light english' in title for title in day_titles)
+                    
+                    if spot_light_in_schedule:
+                        print(f"✅ Spot Light English in {day.title()} schedule")
+                        weekday_schedule_count += 1
+                    else:
+                        print(f"❌ Spot Light English missing from {day.title()} schedule")
+                        self.failed_tests.append(f"Schedule - Spot Light English not in {day.title()} schedule")
+            
+            if weekday_schedule_count == 5:
+                print(f"✅ Spot Light English found in all 5 weekday schedules")
+            else:
+                print(f"❌ Spot Light English missing from {5 - weekday_schedule_count} weekday schedules")
+        
+        # VERIFICATION 6: Count Phase 2 programs (should be 27 including Spot Light English)
+        print(f"\n🔍 VERIFICATION: Phase 2 Program Count")
+        
+        # Look for programs that might be Phase 2 (new programs)
+        phase2_indicators = [
+            'makona talk show', 'guidelines', 'love & faith', 'daily sermon', 'truth for life', 
+            'la vie chez nous', 'renaissance', 'spot light english'
+        ]
+        
+        phase2_programs = []
+        for program in all_programs:
+            title_lower = program.get('title', '').lower()
+            for indicator in phase2_indicators:
+                if indicator in title_lower:
+                    phase2_programs.append(program.get('title'))
+                    break
+        
+        print(f"✅ Found {len(phase2_programs)} identifiable Phase 2 programs:")
+        for program in phase2_programs:
+            print(f"   - {program}")
+        
+        # Expected: 27 Phase 2 programs (22 + 5 Spot Light English)
+        expected_phase2_count = 27
+        if len(phase2_programs) >= expected_phase2_count:
+            print(f"✅ Phase 2 program count meets expectation: {len(phase2_programs)} >= {expected_phase2_count}")
+        else:
+            print(f"❌ Phase 2 program count below expectation: {len(phase2_programs)} < {expected_phase2_count}")
+            self.failed_tests.append(f"Phase 2 Count - Expected at least {expected_phase2_count}, found {len(phase2_programs)}")
+        
+        # Final summary for Spot Light English
+        print(f"\n📊 SPOT LIGHT ENGLISH VERIFICATION SUMMARY:")
+        print(f"   Total Programs: {len(all_programs)}")
+        print(f"   Spot Light English Programs: {len(spot_light_programs) if spot_light_programs else 0}")
+        print(f"   Expected: 5 programs (Monday-Friday)")
+        print(f"   Time Slot: 10:30-11:00 (30 minutes)")
+        print(f"   Language: English")
+        print(f"   Category: Educational")
+        print(f"   Status: {'✅ VERIFIED' if len(spot_light_programs) == 5 else '❌ ISSUES FOUND'}")
+
     def test_new_french_programs_verification(self):
         """CRITICAL TEST: Verify the two new French programs added to Kioo Radio schedule"""
         print("\n=== CRITICAL VERIFICATION: NEW FRENCH PROGRAMS ===")
