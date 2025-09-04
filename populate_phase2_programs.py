@@ -95,6 +95,32 @@ async def populate_programs():
     # Create weekday programs (Monday-Friday)
     for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']:
         for program in weekday_schedule:
+            # SPECIAL CASE: Replace Monday 19:00-20:00 with Gbandi Language Hour
+            if day == 'monday' and program["time"] == "19:00":
+                weekday_programs.append({
+                    "id": str(uuid.uuid4()),
+                    "title": "Gbandi Language Hour",
+                    "description": "Gbandi Language Hour - Monday special program",
+                    "host": "Gbandi Community Host",
+                    "language": "gbandi",
+                    "category": "community",
+                    "day_of_week": day,
+                    "start_time": program["time"],
+                    "end_time": "20:00",  # Full hour for Gbandi
+                    "duration": 60,  # 1 hour
+                    "is_live": True,
+                    "is_recurring": True,
+                    "new_program": False,
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat()
+                })
+                # Skip the regular 19:30-20:00 program for Monday
+                continue
+            elif day == 'monday' and program["time"] == "19:30":
+                # Skip this slot as it's covered by Gbandi Language Hour
+                continue
+            
+            duration = 30 if program["time"] != "09:00" and program["time"] != "18:00" else (60 if program["time"] == "09:00" else 60)  # VNA French and Evening News are 60 mins
             weekday_programs.append({
                 "id": str(uuid.uuid4()),
                 "title": program["title"],
@@ -105,7 +131,7 @@ async def populate_programs():
                 "day_of_week": day,
                 "start_time": program["time"],
                 "end_time": program["end_time"],
-                "duration": 30 if program["time"] != "09:00" else 60,  # VNA French is 60 mins
+                "duration": duration,
                 "is_live": True,
                 "is_recurring": True,
                 "new_program": program.get("new_program", False),
