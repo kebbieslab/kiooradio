@@ -55,6 +55,9 @@ class ProgramLanguage(str, Enum):
     FRENCH = "french"
     KISSI = "kissi"
     KRIO = "krio"
+    MIXED = "mixed"
+    MANDINGO = "mandingo"
+    FULA = "fula"
 
 class ProgramCategory(str, Enum):
     NEWS = "news"
