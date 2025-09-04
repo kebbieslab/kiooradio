@@ -184,7 +184,7 @@ async def populate_programs():
                 "updated_at": datetime.now().isoformat()
             })
     
-    # SATURDAY SCHEDULE - Phase 2 Modified (TTB removed, Makona Talk Show added)
+    # SATURDAY SCHEDULE - Phase 2 Modified + Billy Bimba Programs (TTB removed, Makona Talk Show added)
     saturday_schedule = [
         {"time": "00:00", "end_time": "01:00", "title": "Music & Reflection", "language": "english", "type": "music"},
         {"time": "01:00", "end_time": "02:00", "title": "Community Programming", "language": "english", "type": "community"},
@@ -196,7 +196,7 @@ async def populate_programs():
         {"time": "06:00", "end_time": "09:00", "title": "Makona Talk Show", "language": "english", "type": "talk_show", "new_program": True},
         {"time": "09:00", "end_time": "09:30", "title": "Truth for Life", "language": "english", "type": "bible_teaching", "new_program": True},
         {"time": "09:30", "end_time": "10:00", "title": "Daily Sermon", "language": "english", "type": "sermon", "new_program": True},
-        {"time": "10:00", "end_time": "11:00", "title": "Community Programming", "language": "kissi", "type": "community"},
+        {"time": "10:00", "end_time": "11:00", "title": "Evangelist Billy Bimba - English Hour", "language": "english", "type": "sermon", "new_program": True},
         {"time": "11:00", "end_time": "13:00", "title": "NLASN 'Island Praise'", "language": "english", "type": "satellite"},
         {"time": "13:00", "end_time": "14:00", "title": "Community Programming", "language": "english", "type": "community"},
         {"time": "14:00", "end_time": "15:00", "title": "Community Programming", "language": "french", "type": "community"},
