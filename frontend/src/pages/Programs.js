@@ -736,28 +736,51 @@ Generated on: ${new Date().toLocaleString()}
               </button>
             </div>
 
-            {/* Language Filter */}
-            <div className="flex items-center gap-4">
-              <label htmlFor="language-filter" className="text-sm font-medium text-gray-700">
-                Filter by Language:
-              </label>
-              <select
-                id="language-filter"
-                value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
-              >
-                {languages.map(lang => (
-                  <option key={lang} value={lang}>
-                    {lang === 'all' ? 'All Languages' : lang}
-                  </option>
-                ))}
-              </select>
+            {/* Language and Type Filters */}
+            <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+              
+              {/* Language Filter */}
+              <div className="flex items-center gap-2">
+                <label htmlFor="language-filter" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                  Language:
+                </label>
+                <select
+                  id="language-filter"
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+                >
+                  {languages.map(lang => (
+                    <option key={lang} value={lang}>
+                      {lang === 'all' ? 'All Languages' : lang}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Program Type Filter */}
+              <div className="flex items-center gap-2">
+                <label htmlFor="type-filter" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                  Type:
+                </label>
+                <select
+                  id="type-filter"
+                  value={selectedType}
+                  onChange={(e) => setSelectedType(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
+                >
+                  {programTypes.map(type => (
+                    <option key={type} value={type}>
+                      {type === 'all' ? 'All Types' : type}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               {/* Download Button */}
               <button
                 onClick={downloadSchedule}
-                className="px-4 py-2 bg-kioo-primary text-white rounded-lg hover:bg-kioo-secondary transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-kioo-primary text-white rounded-lg hover:bg-kioo-secondary transition-colors flex items-center gap-2 whitespace-nowrap"
               >
                 📄 Download
               </button>
