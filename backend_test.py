@@ -241,6 +241,125 @@ class KiooRadioAPITester:
         }
         self.run_test("Create Program", "POST", "programs", 200, data=program_data)
 
+    def test_live_broadcast_schedule_endpoint(self):
+        """Test live broadcast schedule endpoint - PHASE 2 CRITICAL"""
+        print("\n=== TESTING LIVE BROADCAST SCHEDULE ENDPOINT ===")
+        
+        # Test GET /api/live-broadcast-schedule
+        success, schedule_data = self.run_test("Get Live Broadcast Schedule", "GET", "live-broadcast-schedule", 200)
+        
+        if success:
+            print(f"✅ Live broadcast schedule endpoint accessible")
+            
+            # CRITICAL VERIFICATION: Check required data structure
+            print(f"\n🔍 CRITICAL VERIFICATION: Live Broadcast Schedule Structure")
+            
+            required_top_level_fields = ['weeklySchedule', 'countrySchedules', 'introText']
+            missing_fields = [field for field in required_top_level_fields if field not in schedule_data]
+            
+            if missing_fields:
+                print(f"❌ Missing required top-level fields: {missing_fields}")
+                self.failed_tests.append(f"Live Broadcast Schedule - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ All required top-level fields present")
+            
+            # Verify weeklySchedule structure
+            if 'weeklySchedule' in schedule_data:
+                weekly_schedule = schedule_data['weeklySchedule']
+                expected_days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+                
+                missing_days = [day for day in expected_days if day not in weekly_schedule]
+                if missing_days:
+                    print(f"❌ Weekly schedule missing days: {missing_days}")
+                    self.failed_tests.append(f"Weekly Schedule - Missing days: {missing_days}")
+                else:
+                    print(f"✅ Weekly schedule contains all 7 days")
+                
+                # Verify each day has country data
+                for day, day_data in weekly_schedule.items():
+                    if isinstance(day_data, dict):
+                        expected_countries = ['liberia', 'sierra_leone', 'guinea']
+                        missing_countries = [country for country in expected_countries if country not in day_data]
+                        
+                        if missing_countries:
+                            print(f"❌ {day.title()} missing countries: {missing_countries}")
+                            self.failed_tests.append(f"Weekly Schedule {day} - Missing countries: {missing_countries}")
+                        else:
+                            print(f"✅ {day.title()} has all 3 countries")
+                    else:
+                        print(f"❌ {day.title()} data is not a dictionary")
+                        self.failed_tests.append(f"Weekly Schedule {day} - Invalid data structure")
+            
+            # Verify countrySchedules structure
+            if 'countrySchedules' in schedule_data:
+                country_schedules = schedule_data['countrySchedules']
+                
+                if isinstance(country_schedules, list):
+                    print(f"✅ Country schedules is a list with {len(country_schedules)} countries")
+                    
+                    expected_countries = ['Liberia', 'Sierra Leone', 'Guinea']
+                    found_countries = [country.get('country', '') for country in country_schedules]
+                    
+                    missing_countries = [country for country in expected_countries if country not in found_countries]
+                    if missing_countries:
+                        print(f"❌ Missing countries in schedules: {missing_countries}")
+                        self.failed_tests.append(f"Country Schedules - Missing countries: {missing_countries}")
+                    else:
+                        print(f"✅ All 3 countries present in schedules")
+                    
+                    # Verify each country has required fields
+                    for country_data in country_schedules:
+                        country_name = country_data.get('country', 'Unknown')
+                        required_fields = ['country', 'liveDays', 'preRecordedDays', 'specialNote', 'colorCode']
+                        missing_fields = [field for field in required_fields if field not in country_data]
+                        
+                        if missing_fields:
+                            print(f"❌ {country_name} missing fields: {missing_fields}")
+                            self.failed_tests.append(f"Country Schedule {country_name} - Missing fields: {missing_fields}")
+                        else:
+                            print(f"✅ {country_name} has all required fields")
+                            
+                            # Verify liveDays and preRecordedDays are lists
+                            live_days = country_data.get('liveDays', [])
+                            pre_recorded_days = country_data.get('preRecordedDays', [])
+                            
+                            if isinstance(live_days, list) and isinstance(pre_recorded_days, list):
+                                print(f"   ✅ {country_name} has {len(live_days)} live days, {len(pre_recorded_days)} pre-recorded days")
+                            else:
+                                print(f"   ❌ {country_name} days are not in list format")
+                                self.failed_tests.append(f"Country Schedule {country_name} - Days not in list format")
+                else:
+                    print(f"❌ Country schedules is not a list")
+                    self.failed_tests.append("Country Schedules - Not a list")
+            
+            # Verify introText is present and meaningful
+            if 'introText' in schedule_data:
+                intro_text = schedule_data['introText']
+                if intro_text and len(intro_text) > 50:  # Should be a meaningful explanation
+                    print(f"✅ Intro text present and meaningful ({len(intro_text)} characters)")
+                else:
+                    print(f"❌ Intro text missing or too short")
+                    self.failed_tests.append("Live Broadcast Schedule - Intro text missing or inadequate")
+            
+            # SPECIFIC VERIFICATION: Liberia should be anchor with daily presence
+            liberia_schedule = next((country for country in schedule_data.get('countrySchedules', []) if country.get('country') == 'Liberia'), None)
+            if liberia_schedule:
+                live_days = liberia_schedule.get('liveDays', [])
+                if len(live_days) == 7:  # All 7 days
+                    print(f"✅ Liberia correctly shows daily live presence (7 days)")
+                else:
+                    print(f"❌ Liberia should have daily live presence, found {len(live_days)} days")
+                    self.failed_tests.append(f"Liberia Schedule - Should have 7 live days, found {len(live_days)}")
+                
+                special_note = liberia_schedule.get('specialNote', '')
+                if 'anchor' in special_note.lower() or 'daily' in special_note.lower():
+                    print(f"✅ Liberia special note mentions anchor/daily role")
+                else:
+                    print(f"❌ Liberia special note should mention anchor/daily role")
+                    self.failed_tests.append("Liberia Schedule - Special note should mention anchor/daily role")
+        else:
+            print(f"❌ Live broadcast schedule endpoint failed")
+
     def test_impact_stories_endpoints(self):
         """Test impact stories endpoints"""
         print("\n=== TESTING IMPACT STORIES ENDPOINTS ===")
