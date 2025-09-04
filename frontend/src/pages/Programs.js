@@ -813,13 +813,23 @@ Generated on: ${new Date().toLocaleString()}
             <h3 className="text-2xl font-bold text-kioo-dark mb-6 text-center">
               🌟 Weekly Special Programs
             </h3>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {weeklySpecial.map((special, index) => (
                 <div key={index} className="bg-gradient-to-r from-kioo-primary to-kioo-secondary rounded-lg p-6 text-white">
-                  <div className="text-2xl mb-3">📅</div>
+                  <div className="text-2xl mb-3">
+                    {special.Program === "Gbandi Language Hour" ? "🗣️" :
+                     special.Program === "Youth Connect Special" ? "👥" :
+                     special.Program === "Women's Empowerment Hour" ? "👩‍💼" :
+                     special.Program === "Makona Talk Show" ? "🎙️" : "📅"}
+                  </div>
                   <h4 className="text-lg font-semibold mb-2">{special.Program}</h4>
                   <p className="text-green-100 text-sm mb-1">{special.Day} • {special.Time}</p>
-                  <p className="text-green-100 text-sm">{special.Language} • {special.Type}</p>
+                  <p className="text-green-100 text-sm mb-2">{special.Language} • {special.Type}</p>
+                  {special.description && (
+                    <p className="text-green-50 text-xs italic border-t border-green-300 pt-2">
+                      {special.description}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
