@@ -602,7 +602,7 @@ Generated on: ${new Date().toLocaleString()}
             </h1>
             <div className="max-w-4xl mx-auto text-left">
               <p className="text-lg lg:text-xl text-green-100 leading-relaxed">
-                Kioo Radio 98.1FM exists to serve the Makona River Region across Liberia, Sierra Leone, and Guinea with Christ-centered teaching, uplifting music, and community-focused programming. Our broadcast lineup reflects our commitment to daily Bible teaching in multiple languages (English, French, Kissi, Fula, Mandingo), along with weekly cultural programming (Gbandi), interactive phone-in shows, and live Sunday church services. This schedule will continue to evolve as we grow, ensuring that every community and language group in our coverage area is represented.
+                Kioo Radio 98.1FM exists to serve the Makona River Region across Liberia, Sierra Leone, and Guinea with Christ-centered teaching, uplifting music, and community-focused programming. Our broadcast lineup now features the exciting new "Makona Talk Show" every Saturday morning (3 hours), daily sermons and Bible teachings including "Love & Faith" and "Guidelines" programs, plus "Truth for Life" on weekends. We maintain our commitment to multilingual programming (English, French, Kissi) with enhanced community programming in Fula and Mandingo languages, interactive phone-in shows, and live Sunday church services.
               </p>
             </div>
           </div>
