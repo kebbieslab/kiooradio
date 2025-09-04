@@ -1073,6 +1073,7 @@ class KiooRadioAPITester:
         
         self.test_basic_endpoints()
         self.test_programs_endpoints()
+        self.test_live_broadcast_schedule_endpoint()  # CRITICAL: Test Phase 2 live broadcast schedule
         self.test_impact_stories_endpoints()
         self.test_news_endpoints()
         self.test_donations_endpoints()
