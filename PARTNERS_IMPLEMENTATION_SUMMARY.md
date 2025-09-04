@@ -131,7 +131,7 @@ Your comprehensive partners logo strip has been successfully added to the Kioo R
 
 ## 🚀 **LIVE WEBSITE**
 
-**URL:** https://radio-dash-1.preview.emergentagent.com  
+**URL:** https://pedantic-sanderson.preview.emergentagent.com  
 **Status:** ✅ **FULLY OPERATIONAL** with scrolling partners strip
 
 **Features Working:**
