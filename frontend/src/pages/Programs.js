@@ -283,6 +283,23 @@ const Programs = () => {
   // Language options - Added Gbandi
   const languages = ['all', 'English', 'French', 'Kissi', 'Fula', 'Mandingo', 'Gbandi', 'Mixed'];
   
+  // Program type options for filtering
+  const programTypes = [
+    'all',
+    'Bible Teaching',
+    'Community', 
+    'Interactive',
+    'Satellite',
+    'Live Service',
+    'Music',
+    'Devotional',
+    'Worship',
+    'Sermon',
+    'Youth/Community',
+    'Outreach',
+    'Educational'
+  ];
+  
   // Live Broadcast Days filter options
   const days = ['all', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   const countries = ['all', 'liberia', 'sierra_leone', 'guinea'];
