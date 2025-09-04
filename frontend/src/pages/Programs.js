@@ -277,7 +277,7 @@ const Programs = () => {
     'Youth/Community': 'bg-lime-100 text-lime-800'
   };
 
-  // Language options
+  // Language options - Added Gbandi
   const languages = ['all', 'English', 'French', 'Kissi', 'Fula', 'Mandingo', 'Gbandi', 'Mixed'];
   
   // Live Broadcast Days filter options
