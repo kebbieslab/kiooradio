@@ -800,6 +800,9 @@ Generated on: ${new Date().toLocaleString()}
               <p className="text-green-100 mt-1">
                 {filteredPrograms.length} programs
                 {selectedLanguage !== 'all' && ` in ${selectedLanguage}`}
+                {selectedType !== 'all' && ` (${selectedType})`}
+                {(selectedLanguage !== 'all' || selectedType !== 'all') && 
+                  ` • ${getCurrentSchedule().length} total`}
               </p>
             </div>
 
