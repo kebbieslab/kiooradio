@@ -213,7 +213,7 @@ const Programs = () => {
     { "Start Time": "06:00", "End Time": "09:00", "Program": "Makona Talk Show", "Language": "English", "Type": "Interactive", "highlight": true },
     { "Start Time": "09:00", "End Time": "09:30", "Program": "Truth for Life", "Language": "English", "Type": "Bible Teaching", "highlight": true },
     { "Start Time": "09:30", "End Time": "10:00", "Program": "Daily Sermon", "Language": "English", "Type": "Sermon", "highlight": true },
-    { "Start Time": "10:00", "End Time": "11:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
+    { "Start Time": "10:00", "End Time": "11:00", "Program": "Evangelist Billy Bimba - English Hour", "Language": "English", "Type": "Sermon", "highlight": true },
     { "Start Time": "11:00", "End Time": "13:00", "Program": "NLASN 'Island Praise'", "Language": "English", "Type": "Satellite", "highlight": true },
     { "Start Time": "13:00", "End Time": "14:00", "Program": "Community Programming", "Language": "English", "Type": "Community" },
     { "Start Time": "14:00", "End Time": "15:00", "Program": "Community Programming", "Language": "French", "Type": "Community" },
