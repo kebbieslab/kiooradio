@@ -144,6 +144,27 @@ async def populate_programs():
             elif day == 'friday' and program["time"] == "15:30":
                 continue
             
+            # SPECIAL CASE: Add Spot Light English on weekdays 10:30-11:00 (replacing Women & Family Hour)
+            elif program["time"] == "10:30" and program["title"] == "Women & Family Hour":
+                weekday_programs.append({
+                    "id": str(uuid.uuid4()),
+                    "title": "Spot Light English",
+                    "description": f"Spot Light English - {day.title()} (Daily English program across multilingual slots)",
+                    "host": "English Program Host",
+                    "language": "english",
+                    "category": "educational",
+                    "day_of_week": day,
+                    "start_time": program["time"],
+                    "end_time": "11:00",
+                    "duration": 30,
+                    "is_live": True,
+                    "is_recurring": True,
+                    "new_program": True,
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat()
+                })
+                continue
+            
             duration = 30 if program["time"] != "09:00" and program["time"] != "18:00" else (60 if program["time"] == "09:00" else 60)  # VNA French and Evening News are 60 mins
             weekday_programs.append({
                 "id": str(uuid.uuid4()),
