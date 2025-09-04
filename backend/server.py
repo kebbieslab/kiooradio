@@ -69,6 +69,9 @@ class ProgramCategory(str, Enum):
     COMMUNITY = "community"
     BIBLE_TEACHING = "bible_teaching"
     INTERACTIVE = "interactive"
+    DEVOTIONAL = "devotional"
+    OUTREACH = "outreach"
+    WORSHIP = "worship"
 
 class DayOfWeek(str, Enum):
     MONDAY = "monday"
