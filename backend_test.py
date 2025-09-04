@@ -99,6 +99,83 @@ class KiooRadioAPITester:
                 print(f"❌ Total program count mismatch: expected {expected_total}, found {actual_total}")
                 self.failed_tests.append(f"Phase 2 Programs - Total count mismatch: expected {expected_total}, found {actual_total}")
             
+            # NEW CRITICAL VERIFICATION: Two New French Programs
+            print(f"\n🔍 NEW CRITICAL VERIFICATION: Two New French Programs")
+            
+            # Check for "La Vie Chez Nous" - Sunday 14:00-15:00 (60 minutes)
+            la_vie_programs = [p for p in programs if 'la vie chez nous' in p.get('title', '').lower()]
+            if la_vie_programs:
+                la_vie_program = la_vie_programs[0]
+                print(f"✅ Found 'La Vie Chez Nous' program: {la_vie_program.get('title')}")
+                
+                # Verify day (Sunday)
+                if la_vie_program.get('day_of_week', '').lower() == 'sunday':
+                    print(f"✅ La Vie Chez Nous correctly scheduled on Sunday")
+                else:
+                    print(f"❌ La Vie Chez Nous wrong day: expected Sunday, found {la_vie_program.get('day_of_week')}")
+                    self.failed_tests.append(f"La Vie Chez Nous - Wrong day: expected Sunday, found {la_vie_program.get('day_of_week')}")
+                
+                # Verify time (14:00)
+                if la_vie_program.get('start_time') == '14:00':
+                    print(f"✅ La Vie Chez Nous correctly scheduled at 14:00")
+                else:
+                    print(f"❌ La Vie Chez Nous wrong time: expected 14:00, found {la_vie_program.get('start_time')}")
+                    self.failed_tests.append(f"La Vie Chez Nous - Wrong time: expected 14:00, found {la_vie_program.get('start_time')}")
+                
+                # Verify duration (60 minutes)
+                if la_vie_program.get('duration_minutes') == 60:
+                    print(f"✅ La Vie Chez Nous correct duration: 60 minutes")
+                else:
+                    print(f"❌ La Vie Chez Nous wrong duration: expected 60 minutes, found {la_vie_program.get('duration_minutes')}")
+                    self.failed_tests.append(f"La Vie Chez Nous - Wrong duration: expected 60 minutes, found {la_vie_program.get('duration_minutes')}")
+                
+                # Verify language (French)
+                if la_vie_program.get('language', '').lower() == 'french':
+                    print(f"✅ La Vie Chez Nous correct language: French")
+                else:
+                    print(f"❌ La Vie Chez Nous wrong language: expected French, found {la_vie_program.get('language')}")
+                    self.failed_tests.append(f"La Vie Chez Nous - Wrong language: expected French, found {la_vie_program.get('language')}")
+            else:
+                print(f"❌ 'La Vie Chez Nous' program not found")
+                self.failed_tests.append("New French Programs - 'La Vie Chez Nous' not found")
+            
+            # Check for "Renaissance" - Friday 15:00-15:30 (30 minutes)
+            renaissance_programs = [p for p in programs if 'renaissance' in p.get('title', '').lower()]
+            if renaissance_programs:
+                renaissance_program = renaissance_programs[0]
+                print(f"✅ Found 'Renaissance' program: {renaissance_program.get('title')}")
+                
+                # Verify day (Friday)
+                if renaissance_program.get('day_of_week', '').lower() == 'friday':
+                    print(f"✅ Renaissance correctly scheduled on Friday")
+                else:
+                    print(f"❌ Renaissance wrong day: expected Friday, found {renaissance_program.get('day_of_week')}")
+                    self.failed_tests.append(f"Renaissance - Wrong day: expected Friday, found {renaissance_program.get('day_of_week')}")
+                
+                # Verify time (15:00)
+                if renaissance_program.get('start_time') == '15:00':
+                    print(f"✅ Renaissance correctly scheduled at 15:00")
+                else:
+                    print(f"❌ Renaissance wrong time: expected 15:00, found {renaissance_program.get('start_time')}")
+                    self.failed_tests.append(f"Renaissance - Wrong time: expected 15:00, found {renaissance_program.get('start_time')}")
+                
+                # Verify duration (30 minutes)
+                if renaissance_program.get('duration_minutes') == 30:
+                    print(f"✅ Renaissance correct duration: 30 minutes")
+                else:
+                    print(f"❌ Renaissance wrong duration: expected 30 minutes, found {renaissance_program.get('duration_minutes')}")
+                    self.failed_tests.append(f"Renaissance - Wrong duration: expected 30 minutes, found {renaissance_program.get('duration_minutes')}")
+                
+                # Verify language (French)
+                if renaissance_program.get('language', '').lower() == 'french':
+                    print(f"✅ Renaissance correct language: French")
+                else:
+                    print(f"❌ Renaissance wrong language: expected French, found {renaissance_program.get('language')}")
+                    self.failed_tests.append(f"Renaissance - Wrong language: expected French, found {renaissance_program.get('language')}")
+            else:
+                print(f"❌ 'Renaissance' program not found")
+                self.failed_tests.append("New French Programs - 'Renaissance' not found")
+            
             # CRITICAL VERIFICATION 1: Check for new program entries mentioned in Phase 2
             print(f"\n🔍 CRITICAL VERIFICATION 1: New Phase 2 Programs")
             expected_new_programs = [
