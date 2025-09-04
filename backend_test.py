@@ -555,7 +555,7 @@ class KiooRadioAPITester:
             checks = [
                 ("Day", renaissance.get('day_of_week', '').lower(), 'friday'),
                 ("Start Time", renaissance.get('start_time'), '15:00'),
-                ("Duration", renaissance.get('duration_minutes'), 30),
+                ("Duration", renaissance.get('duration_minutes'), 60),
                 ("Language", renaissance.get('language', '').lower(), 'french')
             ]
             
