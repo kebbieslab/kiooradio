@@ -1696,6 +1696,7 @@ class KiooRadioAPITester:
         
         self.test_basic_endpoints()
         self.test_programs_endpoints()
+        self.test_spot_light_english_verification()  # CRITICAL: Test new Spot Light English programs
         self.test_new_french_programs_verification()  # CRITICAL: Test new French programs
         self.test_live_broadcast_schedule_endpoint()  # CRITICAL: Test Phase 2 live broadcast schedule
         self.test_impact_stories_endpoints()
