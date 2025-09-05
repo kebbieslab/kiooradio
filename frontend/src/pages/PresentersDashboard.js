@@ -565,6 +565,67 @@ const PresentersDashboard = () => {
           </div>
         )}
 
+        {/* Presenters by Country Section */}
+        {activeSection === 'presenters' && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold mb-6">{t[language].presenters}</h2>
+            
+            <div className="space-y-8">
+              {Object.entries(presenters).map(([country, countryPresenters]) => (
+                <div key={country} className="border rounded-lg p-4">
+                  <h3 className="text-xl font-bold mb-4 text-green-600 capitalize flex items-center">
+                    {country === 'liberia' && '🇱🇷'} 
+                    {country === 'sierra_leone' && '🇸🇱'} 
+                    {country === 'guinea' && '🇬🇳'} 
+                    <span className="ml-2">
+                      {country === 'liberia' ? 'Liberia' : ''}
+                      {country === 'sierra_leone' ? 'Sierra Leone' : ''}
+                      {country === 'guinea' ? 'Guinea' : ''}
+                    </span>
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {countryPresenters.map((presenter, index) => (
+                      <div key={index} className="bg-gray-50 rounded p-4">
+                        <div className="font-semibold text-gray-900 mb-2">{presenter.name}</div>
+                        
+                        <div className="mb-3">
+                          <div className="text-sm font-medium text-gray-600 mb-1">Programs:</div>
+                          <div className="space-y-1">
+                            {presenter.programs.map((program, programIndex) => (
+                              <span key={programIndex} className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-1 mb-1">
+                                {program}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <div className="text-sm font-medium text-gray-600 mb-1">Schedule:</div>
+                          <div className="text-sm text-gray-800">{presenter.schedule}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {countryPresenters.length === 0 && (
+                    <div className="text-center text-gray-500 py-8">
+                      No presenters found for this country
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            {Object.keys(presenters).length === 0 && (
+              <div className="text-center text-gray-500 py-12">
+                <div className="text-4xl mb-4">👥</div>
+                <div>Loading presenters information...</div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Social Media Section */}
         {activeSection === 'social' && (
           <div className="bg-white rounded-lg shadow p-6">
