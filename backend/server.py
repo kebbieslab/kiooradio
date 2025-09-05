@@ -1389,7 +1389,7 @@ async def get_live_broadcast_schedule():
                 "country": "Sierra Leone", 
                 "liveDays": ["Tuesday", "Friday"],
                 "preRecordedDays": ["Monday", "Wednesday", "Thursday", "Saturday"],
-                "specialNote": "Sunday live if in rotation",
+                "specialNote": "Sunday live if in rotation, Saturday 6-9 AM live for Makona Talk Show",
                 "colorCode": "blue"
             },
             {
