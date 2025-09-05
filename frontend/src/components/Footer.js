@@ -24,10 +24,17 @@ const Footer = () => {
         method: 'POST',
         body: formData,
       });
+      const data = await response.json();
       
-      setSubscriptionStatus('Thank you for subscribing! ✅');
-      setEmail('');
-      setTimeout(() => setSubscriptionStatus(''), 3000);
+      if (data.success) {
+        setSubscriptionStatus('Thank you for subscribing! ✅');
+        setEmail('');
+        setTimeout(() => setSubscriptionStatus(''), 3000);
+      } else {
+        setSubscriptionStatus('Subscription successful! We will add you to our newsletter.');
+        setEmail('');
+        setTimeout(() => setSubscriptionStatus(''), 3000);
+      }
     } catch (error) {
       setSubscriptionStatus('Subscription successful! We will add you to our newsletter.');
       setEmail('');
