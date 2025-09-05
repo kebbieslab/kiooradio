@@ -182,7 +182,6 @@ User wants to complete the www.kiooradio.org/visitors analytics page with Google
 
 ## test_plan:
   current_focus:
-    - "Visitor tracking endpoints" 
     - "Visitor Analytics Dashboard (/visitors page)"
     - "Google Analytics 4 Integration"
   stuck_tasks: []
