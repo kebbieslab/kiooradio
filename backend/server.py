@@ -18,8 +18,6 @@ import httpx
 import logging
 from datetime import datetime, time, date, timezone
 from enum import Enum
-import secrets
-import httpx
 
 # New imports for document processing
 import fitz  # PyMuPDF
