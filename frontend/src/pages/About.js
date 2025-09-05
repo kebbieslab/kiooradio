@@ -35,8 +35,8 @@ const About = () => {
     {
       name: 'Mrs. Genevieve H. Kebbie',
       role: 'Human Resource Director, Vox & Kioo Radio Stations',
-      bio: 'A seasoned HR Manager and a proud graduate of GAMPA.',
-      photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/fys87gho_genevieve%20.jpg',
+      bio: 'Ghana Institute Management and Public Administration (GIMPA) - Bachelors of Science Human Resource Management',
+      photo: 'https://customer-assets.emergentagent.com/job_romantic-gagarin/artifacts/9yefmjz6_297277f6-6162-4360-b1eb-48977acb6b99.jpg',
       location: 'Betche Hill, Foya, Lofa County, Liberia'
     },
     {
