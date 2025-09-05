@@ -375,10 +375,10 @@ const About = () => {
               💖 Support Our Mission
             </a>
             <a 
-              href="/get-involved" 
+              href="/volunteer" 
               className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-kioo-secondary transition-colors"
             >
-              🤝 Get Involved
+              🤝 Volunteer Today
             </a>
           </div>
         </div>
