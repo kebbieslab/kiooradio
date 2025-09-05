@@ -243,6 +243,7 @@ const PresentersDashboard = () => {
       title: 'Tableau de Bord des Présentateurs Kioo Radio',
       language: 'Langue',
       weather: 'Météo Actuelle',
+      presenters: 'Présentateurs par Pays',
       submissions: 'Soumissions Récentes',
       testimony: 'Soumettre un Témoignage',
       calls: 'Journal d\'Appel',
