@@ -342,7 +342,7 @@ const About = () => {
                       src={member.photo} 
                       alt={member.name}
                       className="w-full h-full object-cover"
-                      style={{ objectPosition: 'center center' }}
+                      style={{ objectPosition: 'center 25%' }}
                     />
                   ) : (
                     <div className="w-full h-full bg-kioo-primary flex items-center justify-center">
