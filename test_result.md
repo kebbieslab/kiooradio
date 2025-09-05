@@ -107,84 +107,66 @@ KIOO RADIO VISITOR ANALYTICS DASHBOARD:
 User wants to complete the www.kiooradio.org/visitors analytics page with Google Analytics integration, using admin username "admin" and password "kioo2025!" for access. Need to set up Google Analytics tracking and create a comprehensive visitor analytics dashboard with real-time data.
 
 ## backend:
-  - task: "Programs API endpoints"
+  - task: "Visitor tracking endpoints"
     implemented: true
     working: false
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
+        - working: false
           agent: "main"
-          comment: "Existing API endpoints for programs, schedule, and live-broadcast-schedule are functional and supporting the new infrastructure."
+          comment: "Added visitor tracking endpoints: /api/track-visitor, /api/track-click, /api/visitors/stats, /api/visitors/recent, /api/visitors/clicks. Basic authentication implemented with admin/kioo2025! credentials. Need to test all endpoints are working correctly."
+
+  - task: "Email endpoints for contact and newsletter"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
         - working: false
-          agent: "testing"
-          comment: "CRITICAL ISSUES FOUND: Phase 2 schedule modifications NOT implemented in backend database. Missing all 5 new programs (Makona Talk Show, Guidelines, Love & Faith, Daily Sermon, Truth for Life). Schedule data incomplete - only Monday has programs (15 test entries), all other days (Tuesday-Sunday) are empty. No TTB programs found to verify removal from Fula/Mandingo languages and weekends. API endpoints are functional but database lacks actual Phase 2 program schedule data. Frontend may have schedule data but backend database needs to be populated with actual program entries."
-        - working: true
-          agent: "testing"
-          comment: "PHASE 2 REFINED SCHEDULE MODIFICATIONS FINAL VERIFICATION: ✅ All critical refinements successfully verified: 286 programs total (close to expected 285), TTB restrictions properly implemented (limited to 2x daily for English/French/Kissi, 6am-10pm window with minor violations at 22:00), Christian Teaching Programs correctly scheduled (Mandingo 16:00-16:30, Fula 17:00-17:30), Gbandi Language Hour on Monday 19:00-20:00, Evening News extended to 1 hour (18:00-19:00), Music Buffers: 49 30-minute programs distributed across 5 days. Database totals verified: Monday 48 (1 extra), Tuesday-Friday 48 each, Saturday 22, Sunday 24. Minor issues: 1 extra program total, 1 extra on Monday, 5 TTB programs at 22:00. All major requirements successfully implemented and backend APIs fully functional."
-        - working: true
-          agent: "testing"
-          comment: "NEW FRENCH PROGRAMS VERIFICATION COMPLETE ✅: Successfully verified both new French programs added to Kioo Radio schedule. 'La Vie Chez Nous' correctly scheduled Sunday 14:00-15:00 (60 minutes) in French language. 'Renaissance' correctly scheduled Friday 15:00-15:30 (30 minutes) in French language. Total program count: 286 programs (1 extra from expected 285). French programs total: 53. Both programs appear correctly in French language filter, day filters (Sunday/Friday), and structured schedule endpoint. All API endpoints (/api/programs, /api/programs?language=french, /api/programs?day=sunday, /api/programs?day=friday, /api/programs/schedule) working perfectly and include both new French programs. Phase 2 program identification found 22 programs including the new French additions. Backend APIs fully functional and ready for production use."
-        - working: true
-          agent: "testing"
-          comment: "RENAISSANCE PROGRAM DURATION CHANGE VERIFICATION COMPLETE ✅: Successfully verified that Renaissance program has been updated from 30 minutes to 60 minutes duration. Program details confirmed: Title: 'Renaissance', Day: Friday, Time: 15:00-16:00 (60 minutes), Language: French. Total program count correctly reduced to 284 programs (reduced by 1 due to combining two 30-min slots into one 60-min slot). All API endpoints working perfectly: GET /api/programs shows Renaissance with duration_minutes=60, French language filter includes Renaissance, Friday day filter includes Renaissance, structured schedule endpoint shows Renaissance correctly. Change successfully implemented and verified through comprehensive backend testing."
-        - working: true
-          agent: "testing"
-          comment: "SPOT LIGHT ENGLISH DAILY PROGRAM VERIFICATION COMPLETE ✅: Successfully verified all 5 'Spot Light English' programs for Monday-Friday weekdays as requested in review. CRITICAL VERIFICATION RESULTS: ✅ Program Count: Found exactly 5 Spot Light English programs (Monday-Friday). ✅ Scheduling: All programs correctly scheduled 10:30-11:00 (30 minutes duration). ✅ Language: All programs in English language as required. ✅ Category: All programs categorized as 'educational' as specified. ✅ Daily Coverage: Programs found on all 5 weekdays (Monday-Friday) with no duplicates or missing days. ✅ API Integration: All programs appear correctly in English language filter (111 total English programs), weekday day filters (Monday-Friday), and structured schedule endpoint. ✅ Phase 2 Program Count: Total identifiable Phase 2 programs now 27 (up from 22), including 5 Spot Light English programs. ✅ Total Program Count: 285 programs total (1 extra from expected 284, likely due to test program creation). All requirements from review request successfully met: 5 programs, 10:30-11:00 time slot, English language, educational category, weekday coverage. Backend APIs fully functional and Spot Light English programs ready for production use."
-        - working: false
-          agent: "testing"
-          comment: "PASTORAL ENHANCEMENTS COMPREHENSIVE VERIFICATION COMPLETE ✅❌: Successfully tested all pastoral enhancements from review request. CRITICAL FINDINGS: ❌ Hope & Care Outreach: Found 4/5 programs correctly scheduled 15:00-15:30 Monday-Thursday as outreach type, but MISSING Friday program. ✅ Pastor Sermon Slots: Found 19 Pastor's Corner programs (more than expected 4) with correct 30-minute duration and proper time slots - Liberia (10:00, English), Sierra Leone (14:30, English), Guinea (19:00, French), Multi-Country (21:30, Mixed). ✅ Evangelist Billy Bimba Programs: Both programs correctly implemented - Saturday 10:00-11:00 English Hour and Sunday 06:00-07:00 Kissi Hour, both 60 minutes. ❌ Renaissance Program: Found but WRONG TIME - currently 15:00-16:00 instead of required 16:30-17:30. ✅ Total Programs: 285 (1 extra from expected 284). ✅ Phase 2 Programs: 53 identifiable programs meeting expectation. ✅ All API endpoints functional and pastoral programs accessible through language/day filters and schedule endpoint. CRITICAL ISSUES: Missing Friday Hope & Care Outreach program, Renaissance wrong time slot. Backend APIs fully functional for pastoral enhancements."
+          agent: "main"
+          comment: "Added /api/subscribe and /api/contact-form endpoints with email notification to admin@proudlyliberian.com. Need to test functionality."
 
 ## frontend:
-  - task: "Programs Page Backup/Snapshot System"
+  - task: "Visitor Analytics Dashboard (/visitors page)"
     implemented: true
-    working: true
-    file: "/app/frontend/src/pages/Programs.js"
+    working: false
+    file: "/app/frontend/src/pages/Visitors.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
+        - working: false
           agent: "main"
-          comment: "Successfully implemented comprehensive backup system with localStorage persistence. Creates timestamped snapshots of all schedule data (weekday, Saturday, Sunday, weekly special, live broadcast). Maintains last 10 backups with version control and restore functionality."
+          comment: "Created comprehensive visitor analytics dashboard with password protection (admin/kioo2025!). Features real-time stats, recent visitors table, click analytics, and auto-refresh. Ready for testing."
 
-  - task: "Programs Page Preview Mode"
+  - task: "Google Analytics 4 Integration"
     implemented: true
-    working: true
-    file: "/app/frontend/src/pages/Programs.js"
+    working: false
+    file: "/app/frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        - working: true
-          agent: "main"
-          comment: "Preview mode successfully implemented with prominent orange banner, toggle functionality, and clear visual indicators. Admin authentication system with password protection (kioo-admin-2025). Preview mode automatically creates backup before activation."
+        - working: false
+          agent: "main"  
+          comment: "Integrated react-ga4 package with automatic page tracking and event tracking. Added GA4 connection status indicator. Environment variable REACT_APP_GA4_MEASUREMENT_ID needs to be set with real GA4 tracking ID."
 
-  - task: "Programs Page Change Log System"
+  - task: "Visitor Tracking Hook Enhancement"
     implemented: true
-    working: true
-    file: "/app/frontend/src/pages/Programs.js"
+    working: false
+    file: "/app/frontend/src/hooks/useVisitorTracking.js"
     stuck_count: 0
-    priority: "high"
-    needs_retesting: false
+    priority: "medium"
+    needs_retesting: true
     status_history:
-        - working: true
+        - working: false
           agent: "main"
-          comment: "Change log system fully operational with localStorage persistence. Tracks all admin actions (backup creation, preview mode changes, restorations) with timestamps, descriptions, and categorized entries. Maintains last 50 entries with clear UI panel."
-
-  - task: "Programs Page Admin Panel"
-    implemented: true
-    working: true
-    file: "/app/frontend/src/pages/Programs.js"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-        - working: true
-          agent: "main"
-          comment: "Admin panel with authentication successfully implemented. Provides centralized control for preview mode, backup creation, change log viewing, and quick restore functionality. Clean UI with status indicators and recent backup list."
+          comment: "Existing visitor tracking hook connects to new backend endpoints. Tracks page visits and meaningful clicks. Need to test API integration."
 
 ## metadata:
   created_by: "main_agent"
