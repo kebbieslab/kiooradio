@@ -2,6 +2,7 @@ import requests
 import sys
 from datetime import datetime
 import json
+import base64
 
 class KiooRadioAPITester:
     def __init__(self, base_url="https://faith-radio-app.preview.emergentagent.com/api"):
