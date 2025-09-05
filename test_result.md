@@ -103,8 +103,8 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-COMPREHENSIVE KIOO RADIO WEBSITE UPDATES:
-Implement multiple website enhancements including: About section text update, Our Team section with uploaded photos, Volunteer Today page creation, newsletter/contact form email redirection to admin@proudlyliberian.com, contact popup implementation, and site-wide tagline replacement. Focus on mobile responsiveness and email form functionality.
+KIOO RADIO VISITOR ANALYTICS DASHBOARD:
+User wants to complete the www.kiooradio.org/visitors analytics page with Google Analytics integration, using admin username "admin" and password "kioo2025!" for access. Need to set up Google Analytics tracking and create a comprehensive visitor analytics dashboard with real-time data.
 
 ## backend:
   - task: "Programs API endpoints"
