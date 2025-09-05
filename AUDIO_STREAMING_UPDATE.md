@@ -85,7 +85,7 @@
 
 ## 🌐 **LIVE WEBSITE RESULTS**
 
-**URL:** https://faith-radio-app.preview.emergentagent.com
+**URL:** https://faith-broadcast-1.preview.emergentagent.com
 
 ### **Homepage Changes:**
 - ✅ Clean hero section without "Currently Playing" banner
