@@ -1789,5 +1789,3 @@ async def track_click(request, click_data: dict):
 async def redirect_to_api_visitors():
     """Redirect /visitors to /api/visitors"""
     return JSONResponse({"message": "Please access /api/visitors for the analytics dashboard"})
-async def shutdown_db_client():
-    client.close()
