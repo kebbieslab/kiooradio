@@ -106,6 +106,7 @@ function App() {
             <Route path="/programs-lineup" element={<ProgramsLineup />} />
             <Route path="/church-partners" element={<ChurchPartners />} />
             <Route path="/media" element={<MediaGallery />} />
+            <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/kioo-presenters-dashboard-1981" element={<PresentersDashboard />} />
           </Routes>
         </main>
