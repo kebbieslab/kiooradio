@@ -343,6 +343,11 @@ const About = () => {
                         src={member.photo} 
                         alt={member.name}
                         className="w-full h-full object-cover"
+                        style={{ 
+                          objectPosition: member.name === 'Mrs. Genevieve H. Kebbie' 
+                            ? 'center 15%' 
+                            : 'center top' 
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full bg-kioo-primary flex items-center justify-center">
