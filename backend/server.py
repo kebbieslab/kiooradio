@@ -1465,20 +1465,37 @@ async def get_coverage_areas():
 # Include the router in the main app
 app.include_router(api_router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Configure logging
+# Configure logging for production
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-logger = logging.getLogger(__name__)
+
+# Startup event
+@app.on_event("startup")
+async def startup_db_client():
+    """Initialize database connection on startup"""
+    try:
+        # Test the connection
+        await client.admin.command('ping')
+        logger.info("Successfully connected to MongoDB")
+    except Exception as e:
+        logger.error(f"Failed to connect to MongoDB: {e}")
+        raise
+
+# Shutdown event
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    """Close database connection on shutdown"""
+    try:
+        client.close()
+        logger.info("MongoDB connection closed")
+    except Exception as e:
+        logger.error(f"Error closing MongoDB connection: {e}")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)
 
 async def send_simple_email(to_email: str, subject: str, body: str):
     """Send email using a simple SMTP approach"""
