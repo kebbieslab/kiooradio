@@ -8,6 +8,7 @@ const Visitors = () => {
   const [stats, setStats] = useState(null);
   const [recentVisitors, setRecentVisitors] = useState([]);
   const [clickAnalytics, setClickAnalytics] = useState(null);
+  const [gaConnected, setGaConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
