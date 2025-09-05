@@ -336,30 +336,28 @@ const About = () => {
           <div className="grid md:grid-cols-2 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="md:flex">
-                  <div className="md:w-48 md:h-48 h-64 w-full flex-shrink-0">
-                    {member.photo ? (
-                      <img 
-                        src={member.photo} 
-                        alt={member.name}
-                        className="w-full h-full object-cover"
-                        style={{ objectPosition: 'center top' }}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-kioo-primary flex items-center justify-center">
-                        <span className="text-white text-6xl">👤</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6 flex-1">
-                    <div className="text-left">
-                      <h3 className="text-xl font-bold text-kioo-dark mb-2">{member.name}</h3>
-                      <p className="text-kioo-primary font-semibold mb-3 text-lg">{member.role}</p>
-                      <p className="text-gray-700 mb-3 leading-relaxed">{member.bio}</p>
-                      <div className="flex items-center text-sm text-gray-500">
-                        <span className="mr-2">📍</span>
-                        <span>{member.location}</span>
-                      </div>
+                <div className="h-80 w-full">
+                  {member.photo ? (
+                    <img 
+                      src={member.photo} 
+                      alt={member.name}
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: 'center top' }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-kioo-primary flex items-center justify-center">
+                      <span className="text-white text-8xl">👤</span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-6">
+                  <div className="text-left">
+                    <h3 className="text-2xl font-bold text-kioo-dark mb-2">{member.name}</h3>
+                    <p className="text-kioo-primary font-semibold mb-4 text-lg">{member.role}</p>
+                    <p className="text-gray-700 mb-4 leading-relaxed text-base">{member.bio}</p>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <span className="mr-2">📍</span>
+                      <span>{member.location}</span>
                     </div>
                   </div>
                 </div>
