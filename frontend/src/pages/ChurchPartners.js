@@ -438,10 +438,10 @@ const ChurchPartners = () => {
                   className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 transform hover:scale-[1.02]"
                 >
                   
-                  {/* Pastor Headshot - Large, Face-Centered */}
+                  {/* Pastor Headshot - Uniform Size */}
                   <div className="relative">
                     {partner.photoUrl ? (
-                      <div className="w-full h-72 md:h-80 lg:h-96 overflow-hidden bg-gray-100 rounded-xl">
+                      <div className="w-full h-48 overflow-hidden bg-gray-100 rounded-t-2xl">
                         <img
                           src={partner.photoUrl}
                           alt={`Headshot of ${partner.pastorName} — ${partner.churchName}`}
@@ -453,11 +453,11 @@ const ChurchPartners = () => {
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-72 md:h-80 lg:h-96 bg-gradient-to-br from-kioo-primary to-kioo-secondary flex items-center justify-center relative rounded-xl">
+                      <div className="w-full h-48 bg-gradient-to-br from-kioo-primary to-kioo-secondary flex items-center justify-center relative rounded-t-2xl">
                         <div className="text-center">
                           {/* Branded headshot placeholder */}
-                          <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-white border-opacity-30">
-                            <span className="text-white text-3xl font-bold">
+                          <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3 border-4 border-white border-opacity-30">
+                            <span className="text-white text-xl font-bold">
                               {getInitials(partner.pastorName)}
                             </span>
                           </div>
@@ -465,7 +465,7 @@ const ChurchPartners = () => {
                           <p className="text-white text-xs opacity-60">coming soon</p>
                         </div>
                         {partner.isPlaceholder && (
-                          <div className="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                          <div className="absolute top-3 right-3 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg">
                             Coming Soon
                           </div>
                         )}
