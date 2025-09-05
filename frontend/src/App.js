@@ -25,6 +25,10 @@ const STREAM_URL = process.env.REACT_APP_STREAM_URL || "https://radio.galcom.org
 
 function App() {
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
+  const [isContactPopupOpen, setIsContactPopupOpen] = useState(false);
+
+  // Initialize visitor tracking
+  useVisitorTracking();
 
   useEffect(() => {
     // Initialize i18n system
