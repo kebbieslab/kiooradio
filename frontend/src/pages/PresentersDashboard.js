@@ -189,6 +189,7 @@ const PresentersDashboard = () => {
       title: 'Kioo Radio Presenters Dashboard',
       language: 'Language',
       weather: 'Current Weather',
+      presenters: 'Presenters by Country',
       submissions: 'Recent Submissions',
       testimony: 'Submit Testimony',
       calls: 'Log a Phone Call',
