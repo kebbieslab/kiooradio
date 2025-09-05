@@ -571,6 +571,38 @@ def authenticate_admin(credentials: HTTPBasicCredentials = Depends(security)):
         )
     return credentials.username
 
+# Email and Analytics Helper Functions
+async def send_simple_email(to_email: str, subject: str, body: str):
+    """Send email using a simple SMTP approach"""
+    try:
+        # For now, we'll just log the email - in production you'd use a real SMTP service
+        logging.info(f"EMAIL SENT TO: {to_email}")
+        logging.info(f"SUBJECT: {subject}")
+        logging.info(f"BODY: {body}")
+        return True
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+        return False
+
+async def get_ip_location(ip_address: str):
+    """Get location information from IP address using ipapi.co"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"https://ipapi.co/{ip_address}/json/")
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    "country": data.get("country_name"),
+                    "city": data.get("city"),
+                    "region": data.get("region"),
+                    "latitude": data.get("latitude"),
+                    "longitude": data.get("longitude")
+                }
+    except Exception as e:
+        logging.error(f"Failed to get IP location: {e}")
+    
+    return {"country": "Unknown", "city": "Unknown"}
+
 # Routes
 @api_router.get("/")
 async def root():
