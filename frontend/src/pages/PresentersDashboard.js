@@ -152,6 +152,13 @@ const PresentersDashboard = () => {
           setPresenters(presenterData);
         }
 
+        // Fetch live broadcast schedule
+        const liveScheduleRes = await fetch(`${backendUrl}/api/live-broadcast-schedule`);
+        if (liveScheduleRes.ok) {
+          const liveScheduleData = await liveScheduleRes.json();
+          setLiveBroadcastSchedule(liveScheduleData);
+        }
+
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
