@@ -1355,14 +1355,24 @@ class LiveBroadcastSchedule(BaseModel):
 async def get_live_broadcast_schedule():
     """Get live broadcast schedule based on Weekly_Live_vs_Pre-Recorded_Rotation"""
     try:
-        # Weekly schedule data
+        # Weekly schedule data with Makona Talk Show special case
         weekly_schedule = {
             "monday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "pre-recorded"},
             "tuesday": {"liberia": "live", "sierra_leone": "live", "guinea": "pre-recorded"},
             "wednesday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "live"},
             "thursday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "pre-recorded"},
             "friday": {"liberia": "live", "sierra_leone": "live", "guinea": "pre-recorded"},
-            "saturday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "live"},
+            "saturday": {
+                "liberia": "live", 
+                "sierra_leone": "pre-recorded", 
+                "guinea": "live",
+                "special_program": {
+                    "name": "Makona Talk Show",
+                    "time": "6:00 AM - 9:00 AM",
+                    "all_countries_live": True,
+                    "note": "All presenters from Liberia, Sierra Leone, and Guinea are LIVE together"
+                }
+            },
             "sunday": {"liberia": "live", "sierra_leone": "rotation", "guinea": "rotation", "note": "Sunday service rotates weekly between all three countries"}
         }
         
