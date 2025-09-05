@@ -98,6 +98,7 @@ function App() {
     <HelmetProvider>
       <div className="App min-h-screen bg-white">
         <Router>
+        <VisitorTracker />
         <Header setIsPlayerVisible={setIsPlayerVisible} />
         
         <main className="flex-1">
