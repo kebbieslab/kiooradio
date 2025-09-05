@@ -13,7 +13,7 @@ import json
 import secrets
 import httpx
 import logging
-from datetime import datetime, time, date, timezone
+from datetime import datetime, time, date, timezone, timedelta
 from enum import Enum
 
 # New imports for document processing
