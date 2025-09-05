@@ -1975,6 +1975,272 @@ class KiooRadioAPITester:
         print(f"   Renaissance: {'✅ FOUND' if renaissance_programs else '❌ MISSING'}")
         print(f"   Phase 2 Programs: {len(phase2_programs)}/53")
 
+    def test_visitor_analytics_endpoints(self):
+        """Test visitor analytics endpoints - CRITICAL for /visitors dashboard"""
+        print("\n=== TESTING VISITOR ANALYTICS ENDPOINTS ===")
+        print("Testing: Visitor tracking, protected analytics, email endpoints")
+        
+        # Test 1: POST /api/track-visitor - Test visitor page tracking with IP geolocation
+        print(f"\n🔍 TESTING VISITOR TRACKING")
+        visitor_data = {
+            "client_ip": "8.8.8.8",  # Google DNS IP for testing geolocation
+            "page_url": "https://kiooradio.org/",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "referrer": "https://google.com"
+        }
+        success, response = self.run_test("Track Visitor", "POST", "track-visitor", 200, data=visitor_data)
+        
+        if success:
+            if response.get("status") == "success":
+                print(f"✅ Visitor tracking working correctly")
+            else:
+                print(f"❌ Visitor tracking response invalid: {response}")
+                self.failed_tests.append("Visitor Tracking - Invalid response format")
+        
+        # Test 2: POST /api/track-click - Test click event tracking
+        click_data = {
+            "element_type": "button",
+            "element_id": "donate-button",
+            "element_class": "btn btn-primary",
+            "element_text": "Donate Now",
+            "page_url": "https://kiooradio.org/donate",
+            "click_position": {"x": 150, "y": 300}
+        }
+        success, response = self.run_test("Track Click", "POST", "track-click", 200, data=click_data)
+        
+        if success:
+            if response.get("status") == "success":
+                print(f"✅ Click tracking working correctly")
+            else:
+                print(f"❌ Click tracking response invalid: {response}")
+                self.failed_tests.append("Click Tracking - Invalid response format")
+        
+        # Test 3: Protected visitor analytics endpoints (use Basic Auth with admin:kioo2025!)
+        print(f"\n🔍 TESTING PROTECTED ANALYTICS ENDPOINTS")
+        
+        # Create Basic Auth header
+        credentials = base64.b64encode(b"admin:kioo2025!").decode('ascii')
+        auth_headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Basic {credentials}'
+        }
+        
+        # Test GET /api/visitors/stats - Test visitor statistics dashboard data
+        success, stats_response = self.run_test_with_auth("Get Visitor Stats", "GET", "visitors/stats", 200, auth_headers)
+        
+        if success:
+            # Verify required fields in stats response
+            required_stats_fields = ['total_visitors', 'unique_visitors', 'visitors_today', 'top_countries', 'top_pages', 'hourly_traffic']
+            missing_fields = [field for field in required_stats_fields if field not in stats_response]
+            
+            if not missing_fields:
+                print(f"✅ Visitor stats contains all required fields")
+                print(f"   Total visitors: {stats_response.get('total_visitors', 0)}")
+                print(f"   Unique visitors: {stats_response.get('unique_visitors', 0)}")
+                print(f"   Visitors today: {stats_response.get('visitors_today', 0)}")
+            else:
+                print(f"❌ Visitor stats missing fields: {missing_fields}")
+                self.failed_tests.append(f"Visitor Stats - Missing fields: {missing_fields}")
+        
+        # Test GET /api/visitors/recent - Test recent visitor activity
+        success, recent_response = self.run_test_with_auth("Get Recent Visitors", "GET", "visitors/recent", 200, auth_headers)
+        
+        if success:
+            if isinstance(recent_response, list):
+                print(f"✅ Recent visitors endpoint returns list with {len(recent_response)} entries")
+                
+                # Check structure of recent visitor entries
+                if recent_response:
+                    sample_visitor = recent_response[0]
+                    required_visitor_fields = ['ip_address', 'page_url', 'timestamp']
+                    missing_fields = [field for field in required_visitor_fields if field not in sample_visitor]
+                    
+                    if not missing_fields:
+                        print(f"✅ Recent visitor entries have correct structure")
+                    else:
+                        print(f"❌ Recent visitor entries missing fields: {missing_fields}")
+                        self.failed_tests.append(f"Recent Visitors - Missing fields: {missing_fields}")
+            else:
+                print(f"❌ Recent visitors should return a list, got: {type(recent_response)}")
+                self.failed_tests.append("Recent Visitors - Invalid response format (not a list)")
+        
+        # Test GET /api/visitors/clicks - Test click analytics data
+        success, clicks_response = self.run_test_with_auth("Get Click Analytics", "GET", "visitors/clicks", 200, auth_headers)
+        
+        if success:
+            # Verify required fields in clicks response
+            required_clicks_fields = ['click_stats', 'recent_clicks']
+            missing_fields = [field for field in required_clicks_fields if field not in clicks_response]
+            
+            if not missing_fields:
+                print(f"✅ Click analytics contains all required fields")
+                click_stats = clicks_response.get('click_stats', [])
+                recent_clicks = clicks_response.get('recent_clicks', [])
+                print(f"   Click stats entries: {len(click_stats)}")
+                print(f"   Recent clicks: {len(recent_clicks)}")
+            else:
+                print(f"❌ Click analytics missing fields: {missing_fields}")
+                self.failed_tests.append(f"Click Analytics - Missing fields: {missing_fields}")
+        
+        # Test 4: Test authentication failure
+        print(f"\n🔍 TESTING AUTHENTICATION")
+        
+        # Test with wrong credentials
+        wrong_credentials = base64.b64encode(b"wrong:password").decode('ascii')
+        wrong_auth_headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Basic {wrong_credentials}'
+        }
+        
+        success, _ = self.run_test_with_auth("Wrong Auth Test", "GET", "visitors/stats", 401, wrong_auth_headers)
+        if success:
+            print(f"✅ Authentication properly rejects wrong credentials")
+        else:
+            print(f"❌ Authentication not working - should reject wrong credentials")
+            self.failed_tests.append("Authentication - Does not reject wrong credentials")
+        
+        # Test without authentication
+        success, _ = self.run_test("No Auth Test", "GET", "visitors/stats", 401)
+        if success:
+            print(f"✅ Protected endpoints require authentication")
+        else:
+            print(f"❌ Protected endpoints should require authentication")
+            self.failed_tests.append("Authentication - Protected endpoints accessible without auth")
+        
+        # Test 5: Email endpoints
+        print(f"\n🔍 TESTING EMAIL ENDPOINTS")
+        
+        # Test POST /api/subscribe - Test newsletter subscription with email notification
+        newsletter_data = {
+            "email": "test.subscriber@kiooradio.org"
+        }
+        success, response = self.run_test("Newsletter Subscribe", "POST", "subscribe", 200, data=newsletter_data)
+        
+        if success:
+            if response.get("status") == "success":
+                print(f"✅ Newsletter subscription working correctly")
+            else:
+                print(f"❌ Newsletter subscription response invalid: {response}")
+                self.failed_tests.append("Newsletter Subscribe - Invalid response format")
+        
+        # Test POST /api/contact-form - Test contact form submission with email notification
+        contact_data = {
+            "name": "John Doe",
+            "email": "john.doe@example.com",
+            "subject": "Test Contact Form",
+            "message": "This is a test message to verify the contact form API endpoint is working correctly."
+        }
+        success, response = self.run_test("Contact Form Submit", "POST", "contact-form", 200, data=contact_data)
+        
+        if success:
+            if response.get("status") == "success":
+                print(f"✅ Contact form submission working correctly")
+            else:
+                print(f"❌ Contact form response invalid: {response}")
+                self.failed_tests.append("Contact Form - Invalid response format")
+        
+        # Test 6: Error handling for invalid data
+        print(f"\n🔍 TESTING ERROR HANDLING")
+        
+        # Test newsletter with invalid email
+        invalid_newsletter_data = {
+            "email": ""  # Empty email
+        }
+        success, _ = self.run_test("Newsletter Invalid Email", "POST", "subscribe", 400, data=invalid_newsletter_data)
+        if success:
+            print(f"✅ Newsletter properly validates email")
+        else:
+            print(f"⚠️  Newsletter validation may be lenient")
+        
+        # Test contact form with missing required fields
+        invalid_contact_data = {
+            "name": "Test User"
+            # Missing email, subject, message
+        }
+        success, _ = self.run_test("Contact Form Missing Fields", "POST", "contact-form", 400, data=invalid_contact_data)
+        if success:
+            print(f"✅ Contact form properly validates required fields")
+        else:
+            print(f"⚠️  Contact form validation may be lenient")
+        
+        # Test 7: CORS verification (basic check)
+        print(f"\n🔍 TESTING CORS")
+        
+        # Test OPTIONS request to check CORS headers
+        try:
+            url = f"{self.base_url}/track-visitor"
+            response = requests.options(url, timeout=10)
+            
+            if response.status_code in [200, 204]:
+                cors_headers = response.headers
+                if 'Access-Control-Allow-Origin' in cors_headers:
+                    print(f"✅ CORS headers present")
+                else:
+                    print(f"❌ CORS headers missing")
+                    self.failed_tests.append("CORS - Access-Control-Allow-Origin header missing")
+            else:
+                print(f"⚠️  OPTIONS request returned {response.status_code}")
+        except Exception as e:
+            print(f"⚠️  CORS test failed: {e}")
+        
+        # Summary
+        print(f"\n📊 VISITOR ANALYTICS ENDPOINTS SUMMARY:")
+        print(f"   Visitor Tracking: ✅ Tested")
+        print(f"   Click Tracking: ✅ Tested")
+        print(f"   Protected Analytics: ✅ Tested with Authentication")
+        print(f"   Email Endpoints: ✅ Tested")
+        print(f"   Error Handling: ✅ Tested")
+        print(f"   CORS: ✅ Verified")
+
+    def run_test_with_auth(self, name, method, endpoint, expected_status, headers, data=None, params=None):
+        """Run a single API test with custom headers (for authentication)"""
+        url = f"{self.base_url}/{endpoint}" if endpoint else self.base_url
+
+        self.tests_run += 1
+        print(f"\n🔍 Testing {name}...")
+        print(f"   URL: {url}")
+        
+        try:
+            if method == 'GET':
+                response = requests.get(url, headers=headers, params=params, timeout=10)
+            elif method == 'POST':
+                response = requests.post(url, json=data, headers=headers, timeout=10)
+            elif method == 'PUT':
+                response = requests.put(url, json=data, headers=headers, timeout=10)
+
+            success = response.status_code == expected_status
+            if success:
+                self.tests_passed += 1
+                print(f"✅ Passed - Status: {response.status_code}")
+                try:
+                    # Check if response is JSON
+                    if 'application/json' in response.headers.get('content-type', ''):
+                        response_data = response.json()
+                        if isinstance(response_data, dict) and len(response_data) <= 3:
+                            print(f"   Response: {response_data}")
+                        elif isinstance(response_data, list):
+                            print(f"   Response: List with {len(response_data)} items")
+                        else:
+                            print(f"   Response: {str(response_data)[:100]}...")
+                        return success, response_data
+                    else:
+                        print(f"   Response: {response.text[:100]}...")
+                        return success, {}
+                except:
+                    print(f"   Response: {response.text[:100]}...")
+                    return success, {}
+            else:
+                self.failed_tests.append(f"{name} - Expected {expected_status}, got {response.status_code}")
+                print(f"❌ Failed - Expected {expected_status}, got {response.status_code}")
+                print(f"   Response: {response.text[:200]}...")
+
+            return success, {}
+
+        except Exception as e:
+            self.failed_tests.append(f"{name} - Error: {str(e)}")
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
+
     def run_all_tests(self):
         """Run all API tests"""
         print("🚀 Starting Kioo Radio API Tests...")
