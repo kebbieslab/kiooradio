@@ -155,7 +155,7 @@ Your Kioo Radio website has been compiled into a production-ready deployment pac
 
 ### **Current Setup:**
 The website currently uses the development API at:
-`https://pedantic-sanderson.preview.emergentagent.com/api`
+`https://radio-program-hub.preview.emergentagent.com/api`
 
 ### **For Production:**
 **Option 1 (Recommended):** Keep development API
