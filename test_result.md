@@ -190,8 +190,8 @@ User wants to complete the www.kiooradio.org/visitors analytics page with Google
           comment: "Successfully removed all countdown-related code from Home.js: removed showCountdown state, countdown useEffect hook, closeCountdown function, and entire countdown popup JSX structure. Home page now loads without countdown popup."
 
   - task: "Fix Partner Churches Image Sizing"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "/app/frontend/src/pages/ChurchPartners.js"
     stuck_count: 0
     priority: "medium"
@@ -200,6 +200,9 @@ User wants to complete the www.kiooradio.org/visitors analytics page with Google
         - working: "NA"
           agent: "main"
           comment: "User reports partner church images are too big and need uniform sizing. Current images use h-72 md:h-80 lg:h-96 (288px-384px). Need to reduce to smaller, consistent dimensions."
+        - working: true
+          agent: "main"
+          comment: "✅ FIXED: Successfully reduced image sizes from h-72 md:h-80 lg:h-96 (288px-384px) to uniform h-48 (192px). Updated card layout with flex-col and h-full for consistent heights. Reduced padding, font sizes, and button sizes proportionally. Screenshots confirm uniform, professional appearance across all partner church cards."
 
 ## metadata:
   created_by: "main_agent"
