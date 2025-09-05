@@ -27,6 +27,10 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
@@ -39,13 +43,29 @@ CACHE_DIR = ROOT_DIR / "cache"
 for directory in [TEMP_DIR, THUMBNAILS_DIR, CACHE_DIR]:
     directory.mkdir(parents=True, exist_ok=True)
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# MongoDB connection with error handling
+try:
+    mongo_url = os.environ.get('MONGO_URL')
+    if not mongo_url:
+        raise ValueError("MONGO_URL environment variable is required")
+    
+    db_name = os.environ.get('DB_NAME', 'kioo_radio')
+    logger.info(f"Connecting to MongoDB at {mongo_url[:20]}... using database: {db_name}")
+    
+    client = AsyncIOMotorClient(mongo_url)
+    db = client[db_name]
+    
+except Exception as e:
+    logger.error(f"Failed to initialize MongoDB connection: {e}")
+    raise
 
 # Create the main app without a prefix
-app = FastAPI(title="Kioo Radio API", version="1.0.0")
+app = FastAPI(
+    title="Kioo Radio API", 
+    version="1.0.0",
+    docs_url="/docs" if os.environ.get("ENVIRONMENT") != "production" else None,
+    redoc_url="/redoc" if os.environ.get("ENVIRONMENT") != "production" else None
+)
 
 # Serve static files for thumbnails
 from fastapi.staticfiles import StaticFiles
