@@ -7,6 +7,7 @@ const PresentersDashboard = () => {
   const [weatherData, setWeatherData] = useState({});
   const [programSchedule, setProgramSchedule] = useState([]);
   const [presenters, setPresenters] = useState({});
+  const [liveBroadcastSchedule, setLiveBroadcastSchedule] = useState({});
   const [submittedTestimonies, setSubmittedTestimonies] = useState([]);
   const [submittedCalls, setSubmittedCalls] = useState([]);
   const [notifications, setNotifications] = useState([]);
