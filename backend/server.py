@@ -49,7 +49,9 @@ try:
     if not mongo_url:
         raise ValueError("MONGO_URL environment variable is required")
     
-    db_name = os.environ.get('DB_NAME', 'kioo_radio')
+    db_name = os.environ.get('DB_NAME')
+    if not db_name:
+        raise ValueError("DB_NAME environment variable is required")
     logger.info(f"Connecting to MongoDB at {mongo_url[:20]}... using database: {db_name}")
     
     client = AsyncIOMotorClient(mongo_url)
