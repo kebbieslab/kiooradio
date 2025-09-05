@@ -107,8 +107,7 @@ const Footer = () => {
                 </div>
               </div>
               <p className="text-gray-300 mb-6 leading-relaxed">
-                Broadcasting hope, faith, and community news across the Makona River Region. 
-                Bringing people together through the power of radio since 2025.
+                Broadcasting Faith, Hope and Love in Christ across the Makona River Region
               </p>
               
               {/* Updated Contact Information */}
