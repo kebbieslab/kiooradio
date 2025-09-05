@@ -40,15 +40,15 @@ const About = () => {
       location: 'Betche Hill, Foya, Lofa County, Liberia'
     },
     {
-      name: 'Coming Soon',
-      role: 'Team Member',
-      bio: 'New team member joining us soon.',
-      photo: null,
+      name: 'Pastor Solomon Kebbie',
+      role: 'Project Coordinator, Kioo Radio',
+      bio: 'Dedicated pastor overseeing project coordination and community outreach.',
+      photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/q5fzsdb2_solomonk.jpg',
       location: 'Makona River Region'
     },
     {
       name: 'Coming Soon',
-      role: 'Team Member', 
+      role: 'Team Member',
       bio: 'New team member joining us soon.',
       photo: null,
       location: 'Makona River Region'
