@@ -1690,6 +1690,34 @@ async def visitors_page(username: str = Depends(authenticate_admin)):
         logging.error(f"Visitors page error: {e}")
         return HTMLResponse(content=f"<h1>Error loading analytics: {str(e)}</h1>")
 
+@api_router.post("/track-click")
+async def track_click(request, click_data: dict):
+    """Track click events for analytics"""
+    try:
+        # Get client IP
+        client_ip = request.client.host
+        
+        # Save click data
+        click_record = {
+            "id": str(uuid.uuid4()),
+            "ip_address": client_ip,
+            "element_type": click_data.get("element_type"),
+            "element_id": click_data.get("element_id"),
+            "element_class": click_data.get("element_class"),
+            "element_text": click_data.get("element_text"),
+            "page_url": click_data.get("page_url"),
+            "click_position": click_data.get("click_position"),
+            "timestamp": datetime.now(timezone.utc)
+        }
+        
+        await db.click_analytics.insert_one(click_record)
+        
+        return {"success": True}
+    
+    except Exception as e:
+        logging.error(f"Click tracking error: {e}")
+        return {"success": False, "error": str(e)}
+
 @app.get("/visitors")
 async def redirect_to_api_visitors():
     """Redirect /visitors to /api/visitors"""
