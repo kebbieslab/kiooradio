@@ -693,8 +693,8 @@ async def get_visitor_stats(credentials: HTTPBasicCredentials = Depends(authenti
         # Get hourly traffic (last 24 hours)
         hourly_traffic = []
         for i in range(24):
-            hour_start = datetime.now(timezone.utc) - timezone.timedelta(hours=i+1)
-            hour_end = datetime.now(timezone.utc) - timezone.timedelta(hours=i)
+            hour_start = datetime.now(timezone.utc) - timedelta(hours=i+1)
+            hour_end = datetime.now(timezone.utc) - timedelta(hours=i)
             
             count = await db.visitor_analytics.count_documents({
                 "timestamp": {"$gte": hour_start, "$lt": hour_end}
