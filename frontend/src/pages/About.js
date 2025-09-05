@@ -336,26 +336,25 @@ const About = () => {
           <div className="grid md:grid-cols-2 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="h-64 w-full">
+                <div className="h-48 w-full bg-gray-50">
                   {member.photo ? (
                     <img 
                       src={member.photo} 
                       alt={member.name}
-                      className="w-full h-full object-cover"
-                      style={{ objectPosition: 'center 25%' }}
+                      className="w-full h-full object-contain"
                     />
                   ) : (
                     <div className="w-full h-full bg-kioo-primary flex items-center justify-center">
-                      <span className="text-white text-6xl">👤</span>
+                      <span className="text-white text-5xl">👤</span>
                     </div>
                   )}
                 </div>
                 <div className="p-6">
                   <div className="text-left">
-                    <h3 className="text-2xl font-bold text-kioo-dark mb-2">{member.name}</h3>
-                    <p className="text-kioo-primary font-semibold mb-4 text-lg">{member.role}</p>
-                    <p className="text-gray-700 mb-4 leading-relaxed text-base">{member.bio}</p>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <h3 className="text-xl font-bold text-kioo-dark mb-2">{member.name}</h3>
+                    <p className="text-kioo-primary font-semibold mb-3 text-base">{member.role}</p>
+                    <p className="text-gray-700 mb-3 leading-relaxed text-sm">{member.bio}</p>
+                    <div className="flex items-center text-xs text-gray-500">
                       <span className="mr-2">📍</span>
                       <span>{member.location}</span>
                     </div>
