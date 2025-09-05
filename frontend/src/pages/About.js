@@ -49,8 +49,8 @@ const About = () => {
     {
       name: 'Pastor David S. Fatorma',
       role: 'Strategic Project Advisor',
-      bio: 'Strategic advisor providing guidance and oversight for Kioo Radio projects.',
-      photo: 'https://customer-assets.emergentagent.com/job_radio-geo-detect/artifacts/xflxhg4y_David%20Fatorma.jpg',
+      bio: 'Dedicated Pastor overseeing Project Coordination and Church Engagement.',
+      photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/uh9vttv3_David%20Fatorma.jpg',
       location: 'Makona River Region'
     }
   ];
