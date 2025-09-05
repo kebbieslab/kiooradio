@@ -1361,7 +1361,7 @@ async def get_live_broadcast_schedule():
             "tuesday": {"liberia": "live", "sierra_leone": "live", "guinea": "pre-recorded"},
             "wednesday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "live"},
             "thursday": {"liberia": "live", "sierra_leone": "pre-recorded", "guinea": "pre-recorded"},
-            "friday": {"liberia": "live", "sierra_leone": "live", "guinea": "pre-recorded"},
+            "friday": {"liberia": "live", "sierra_leone": "live", "guinea": "live"},
             "saturday": {
                 "liberia": "live", 
                 "sierra_leone": "pre-recorded", 
