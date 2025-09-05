@@ -204,6 +204,33 @@ User wants to complete the www.kiooradio.org/visitors analytics page with Google
           agent: "main"
           comment: "✅ FIXED: Successfully reduced image sizes from h-72 md:h-80 lg:h-96 (288px-384px) to uniform h-48 (192px). Updated card layout with flex-col and h-full for consistent heights. Reduced padding, font sizes, and button sizes proportionally. Screenshots confirm uniform, professional appearance across all partner church cards."
 
+  - task: "Fix Partner Churches Data Loading"
+    implemented: true
+    working: true
+    file: "/app/frontend/.env"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Partner Churches page showing 'Coming Soon' placeholder data instead of real church partner data from database. API has 79 partners but frontend shows placeholders."
+        - working: true
+          agent: "main"
+          comment: "✅ FIXED: Root cause was REACT_APP_BACKEND_URL pointing to production URL (https://faith-broadcast-1.preview.emergentagent.com) instead of local development URL. Updated to http://localhost:8001 and restarted frontend. Page now shows 79 real partner churches instead of placeholders."
+
+  - task: "Verify Presenters Dashboard Functionality"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/PresentersDashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "✅ VERIFIED FULLY FUNCTIONAL: Presenters Dashboard working perfectly. Weather section shows live data for 4 cities, Presenters by Country displays organized by flags, Social section has WhatsApp/Facebook links, Testimony/Call Log forms are functional with proper validation, Language switcher works, Export functionality available. All navigation tabs and features working correctly."
+
 ## metadata:
   created_by: "main_agent"
   version: "3.0"
