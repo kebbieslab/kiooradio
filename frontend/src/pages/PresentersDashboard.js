@@ -679,6 +679,30 @@ const PresentersDashboard = () => {
                         * {liveBroadcastSchedule.weeklySchedule.sunday.note}
                       </div>
                     )}
+                    <div className="mt-2 text-xs text-yellow-700 italic">
+                      * Saturday 6:00-9:00 AM: All countries are LIVE for Makona Talk Show
+                    </div>
+                  </div>
+                )}
+                
+                {/* Special Programs Highlight */}
+                {liveBroadcastSchedule.specialPrograms && (
+                  <div className="mt-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 rounded">
+                    <h4 className="font-bold text-yellow-800 mb-2">⭐ Special Programs</h4>
+                    {Object.entries(liveBroadcastSchedule.specialPrograms).map(([key, program]) => (
+                      <div key={key} className="mb-3">
+                        <div className="font-semibold text-yellow-900">{program.name}</div>
+                        <div className="text-sm text-yellow-800">{program.day} • {program.time}</div>
+                        <div className="text-xs text-yellow-700 mt-1">{program.description}</div>
+                        {program.all_countries_live && (
+                          <div className="mt-2 flex items-center space-x-2">
+                            <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">🇱🇷 Liberia LIVE</span>
+                            <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">🇸🇱 Sierra Leone LIVE</span>
+                            <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded">🇬🇳 Guinea LIVE</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
