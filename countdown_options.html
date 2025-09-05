@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kioo Radio - Countdown Design Options</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f2f5;
+            color: #333;
+        }
+        .options-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .option-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .option-title {
+            color: #148026;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .preview-button {
+            background: #148026;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .preview-button:hover {
+            background: #0f6a1f;
+            transform: translateY(-2px);
+        }
+        .close-overlay {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        .close-overlay:hover {
+            background: white;
+            color: #148026;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="options-container">
+        <h1 style="text-align: center; color: #148026; margin-bottom: 40px;">
+            📻 Kioo Radio Countdown Design Options
+        </h1>
+
+        <!-- Option 1: Minimalist Card Design -->
+        <div class="option-card">
+            <div class="option-title">🎯 Option 1: Minimalist Card Design</div>
+            <p><strong>Style:</strong> Clean, card-based layout with subtle shadows and elegant typography</p>
+            <p><strong>Features:</strong> Centered card popup, gradient backgrounds, smooth animations</p>
+            <p><strong>Best for:</strong> Professional, corporate feel that matches website aesthetics</p>
+            <button class="preview-button" onclick="showOption1()">Preview Option 1</button>
+        </div>
+
+        <!-- Option 2: Circular Progress Design -->
+        <div class="option-card">
+            <div class="option-title">⭕ Option 2: Circular Progress Design</div>
+            <p><strong>Style:</strong> Circular countdown rings with animated progress indicators</p>
+            <p><strong>Features:</strong> Visual progress circles, modern UI, dynamic animations</p>
+            <p><strong>Best for:</strong> Modern, tech-savvy audience with visual appeal</p>
+            <button class="preview-button" onclick="showOption2()">Preview Option 2</button>
+        </div>
+
+        <!-- Option 3: Banner Strip Design -->
+        <div class="option-card">
+            <div class="option-title">📊 Option 3: Top Banner Strip Design</div>
+            <p><strong>Style:</strong> Horizontal banner at top of page, non-intrusive</p>
+            <p><strong>Features:</strong> Compact design, always visible, doesn't block content</p>
+            <p><strong>Best for:</strong> Users who want subtle countdown without popup overlay</p>
+            <button class="preview-button" onclick="showOption3()">Preview Option 3</button>
+        </div>
+    </div>
+
+    <!-- Option 1: Minimalist Card -->
+    <div id="option1" class="countdown-overlay" style="display: none;">
+        <div style="
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.2);
+            text-align: center;
+            border: 1px solid #e9ecef;
+        ">
+            <button class="close-overlay" onclick="hideOverlay('option1')">×</button>
+            
+            <div style="margin-bottom: 30px;">
+                <div style="font-size: 1.8em; color: #148026; font-weight: bold; margin-bottom: 5px;">
+                    📻 KIOO RADIO 98.1FM
+                </div>
+                <div style="font-size: 1em; color: #666; font-style: italic;">
+                    Official Launch Countdown
+                </div>
+            </div>
+
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+                margin: 40px 0;
+            ">
+                <div style="text-align: center;">
+                    <div style="
+                        font-size: 2.5em;
+                        font-weight: bold;
+                        color: #148026;
+                        background: linear-gradient(135deg, #f8fffe, #e8f5e8);
+                        border: 2px solid #148026;
+                        border-radius: 12px;
+                        padding: 20px 10px;
+                        box-shadow: 0 4px 15px rgba(20, 128, 38, 0.1);
+                    " id="opt1-days">68</div>
+                    <div style="font-size: 0.9em; color: #148026; font-weight: 600; margin-top: 8px;">DAYS</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="
+                        font-size: 2.5em;
+                        font-weight: bold;
+                        color: #148026;
+                        background: linear-gradient(135deg, #f8fffe, #e8f5e8);
+                        border: 2px solid #148026;
+                        border-radius: 12px;
+                        padding: 20px 10px;
+                        box-shadow: 0 4px 15px rgba(20, 128, 38, 0.1);
+                    " id="opt1-hours">19</div>
+                    <div style="font-size: 0.9em; color: #148026; font-weight: 600; margin-top: 8px;">HOURS</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="
+                        font-size: 2.5em;
+                        font-weight: bold;
+                        color: #148026;
+                        background: linear-gradient(135deg, #f8fffe, #e8f5e8);
+                        border: 2px solid #148026;
+                        border-radius: 12px;
+                        padding: 20px 10px;
+                        box-shadow: 0 4px 15px rgba(20, 128, 38, 0.1);
+                    " id="opt1-minutes">08</div>
+                    <div style="font-size: 0.9em; color: #148026; font-weight: 600; margin-top: 8px;">MINUTES</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="
+                        font-size: 2.5em;
+                        font-weight: bold;
+                        color: #148026;
+                        background: linear-gradient(135deg, #f8fffe, #e8f5e8);
+                        border: 2px solid #148026;
+                        border-radius: 12px;
+                        padding: 20px 10px;
+                        box-shadow: 0 4px 15px rgba(20, 128, 38, 0.1);
+                    " id="opt1-seconds">45</div>
+                    <div style="font-size: 0.9em; color: #148026; font-weight: 600; margin-top: 8px;">SECONDS</div>
+                </div>
+            </div>
+
+            <div style="
+                background: linear-gradient(135deg, #148026, #0f6a1f);
+                color: white;
+                padding: 20px;
+                border-radius: 12px;
+                margin-top: 30px;
+            ">
+                <div style="font-size: 1.2em; font-weight: bold; margin-bottom: 8px;">
+                    🎉 November 13, 2025
+                </div>
+                <div style="font-size: 0.95em; opacity: 0.9;">
+                    Broadcasting to 🇱🇷 Liberia • 🇸🇱 Sierra Leone • 🇬🇳 Guinea
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Option 2: Circular Progress -->
+    <div id="option2" class="countdown-overlay" style="display: none;">
+        <div style="
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.2);
+            text-align: center;
+        ">
+            <button class="close-overlay" onclick="hideOverlay('option2')">×</button>
+            
+            <div style="margin-bottom: 30px;">
+                <div style="font-size: 2em; color: #148026; font-weight: bold; margin-bottom: 5px;">
+                    📻 KIOO RADIO 98.1FM
+                </div>
+                <div style="font-size: 1.1em; color: #666;">
+                    Official Launch Countdown
+                </div>
+            </div>
+
+            <div style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 20px;
+                margin: 40px 0;
+            ">
+                <!-- Days Circle -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="
+                        position: relative;
+                        width: 120px;
+                        height: 120px;
+                        border-radius: 50%;
+                        background: conic-gradient(#148026 270deg, #e9ecef 270deg);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-bottom: 12px;
+                    ">
+                        <div style="
+                            width: 90px;
+                            height: 90px;
+                            background: white;
+                            border-radius: 50%;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+                        ">
+                            <div style="font-size: 2em; font-weight: bold; color: #148026;" id="opt2-days">68</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.9em; color: #148026; font-weight: 600;">DAYS</div>
+                </div>
+
+                <!-- Hours Circle -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="
+                        position: relative;
+                        width: 120px;
+                        height: 120px;
+                        border-radius: 50%;
+                        background: conic-gradient(#1a9b3a 200deg, #e9ecef 200deg);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-bottom: 12px;
+                    ">
+                        <div style="
+                            width: 90px;
+                            height: 90px;
+                            background: white;
+                            border-radius: 50%;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+                        ">
+                            <div style="font-size: 2em; font-weight: bold; color: #1a9b3a;" id="opt2-hours">19</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.9em; color: #1a9b3a; font-weight: 600;">HOURS</div>
+                </div>
+
+                <!-- Minutes Circle -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="
+                        position: relative;
+                        width: 120px;
+                        height: 120px;
+                        border-radius: 50%;
+                        background: conic-gradient(#148026 180deg, #e9ecef 180deg);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-bottom: 12px;
+                    ">
+                        <div style="
+                            width: 90px;
+                            height: 90px;
+                            background: white;
+                            border-radius: 50%;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+                        ">
+                            <div style="font-size: 2em; font-weight: bold; color: #148026;" id="opt2-minutes">08</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.9em; color: #148026; font-weight: 600;">MINUTES</div>
+                </div>
+
+                <!-- Seconds Circle -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="
+                        position: relative;
+                        width: 120px;
+                        height: 120px;
+                        border-radius: 50%;
+                        background: conic-gradient(#1a9b3a 300deg, #e9ecef 300deg);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-bottom: 12px;
+                    ">
+                        <div style="
+                            width: 90px;
+                            height: 90px;
+                            background: white;
+                            border-radius: 50%;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+                        ">
+                            <div style="font-size: 2em; font-weight: bold; color: #1a9b3a;" id="opt2-seconds">45</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.9em; color: #1a9b3a; font-weight: 600;">SECONDS</div>
+                </div>
+            </div>
+
+            <div style="
+                background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+                border: 2px solid #148026;
+                padding: 20px;
+                border-radius: 12px;
+                margin-top: 30px;
+            ">
+                <div style="font-size: 1.2em; color: #148026; font-weight: bold; margin-bottom: 8px;">
+                    🎉 November 13, 2025
+                </div>
+                <div style="font-size: 0.95em; color: #666;">
+                    Broadcasting to the Makona River Region
+                </div>
+                <div style="font-size: 0.95em; color: #148026; font-weight: 600; margin-top: 5px;">
+                    🇱🇷 Liberia • 🇸🇱 Sierra Leone • 🇬🇳 Guinea
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Option 3: Top Banner -->
+    <div id="option3" class="countdown-overlay" style="display: none;">
+        <div style="
+            background: linear-gradient(135deg, #148026, #0f6a1f);
+            color: white;
+            padding: 0;
+            width: 100%;
+            height: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            border-radius: 0;
+            z-index: 999999;
+        ">
+            <button class="close-overlay" onclick="hideOverlay('option3')" style="
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                background: rgba(255,255,255,0.2);
+                color: white;
+                border: 1px solid rgba(255,255,255,0.3);
+                font-size: 20px;
+            ">×</button>
+            
+            <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 15px 60px 15px 20px;
+                flex-wrap: wrap;
+                gap: 15px;
+            ">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 2em;">📻</span>
+                    <div>
+                        <div style="font-size: 1.3em; font-weight: bold;">KIOO RADIO 98.1FM</div>
+                        <div style="font-size: 0.9em; opacity: 0.9;">Launching November 13, 2025</div>
+                    </div>
+                </div>
+                
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    background: rgba(255,255,255,0.1);
+                    padding: 12px 20px;
+                    border-radius: 25px;
+                    backdrop-filter: blur(10px);
+                ">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold;" id="opt3-days">68</div>
+                        <div style="font-size: 0.7em; opacity: 0.8;">DAYS</div>
+                    </div>
+                    <div style="font-size: 1.2em; opacity: 0.6;">:</div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold;" id="opt3-hours">19</div>
+                        <div style="font-size: 0.7em; opacity: 0.8;">HRS</div>
+                    </div>
+                    <div style="font-size: 1.2em; opacity: 0.6;">:</div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold;" id="opt3-minutes">08</div>
+                        <div style="font-size: 0.7em; opacity: 0.8;">MIN</div>
+                    </div>
+                    <div style="font-size: 1.2em; opacity: 0.6;">:</div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold;" id="opt3-seconds">45</div>
+                        <div style="font-size: 0.7em; opacity: 0.8;">SEC</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; font-size: 0.9em;">
+                    <div style="margin-bottom: 3px;">🇱🇷 🇸🇱 🇬🇳</div>
+                    <div style="opacity: 0.9;">Makona River Region</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay Styles -->
+    <style>
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999999;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+
+        @media (max-width: 768px) {
+            #option2 .countdown-display {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            #option3 > div {
+                padding: 12px 50px 12px 15px !important;
+            }
+            #option3 .countdown-compact {
+                gap: 8px !important;
+            }
+        }
+    </style>
+
+    <script>
+        function showOption1() {
+            document.getElementById('option1').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showOption2() {
+            document.getElementById('option2').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showOption3() {
+            document.getElementById('option3').style.display = 'block';
+            document.body.style.paddingTop = '80px';
+        }
+
+        function hideOverlay(optionId) {
+            const overlay = document.getElementById(optionId);
+            overlay.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.body.style.overflow = '';
+                document.body.style.paddingTop = '';
+            }, 300);
+        }
+
+        // Simulate countdown updates
+        function startDemoCountdown() {
+            setInterval(() => {
+                // Update all options with current time
+                const now = new Date().getTime();
+                const launch = new Date('November 13, 2025 00:00:00 GMT').getTime();
+                const timeLeft = launch - now;
+                
+                if (timeLeft > 0) {
+                    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    
+                    // Update Option 1
+                    const opt1Days = document.getElementById('opt1-days');
+                    const opt1Hours = document.getElementById('opt1-hours');
+                    const opt1Minutes = document.getElementById('opt1-minutes');
+                    const opt1Seconds = document.getElementById('opt1-seconds');
+                    
+                    if (opt1Days) opt1Days.textContent = days.toString().padStart(2, '0');
+                    if (opt1Hours) opt1Hours.textContent = hours.toString().padStart(2, '0');
+                    if (opt1Minutes) opt1Minutes.textContent = minutes.toString().padStart(2, '0');
+                    if (opt1Seconds) opt1Seconds.textContent = seconds.toString().padStart(2, '0');
+                    
+                    // Update Option 2
+                    const opt2Days = document.getElementById('opt2-days');
+                    const opt2Hours = document.getElementById('opt2-hours');
+                    const opt2Minutes = document.getElementById('opt2-minutes');
+                    const opt2Seconds = document.getElementById('opt2-seconds');
+                    
+                    if (opt2Days) opt2Days.textContent = days;
+                    if (opt2Hours) opt2Hours.textContent = hours;
+                    if (opt2Minutes) opt2Minutes.textContent = minutes;
+                    if (opt2Seconds) opt2Seconds.textContent = seconds;
+                    
+                    // Update Option 3
+                    const opt3Days = document.getElementById('opt3-days');
+                    const opt3Hours = document.getElementById('opt3-hours');
+                    const opt3Minutes = document.getElementById('opt3-minutes');
+                    const opt3Seconds = document.getElementById('opt3-seconds');
+                    
+                    if (opt3Days) opt3Days.textContent = days;
+                    if (opt3Hours) opt3Hours.textContent = hours;
+                    if (opt3Minutes) opt3Minutes.textContent = minutes;
+                    if (opt3Seconds) opt3Seconds.textContent = seconds;
+                }
+            }, 1000);
+        }
+
+        // Start demo countdown
+        startDemoCountdown();
+
+        // ESC key to close overlays
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                ['option1', 'option2', 'option3'].forEach(id => {
+                    const overlay = document.getElementById(id);
+                    if (overlay && overlay.style.display !== 'none') {
+                        hideOverlay(id);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
