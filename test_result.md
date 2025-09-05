@@ -212,3 +212,5 @@ User wants to complete the www.kiooradio.org/visitors analytics page with Google
       message: "USER REQUEST: Remove countdown popup from frontend. Removing all countdown-related code from Home.js component including state management, useEffect hooks, and the entire countdown popup JSX structure while preserving all other functionality."
     - agent: "main"
       message: "✅ COUNTDOWN REMOVAL COMPLETED: Successfully removed launch countdown popup from frontend. Removed showCountdown state, countdown useEffect logic, closeCountdown function, and entire countdown popup JSX structure (lines 75-399). Screenshot verification confirms countdown popup no longer appears and hero section displays properly. Home page functionality preserved."
+    - agent: "main"
+      message: "USER REQUEST: Fix Partner Churches page - images too big, need uniform sizing. Reducing image heights from h-72 md:h-80 lg:h-96 (288px-384px) to smaller, consistent dimensions and ensuring uniform card sizing."
