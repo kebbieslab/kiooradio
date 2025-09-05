@@ -474,25 +474,25 @@ const ChurchPartners = () => {
                   </div>
 
                   {/* Card Content */}
-                  <div className="p-6">
+                  <div className="p-5 flex flex-col flex-grow">
                     
                     {/* Pastor Name */}
-                    <h3 className="text-xl font-bold text-kioo-dark mb-2 leading-tight">
+                    <h3 className="text-lg font-bold text-kioo-dark mb-2 leading-tight">
                       {partner.pastorName}
                     </h3>
 
                     {/* Church Name */}
-                    <p className="text-kioo-primary font-semibold mb-3 leading-tight">
+                    <p className="text-kioo-primary font-semibold mb-2 leading-tight text-sm">
                       {partner.churchName}
                     </p>
 
                     {/* Location */}
-                    <p className="text-gray-600 text-sm mb-4 flex items-center">
+                    <p className="text-gray-600 text-sm mb-3 flex items-center">
                       📍 {partner.city}, {partner.country}
                     </p>
 
                     {/* On Air Schedule */}
-                    <div className="bg-gray-50 rounded-lg p-3 mb-6">
+                    <div className="bg-gray-50 rounded-lg p-3 mb-4 flex-grow">
                       <p className="text-sm text-gray-700">
                         <strong>On Kioo Radio:</strong>{' '}
                         {partner.onAirDaysTimes || 'Schedule to be announced'}
@@ -500,7 +500,7 @@ const ChurchPartners = () => {
                     </div>
 
                     {/* Unified Action Bar - 4 buttons with nice green theme */}
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2 mt-auto">
                       
                       {/* Call Button */}
                       <ActionButton
