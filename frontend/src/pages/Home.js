@@ -9,7 +9,6 @@ const API = `${BACKEND_URL}/api`;
 const Home = () => {
   const [impactStories, setImpactStories] = useState([]);
   const [latestNews, setLatestNews] = useState([]);
-  const [showCountdown, setShowCountdown] = useState(true);
 
   useEffect(() => {
     const fetchHomeData = async () => {
