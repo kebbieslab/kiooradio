@@ -72,6 +72,208 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       
+      {/* Kioo Radio Launch Countdown Popup */}
+      {showCountdown && (
+        <div className="kioo-countdown-overlay" style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0, 0, 0, 0.85)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 999999,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        }}>
+          <div className="kioo-countdown-container" style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '40px 30px',
+            maxWidth: '90%',
+            maxHeight: '90%',
+            width: '600px',
+            position: 'relative',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+            textAlign: 'center'
+          }}>
+            {/* Close Button */}
+            <button 
+              onClick={closeCountdown}
+              style={{
+                position: 'absolute',
+                top: '15px',
+                right: '20px',
+                background: 'none',
+                border: 'none',
+                fontSize: '32px',
+                color: '#666',
+                cursor: 'pointer',
+                width: '40px',
+                height: '40px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#f0f0f0';
+                e.target.style.color = '#148026';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = 'none';
+                e.target.style.color = '#666';
+              }}
+            >
+              ×
+            </button>
+            
+            {/* Content */}
+            <div className="kioo-countdown-content">
+              {/* Header */}
+              <div style={{ marginBottom: '30px' }}>
+                <h1 style={{
+                  fontSize: '2.2em',
+                  fontWeight: 'bold',
+                  color: '#148026',
+                  margin: '0 0 10px 0',
+                  textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)'
+                }}>
+                  📻 KIOO RADIO 98.1FM
+                </h1>
+                <p style={{
+                  fontSize: '1.2em',
+                  color: '#FF6600',
+                  margin: '0',
+                  fontWeight: '600'
+                }}>
+                  Official Launch Countdown
+                </p>
+              </div>
+              
+              {/* Countdown Display */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                margin: '40px 0',
+                flexWrap: 'wrap',
+                gap: '10px'
+              }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
+                  <div id="kioo-days" style={{
+                    fontSize: '3em',
+                    fontWeight: 'bold',
+                    color: '#148026',
+                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                    border: '3px solid #148026',
+                    borderRadius: '15px',
+                    padding: '15px 10px',
+                    minWidth: '80px',
+                    boxShadow: '0 4px 15px rgba(20, 128, 38, 0.2)'
+                  }}>00</div>
+                  <div style={{
+                    fontSize: '0.9em',
+                    fontWeight: 'bold',
+                    color: '#FF6600',
+                    marginTop: '8px',
+                    letterSpacing: '1px'
+                  }}>DAYS</div>
+                </div>
+                
+                <div style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#148026', margin: '0 10px' }}>|</div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
+                  <div id="kioo-hours" style={{
+                    fontSize: '3em',
+                    fontWeight: 'bold',
+                    color: '#148026',
+                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                    border: '3px solid #148026',
+                    borderRadius: '15px',
+                    padding: '15px 10px',
+                    minWidth: '80px',
+                    boxShadow: '0 4px 15px rgba(20, 128, 38, 0.2)'
+                  }}>00</div>
+                  <div style={{
+                    fontSize: '0.9em',
+                    fontWeight: 'bold',
+                    color: '#FF6600',
+                    marginTop: '8px',
+                    letterSpacing: '1px'
+                  }}>HOURS</div>
+                </div>
+                
+                <div style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#148026', margin: '0 10px' }}>|</div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
+                  <div id="kioo-minutes" style={{
+                    fontSize: '3em',
+                    fontWeight: 'bold',
+                    color: '#148026',
+                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                    border: '3px solid #148026',
+                    borderRadius: '15px',
+                    padding: '15px 10px',
+                    minWidth: '80px',
+                    boxShadow: '0 4px 15px rgba(20, 128, 38, 0.2)'
+                  }}>00</div>
+                  <div style={{
+                    fontSize: '0.9em',
+                    fontWeight: 'bold',
+                    color: '#FF6600',
+                    marginTop: '8px',
+                    letterSpacing: '1px'
+                  }}>MINUTES</div>
+                </div>
+                
+                <div style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#148026', margin: '0 10px' }}>|</div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
+                  <div id="kioo-seconds" style={{
+                    fontSize: '3em',
+                    fontWeight: 'bold',
+                    color: '#148026',
+                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                    border: '3px solid #148026',
+                    borderRadius: '15px',
+                    padding: '15px 10px',
+                    minWidth: '80px',
+                    boxShadow: '0 4px 15px rgba(20, 128, 38, 0.2)'
+                  }}>00</div>
+                  <div style={{
+                    fontSize: '0.9em',
+                    fontWeight: 'bold',
+                    color: '#FF6600',
+                    marginTop: '8px',
+                    letterSpacing: '1px'
+                  }}>SECONDS</div>
+                </div>
+              </div>
+              
+              {/* Launch Date */}
+              <div style={{
+                marginTop: '30px',
+                paddingTop: '25px',
+                borderTop: '2px solid #e9ecef'
+              }}>
+                <p style={{ margin: '8px 0', fontSize: '1.1em' }}>
+                  🎉 <strong style={{ color: '#148026', fontSize: '1.2em' }}>November 13, 2025</strong> 🎉
+                </p>
+                <p style={{ color: '#666', fontStyle: 'italic', margin: '8px 0', fontSize: '1.1em' }}>
+                  Broadcasting to the Makona River Region
+                </p>
+                <p style={{ color: '#FF6600', fontWeight: '600', fontSize: '1em', margin: '8px 0' }}>
+                  🇱🇷 Liberia • 🇸🇱 Sierra Leone • 🇬🇳 Guinea
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Hero Section - Updated for Makona River Region */}
       <section className="relative bg-gradient-to-br from-kioo-primary via-kioo-secondary to-kioo-dark text-white py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
