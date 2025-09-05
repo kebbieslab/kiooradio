@@ -43,15 +43,15 @@ const About = () => {
       name: 'Pastor Solomon Kebbie',
       role: 'Project Coordinator, Kioo Radio',
       bio: 'Dedicated Pastor overseeing Project Coordination and Church Engagement.',
-      photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/q5fzsdb2_solomonk.jpg',
-      location: 'Makona River Region'
+      photo: 'https://customer-assets.emergentagent.com/job_romantic-gagarin/artifacts/gzi8lbyt_SolomonNew.jpg',
+      location: 'Togo'
     },
     {
       name: 'Pastor David S. Fatorma',
       role: 'Strategic Project Advisor',
       bio: 'Dedicated Pastor overseeing Project Coordination and Church Engagement.',
       photo: 'https://customer-assets.emergentagent.com/job_romantic-gagarin/artifacts/3m15737k_David-Saah.jpg',
-      location: 'Makona River Region'
+      location: 'Monrovia'
     },
     {
       name: 'Philip Kamara',
@@ -64,7 +64,7 @@ const About = () => {
       name: 'Guinea Coordinator',
       role: 'Kioo Radio Coordinator for Guinea',
       bio: 'Coordinator position for Guinea operations - joining soon.',
-      photo: null,
+      photo: 'https://customer-assets.emergentagent.com/job_romantic-gagarin/artifacts/xfwbzh7a_Guinea.PNG',
       location: 'Guinea'
     }
   ];
