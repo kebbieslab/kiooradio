@@ -72,7 +72,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       
-      {/* Kioo Radio Launch Countdown Popup */}
+      {/* Kioo Radio Launch Countdown Popup - Horizontal Design */}
       {showCountdown && (
         <div className="kioo-countdown-overlay" style={{
           position: 'fixed',
@@ -88,15 +88,19 @@ const Home = () => {
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
         }}>
           <div className="kioo-countdown-container" style={{
-            background: 'white',
-            borderRadius: '20px',
-            padding: '40px 30px',
-            maxWidth: '90%',
-            maxHeight: '90%',
-            width: '600px',
+            background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+            borderRadius: '25px',
+            padding: '25px 40px',
+            maxWidth: '95%',
+            width: '900px',
+            height: 'auto',
             position: 'relative',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-            textAlign: 'center'
+            boxShadow: '0 25px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+            textAlign: 'center',
+            border: '3px solid transparent',
+            backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #148026, #FF6600)',
+            backgroundOrigin: 'border-box',
+            backgroundClip: 'content-box, border-box'
           }}>
             {/* Close Button */}
             <button 
@@ -104,27 +108,30 @@ const Home = () => {
               style={{
                 position: 'absolute',
                 top: '15px',
-                right: '20px',
-                background: 'none',
-                border: 'none',
-                fontSize: '32px',
-                color: '#666',
+                right: '25px',
+                background: 'linear-gradient(135deg, #f8f9fa, #e9ecef)',
+                border: '2px solid #148026',
+                fontSize: '24px',
+                color: '#148026',
                 cursor: 'pointer',
-                width: '40px',
-                height: '40px',
+                width: '35px',
+                height: '35px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: '50%',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.3s ease',
+                fontWeight: 'bold'
               }}
               onMouseOver={(e) => {
-                e.target.style.background = '#f0f0f0';
-                e.target.style.color = '#148026';
+                e.target.style.background = 'linear-gradient(135deg, #148026, #0f6a1f)';
+                e.target.style.color = 'white';
+                e.target.style.transform = 'scale(1.1)';
               }}
               onMouseOut={(e) => {
-                e.target.style.background = 'none';
-                e.target.style.color = '#666';
+                e.target.style.background = 'linear-gradient(135deg, #f8f9fa, #e9ecef)';
+                e.target.style.color = '#148026';
+                e.target.style.transform = 'scale(1)';
               }}
             >
               ×
@@ -132,142 +139,233 @@ const Home = () => {
             
             {/* Content */}
             <div className="kioo-countdown-content">
-              {/* Header */}
-              <div style={{ marginBottom: '30px' }}>
-                <h1 style={{
-                  fontSize: '2.2em',
-                  fontWeight: 'bold',
-                  color: '#148026',
-                  margin: '0 0 10px 0',
-                  textShadow: '2px 2px 4px rgba(0, 0, 0, 0.1)'
-                }}>
-                  📻 KIOO RADIO 98.1FM
-                </h1>
-                <p style={{
-                  fontSize: '1.2em',
-                  color: '#FF6600',
-                  margin: '0',
-                  fontWeight: '600'
+              {/* Header - Horizontal Layout */}
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                marginBottom: '25px',
+                flexWrap: 'wrap',
+                gap: '20px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                  <div style={{
+                    fontSize: '3em',
+                    background: 'linear-gradient(135deg, #148026, #0f6a1f)',
+                    borderRadius: '15px',
+                    padding: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 8px 25px rgba(20, 128, 38, 0.3)'
+                  }}>📻</div>
+                  
+                  <div style={{ textAlign: 'left' }}>
+                    <h1 style={{
+                      fontSize: '2.4em',
+                      fontWeight: 'bold',
+                      background: 'linear-gradient(135deg, #148026, #0f6a1f)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      margin: '0',
+                      textShadow: 'none'
+                    }}>
+                      KIOO RADIO
+                    </h1>
+                    <div style={{
+                      fontSize: '1.4em',
+                      color: '#148026',
+                      fontWeight: '600',
+                      margin: '0'
+                    }}>
+                      98.1FM
+                    </div>
+                  </div>
+                </div>
+                
+                <div style={{
+                  background: 'linear-gradient(135deg, #FF6600, #e55d00)',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '25px',
+                  fontSize: '1.1em',
+                  fontWeight: '600',
+                  boxShadow: '0 6px 20px rgba(255, 102, 0, 0.3)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px'
                 }}>
                   Official Launch Countdown
-                </p>
+                </div>
               </div>
               
-              {/* Countdown Display */}
+              {/* Countdown Display - Horizontal */}
               <div style={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                margin: '40px 0',
+                margin: '30px 0',
                 flexWrap: 'wrap',
-                gap: '10px'
+                gap: '15px',
+                background: 'linear-gradient(135deg, #f1f3f4 0%, #e8eaed 100%)',
+                padding: '25px',
+                borderRadius: '20px',
+                border: '2px solid #e9ecef'
               }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
+                {/* Days */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '100px' }}>
                   <div id="kioo-days" style={{
-                    fontSize: '3em',
+                    fontSize: '3.5em',
                     fontWeight: 'bold',
-                    color: '#148026',
-                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                    border: '3px solid #148026',
-                    borderRadius: '15px',
-                    padding: '15px 10px',
-                    minWidth: '80px',
-                    boxShadow: '0 4px 15px rgba(20, 128, 38, 0.2)'
+                    color: 'white',
+                    background: 'linear-gradient(135deg, #148026, #0f6a1f)',
+                    borderRadius: '18px',
+                    padding: '20px 15px',
+                    minWidth: '100px',
+                    boxShadow: '0 8px 25px rgba(20, 128, 38, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}>00</div>
                   <div style={{
-                    fontSize: '0.9em',
+                    fontSize: '1em',
                     fontWeight: 'bold',
-                    color: '#FF6600',
-                    marginTop: '8px',
-                    letterSpacing: '1px'
-                  }}>DAYS</div>
+                    color: '#148026',
+                    marginTop: '12px',
+                    letterSpacing: '2px',
+                    textTransform: 'uppercase'
+                  }}>Days</div>
                 </div>
                 
-                <div style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#148026', margin: '0 10px' }}>|</div>
+                {/* Separator */}
+                <div style={{ 
+                  fontSize: '3em', 
+                  fontWeight: 'bold', 
+                  color: '#FF6600', 
+                  margin: '0 5px',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+                }}>:</div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
+                {/* Hours */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '100px' }}>
                   <div id="kioo-hours" style={{
-                    fontSize: '3em',
+                    fontSize: '3.5em',
                     fontWeight: 'bold',
-                    color: '#148026',
-                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                    border: '3px solid #148026',
-                    borderRadius: '15px',
-                    padding: '15px 10px',
-                    minWidth: '80px',
-                    boxShadow: '0 4px 15px rgba(20, 128, 38, 0.2)'
+                    color: 'white',
+                    background: 'linear-gradient(135deg, #FF6600, #e55d00)',
+                    borderRadius: '18px',
+                    padding: '20px 15px',
+                    minWidth: '100px',
+                    boxShadow: '0 8px 25px rgba(255, 102, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                   }}>00</div>
                   <div style={{
-                    fontSize: '0.9em',
+                    fontSize: '1em',
                     fontWeight: 'bold',
                     color: '#FF6600',
-                    marginTop: '8px',
-                    letterSpacing: '1px'
-                  }}>HOURS</div>
+                    marginTop: '12px',
+                    letterSpacing: '2px',
+                    textTransform: 'uppercase'
+                  }}>Hours</div>
                 </div>
                 
-                <div style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#148026', margin: '0 10px' }}>|</div>
+                {/* Separator */}
+                <div style={{ 
+                  fontSize: '3em', 
+                  fontWeight: 'bold', 
+                  color: '#148026', 
+                  margin: '0 5px',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+                }}>:</div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
+                {/* Minutes */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '100px' }}>
                   <div id="kioo-minutes" style={{
-                    fontSize: '3em',
+                    fontSize: '3.5em',
                     fontWeight: 'bold',
-                    color: '#148026',
-                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                    border: '3px solid #148026',
-                    borderRadius: '15px',
-                    padding: '15px 10px',
-                    minWidth: '80px',
-                    boxShadow: '0 4px 15px rgba(20, 128, 38, 0.2)'
+                    color: 'white',
+                    background: 'linear-gradient(135deg, #148026, #0f6a1f)',
+                    borderRadius: '18px',
+                    padding: '20px 15px',
+                    minWidth: '100px',
+                    boxShadow: '0 8px 25px rgba(20, 128, 38, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                   }}>00</div>
                   <div style={{
-                    fontSize: '0.9em',
+                    fontSize: '1em',
                     fontWeight: 'bold',
-                    color: '#FF6600',
-                    marginTop: '8px',
-                    letterSpacing: '1px'
-                  }}>MINUTES</div>
+                    color: '#148026',
+                    marginTop: '12px',
+                    letterSpacing: '2px',
+                    textTransform: 'uppercase'
+                  }}>Minutes</div>
                 </div>
                 
-                <div style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#148026', margin: '0 10px' }}>|</div>
+                {/* Separator */}
+                <div style={{ 
+                  fontSize: '3em', 
+                  fontWeight: 'bold', 
+                  color: '#FF6600', 
+                  margin: '0 5px',
+                  textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+                }}>:</div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '80px' }}>
+                {/* Seconds */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '100px' }}>
                   <div id="kioo-seconds" style={{
-                    fontSize: '3em',
+                    fontSize: '3.5em',
                     fontWeight: 'bold',
-                    color: '#148026',
-                    background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                    border: '3px solid #148026',
-                    borderRadius: '15px',
-                    padding: '15px 10px',
-                    minWidth: '80px',
-                    boxShadow: '0 4px 15px rgba(20, 128, 38, 0.2)'
+                    color: 'white',
+                    background: 'linear-gradient(135deg, #FF6600, #e55d00)',
+                    borderRadius: '18px',
+                    padding: '20px 15px',
+                    minWidth: '100px',
+                    boxShadow: '0 8px 25px rgba(255, 102, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                   }}>00</div>
                   <div style={{
-                    fontSize: '0.9em',
+                    fontSize: '1em',
                     fontWeight: 'bold',
                     color: '#FF6600',
-                    marginTop: '8px',
-                    letterSpacing: '1px'
-                  }}>SECONDS</div>
+                    marginTop: '12px',
+                    letterSpacing: '2px',
+                    textTransform: 'uppercase'
+                  }}>Seconds</div>
                 </div>
               </div>
               
-              {/* Launch Date */}
+              {/* Launch Date - Horizontal Info Bar */}
               <div style={{
-                marginTop: '30px',
-                paddingTop: '25px',
-                borderTop: '2px solid #e9ecef'
+                background: 'linear-gradient(135deg, #148026, #0f6a1f)',
+                color: 'white',
+                padding: '20px',
+                borderRadius: '15px',
+                marginTop: '20px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '15px'
               }}>
-                <p style={{ margin: '8px 0', fontSize: '1.1em' }}>
-                  🎉 <strong style={{ color: '#148026', fontSize: '1.2em' }}>November 13, 2025</strong> 🎉
-                </p>
-                <p style={{ color: '#666', fontStyle: 'italic', margin: '8px 0', fontSize: '1.1em' }}>
-                  Broadcasting to the Makona River Region
-                </p>
-                <p style={{ color: '#FF6600', fontWeight: '600', fontSize: '1em', margin: '8px 0' }}>
-                  🇱🇷 Liberia • 🇸🇱 Sierra Leone • 🇬🇳 Guinea
-                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '1.5em' }}>🎉</span>
+                  <div>
+                    <div style={{ fontSize: '1.3em', fontWeight: 'bold' }}>November 13, 2025</div>
+                    <div style={{ fontSize: '0.9em', opacity: '0.9' }}>Launch Day</div>
+                  </div>
+                </div>
+                
+                <div style={{ textAlign: 'center', flex: '1' }}>
+                  <div style={{ fontSize: '1.1em', fontStyle: 'italic', marginBottom: '5px' }}>
+                    Broadcasting to the Makona River Region
+                  </div>
+                  <div style={{ fontSize: '1em', fontWeight: '600' }}>
+                    🇱🇷 Liberia • 🇸🇱 Sierra Leone • 🇬🇳 Guinea
+                  </div>
+                </div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div>
+                    <div style={{ fontSize: '1.1em', fontWeight: 'bold' }}>98.1 FM</div>
+                    <div style={{ fontSize: '0.9em', opacity: '0.9' }}>Radio Frequency</div>
+                  </div>
+                  <span style={{ fontSize: '1.5em' }}>📡</span>
+                </div>
               </div>
             </div>
           </div>
