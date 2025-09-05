@@ -484,6 +484,43 @@ class ChurchPartnerCreate(BaseModel):
     isPublished: bool = True
     sortOrder: Optional[int] = None
 
+# Email Models
+class ContactFormSubmission(BaseModel):
+    name: str
+    email: EmailStr
+    subject: str
+    message: str
+    timestamp: Optional[datetime] = None
+
+class NewsletterSubscription(BaseModel):
+    email: EmailStr
+    timestamp: Optional[datetime] = None
+
+class VisitorAnalytics(BaseModel):
+    ip_address: str
+    country: Optional[str] = None
+    city: Optional[str] = None
+    page_url: str
+    user_agent: str
+    referrer: Optional[str] = None
+    timestamp: Optional[datetime] = None
+
+# Authentication for visitors page
+security = HTTPBasic()
+
+def authenticate_admin(credentials: HTTPBasicCredentials = Depends(security)):
+    """Simple admin authentication for visitors page"""
+    correct_username = secrets.compare_digest(credentials.username, "admin")
+    correct_password = secrets.compare_digest(credentials.password, "kioo2025!")
+    
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
 # Routes
 @api_router.get("/")
 async def root():
