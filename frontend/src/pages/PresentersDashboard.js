@@ -637,19 +637,28 @@ const PresentersDashboard = () => {
                         </thead>
                         <tbody>
                           {Object.entries(liveBroadcastSchedule.weeklySchedule).map(([day, countries]) => (
-                            <tr key={day}>
-                              <td className="border border-gray-300 px-2 py-1 font-medium capitalize">{day}</td>
+                            <tr key={day} className={day === 'saturday' ? 'bg-yellow-50' : ''}>
+                              <td className="border border-gray-300 px-2 py-1 font-medium capitalize">
+                                {day}
+                                {day === 'saturday' && (
+                                  <div className="text-xs text-yellow-700 mt-1">
+                                    ⭐ Makona Talk Show<br/>6:00-9:00 AM
+                                  </div>
+                                )}
+                              </td>
                               <td className={`border border-gray-300 px-2 py-1 text-center ${
                                 countries.liberia === 'live' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
                               }`}>
                                 {countries.liberia === 'live' ? '🔴 LIVE' : '📹 Pre-recorded'}
                               </td>
                               <td className={`border border-gray-300 px-2 py-1 text-center ${
+                                day === 'saturday' ? 'bg-green-100 text-green-800' :
                                 countries.sierra_leone === 'live' ? 'bg-green-100 text-green-800' : 
                                 countries.sierra_leone === 'rotation' ? 'bg-yellow-100 text-yellow-800' :
                                 'bg-orange-100 text-orange-800'
                               }`}>
-                                {countries.sierra_leone === 'live' ? '🔴 LIVE' : 
+                                {day === 'saturday' ? '🔴 LIVE*' :
+                                 countries.sierra_leone === 'live' ? '🔴 LIVE' : 
                                  countries.sierra_leone === 'rotation' ? '🔄 Rotation' : '📹 Pre-recorded'}
                               </td>
                               <td className={`border border-gray-300 px-2 py-1 text-center ${
