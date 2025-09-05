@@ -509,6 +509,7 @@ const PresentersDashboard = () => {
           <div className="flex overflow-x-auto">
             {[
               { key: 'weather', label: t[language].weather },
+              { key: 'presenters', label: t[language].presenters },
               { key: 'social', label: t[language].social },
               { key: 'testimony', label: t[language].testimony },
               { key: 'calls', label: t[language].calls },
