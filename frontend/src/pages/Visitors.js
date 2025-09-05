@@ -178,7 +178,15 @@ const Visitors = () => {
           <div className="flex justify-between items-center py-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Visitor Analytics Dashboard</h1>
-              <p className="text-sm text-gray-500">Real-time visitor tracking for Kioo Radio</p>
+              <div className="flex items-center space-x-4 mt-1">
+                <p className="text-sm text-gray-500">Real-time visitor tracking for Kioo Radio</p>
+                <div className="flex items-center space-x-2">
+                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${gaConnected ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                    <span className={`w-2 h-2 rounded-full mr-1 ${gaConnected ? 'bg-green-400' : 'bg-yellow-400'}`}></span>
+                    {gaConnected ? 'GA4 Connected' : 'GA4 Setup Required'}
+                  </span>
+                </div>
+              </div>
             </div>
             <div className="flex space-x-4">
               <button
