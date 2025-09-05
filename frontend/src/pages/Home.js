@@ -28,45 +28,7 @@ const Home = () => {
     fetchHomeData();
   }, []);
 
-  // Countdown Logic
-  useEffect(() => {
-    const LAUNCH_DATE = new Date('November 13, 2025 00:00:00 GMT').getTime();
-    
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const timeLeft = LAUNCH_DATE - now;
-      
-      if (timeLeft <= 0) {
-        setShowCountdown(false);
-        return;
-      }
-      
-      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-      
-      const daysEl = document.getElementById('kioo-days');
-      const hoursEl = document.getElementById('kioo-hours');
-      const minutesEl = document.getElementById('kioo-minutes');
-      const secondsEl = document.getElementById('kioo-seconds');
-      
-      if (daysEl) daysEl.textContent = days.toString().padStart(2, '0');
-      if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
-      if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
-      if (secondsEl) secondsEl.textContent = seconds.toString().padStart(2, '0');
-    };
 
-    if (showCountdown) {
-      updateCountdown();
-      const interval = setInterval(updateCountdown, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [showCountdown]);
-
-  const closeCountdown = () => {
-    setShowCountdown(false);
-  };
 
   return (
     <div className="min-h-screen">
