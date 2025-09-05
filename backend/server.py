@@ -571,7 +571,7 @@ def authenticate_admin(credentials: HTTPBasicCredentials = Depends(security)):
         )
     return credentials.username
 
-# Email and Analytics Helper Functions
+# Visitor Analytics and Email Helper Functions
 async def send_simple_email(to_email: str, subject: str, body: str):
     """Send email using a simple SMTP approach"""
     try:
