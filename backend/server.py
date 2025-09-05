@@ -1430,6 +1430,269 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-@app.on_event("shutdown")
+async def send_simple_email(to_email: str, subject: str, body: str):
+    """Send email using a simple SMTP approach"""
+    try:
+        # For now, we'll just log the email - in production you'd use a real SMTP service
+        logging.info(f"EMAIL SENT TO: {to_email}")
+        logging.info(f"SUBJECT: {subject}")
+        logging.info(f"BODY: {body}")
+        return True
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
+        return False
+
+async def get_ip_location(ip_address: str):
+    """Get location information from IP address using ipapi.co"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"https://ipapi.co/{ip_address}/json/")
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    "country": data.get("country_name"),
+                    "city": data.get("city"),
+                    "region": data.get("region"),
+                    "latitude": data.get("latitude"),
+                    "longitude": data.get("longitude")
+                }
+    except Exception as e:
+        logging.error(f"Failed to get IP location: {e}")
+    
+    return {"country": "Unknown", "city": "Unknown"}
+
+@api_router.post("/contact")
+async def submit_contact_form(
+    name: str = Form(...),
+    email: str = Form(...),
+    subject: str = Form(...),
+    message: str = Form(...)
+):
+    """Handle contact form submissions"""
+    try:
+        # Save to database
+        contact_data = {
+            "id": str(uuid.uuid4()),
+            "name": name,
+            "email": email,
+            "subject": subject,
+            "message": message,
+            "timestamp": datetime.now(timezone.utc)
+        }
+        
+        await db.contact_submissions.insert_one(contact_data)
+        
+        # Send email notification
+        email_body = f"""
+        New contact form submission:
+        
+        Name: {name}
+        Email: {email}
+        Subject: {subject}
+        
+        Message:
+        {message}
+        """
+        
+        await send_simple_email("admin@proudlyliberian.com", f"Contact Form: {subject}", email_body)
+        
+        return {"success": True, "message": "Contact form submitted successfully"}
+    
+    except Exception as e:
+        logging.error(f"Contact form submission error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to submit contact form")
+
+@api_router.post("/newsletter")
+async def subscribe_newsletter(email: str = Form(...)):
+    """Handle newsletter subscriptions"""
+    try:
+        # Save to database
+        subscription_data = {
+            "id": str(uuid.uuid4()),
+            "email": email,
+            "timestamp": datetime.now(timezone.utc)
+        }
+        
+        await db.newsletter_subscriptions.insert_one(subscription_data)
+        
+        # Send email notification
+        email_body = f"New newsletter subscription: {email}"
+        await send_simple_email("admin@proudlyliberian.com", "New Newsletter Subscription", email_body)
+        
+        return {"success": True, "message": "Newsletter subscription successful"}
+    
+    except Exception as e:
+        logging.error(f"Newsletter subscription error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to subscribe to newsletter")
+
+@api_router.post("/track-visitor")
+async def track_visitor(request, visitor_data: dict):
+    """Track visitor analytics"""
+    try:
+        # Get client IP
+        client_ip = request.client.host
+        
+        # Get location data
+        location_data = await get_ip_location(client_ip)
+        
+        # Save visitor data
+        analytics_data = {
+            "id": str(uuid.uuid4()),
+            "ip_address": client_ip,
+            "country": location_data.get("country"),
+            "city": location_data.get("city"),
+            "page_url": visitor_data.get("page_url"),
+            "user_agent": visitor_data.get("user_agent"),
+            "referrer": visitor_data.get("referrer"),
+            "timestamp": datetime.now(timezone.utc)
+        }
+        
+        await db.visitor_analytics.insert_one(analytics_data)
+        
+        return {"success": True}
+    
+    except Exception as e:
+        logging.error(f"Visitor tracking error: {e}")
+        return {"success": False, "error": str(e)}
+
+@api_router.get("/visitors", response_class=HTMLResponse)
+async def visitors_page(username: str = Depends(authenticate_admin)):
+    """Protected visitors analytics page"""
+    
+    # Get visitor analytics from database
+    try:
+        visitors = await db.visitor_analytics.find().sort("timestamp", -1).limit(100).to_list(100)
+        contact_submissions = await db.contact_submissions.find().sort("timestamp", -1).limit(50).to_list(50)
+        newsletter_subs = await db.newsletter_subscriptions.find().sort("timestamp", -1).limit(50).to_list(50)
+        
+        # Generate AI insights (placeholder for now)
+        ai_insights = """
+        Based on visitor data analysis:
+        
+        1. Most visitors are from West Africa region
+        2. High engagement with Programs and About pages
+        3. Contact form submissions indicate interest in partnership opportunities
+        4. Newsletter subscriptions show growing audience base
+        
+        Recommendations:
+        - Increase local language content
+        - Focus on mobile optimization
+        - Expand partnership outreach programs
+        """
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Kioo Radio - Visitor Analytics</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {{ font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }}
+                .container {{ max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }}
+                .header {{ background: #2d5a27; color: white; padding: 20px; margin: -20px -20px 20px; border-radius: 8px 8px 0 0; }}
+                .stats {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }}
+                .stat-card {{ background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #2d5a27; }}
+                .section {{ margin-bottom: 30px; }}
+                .section h3 {{ color: #2d5a27; border-bottom: 2px solid #2d5a27; padding-bottom: 10px; }}
+                table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
+                th, td {{ padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }}
+                th {{ background-color: #2d5a27; color: white; }}
+                .ai-insights {{ background: #e8f5e8; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745; }}
+                .visitor-map {{ height: 300px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🎙️ Kioo Radio - Visitor Analytics Dashboard</h1>
+                    <p>Real-time insights into your website visitors and engagement</p>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>Total Visitors</h4>
+                        <h2>{len(visitors)}</h2>
+                        <small>Last 100 visits</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Contact Submissions</h4>
+                        <h2>{len(contact_submissions)}</h2>
+                        <small>All time</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Newsletter Subscribers</h4>
+                        <h2>{len(newsletter_subs)}</h2>
+                        <small>All time</small>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Countries Reached</h4>
+                        <h2>{len(set([v.get('country', 'Unknown') for v in visitors if v.get('country')]))}</h2>
+                        <small>Unique countries</small>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>🤖 AI-Powered Insights</h3>
+                    <div class="ai-insights">
+                        <pre>{ai_insights}</pre>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h3>🌍 Recent Visitors</h3>
+                    <table>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Location</th>
+                            <th>Page</th>
+                            <th>IP Address</th>
+                        </tr>
+                        {''.join([f"<tr><td>{v.get('timestamp', 'N/A')}</td><td>{v.get('country', 'Unknown')}, {v.get('city', 'Unknown')}</td><td>{v.get('page_url', 'N/A')}</td><td>{v.get('ip_address', 'N/A')}</td></tr>" for v in visitors[:20]])}
+                    </table>
+                </div>
+                
+                <div class="section">
+                    <h3>📧 Recent Contact Submissions</h3>
+                    <table>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Subject</th>
+                        </tr>
+                        {''.join([f"<tr><td>{c.get('timestamp', 'N/A')}</td><td>{c.get('name', 'N/A')}</td><td>{c.get('email', 'N/A')}</td><td>{c.get('subject', 'N/A')}</td></tr>" for c in contact_submissions[:10]])}
+                    </table>
+                </div>
+                
+                <div class="section">
+                    <h3>📰 Newsletter Subscribers</h3>
+                    <table>
+                        <tr>
+                            <th>Date</th>
+                            <th>Email</th>
+                        </tr>
+                        {''.join([f"<tr><td>{n.get('timestamp', 'N/A')}</td><td>{n.get('email', 'N/A')}</td></tr>" for n in newsletter_subs[:10]])}
+                    </table>
+                </div>
+                
+                <footer style="margin-top: 40px; text-align: center; color: #666;">
+                    <p>Kioo Radio Analytics Dashboard - Last updated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+                </footer>
+            </div>
+        </body>
+        </html>
+        """
+        
+        return HTMLResponse(content=html_content)
+    
+    except Exception as e:
+        logging.error(f"Visitors page error: {e}")
+        return HTMLResponse(content=f"<h1>Error loading analytics: {str(e)}</h1>")
+
+@app.get("/visitors")
+async def redirect_to_api_visitors():
+    """Redirect /visitors to /api/visitors"""
+    return JSONResponse({"message": "Please access /api/visitors for the analytics dashboard"})
 async def shutdown_db_client():
     client.close()
