@@ -1,0 +1,408 @@
+<!-- Kioo Radio Launch Countdown Popup Widget -->
+<!-- Embed this code just before the closing </body> tag on kiooradio.org homepage -->
+
+<div id="kioo-countdown-popup" class="kioo-countdown-overlay">
+  <div class="kioo-countdown-container">
+    <!-- Close Button -->
+    <button class="kioo-countdown-close" onclick="closeCountdownPopup()">×</button>
+    
+    <!-- Content -->
+    <div class="kioo-countdown-content">
+      <!-- Logo/Title -->
+      <div class="kioo-countdown-header">
+        <h1 class="kioo-countdown-title">📻 KIOO RADIO 98.1FM</h1>
+        <p class="kioo-countdown-subtitle">Official Launch Countdown</p>
+      </div>
+      
+      <!-- Countdown Display -->
+      <div class="kioo-countdown-display">
+        <div class="kioo-countdown-unit">
+          <div class="kioo-countdown-number" id="kioo-days">00</div>
+          <div class="kioo-countdown-label">DAYS</div>
+        </div>
+        <div class="kioo-countdown-separator">|</div>
+        <div class="kioo-countdown-unit">
+          <div class="kioo-countdown-number" id="kioo-hours">00</div>
+          <div class="kioo-countdown-label">HOURS</div>
+        </div>
+        <div class="kioo-countdown-separator">|</div>
+        <div class="kioo-countdown-unit">
+          <div class="kioo-countdown-number" id="kioo-minutes">00</div>
+          <div class="kioo-countdown-label">MINUTES</div>
+        </div>
+        <div class="kioo-countdown-separator">|</div>
+        <div class="kioo-countdown-unit">
+          <div class="kioo-countdown-number" id="kioo-seconds">00</div>
+          <div class="kioo-countdown-label">SECONDS</div>
+        </div>
+      </div>
+      
+      <!-- Launch Date -->
+      <div class="kioo-countdown-launch-date">
+        <p>🎉 <strong>November 13, 2025</strong> 🎉</p>
+        <p class="kioo-countdown-description">Broadcasting to the Makona River Region</p>
+        <p class="kioo-countdown-countries">🇱🇷 Liberia • 🇸🇱 Sierra Leone • 🇬🇳 Guinea</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Kioo Radio Countdown Popup Styles */
+.kioo-countdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  animation: kiooFadeIn 0.5s ease-out;
+}
+
+.kioo-countdown-container {
+  background: white;
+  border-radius: 20px;
+  padding: 40px 30px;
+  max-width: 90%;
+  max-height: 90%;
+  width: 600px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  overflow-y: auto;
+}
+
+.kioo-countdown-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #666;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.kioo-countdown-close:hover {
+  background: #f0f0f0;
+  color: #148026;
+  transform: scale(1.1);
+}
+
+.kioo-countdown-header {
+  margin-bottom: 30px;
+}
+
+.kioo-countdown-title {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #148026;
+  margin: 0 0 10px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.kioo-countdown-subtitle {
+  font-size: 1.2em;
+  color: #FF6600;
+  margin: 0;
+  font-weight: 600;
+}
+
+.kioo-countdown-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.kioo-countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.kioo-countdown-number {
+  font-size: 3em;
+  font-weight: bold;
+  color: #148026;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 3px solid #148026;
+  border-radius: 15px;
+  padding: 15px 10px;
+  min-width: 80px;
+  box-shadow: 0 4px 15px rgba(20, 128, 38, 0.2);
+  transition: all 0.3s ease;
+  animation: kiooCounterPulse 2s infinite;
+}
+
+.kioo-countdown-label {
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #FF6600;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+.kioo-countdown-separator {
+  font-size: 2.5em;
+  font-weight: bold;
+  color: #148026;
+  margin: 0 10px;
+  align-self: center;
+}
+
+.kioo-countdown-launch-date {
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 2px solid #e9ecef;
+}
+
+.kioo-countdown-launch-date p {
+  margin: 8px 0;
+  font-size: 1.1em;
+}
+
+.kioo-countdown-launch-date strong {
+  color: #148026;
+  font-size: 1.2em;
+}
+
+.kioo-countdown-description {
+  color: #666;
+  font-style: italic;
+}
+
+.kioo-countdown-countries {
+  color: #FF6600;
+  font-weight: 600;
+  font-size: 1em;
+}
+
+/* Animations */
+@keyframes kiooFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes kiooCounterPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(20, 128, 38, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(20, 128, 38, 0.3);
+  }
+}
+
+@keyframes kiooFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .kioo-countdown-container {
+    padding: 30px 20px;
+    margin: 10px;
+    border-radius: 15px;
+  }
+  
+  .kioo-countdown-title {
+    font-size: 1.8em;
+  }
+  
+  .kioo-countdown-subtitle {
+    font-size: 1em;
+  }
+  
+  .kioo-countdown-display {
+    margin: 30px 0;
+    gap: 5px;
+  }
+  
+  .kioo-countdown-unit {
+    min-width: 60px;
+  }
+  
+  .kioo-countdown-number {
+    font-size: 2.2em;
+    padding: 10px 5px;
+    min-width: 60px;
+  }
+  
+  .kioo-countdown-separator {
+    font-size: 2em;
+    margin: 0 5px;
+  }
+  
+  .kioo-countdown-label {
+    font-size: 0.8em;
+  }
+  
+  .kioo-countdown-close {
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .kioo-countdown-display {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .kioo-countdown-separator {
+    display: none;
+  }
+  
+  .kioo-countdown-unit {
+    width: 100%;
+  }
+  
+  .kioo-countdown-number {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}
+
+/* Hidden state */
+.kioo-countdown-hidden {
+  display: none !important;
+}
+</style>
+
+<script>
+// Kioo Radio Countdown Timer JavaScript
+(function() {
+  'use strict';
+  
+  // Launch date: November 13, 2025 at 00:00:00 GMT
+  const LAUNCH_DATE = new Date('November 13, 2025 00:00:00 GMT').getTime();
+  
+  let countdownInterval;
+  
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const timeLeft = LAUNCH_DATE - now;
+    
+    // Check if countdown has ended
+    if (timeLeft <= 0) {
+      // Launch day reached - hide popup automatically
+      autoHideCountdown();
+      return;
+    }
+    
+    // Calculate time units
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+    
+    // Update display with zero padding
+    document.getElementById('kioo-days').textContent = padZero(days);
+    document.getElementById('kioo-hours').textContent = padZero(hours);
+    document.getElementById('kioo-minutes').textContent = padZero(minutes);
+    document.getElementById('kioo-seconds').textContent = padZero(seconds);
+  }
+  
+  function padZero(num) {
+    return num.toString().padStart(2, '0');
+  }
+  
+  function autoHideCountdown() {
+    const popup = document.getElementById('kioo-countdown-popup');
+    if (popup) {
+      popup.style.animation = 'kiooFadeOut 0.5s ease-out';
+      setTimeout(() => {
+        popup.classList.add('kioo-countdown-hidden');
+        clearInterval(countdownInterval);
+      }, 500);
+    }
+  }
+  
+  // Global function to close popup manually
+  window.closeCountdownPopup = function() {
+    const popup = document.getElementById('kioo-countdown-popup');
+    if (popup) {
+      popup.style.animation = 'kiooFadeOut 0.5s ease-out';
+      setTimeout(() => {
+        popup.classList.add('kioo-countdown-hidden');
+        clearInterval(countdownInterval);
+      }, 500);
+    }
+  };
+  
+  // Initialize countdown when DOM is ready
+  function initCountdown() {
+    // Check if launch date has already passed
+    const now = new Date().getTime();
+    if (LAUNCH_DATE <= now) {
+      // Launch date has passed, don't show popup
+      const popup = document.getElementById('kioo-countdown-popup');
+      if (popup) {
+        popup.classList.add('kioo-countdown-hidden');
+      }
+      return;
+    }
+    
+    // Start the countdown
+    updateCountdown(); // Initial update
+    countdownInterval = setInterval(updateCountdown, 1000);
+  }
+  
+  // Initialize when DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCountdown);
+  } else {
+    initCountdown();
+  }
+  
+  // Handle escape key to close popup
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      closeCountdownPopup();
+    }
+  });
+  
+  // Prevent background scrolling when popup is open
+  document.body.style.overflow = 'hidden';
+  
+  // Restore scrolling when popup is closed
+  const originalCloseFunction = window.closeCountdownPopup;
+  window.closeCountdownPopup = function() {
+    document.body.style.overflow = '';
+    originalCloseFunction();
+  };
+  
+})();
+</script>
