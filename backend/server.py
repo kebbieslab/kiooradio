@@ -1394,9 +1394,9 @@ async def get_live_broadcast_schedule():
             },
             {
                 "country": "Guinea",
-                "liveDays": ["Wednesday", "Saturday"], 
-                "preRecordedDays": ["Monday", "Tuesday", "Thursday", "Friday"],
-                "specialNote": "Sunday live if in rotation",
+                "liveDays": ["Wednesday", "Friday", "Saturday"], 
+                "preRecordedDays": ["Monday", "Tuesday", "Thursday"],
+                "specialNote": "Sunday live if in rotation, Saturday 6-9 AM live for Makona Talk Show",
                 "colorCode": "gold"
             }
         ]
