@@ -120,6 +120,12 @@ function App() {
 
         <Footer />
 
+        {/* Contact Popup */}
+        <ContactPopup 
+          isOpen={isContactPopupOpen} 
+          onClose={() => setIsContactPopupOpen(false)} 
+        />
+
         {/* Global Audio Player */}
         {isPlayerVisible && (
           <div className="fixed bottom-0 left-0 right-0 bg-kioo-primary text-white p-4 shadow-lg z-50">
