@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReactGA from 'react-ga4';
 
 const Visitors = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
