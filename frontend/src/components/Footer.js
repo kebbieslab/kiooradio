@@ -17,9 +17,12 @@ const Footer = () => {
 
     try {
       // Send email to admin@proudlyliberian.com
-      const response = await axios.post(`${BACKEND_URL}/api/newsletter-signup`, {
-        email: email,
-        adminEmail: 'admin@proudlyliberian.com'
+      const formData = new FormData();
+      formData.append('email', email);
+
+      const response = await fetch(`${BACKEND_URL}/api/newsletter`, {
+        method: 'POST',
+        body: formData,
       });
       
       setSubscriptionStatus('Thank you for subscribing! ✅');
