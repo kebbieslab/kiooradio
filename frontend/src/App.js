@@ -89,6 +89,7 @@ function App() {
     // Make functions global for header component
     window.setLang = setLang;
     window.applyI18n = applyI18n;
+    window.openContactPopup = () => setIsContactPopupOpen(true);
 
     initLang();
   }, []);
