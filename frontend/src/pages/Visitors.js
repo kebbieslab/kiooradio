@@ -42,6 +42,15 @@ const Visitors = () => {
     try {
       const authHeader = btoa('admin:kioo2025!');
       
+      // Track data refresh event
+      if (gaConnected) {
+        ReactGA.event({
+          category: 'Analytics',
+          action: 'Data Refresh',
+          label: 'Visitor Dashboard'
+        });
+      }
+      
       // Load visitor stats
       const statsResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors/stats`, {
         headers: {
