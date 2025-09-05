@@ -29,7 +29,7 @@ const About = () => {
       name: 'Joseph H. Kebbie',
       role: 'CEO, Vox & Kioo Radio Stations',
       bio: 'Joseph comes with over 20 years of experience in Christian radio.',
-      photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/gl0m45uz_joseph.kebbie.JPG',
+      photo: 'https://customer-assets.emergentagent.com/job_romantic-gagarin/artifacts/1ey8xh54_jhk.jpg',
       location: 'Betche Hill, Foya, Lofa County, Liberia'
     },
     {
