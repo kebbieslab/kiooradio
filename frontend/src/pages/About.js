@@ -35,7 +35,7 @@ const About = () => {
     {
       name: 'Mrs. Genevieve H. Kebbie',
       role: 'Human Resource Director, Vox & Kioo Radio Stations',
-      bio: 'A seasoned manager and a proud graduate of GAMPA.',
+      bio: 'A seasoned HR Manager and a proud graduate of GAMPA.',
       photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/fys87gho_genevieve%20.jpg',
       location: 'Betche Hill, Foya, Lofa County, Liberia'
     },
@@ -47,10 +47,10 @@ const About = () => {
       location: 'Makona River Region'
     },
     {
-      name: 'Coming Soon',
-      role: 'Team Member',
-      bio: 'New team member joining us soon.',
-      photo: null,
+      name: 'Pastor David S. Fatorma',
+      role: 'Strategic Project Advisor',
+      bio: 'Strategic advisor providing guidance and oversight for Kioo Radio projects.',
+      photo: 'https://customer-assets.emergentagent.com/job_radio-geo-detect/artifacts/xflxhg4y_David%20Fatorma.jpg',
       location: 'Makona River Region'
     }
   ];
