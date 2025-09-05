@@ -4,6 +4,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import "./App.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import ContactPopup from "./components/ContactPopup";
+import useVisitorTracking from "./hooks/useVisitorTracking";
 import Home from "./pages/Home";
 import ListenLive from "./pages/ListenLive";
 import Programs from "./pages/Programs";
