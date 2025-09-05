@@ -19,6 +19,18 @@ const Visitors = () => {
     
     if (credentials.username === 'admin' && credentials.password === 'kioo2025!') {
       setIsAuthenticated(true);
+      
+      // Track login event with Google Analytics
+      const gaId = process.env.REACT_APP_GA4_MEASUREMENT_ID;
+      if (gaId && gaId !== 'G-PLACEHOLDER123') {
+        ReactGA.event({
+          category: 'Admin',
+          action: 'Login',
+          label: 'Visitor Analytics Dashboard'
+        });
+        setGaConnected(true);
+      }
+      
       loadAnalyticsData();
     } else {
       setError('Invalid username or password');
