@@ -42,7 +42,7 @@ const About = () => {
     {
       name: 'Pastor Solomon Kebbie',
       role: 'Project Coordinator, Kioo Radio',
-      bio: 'Dedicated pastor overseeing project coordination and community outreach.',
+      bio: 'Dedicated Pastor overseeing Project Coordination and Church Engagement.',
       photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/q5fzsdb2_solomonk.jpg',
       location: 'Makona River Region'
     },
