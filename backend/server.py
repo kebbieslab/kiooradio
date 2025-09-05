@@ -603,6 +603,249 @@ async def get_ip_location(ip_address: str):
     
     return {"country": "Unknown", "city": "Unknown"}
 
+# Visitor tracking endpoints
+@api_router.post("/track-visitor")
+async def track_visitor(visitor_data: dict):
+    """Track visitor page visits with IP geolocation"""
+    try:
+        # Get client IP address (in production, handle proxies properly)
+        client_ip = visitor_data.get("client_ip", "127.0.0.1")
+        
+        # Get location data
+        location_data = await get_ip_location(client_ip)
+        
+        # Create visitor record
+        visitor_record = VisitorAnalytics(
+            ip_address=client_ip,
+            country=location_data.get("country"),
+            city=location_data.get("city"),
+            page_url=visitor_data.get("page_url", ""),
+            user_agent=visitor_data.get("user_agent", ""),
+            referrer=visitor_data.get("referrer"),
+            timestamp=datetime.now(timezone.utc)
+        )
+        
+        # Store in database
+        await db.visitor_analytics.insert_one(visitor_record.dict())
+        
+        return {"status": "success", "message": "Visitor tracked successfully"}
+    except Exception as e:
+        logging.error(f"Failed to track visitor: {e}")
+        return {"status": "error", "message": "Failed to track visitor"}
+
+@api_router.post("/track-click")
+async def track_click(click_data: dict):
+    """Track click events"""
+    try:
+        # Create click record
+        click_record = {
+            "id": str(uuid.uuid4()),
+            "element_type": click_data.get("element_type"),
+            "element_id": click_data.get("element_id"),
+            "element_class": click_data.get("element_class"),
+            "element_text": click_data.get("element_text"),
+            "page_url": click_data.get("page_url"),
+            "click_position": click_data.get("click_position"),
+            "timestamp": datetime.now(timezone.utc)
+        }
+        
+        # Store in database
+        await db.click_analytics.insert_one(click_record)
+        
+        return {"status": "success", "message": "Click tracked successfully"}
+    except Exception as e:
+        logging.error(f"Failed to track click: {e}")
+        return {"status": "error", "message": "Failed to track click"}
+
+# Visitor analytics dashboard endpoints (protected)
+@api_router.get("/visitors/stats")
+async def get_visitor_stats(credentials: HTTPBasicCredentials = Depends(authenticate_admin)):
+    """Get visitor statistics for the analytics dashboard"""
+    try:
+        # Get total visitors
+        total_visitors = await db.visitor_analytics.count_documents({})
+        
+        # Get unique visitors (by IP)
+        unique_visitors = len(await db.visitor_analytics.distinct("ip_address"))
+        
+        # Get visitors today
+        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        visitors_today = await db.visitor_analytics.count_documents({
+            "timestamp": {"$gte": today}
+        })
+        
+        # Get top countries
+        top_countries_pipeline = [
+            {"$group": {"_id": "$country", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 10}
+        ]
+        top_countries = await db.visitor_analytics.aggregate(top_countries_pipeline).to_list(10)
+        
+        # Get top pages
+        top_pages_pipeline = [
+            {"$group": {"_id": "$page_url", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 10}
+        ]
+        top_pages = await db.visitor_analytics.aggregate(top_pages_pipeline).to_list(10)
+        
+        # Get hourly traffic (last 24 hours)
+        hourly_traffic = []
+        for i in range(24):
+            hour_start = datetime.now(timezone.utc) - timezone.timedelta(hours=i+1)
+            hour_end = datetime.now(timezone.utc) - timezone.timedelta(hours=i)
+            
+            count = await db.visitor_analytics.count_documents({
+                "timestamp": {"$gte": hour_start, "$lt": hour_end}
+            })
+            
+            hourly_traffic.append({
+                "hour": hour_start.strftime("%H:00"),
+                "count": count
+            })
+        
+        hourly_traffic.reverse()  # Show oldest to newest
+        
+        return {
+            "total_visitors": total_visitors,
+            "unique_visitors": unique_visitors,
+            "visitors_today": visitors_today,
+            "top_countries": top_countries,
+            "top_pages": top_pages,
+            "hourly_traffic": hourly_traffic
+        }
+    except Exception as e:
+        logging.error(f"Failed to get visitor stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get visitor statistics")
+
+@api_router.get("/visitors/recent")
+async def get_recent_visitors(credentials: HTTPBasicCredentials = Depends(authenticate_admin)):
+    """Get recent visitor activity"""
+    try:
+        recent_visitors = await db.visitor_analytics.find().sort("timestamp", -1).limit(50).to_list(50)
+        
+        # Convert datetime objects to strings for JSON serialization
+        for visitor in recent_visitors:
+            if '_id' in visitor:
+                del visitor['_id']
+            if 'timestamp' in visitor and isinstance(visitor['timestamp'], datetime):
+                visitor['timestamp'] = visitor['timestamp'].isoformat()
+        
+        return recent_visitors
+    except Exception as e:
+        logging.error(f"Failed to get recent visitors: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get recent visitors")
+
+@api_router.get("/visitors/clicks")
+async def get_click_analytics(credentials: HTTPBasicCredentials = Depends(authenticate_admin)):
+    """Get click analytics data"""
+    try:
+        # Get most clicked elements
+        click_pipeline = [
+            {"$group": {"_id": "$element_type", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 10}
+        ]
+        click_stats = await db.click_analytics.aggregate(click_pipeline).to_list(10)
+        
+        # Get recent clicks
+        recent_clicks = await db.click_analytics.find().sort("timestamp", -1).limit(20).to_list(20)
+        
+        # Convert datetime objects to strings
+        for click in recent_clicks:
+            if '_id' in click:
+                del click['_id']
+            if 'timestamp' in click and isinstance(click['timestamp'], datetime):
+                click['timestamp'] = click['timestamp'].isoformat()
+        
+        return {
+            "click_stats": click_stats,
+            "recent_clicks": recent_clicks
+        }
+    except Exception as e:
+        logging.error(f"Failed to get click analytics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get click analytics")
+
+# Newsletter subscription endpoint
+@api_router.post("/subscribe")
+async def subscribe_newsletter(email_data: dict):
+    """Handle newsletter subscription"""
+    try:
+        email = email_data.get("email")
+        if not email:
+            raise HTTPException(status_code=400, detail="Email is required")
+        
+        # Store subscription
+        subscription_record = NewsletterSubscription(
+            email=email,
+            timestamp=datetime.now(timezone.utc)
+        )
+        
+        await db.newsletter_subscriptions.insert_one(subscription_record.dict())
+        
+        # Send notification email to admin
+        subject = f"New Newsletter Subscription - Kioo Radio"
+        content = f"""
+New newsletter subscription received:
+
+Email: {email}
+Timestamp: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC
+
+---
+Kioo Radio 98.1 FM
+Broadcasting Faith, Hope and Love in Christ across the Makona River Region
+        """
+        
+        await send_simple_email("admin@proudlyliberian.com", subject, content)
+        
+        return {"status": "success", "message": "Successfully subscribed to newsletter"}
+    except Exception as e:
+        logging.error(f"Failed to handle newsletter subscription: {e}")
+        raise HTTPException(status_code=500, detail="Failed to subscribe to newsletter")
+
+# Contact form submission endpoint  
+@api_router.post("/contact-form")
+async def submit_contact_form(form_data: dict):
+    """Handle contact form submissions"""
+    try:
+        # Store contact form submission
+        contact_record = ContactFormSubmission(
+            name=form_data.get("name", ""),
+            email=form_data.get("email", ""),
+            subject=form_data.get("subject", ""),
+            message=form_data.get("message", ""),
+            timestamp=datetime.now(timezone.utc)
+        )
+        
+        await db.contact_form_submissions.insert_one(contact_record.dict())
+        
+        # Send notification email to admin
+        subject = f"New Contact Form Submission - {form_data.get('subject', 'No Subject')}"
+        content = f"""
+New contact form submission received:
+
+Name: {form_data.get('name', 'Not provided')}
+Email: {form_data.get('email', 'Not provided')}
+Subject: {form_data.get('subject', 'No subject')}
+
+Message:
+{form_data.get('message', 'No message')}
+
+Timestamp: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')} UTC
+
+---
+Kioo Radio 98.1 FM
+Broadcasting Faith, Hope and Love in Christ across the Makona River Region
+        """
+        
+        await send_simple_email("admin@proudlyliberian.com", subject, content)
+        
+        return {"status": "success", "message": "Contact form submitted successfully"}
+    except Exception as e:
+        logging.error(f"Failed to handle contact form submission: {e}")
+        raise HTTPException(status_code=500, detail="Failed to submit contact form")
+
 # Routes
 @api_router.get("/")
 async def root():
