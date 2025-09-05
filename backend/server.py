@@ -1404,7 +1404,16 @@ async def get_live_broadcast_schedule():
         return {
             "weeklySchedule": weekly_schedule,
             "countrySchedules": country_schedules,
-            "introText": "Because of cross-border travel distances, not every team can be live in Foya every day. To ensure fairness and inclusion, each country has specific live days, while pre-recorded programs fill the gaps. Here is our official weekly live broadcast rotation."
+            "introText": "Because of cross-border travel distances, not every team can be live in Foya every day. To ensure fairness and inclusion, each country has specific live days, while pre-recorded programs fill the gaps. Here is our official weekly live broadcast rotation.",
+            "specialPrograms": {
+                "makona_talk_show": {
+                    "name": "Makona Talk Show",
+                    "day": "Saturday",
+                    "time": "6:00 AM - 9:00 AM",
+                    "description": "Special 3-hour program featuring ALL presenters from Liberia, Sierra Leone, and Guinea broadcasting LIVE together",
+                    "all_countries_live": True
+                }
+            }
         }
     except Exception as e:
         print(f"Error fetching live broadcast schedule: {e}")
