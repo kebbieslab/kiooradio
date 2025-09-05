@@ -336,13 +336,13 @@ const About = () => {
           <div className="grid md:grid-cols-2 gap-8">
             {teamMembers.map((member, index) => (
               <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="h-56 w-full">
+                <div className="h-64 w-full">
                   {member.photo ? (
                     <img 
                       src={member.photo} 
                       alt={member.name}
                       className="w-full h-full object-cover"
-                      style={{ objectPosition: 'center top' }}
+                      style={{ objectPosition: 'center center' }}
                     />
                   ) : (
                     <div className="w-full h-full bg-kioo-primary flex items-center justify-center">
