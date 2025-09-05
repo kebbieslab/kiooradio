@@ -578,6 +578,103 @@ const PresentersDashboard = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-6">{t[language].presenters}</h2>
             
+            {/* Live vs Pre-recorded Schedule Overview */}
+            {liveBroadcastSchedule.countrySchedules && (
+              <div className="mb-8 p-4 bg-blue-50 rounded-lg">
+                <h3 className="text-lg font-bold mb-3 text-blue-800">📡 Live vs Pre-recorded Broadcast Schedule</h3>
+                <p className="text-sm text-blue-700 mb-4">
+                  {liveBroadcastSchedule.introText}
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {liveBroadcastSchedule.countrySchedules.map((schedule) => (
+                    <div key={schedule.country} className={`border-2 rounded-lg p-4 ${
+                      schedule.colorCode === 'green' ? 'border-green-500 bg-green-50' :
+                      schedule.colorCode === 'blue' ? 'border-blue-500 bg-blue-50' :
+                      'border-yellow-500 bg-yellow-50'
+                    }`}>
+                      <div className="font-bold text-lg mb-2 flex items-center">
+                        {schedule.country === 'Liberia' && '🇱🇷'} 
+                        {schedule.country === 'Sierra Leone' && '🇸🇱'} 
+                        {schedule.country === 'Guinea' && '🇬🇳'} 
+                        <span className="ml-2">{schedule.country}</span>
+                      </div>
+                      
+                      <div className="mb-3">
+                        <div className="text-sm font-medium text-green-700 mb-1">🔴 Live Days:</div>
+                        <div className="text-xs">
+                          {schedule.liveDays.join(', ')}
+                        </div>
+                      </div>
+                      
+                      <div className="mb-3">
+                        <div className="text-sm font-medium text-orange-700 mb-1">📹 Pre-recorded Days:</div>
+                        <div className="text-xs">
+                          {schedule.preRecordedDays.length > 0 ? schedule.preRecordedDays.join(', ') : 'None'}
+                        </div>
+                      </div>
+                      
+                      <div className="text-xs text-gray-600 italic">
+                        {schedule.specialNote}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Weekly Schedule Grid */}
+                {liveBroadcastSchedule.weeklySchedule && (
+                  <div className="mt-6">
+                    <h4 className="font-bold mb-3">📅 Weekly Live vs Pre-recorded Schedule</h4>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full text-xs border border-gray-300">
+                        <thead className="bg-gray-100">
+                          <tr>
+                            <th className="border border-gray-300 px-2 py-1 text-left font-medium">Day</th>
+                            <th className="border border-gray-300 px-2 py-1 text-center font-medium">🇱🇷 Liberia</th>
+                            <th className="border border-gray-300 px-2 py-1 text-center font-medium">🇸🇱 Sierra Leone</th>
+                            <th className="border border-gray-300 px-2 py-1 text-center font-medium">🇬🇳 Guinea</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.entries(liveBroadcastSchedule.weeklySchedule).map(([day, countries]) => (
+                            <tr key={day}>
+                              <td className="border border-gray-300 px-2 py-1 font-medium capitalize">{day}</td>
+                              <td className={`border border-gray-300 px-2 py-1 text-center ${
+                                countries.liberia === 'live' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+                              }`}>
+                                {countries.liberia === 'live' ? '🔴 LIVE' : '📹 Pre-recorded'}
+                              </td>
+                              <td className={`border border-gray-300 px-2 py-1 text-center ${
+                                countries.sierra_leone === 'live' ? 'bg-green-100 text-green-800' : 
+                                countries.sierra_leone === 'rotation' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-orange-100 text-orange-800'
+                              }`}>
+                                {countries.sierra_leone === 'live' ? '🔴 LIVE' : 
+                                 countries.sierra_leone === 'rotation' ? '🔄 Rotation' : '📹 Pre-recorded'}
+                              </td>
+                              <td className={`border border-gray-300 px-2 py-1 text-center ${
+                                countries.guinea === 'live' ? 'bg-green-100 text-green-800' : 
+                                countries.guinea === 'rotation' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-orange-100 text-orange-800'
+                              }`}>
+                                {countries.guinea === 'live' ? '🔴 LIVE' : 
+                                 countries.guinea === 'rotation' ? '🔄 Rotation' : '📹 Pre-recorded'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {liveBroadcastSchedule.weeklySchedule.sunday?.note && (
+                      <div className="mt-2 text-xs text-gray-600 italic">
+                        * {liveBroadcastSchedule.weeklySchedule.sunday.note}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+            
             <div className="space-y-8">
               {Object.entries(presenters).map(([country, countryPresenters]) => (
                 <div key={country} className="border rounded-lg p-4">
