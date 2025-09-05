@@ -11,7 +11,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional, Dict, Any
 import uuid
-from datetime import datetime, time
+from datetime import datetime, time, date, timezone
 from enum import Enum
 
 # New imports for document processing
