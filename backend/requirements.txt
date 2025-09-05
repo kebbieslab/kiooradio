@@ -27,3 +27,4 @@ aiofiles
 PyMuPDF
 Pillow
 aiohttp
+httpx
