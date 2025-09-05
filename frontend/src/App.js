@@ -131,6 +131,7 @@ function App() {
     <HelmetProvider>
       <div className="App min-h-screen bg-white">
         <Router>
+        <GoogleAnalyticsTracker />
         <VisitorTracker />
         <Header setIsPlayerVisible={setIsPlayerVisible} />
         
