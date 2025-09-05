@@ -27,8 +27,11 @@ function App() {
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const [isContactPopupOpen, setIsContactPopupOpen] = useState(false);
 
-  // Initialize visitor tracking
-  useVisitorTracking();
+  // Create a component to handle visitor tracking inside Router
+  const VisitorTracker = () => {
+    useVisitorTracking();
+    return null;
+  };
 
   useEffect(() => {
     // Initialize i18n system
