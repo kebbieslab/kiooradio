@@ -26,28 +26,32 @@ const About = () => {
 
   const teamMembers = [
     {
-      name: 'Rev. Samuel Johnson',
-      role: 'Station Manager & Lead Pastor',
-      bio: 'Over 15 years of radio ministry experience across West Africa',
+      name: 'Joseph H. Kebbie',
+      role: 'CEO, Vox & Kioo Radio Stations',
+      bio: 'Joseph comes with over 20 years of experience in Christian radio.',
+      photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/gl0m45uz_joseph.kebbie.JPG',
       location: 'Betche Hill, Foya, Lofa County, Liberia'
     },
     {
-      name: 'Sarah Williams',
-      role: 'Program Director',
-      bio: 'Multilingual broadcaster specializing in community programming',
-      location: 'Gbarnga, Liberia'
+      name: 'Mrs. Genevieve H. Kebbie',
+      role: 'Human Resource Director, Vox & Kioo Radio Stations',
+      bio: 'A seasoned manager and a proud graduate of GAMPA.',
+      photo: 'https://customer-assets.emergentagent.com/job_radio-program-hub/artifacts/fys87gho_genevieve%20.jpg',
+      location: 'Betche Hill, Foya, Lofa County, Liberia'
     },
     {
-      name: 'Emmanuel Koroma',
-      role: 'Technical Director',
-      bio: 'Broadcasting engineering specialist',
-      location: 'Freetown, Sierra Leone'
+      name: 'Coming Soon',
+      role: 'Team Member',
+      bio: 'New team member joining us soon.',
+      photo: null,
+      location: 'Makona River Region'
     },
     {
-      name: 'Marie Camara',
-      role: 'Community Outreach Coordinator',
-      bio: 'Connecting listeners across Guinea and building relationships',
-      location: 'Conakry, Guinea'
+      name: 'Coming Soon',
+      role: 'Team Member', 
+      bio: 'New team member joining us soon.',
+      photo: null,
+      location: 'Makona River Region'
     }
   ];
 
