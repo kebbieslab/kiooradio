@@ -123,7 +123,7 @@ const Home = () => {
               boxShadow: '0 25px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)',
               textAlign: 'center',
               border: '3px solid transparent',
-              backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #148026, #FF6600)',
+              backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #148026, #0f6a1f)',
               backgroundOrigin: 'border-box',
               backgroundClip: 'content-box, border-box'
             }}>
@@ -209,13 +209,13 @@ const Home = () => {
                   </div>
                   
                   <div style={{
-                    background: 'linear-gradient(135deg, #FF6600, #e55d00)',
+                    background: 'linear-gradient(135deg, #1a9b3a, #148026)',
                     color: 'white',
                     padding: '12px 24px',
                     borderRadius: '25px',
                     fontSize: '1.1em',
                     fontWeight: '600',
-                    boxShadow: '0 6px 20px rgba(255, 102, 0, 0.3)',
+                    boxShadow: '0 6px 20px rgba(20, 128, 38, 0.3)',
                     textTransform: 'uppercase',
                     letterSpacing: '1px'
                   }}>
@@ -264,7 +264,7 @@ const Home = () => {
                   <div style={{ 
                     fontSize: '3em', 
                     fontWeight: 'bold', 
-                    color: '#FF6600', 
+                    color: '#666', 
                     margin: '0 5px',
                     textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
                   }}>:</div>
@@ -275,16 +275,16 @@ const Home = () => {
                       fontSize: '3.5em',
                       fontWeight: 'bold',
                       color: 'white',
-                      background: 'linear-gradient(135deg, #FF6600, #e55d00)',
+                      background: 'linear-gradient(135deg, #1a9b3a, #148026)',
                       borderRadius: '18px',
                       padding: '20px 15px',
                       minWidth: '100px',
-                      boxShadow: '0 8px 25px rgba(255, 102, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                      boxShadow: '0 8px 25px rgba(26, 155, 58, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                     }}>00</div>
                     <div style={{
                       fontSize: '1em',
                       fontWeight: 'bold',
-                      color: '#FF6600',
+                      color: '#1a9b3a',
                       marginTop: '12px',
                       letterSpacing: '2px',
                       textTransform: 'uppercase'
@@ -326,7 +326,7 @@ const Home = () => {
                   <div style={{ 
                     fontSize: '3em', 
                     fontWeight: 'bold', 
-                    color: '#FF6600', 
+                    color: '#666', 
                     margin: '0 5px',
                     textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
                   }}>:</div>
@@ -337,16 +337,16 @@ const Home = () => {
                       fontSize: '3.5em',
                       fontWeight: 'bold',
                       color: 'white',
-                      background: 'linear-gradient(135deg, #FF6600, #e55d00)',
+                      background: 'linear-gradient(135deg, #1a9b3a, #148026)',
                       borderRadius: '18px',
                       padding: '20px 15px',
                       minWidth: '100px',
-                      boxShadow: '0 8px 25px rgba(255, 102, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                      boxShadow: '0 8px 25px rgba(26, 155, 58, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                     }}>00</div>
                     <div style={{
                       fontSize: '1em',
                       fontWeight: 'bold',
-                      color: '#FF6600',
+                      color: '#1a9b3a',
                       marginTop: '12px',
                       letterSpacing: '2px',
                       textTransform: 'uppercase'
