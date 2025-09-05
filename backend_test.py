@@ -2265,6 +2265,9 @@ class KiooRadioAPITester:
         self.test_dashboard_weather_api()  # PRIMARY FOCUS: Weather API integration
         self.test_dashboard_endpoints()    # Test all dashboard endpoints comprehensively
         
+        # CRITICAL: Test Visitor Analytics endpoints for /visitors dashboard
+        self.test_visitor_analytics_endpoints()  # NEW: Test visitor analytics functionality
+        
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
         print(f"Tests passed: {self.tests_passed}/{self.tests_run}")
