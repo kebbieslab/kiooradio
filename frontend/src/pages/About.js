@@ -345,7 +345,7 @@ const About = () => {
                         className="w-full h-full object-cover"
                         style={{ 
                           objectPosition: member.name === 'Mrs. Genevieve H. Kebbie' 
-                            ? 'center 70%' 
+                            ? 'center 20%' 
                             : 'center top' 
                         }}
                       />
