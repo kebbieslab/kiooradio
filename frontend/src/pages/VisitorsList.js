@@ -86,7 +86,7 @@ const VisitorsList = () => {
 
   const loadStats = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors/stats`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/visitors/filter-stats`, {
         headers: {
           'Authorization': 'Basic ' + btoa('admin:kioo2025!')
         }
