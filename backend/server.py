@@ -4733,6 +4733,15 @@ async def startup_db_client():
                 ("keywords", "text")
             ])
             logger.info("Created text search indexes for programs collection")
+            
+            # Create text indexes for AI programs collection
+            await db.ai_programs.create_index([
+                ("title", "text"),
+                ("description", "text"),
+                ("content", "text"),
+                ("keywords", "text")
+            ])
+            logger.info("Created text search indexes for ai_programs collection")
         except Exception as index_error:
             logger.warning(f"Failed to create search indexes: {index_error}")
             
