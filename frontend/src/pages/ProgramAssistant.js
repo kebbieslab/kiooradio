@@ -129,7 +129,7 @@ const ProgramAssistant = () => {
     setLoading(true);
     try {
       const auth = localStorage.getItem('programAssistantAuth');
-      const response = await fetch(`${BACKEND_URL}/api/programs/${programId}/analyze`, {
+      const response = await fetch(`${BACKEND_URL}/api/ai-programs/${programId}/analyze`, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,
