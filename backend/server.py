@@ -786,6 +786,363 @@ class UserRecord(BaseModel):
     last_login: Optional[str] = None
     notes: Optional[str] = None
 
+# User Management Service Classes
+class UserManager:
+    """Service class for user management operations"""
+    
+    def __init__(self):
+        self.collection = db.users
+    
+    async def create_user(self, user_data: UserCreate) -> UserRecord:
+        """Create a new user"""
+        try:
+            # Check if username already exists
+            existing_user = await self.collection.find_one({'username': user_data.username})
+            if existing_user:
+                raise HTTPException(status_code=400, detail="Username already exists")
+            
+            # Check if email already exists
+            existing_email = await self.collection.find_one({'email': user_data.email})
+            if existing_email:
+                raise HTTPException(status_code=400, detail="Email already exists")
+            
+            # Hash password (simple base64 encoding for now)
+            hashed_password = base64.b64encode(user_data.password.encode()).decode()
+            
+            # Create user document
+            user_doc = {
+                'id': str(uuid.uuid4()),
+                'username': user_data.username,
+                'password': hashed_password,
+                'email': user_data.email,
+                'full_name': user_data.full_name,
+                'role': user_data.role,
+                'is_active': user_data.is_active,
+                'permissions': [perm.dict() for perm in user_data.permissions],
+                'created_at': datetime.now(timezone.utc).isoformat(),
+                'updated_at': datetime.now(timezone.utc).isoformat(),
+                'last_login': None,
+                'notes': user_data.notes
+            }
+            
+            # Insert user
+            await self.collection.insert_one(user_doc)
+            
+            # Return user record (without password)
+            user_record = UserRecord(**{k: v for k, v in user_doc.items() if k != 'password'})
+            return user_record
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"User creation failed: {e}")
+            raise HTTPException(status_code=500, detail="User creation failed")
+    
+    async def get_user(self, user_id: str) -> Optional[UserRecord]:
+        """Get user by ID"""
+        try:
+            user = await self.collection.find_one({'id': user_id})
+            if user:
+                # Remove password from response
+                user_data = {k: v for k, v in user.items() if k not in ['_id', 'password']}
+                return UserRecord(**user_data)
+            return None
+        except Exception as e:
+            logger.error(f"Failed to get user: {e}")
+            return None
+    
+    async def get_user_by_username(self, username: str) -> Optional[Dict[str, Any]]:
+        """Get user by username (includes password for authentication)"""
+        try:
+            user = await self.collection.find_one({'username': username})
+            if user:
+                user_data = {k: v for k, v in user.items() if k != '_id'}
+                return user_data
+            return None
+        except Exception as e:
+            logger.error(f"Failed to get user by username: {e}")
+            return None
+    
+    async def list_users(self, include_inactive: bool = False) -> List[UserRecord]:
+        """List all users"""
+        try:
+            filter_dict = {} if include_inactive else {'is_active': True}
+            users = await self.collection.find(filter_dict).sort('created_at', -1).to_list(length=None)
+            
+            result = []
+            for user in users:
+                user_data = {k: v for k, v in user.items() if k not in ['_id', 'password']}
+                result.append(UserRecord(**user_data))
+            
+            return result
+        except Exception as e:
+            logger.error(f"Failed to list users: {e}")
+            return []
+    
+    async def update_user(self, user_id: str, user_update: UserUpdate) -> Optional[UserRecord]:
+        """Update user"""
+        try:
+            update_data = {}
+            if user_update.email is not None:
+                # Check if email is already used by another user
+                existing_email = await self.collection.find_one({'email': user_update.email, 'id': {'$ne': user_id}})
+                if existing_email:
+                    raise HTTPException(status_code=400, detail="Email already exists")
+                update_data['email'] = user_update.email
+            
+            if user_update.full_name is not None:
+                update_data['full_name'] = user_update.full_name
+            if user_update.role is not None:
+                update_data['role'] = user_update.role
+            if user_update.is_active is not None:
+                update_data['is_active'] = user_update.is_active
+            if user_update.permissions is not None:
+                update_data['permissions'] = [perm.dict() for perm in user_update.permissions]
+            if user_update.notes is not None:
+                update_data['notes'] = user_update.notes
+            
+            update_data['updated_at'] = datetime.now(timezone.utc).isoformat()
+            
+            result = await self.collection.update_one(
+                {'id': user_id},
+                {'$set': update_data}
+            )
+            
+            if result.modified_count > 0:
+                return await self.get_user(user_id)
+            return None
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"User update failed: {e}")
+            raise HTTPException(status_code=500, detail="User update failed")
+    
+    async def delete_user(self, user_id: str) -> bool:
+        """Delete user"""
+        try:
+            result = await self.collection.delete_one({'id': user_id})
+            return result.deleted_count > 0
+        except Exception as e:
+            logger.error(f"User deletion failed: {e}")
+            return False
+    
+    async def reset_password(self, user_id: str, new_password: str) -> bool:
+        """Reset user password"""
+        try:
+            hashed_password = base64.b64encode(new_password.encode()).decode()
+            result = await self.collection.update_one(
+                {'id': user_id},
+                {'$set': {
+                    'password': hashed_password,
+                    'updated_at': datetime.now(timezone.utc).isoformat()
+                }}
+            )
+            return result.modified_count > 0
+        except Exception as e:
+            logger.error(f"Password reset failed: {e}")
+            return False
+    
+    async def verify_user(self, username: str, password: str) -> Optional[UserRecord]:
+        """Verify user credentials"""
+        try:
+            user_data = await self.get_user_by_username(username)
+            if not user_data or not user_data.get('is_active', False):
+                return None
+            
+            # Verify password
+            stored_password = base64.b64decode(user_data['password']).decode()
+            if stored_password == password:
+                # Update last login
+                await self.collection.update_one(
+                    {'id': user_data['id']},
+                    {'$set': {'last_login': datetime.now(timezone.utc).isoformat()}}
+                )
+                
+                # Return user record (without password)
+                user_record_data = {k: v for k, v in user_data.items() if k != 'password'}
+                return UserRecord(**user_record_data)
+            
+            return None
+        except Exception as e:
+            logger.error(f"User verification failed: {e}")
+            return None
+
+class EmailNotificationService:
+    """Service class for email notifications"""
+    
+    def __init__(self):
+        self.smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+        self.smtp_port = int(os.getenv('SMTP_PORT', '587'))
+        self.smtp_username = os.getenv('SMTP_USERNAME', '')
+        self.smtp_password = os.getenv('SMTP_PASSWORD', '')
+        self.from_email = os.getenv('FROM_EMAIL', 'noreply@kiooradio.com')
+    
+    async def send_welcome_email(self, user: UserRecord, password: str) -> bool:
+        """Send welcome email to new user"""
+        try:
+            subject = "Welcome to Kioo Radio CRM - Your Account Details"
+            
+            # Create HTML email template
+            html_body = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background-color: #7c3aed; color: white; padding: 20px; text-align: center; }}
+                    .content {{ padding: 20px; background-color: #f9fafb; }}
+                    .credentials {{ background-color: #e5e7eb; padding: 15px; border-radius: 5px; margin: 15px 0; }}
+                    .footer {{ text-align: center; padding: 10px; font-size: 12px; color: #666; }}
+                    .button {{ display: inline-block; padding: 10px 20px; background-color: #7c3aed; color: white; text-decoration: none; border-radius: 5px; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🎵 Welcome to Kioo Radio CRM</h1>
+                    </div>
+                    <div class="content">
+                        <h2>Hello {user.full_name}!</h2>
+                        <p>Your CRM account has been created successfully. You now have access to the Kioo Radio CRM system.</p>
+                        
+                        <div class="credentials">
+                            <h3>📋 Your Login Credentials:</h3>
+                            <p><strong>Username:</strong> {user.username}</p>
+                            <p><strong>Password:</strong> {password}</p>
+                            <p><strong>Role:</strong> {user.role.title()}</p>
+                        </div>
+                        
+                        <h3>🔐 Your Access Permissions:</h3>
+                        <ul>
+            """
+            
+            # Add permissions to email
+            for perm in user.permissions:
+                permissions_list = []
+                if perm.can_read:
+                    permissions_list.append("View")
+                if perm.can_write:
+                    permissions_list.append("Create/Edit")
+                if perm.can_delete:
+                    permissions_list.append("Delete")
+                if perm.can_export:
+                    permissions_list.append("Export")
+                
+                html_body += f"<li><strong>{perm.module.title()}:</strong> {', '.join(permissions_list)}</li>"
+            
+            html_body += f"""
+                        </ul>
+                        
+                        <p style="margin-top: 20px;">
+                            <a href="http://localhost:3000/crm" class="button">Access CRM System</a>
+                        </p>
+                        
+                        <p><strong>Important:</strong> Please keep your login credentials secure and do not share them with others.</p>
+                        
+                        <p>If you have any questions or need assistance, please contact your administrator.</p>
+                    </div>
+                    <div class="footer">
+                        <p>© 2024 Kioo Radio - CRM System</p>
+                        <p>This is an automated message. Please do not reply to this email.</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            # Send email
+            return await self.send_email(user.email, subject, html_body)
+            
+        except Exception as e:
+            logger.error(f"Failed to send welcome email: {e}")
+            return False
+    
+    async def send_password_reset_email(self, user: UserRecord, new_password: str) -> bool:
+        """Send password reset email"""
+        try:
+            subject = "Kioo Radio CRM - Password Reset"
+            
+            html_body = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                    .header {{ background-color: #dc2626; color: white; padding: 20px; text-align: center; }}
+                    .content {{ padding: 20px; background-color: #f9fafb; }}
+                    .credentials {{ background-color: #fee2e2; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #dc2626; }}
+                    .footer {{ text-align: center; padding: 10px; font-size: 12px; color: #666; }}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🔒 Password Reset - Kioo Radio CRM</h1>
+                    </div>
+                    <div class="content">
+                        <h2>Hello {user.full_name}!</h2>
+                        <p>Your password has been reset by an administrator.</p>
+                        
+                        <div class="credentials">
+                            <h3>🔑 Your New Login Credentials:</h3>
+                            <p><strong>Username:</strong> {user.username}</p>
+                            <p><strong>New Password:</strong> {new_password}</p>
+                        </div>
+                        
+                        <p><strong>For security reasons, please change your password after logging in.</strong></p>
+                        
+                        <p>If you did not request this password reset, please contact your administrator immediately.</p>
+                    </div>
+                    <div class="footer">
+                        <p>© 2024 Kioo Radio - CRM System</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            return await self.send_email(user.email, subject, html_body)
+            
+        except Exception as e:
+            logger.error(f"Failed to send password reset email: {e}")
+            return False
+    
+    async def send_email(self, to_email: str, subject: str, html_body: str) -> bool:
+        """Send email using SMTP"""
+        try:
+            # Skip email sending if SMTP not configured
+            if not self.smtp_username or not self.smtp_password:
+                logger.info(f"Email would be sent to {to_email}: {subject}")
+                return True  # Return True for testing purposes
+            
+            # Create message
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = subject
+            msg['From'] = self.from_email
+            msg['To'] = to_email
+            
+            # Attach HTML content
+            html_part = MIMEText(html_body, 'html')
+            msg.attach(html_part)
+            
+            # Send email
+            server = smtplib.SMTP(self.smtp_server, self.smtp_port)
+            server.starttls()
+            server.login(self.smtp_username, self.smtp_password)
+            text = msg.as_string()
+            server.sendmail(self.from_email, to_email, text)
+            server.quit()
+            
+            logger.info(f"Email sent successfully to {to_email}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to send email to {to_email}: {e}")
+            return False
+
 class Program(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
