@@ -96,7 +96,6 @@ function App() {
             <Route path="/media" element={<MediaGallery />} />
             <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/visitors" element={<Visitors />} />
-            <Route path="/visitors-list" element={<VisitorsList />} />
             <Route path="/crm" element={<CRM />} />
             <Route path="/admin" element={<Dashboard />} />
             <Route path="/admin-dashboard" element={<Dashboard />} />
