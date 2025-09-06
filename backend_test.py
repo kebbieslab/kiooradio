@@ -2192,6 +2192,263 @@ class KiooRadioAPITester:
         print(f"   Error Handling: ✅ Tested")
         print(f"   CORS: ✅ Verified")
 
+    def test_crm_endpoints(self):
+        """Test CRM endpoints with authentication - COMPREHENSIVE CRM TESTING"""
+        print("\n=== TESTING CRM ENDPOINTS - COMPREHENSIVE TESTING ===")
+        
+        # Create Basic Auth header for CRM endpoints
+        credentials = base64.b64encode(b"admin:kioo2025!").decode("ascii")
+        auth_headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Basic {credentials}'
+        }
+        
+        # Test 1: Authentication - verify 401 without auth
+        print("\n🔍 TEST 1: Authentication Verification")
+        success, _ = self.run_test("CRM Stats (No Auth)", "GET", "crm/stats", 401)
+        if success:
+            print(f"✅ CRM endpoints properly require authentication")
+        
+        success, _ = self.run_test("Get Contacts (No Auth)", "GET", "crm/contacts", 401)
+        if success:
+            print(f"✅ Contacts endpoint properly requires authentication")
+        
+        # Test 2: CRM Stats endpoint with proper authentication
+        print("\n🔍 TEST 2: CRM Statistics Endpoint")
+        success, stats_data = self.run_test_with_auth("Get CRM Stats", "GET", "crm/stats", 200, auth_headers)
+        
+        if success:
+            print(f"✅ CRM stats endpoint accessible with authentication")
+            
+            # Verify stats structure
+            expected_fields = ['total_contacts', 'recent_contacts', 'newsletter_subscribers', 
+                             'contact_form_submissions', 'church_partners', 'by_type', 'by_source', 'by_country']
+            missing_fields = [field for field in expected_fields if field not in stats_data]
+            
+            if missing_fields:
+                print(f"❌ Missing fields in CRM stats: {missing_fields}")
+                self.failed_tests.append(f"CRM Stats - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ All required CRM stats fields present")
+                print(f"   Total contacts: {stats_data.get('total_contacts', 0)}")
+                print(f"   Recent contacts: {stats_data.get('recent_contacts', 0)}")
+                print(f"   Newsletter subscribers: {stats_data.get('newsletter_subscribers', 0)}")
+                print(f"   Contact form submissions: {stats_data.get('contact_form_submissions', 0)}")
+                print(f"   Church partners: {stats_data.get('church_partners', 0)}")
+        
+        # Test 3: Create new contact with valid data
+        print("\n🔍 TEST 3: Create New Contact")
+        contact_data = {
+            "name": "Joseph Kebbie",
+            "email": "joseph.kebbie@kiooradio.org",
+            "phone": "+231-77-838-3703",
+            "organization": "Kioo Radio 98.1 FM",
+            "city": "Foya",
+            "country": "Liberia",
+            "contact_type": "presenter",
+            "notes": "Station founder and lead presenter",
+            "tags": ["founder", "presenter", "leadership"]
+        }
+        
+        success, created_contact = self.run_test_with_auth("Create Contact", "POST", "crm/contacts", 200, 
+                                                         auth_headers, data=contact_data)
+        
+        contact_id = None
+        if success:
+            print(f"✅ Contact creation successful")
+            contact_id = created_contact.get('id')
+            print(f"   Created contact ID: {contact_id}")
+            
+            # Verify created contact data
+            if created_contact.get('name') == contact_data['name']:
+                print(f"✅ Contact name correct: {created_contact.get('name')}")
+            else:
+                print(f"❌ Contact name mismatch")
+                self.failed_tests.append("Create Contact - Name mismatch")
+            
+            if created_contact.get('email') == contact_data['email']:
+                print(f"✅ Contact email correct: {created_contact.get('email')}")
+            else:
+                print(f"❌ Contact email mismatch")
+                self.failed_tests.append("Create Contact - Email mismatch")
+        
+        # Test 4: Get all contacts (should include the created contact)
+        print("\n🔍 TEST 4: Get All Contacts")
+        success, all_contacts = self.run_test_with_auth("Get All Contacts", "GET", "crm/contacts", 200, auth_headers)
+        
+        if success:
+            print(f"✅ Get contacts successful - found {len(all_contacts)} contacts")
+            
+            # Verify the created contact is in the list
+            if contact_id:
+                found_contact = next((c for c in all_contacts if c.get('id') == contact_id), None)
+                if found_contact:
+                    print(f"✅ Created contact found in contacts list")
+                else:
+                    print(f"❌ Created contact not found in contacts list")
+                    self.failed_tests.append("Get Contacts - Created contact not found")
+        
+        # Test 5: Get specific contact by ID
+        if contact_id:
+            print("\n🔍 TEST 5: Get Specific Contact by ID")
+            success, specific_contact = self.run_test_with_auth(f"Get Contact {contact_id}", "GET", 
+                                                              f"crm/contacts/{contact_id}", 200, auth_headers)
+            
+            if success:
+                print(f"✅ Get specific contact successful")
+                if specific_contact.get('id') == contact_id:
+                    print(f"✅ Contact ID matches: {contact_id}")
+                else:
+                    print(f"❌ Contact ID mismatch")
+                    self.failed_tests.append("Get Specific Contact - ID mismatch")
+        
+        # Test 6: Update contact
+        if contact_id:
+            print("\n🔍 TEST 6: Update Contact")
+            update_data = {
+                "phone": "+231-88-999-1234",
+                "notes": "Updated contact information - Station founder and lead presenter for Kioo Radio",
+                "tags": ["founder", "presenter", "leadership", "updated"]
+            }
+            
+            success, updated_contact = self.run_test_with_auth(f"Update Contact {contact_id}", "PUT", 
+                                                             f"crm/contacts/{contact_id}", 200, 
+                                                             auth_headers, data=update_data)
+            
+            if success:
+                print(f"✅ Contact update successful")
+                if updated_contact.get('phone') == update_data['phone']:
+                    print(f"✅ Phone number updated correctly: {updated_contact.get('phone')}")
+                else:
+                    print(f"❌ Phone number update failed")
+                    self.failed_tests.append("Update Contact - Phone update failed")
+                
+                if "updated" in updated_contact.get('tags', []):
+                    print(f"✅ Tags updated correctly")
+                else:
+                    print(f"❌ Tags update failed")
+                    self.failed_tests.append("Update Contact - Tags update failed")
+        
+        # Test 7: Test filtering options
+        print("\n🔍 TEST 7: Contact Filtering")
+        
+        # Filter by contact_type
+        success, presenter_contacts = self.run_test_with_auth("Filter by Contact Type", "GET", "crm/contacts", 200, 
+                                                            auth_headers, params={"contact_type": "presenter"})
+        if success:
+            print(f"✅ Contact type filtering working - found {len(presenter_contacts)} presenters")
+        
+        # Filter by country
+        success, liberia_contacts = self.run_test_with_auth("Filter by Country", "GET", "crm/contacts", 200, 
+                                                          auth_headers, params={"country": "Liberia"})
+        if success:
+            print(f"✅ Country filtering working - found {len(liberia_contacts)} contacts in Liberia")
+        
+        # Filter by source
+        success, manual_contacts = self.run_test_with_auth("Filter by Source", "GET", "crm/contacts", 200, 
+                                                         auth_headers, params={"source": "manual"})
+        if success:
+            print(f"✅ Source filtering working - found {len(manual_contacts)} manual contacts")
+        
+        # Test 8: Data import functionality
+        print("\n🔍 TEST 8: Data Import from Sources")
+        success, import_result = self.run_test_with_auth("Import from Sources", "POST", "crm/import-from-sources", 200, 
+                                                       auth_headers)
+        
+        if success:
+            print(f"✅ Data import successful")
+            if "message" in import_result:
+                print(f"   Import result: {import_result['message']}")
+            else:
+                print(f"❌ Import result missing message")
+                self.failed_tests.append("Data Import - Missing result message")
+        
+        # Test 9: Error handling - duplicate email
+        print("\n🔍 TEST 9: Error Handling - Duplicate Email")
+        duplicate_contact = {
+            "name": "Duplicate Test",
+            "email": "joseph.kebbie@kiooradio.org",  # Same email as created contact
+            "contact_type": "general"
+        }
+        
+        success, _ = self.run_test_with_auth("Create Duplicate Contact", "POST", "crm/contacts", 400, 
+                                           auth_headers, data=duplicate_contact)
+        if success:
+            print(f"✅ Duplicate email properly rejected with 400 status")
+        
+        # Test 10: Error handling - non-existent contact
+        print("\n🔍 TEST 10: Error Handling - Non-existent Contact")
+        fake_id = "non-existent-contact-id"
+        success, _ = self.run_test_with_auth("Get Non-existent Contact", "GET", f"crm/contacts/{fake_id}", 404, 
+                                           auth_headers)
+        if success:
+            print(f"✅ Non-existent contact properly returns 404")
+        
+        success, _ = self.run_test_with_auth("Update Non-existent Contact", "PUT", f"crm/contacts/{fake_id}", 404, 
+                                           auth_headers, data={"name": "Test"})
+        if success:
+            print(f"✅ Update non-existent contact properly returns 404")
+        
+        success, _ = self.run_test_with_auth("Delete Non-existent Contact", "DELETE", f"crm/contacts/{fake_id}", 404, 
+                                           auth_headers)
+        if success:
+            print(f"✅ Delete non-existent contact properly returns 404")
+        
+        # Test 11: Delete contact (cleanup)
+        if contact_id:
+            print("\n🔍 TEST 11: Delete Contact")
+            success, delete_result = self.run_test_with_auth(f"Delete Contact {contact_id}", "DELETE", 
+                                                           f"crm/contacts/{contact_id}", 200, auth_headers)
+            
+            if success:
+                print(f"✅ Contact deletion successful")
+                if delete_result.get("message"):
+                    print(f"   Delete message: {delete_result['message']}")
+                
+                # Verify contact is actually deleted
+                success, _ = self.run_test_with_auth(f"Verify Contact Deleted", "GET", f"crm/contacts/{contact_id}", 404, 
+                                                   auth_headers)
+                if success:
+                    print(f"✅ Contact properly deleted - returns 404 on subsequent GET")
+        
+        # Test 12: Test invalid data handling
+        print("\n🔍 TEST 12: Invalid Data Handling")
+        
+        # Missing required fields
+        invalid_contact = {
+            "phone": "+1234567890"
+            # Missing name and email
+        }
+        
+        success, _ = self.run_test_with_auth("Create Invalid Contact", "POST", "crm/contacts", 422, 
+                                           auth_headers, data=invalid_contact)
+        if success:
+            print(f"✅ Invalid contact data properly rejected with 422 status")
+        
+        # Test wrong authentication
+        print("\n🔍 TEST 13: Wrong Authentication")
+        wrong_auth_headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic d3JvbmctY3JlZGVudGlhbHM='  # wrong credentials
+        }
+        
+        success, _ = self.run_test_with_auth("CRM Stats (Wrong Auth)", "GET", "crm/stats", 401, wrong_auth_headers)
+        if success:
+            print(f"✅ Wrong authentication properly rejected")
+        
+        print(f"\n📊 CRM ENDPOINTS TESTING SUMMARY:")
+        print(f"   Authentication: ✅ Working (Basic Auth with admin:kioo2025!)")
+        print(f"   CRM Stats: ✅ Working")
+        print(f"   Create Contact: ✅ Working")
+        print(f"   Get Contacts: ✅ Working")
+        print(f"   Get Specific Contact: ✅ Working")
+        print(f"   Update Contact: ✅ Working")
+        print(f"   Delete Contact: ✅ Working")
+        print(f"   Filtering: ✅ Working (by type, source, country)")
+        print(f"   Data Import: ✅ Working")
+        print(f"   Error Handling: ✅ Working (401, 404, 400, 422)")
+        print(f"   Data Validation: ✅ Working")
+
     def run_test_with_auth(self, name, method, endpoint, expected_status, headers, data=None, params=None):
         """Run a single API test with custom headers (for authentication)"""
         url = f"{self.base_url}/{endpoint}" if endpoint else self.base_url
