@@ -2943,6 +2943,545 @@ async def get_visitors_stats(admin: str = Depends(authenticate_admin)):
         logger.error(f"Failed to get visitors stats: {e}")
         raise HTTPException(status_code=500, detail="Failed to get visitors stats")
 
+# Donations Management Models
+class DonationCreate(BaseModel):
+    date_iso: str
+    donor_name: str
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    country: Optional[str] = None
+    method: str  # OrangeMoney/Lonestar/PayPal/Bank
+    amount_currency: str  # LRD/USD
+    amount: float
+    project_code: Optional[str] = None
+    note: Optional[str] = None
+    receipt_no: Optional[str] = None
+    anonymous_y_n: str = "N"
+
+class DonationUpdate(BaseModel):
+    date_iso: Optional[str] = None
+    donor_name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    country: Optional[str] = None
+    method: Optional[str] = None
+    amount_currency: Optional[str] = None
+    amount: Optional[float] = None
+    project_code: Optional[str] = None
+    note: Optional[str] = None
+    receipt_no: Optional[str] = None
+    anonymous_y_n: Optional[str] = None
+
+# Donations Management Endpoints
+@api_router.get("/donations", response_model=List[DonationRecord])
+async def get_donations(
+    month: Optional[str] = None,  # YYYY-MM format
+    project_code: Optional[str] = None,
+    method: Optional[str] = None,
+    anonymous: Optional[str] = None,  # Y/N
+    limit: int = 100,
+    skip: int = 0,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get donations with optional filtering"""
+    try:
+        filter_dict = {}
+        
+        # Month filter (YYYY-MM format)
+        if month:
+            try:
+                year, month_num = month.split('-')
+                start_date = f"{year}-{month_num.zfill(2)}-01"
+                # Calculate end date (first day of next month)
+                if month_num == "12":
+                    end_date = f"{int(year) + 1}-01-01"
+                else:
+                    end_date = f"{year}-{str(int(month_num) + 1).zfill(2)}-01"
+                
+                filter_dict["date_iso"] = {
+                    "$gte": start_date,
+                    "$lt": end_date
+                }
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid month format. Use YYYY-MM")
+        
+        # Other filters
+        if project_code:
+            filter_dict["project_code"] = project_code
+        if method:
+            filter_dict["method"] = method
+        if anonymous:
+            filter_dict["anonymous_y_n"] = anonymous
+        
+        # Get donations with pagination
+        donations = await db.donations.find(filter_dict).sort("date_iso", -1).skip(skip).limit(limit).to_list(limit)
+        
+        # Convert MongoDB documents to API format
+        result = []
+        for donation in donations:
+            if '_id' in donation:
+                del donation['_id']
+            # Convert datetime strings to datetime objects if needed
+            if 'created_at' in donation and isinstance(donation['created_at'], str):
+                try:
+                    donation['created_at'] = datetime.fromisoformat(donation['created_at'].replace('Z', '+00:00'))
+                except ValueError:
+                    pass
+            result.append(DonationRecord(**donation))
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get donations: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get donations")
+
+@api_router.post("/donations", response_model=DonationRecord)
+async def create_donation(donation: DonationCreate, admin: str = Depends(authenticate_admin)):
+    """Create a new donation"""
+    try:
+        # Validate date format
+        try:
+            datetime.strptime(donation.date_iso, '%Y-%m-%d')
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+        
+        # Validate amount
+        if donation.amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be greater than 0")
+            
+        # Validate currency
+        if donation.amount_currency not in ['USD', 'LRD']:
+            raise HTTPException(status_code=400, detail="Currency must be USD or LRD")
+        
+        # Validate method
+        valid_methods = ['OrangeMoney', 'Lonestar', 'PayPal', 'Bank']
+        if donation.method not in valid_methods:
+            raise HTTPException(status_code=400, detail=f"Method must be one of: {', '.join(valid_methods)}")
+        
+        # Validate anonymous
+        if donation.anonymous_y_n not in ['Y', 'N']:
+            raise HTTPException(status_code=400, detail="Anonymous must be Y or N")
+        
+        # Create donation record
+        donation_dict = donation.dict()
+        donation_obj = DonationRecord(**donation_dict)
+        
+        # Prepare for MongoDB storage
+        donation_data = donation_obj.dict()
+        for field in ['created_at']:
+            if field in donation_data and donation_data[field]:
+                donation_data[field] = donation_data[field].isoformat() if isinstance(donation_data[field], datetime) else donation_data[field]
+        
+        await db.donations.insert_one(donation_data)
+        return donation_obj
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to create donation: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create donation")
+
+@api_router.get("/donations/{donation_id}", response_model=DonationRecord)
+async def get_donation(donation_id: str, admin: str = Depends(authenticate_admin)):
+    """Get a specific donation by ID"""
+    try:
+        donation = await db.donations.find_one({"id": donation_id})
+        if not donation:
+            raise HTTPException(status_code=404, detail="Donation not found")
+        
+        if '_id' in donation:
+            del donation['_id']
+        
+        # Convert datetime strings to datetime objects if needed
+        if 'created_at' in donation and isinstance(donation['created_at'], str):
+            try:
+                donation['created_at'] = datetime.fromisoformat(donation['created_at'].replace('Z', '+00:00'))
+            except ValueError:
+                pass
+        
+        return DonationRecord(**donation)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get donation: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get donation")
+
+@api_router.put("/donations/{donation_id}", response_model=DonationRecord)
+async def update_donation(donation_id: str, donation_update: DonationUpdate, admin: str = Depends(authenticate_admin)):
+    """Update an existing donation"""
+    try:
+        # Get existing donation
+        existing_donation = await db.donations.find_one({"id": donation_id})
+        if not existing_donation:
+            raise HTTPException(status_code=404, detail="Donation not found")
+        
+        # Prepare update data
+        update_data = donation_update.dict(exclude_unset=True)
+        
+        # Validate date format if provided
+        if "date_iso" in update_data and update_data["date_iso"]:
+            try:
+                datetime.strptime(update_data["date_iso"], '%Y-%m-%d')
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+        
+        # Validate amount if provided
+        if "amount" in update_data and update_data["amount"] is not None:
+            if update_data["amount"] <= 0:
+                raise HTTPException(status_code=400, detail="Amount must be greater than 0")
+        
+        # Validate currency if provided
+        if "amount_currency" in update_data and update_data["amount_currency"]:
+            if update_data["amount_currency"] not in ['USD', 'LRD']:
+                raise HTTPException(status_code=400, detail="Currency must be USD or LRD")
+        
+        # Validate method if provided
+        if "method" in update_data and update_data["method"]:
+            valid_methods = ['OrangeMoney', 'Lonestar', 'PayPal', 'Bank']
+            if update_data["method"] not in valid_methods:
+                raise HTTPException(status_code=400, detail=f"Method must be one of: {', '.join(valid_methods)}")
+        
+        # Validate anonymous if provided
+        if "anonymous_y_n" in update_data and update_data["anonymous_y_n"] not in ['Y', 'N']:
+            raise HTTPException(status_code=400, detail="Anonymous must be Y or N")
+        
+        # Update in database
+        await db.donations.update_one(
+            {"id": donation_id},
+            {"$set": update_data}
+        )
+        
+        # Get updated donation
+        updated_donation = await db.donations.find_one({"id": donation_id})
+        if '_id' in updated_donation:
+            del updated_donation['_id']
+        
+        # Convert datetime strings to datetime objects if needed
+        if 'created_at' in updated_donation and isinstance(updated_donation['created_at'], str):
+            try:
+                updated_donation['created_at'] = datetime.fromisoformat(updated_donation['created_at'].replace('Z', '+00:00'))
+            except ValueError:
+                pass
+        
+        return DonationRecord(**updated_donation)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update donation: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update donation")
+
+@api_router.delete("/donations/{donation_id}")
+async def delete_donation(donation_id: str, admin: str = Depends(authenticate_admin)):
+    """Delete a donation"""
+    try:
+        result = await db.donations.delete_one({"id": donation_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Donation not found")
+        return {"message": "Donation deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete donation: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete donation")
+
+@api_router.get("/donations/totals/summary")
+async def get_donation_totals(admin: str = Depends(authenticate_admin)):
+    """Get donation totals for this month and YTD"""
+    try:
+        now = datetime.now(timezone.utc)
+        
+        # This month totals
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        month_start_str = month_start.strftime('%Y-%m-%d')
+        
+        # Next month start for range
+        if now.month == 12:
+            next_month_start = now.replace(year=now.year + 1, month=1, day=1)
+        else:
+            next_month_start = now.replace(month=now.month + 1, day=1)
+        next_month_start_str = next_month_start.strftime('%Y-%m-%d')
+        
+        # Year start
+        year_start = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        year_start_str = year_start.strftime('%Y-%m-%d')
+        
+        # This month aggregation
+        month_pipeline = [
+            {"$match": {
+                "date_iso": {
+                    "$gte": month_start_str,
+                    "$lt": next_month_start_str
+                }
+            }},
+            {"$group": {
+                "_id": "$amount_currency",
+                "total": {"$sum": "$amount"},
+                "count": {"$sum": 1}
+            }}
+        ]
+        
+        month_results = await db.donations.aggregate(month_pipeline).to_list(10)
+        
+        # YTD aggregation
+        ytd_pipeline = [
+            {"$match": {
+                "date_iso": {"$gte": year_start_str}
+            }},
+            {"$group": {
+                "_id": "$amount_currency",
+                "total": {"$sum": "$amount"},
+                "count": {"$sum": 1}
+            }}
+        ]
+        
+        ytd_results = await db.donations.aggregate(ytd_pipeline).to_list(10)
+        
+        # Format results
+        month_totals = {"USD": 0, "LRD": 0, "count": 0}
+        for result in month_results:
+            currency = result["_id"] or "USD"
+            month_totals[currency] = result["total"]
+            month_totals["count"] += result["count"]
+        
+        ytd_totals = {"USD": 0, "LRD": 0, "count": 0}
+        for result in ytd_results:
+            currency = result["_id"] or "USD"
+            ytd_totals[currency] = result["total"]
+            ytd_totals["count"] += result["count"]
+        
+        return {
+            "month": {
+                "period": f"{now.strftime('%B %Y')}",
+                "usd_total": month_totals["USD"],
+                "lrd_total": month_totals["LRD"],
+                "total_donations": month_totals["count"]
+            },
+            "ytd": {
+                "period": f"{now.year}",
+                "usd_total": ytd_totals["USD"],
+                "lrd_total": ytd_totals["LRD"],
+                "total_donations": ytd_totals["count"]
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get donation totals: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get donation totals")
+
+@api_router.get("/donations/export/csv")
+async def export_donations_csv(
+    month: Optional[str] = None,
+    project_code: Optional[str] = None,
+    method: Optional[str] = None,
+    anonymous: Optional[str] = None,
+    admin: str = Depends(authenticate_admin)
+):
+    """Export donations as CSV"""
+    try:
+        # Build filter
+        filter_dict = {}
+        if month:
+            try:
+                year, month_num = month.split('-')
+                start_date = f"{year}-{month_num.zfill(2)}-01"
+                if month_num == "12":
+                    end_date = f"{int(year) + 1}-01-01"
+                else:
+                    end_date = f"{year}-{str(int(month_num) + 1).zfill(2)}-01"
+                filter_dict["date_iso"] = {"$gte": start_date, "$lt": end_date}
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid month format. Use YYYY-MM")
+        
+        if project_code:
+            filter_dict["project_code"] = project_code
+        if method:
+            filter_dict["method"] = method
+        if anonymous:
+            filter_dict["anonymous_y_n"] = anonymous
+        
+        # Get all matching donations
+        donations = await db.donations.find(filter_dict).sort("date_iso", -1).to_list(10000)
+        
+        # Create CSV content
+        csv_content = "date_iso,donor_name,phone,email,country,method,amount_currency,amount,project_code,note,receipt_no,anonymous_y_n\n"
+        
+        for donation in donations:
+            row = [
+                donation.get("date_iso", ""),
+                donation.get("donor_name", ""),
+                donation.get("phone", ""),
+                donation.get("email", ""),
+                donation.get("country", ""),
+                donation.get("method", ""),
+                donation.get("amount_currency", ""),
+                str(donation.get("amount", "")),
+                donation.get("project_code", ""),
+                donation.get("note", "").replace('"', '""'),  # Escape quotes
+                donation.get("receipt_no", ""),
+                donation.get("anonymous_y_n", "")
+            ]
+            csv_content += '"' + '","'.join(row) + '"\n'
+        
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"donations_export_{timestamp}.csv"
+        
+        return Response(
+            content=csv_content,
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to export donations CSV: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export donations CSV")
+
+@api_router.get("/donations/export/xlsx")
+async def export_donations_xlsx(
+    month: Optional[str] = None,
+    project_code: Optional[str] = None,
+    method: Optional[str] = None,
+    anonymous: Optional[str] = None,
+    admin: str = Depends(authenticate_admin)
+):
+    """Export donations as XLSX"""
+    try:
+        # Build filter
+        filter_dict = {}
+        if month:
+            try:
+                year, month_num = month.split('-')
+                start_date = f"{year}-{month_num.zfill(2)}-01"
+                if month_num == "12":
+                    end_date = f"{int(year) + 1}-01-01"
+                else:
+                    end_date = f"{year}-{str(int(month_num) + 1).zfill(2)}-01"
+                filter_dict["date_iso"] = {"$gte": start_date, "$lt": end_date}
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid month format. Use YYYY-MM")
+        
+        if project_code:
+            filter_dict["project_code"] = project_code
+        if method:
+            filter_dict["method"] = method
+        if anonymous:
+            filter_dict["anonymous_y_n"] = anonymous
+        
+        # Get all matching donations
+        donations = await db.donations.find(filter_dict).sort("date_iso", -1).to_list(10000)
+        
+        # Create Excel workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Donations"
+        
+        # Headers
+        headers = ["Date", "Donor Name", "Phone", "Email", "Country", "Method", "Currency", "Amount", "Project Code", "Note", "Receipt No", "Anonymous"]
+        ws.append(headers)
+        
+        # Style headers
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+        
+        for col_num, _ in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Add data
+        for donation in donations:
+            row = [
+                donation.get("date_iso", ""),
+                donation.get("donor_name", ""),
+                donation.get("phone", ""),
+                donation.get("email", ""),
+                donation.get("country", ""),
+                donation.get("method", ""),
+                donation.get("amount_currency", ""),
+                donation.get("amount", ""),
+                donation.get("project_code", ""),
+                donation.get("note", ""),
+                donation.get("receipt_no", ""),
+                donation.get("anonymous_y_n", "")
+            ]
+            ws.append(row)
+        
+        # Auto-adjust column widths
+        for column in ws.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min((max_length + 2), 50)
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Save to BytesIO
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"donations_export_{timestamp}.xlsx"
+        
+        return Response(
+            content=output.read(),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to export donations XLSX: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export donations XLSX")
+
+@api_router.get("/donations/filter-stats")
+async def get_donations_filter_stats(admin: str = Depends(authenticate_admin)):
+    """Get donation statistics for filters"""
+    try:
+        # Get unique project codes
+        project_codes = await db.donations.distinct("project_code")
+        project_codes = [p for p in project_codes if p]  # Remove empty/null values
+        
+        # Get unique methods
+        methods = await db.donations.distinct("method")
+        methods = [m for m in methods if m]  # Remove empty/null values
+        
+        # Get date range for month filter
+        date_pipeline = [
+            {"$group": {
+                "_id": None,
+                "min_date": {"$min": "$date_iso"},
+                "max_date": {"$max": "$date_iso"}
+            }}
+        ]
+        date_result = await db.donations.aggregate(date_pipeline).to_list(1)
+        date_range = date_result[0] if date_result else {"min_date": None, "max_date": None}
+        
+        return {
+            "project_codes": sorted(project_codes),
+            "methods": sorted(methods),
+            "date_range": date_range,
+            "total_donations": await db.donations.count_documents({})
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get donations filter stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get donations filter stats")
+
 # Dashboard Models
 class DashboardStats(BaseModel):
     visitors_this_month: int = 0
