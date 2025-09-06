@@ -4418,18 +4418,18 @@ async def ai_translate_content(content: str, target_language: str = "fr") -> str
 
 # AI Program Assistant API Endpoints
 
-@api_router.post("/programs", response_model=ProgramContent)
-async def create_program(
+@api_router.post("/ai-programs", response_model=ProgramContent)
+async def create_ai_program(
     program: ProgramCreate,
     admin: str = Depends(authenticate_admin)
 ):
-    """Create a new program with AI analysis"""
+    """Create a new AI program with AI analysis"""
     try:
         # Create program document
         program_doc = ProgramContent(**program.dict())
         
-        # Store in database
-        result = await db.programs.insert_one(program_doc.dict())
+        # Store in database (use separate collection for AI programs)
+        result = await db.ai_programs.insert_one(program_doc.dict())
         program_doc.id = str(result.inserted_id) if hasattr(result, 'inserted_id') else program_doc.id
         
         # Start AI analysis in background (non-blocking for user experience)
@@ -4445,7 +4445,7 @@ async def create_program(
             
             # Update document with AI analysis
             program_doc.updated_at = datetime.now(timezone.utc).isoformat()
-            await db.programs.update_one(
+            await db.ai_programs.update_one(
                 {"id": program_doc.id},
                 {"$set": program_doc.dict()}
             )
@@ -4456,11 +4456,11 @@ async def create_program(
         return program_doc
         
     except Exception as e:
-        logger.error(f"Failed to create program: {e}")
-        raise HTTPException(status_code=500, detail="Failed to create program")
+        logger.error(f"Failed to create AI program: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create AI program")
 
-@api_router.get("/programs", response_model=List[ProgramContent])
-async def get_programs(
+@api_router.get("/ai-programs", response_model=List[ProgramContent])
+async def get_ai_programs(
     limit: int = 20,
     skip: int = 0,
     program_type: Optional[str] = None,
@@ -4468,7 +4468,7 @@ async def get_programs(
     presenter: Optional[str] = None,
     admin: str = Depends(authenticate_admin)
 ):
-    """Get all programs with optional filtering"""
+    """Get all AI programs with optional filtering"""
     try:
         # Build filter
         filter_dict = {}
@@ -4479,69 +4479,69 @@ async def get_programs(
         if presenter:
             filter_dict["presenter"] = {"$regex": presenter, "$options": "i"}
         
-        # Get programs
-        programs = await db.programs.find(filter_dict).sort("date_aired", -1).skip(skip).limit(limit).to_list(limit)
+        # Get programs from AI programs collection
+        programs = await db.ai_programs.find(filter_dict).sort("date_aired", -1).skip(skip).limit(limit).to_list(limit)
         
         return [ProgramContent(**program) for program in programs]
         
     except Exception as e:
-        logger.error(f"Failed to get programs: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get programs")
+        logger.error(f"Failed to get AI programs: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get AI programs")
 
-@api_router.get("/programs/{program_id}", response_model=ProgramContent)
-async def get_program(
+@api_router.get("/ai-programs/{program_id}", response_model=ProgramContent)
+async def get_ai_program(
     program_id: str,
     admin: str = Depends(authenticate_admin)
 ):
-    """Get specific program by ID"""
+    """Get specific AI program by ID"""
     try:
-        program = await db.programs.find_one({"id": program_id})
+        program = await db.ai_programs.find_one({"id": program_id})
         if not program:
-            raise HTTPException(status_code=404, detail="Program not found")
+            raise HTTPException(status_code=404, detail="AI Program not found")
         
         return ProgramContent(**program)
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to get program: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get program")
+        logger.error(f"Failed to get AI program: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get AI program")
 
-@api_router.post("/programs/{program_id}/analyze", response_model=AIAnalysisResponse)
-async def analyze_program(
+@api_router.post("/ai-programs/{program_id}/analyze", response_model=AIAnalysisResponse)
+async def analyze_ai_program(
     program_id: str,
     request: AIAnalysisRequest,
     admin: str = Depends(authenticate_admin)
 ):
-    """Trigger AI analysis for a specific program"""
+    """Trigger AI analysis for a specific AI program"""
     try:
         start_time = datetime.now()
         
-        # Get program
-        program = await db.programs.find_one({"id": program_id})
+        # Get program from AI programs collection
+        program = await db.ai_programs.find_one({"id": program_id})
         if not program:
-            raise HTTPException(status_code=404, detail="Program not found")
+            raise HTTPException(status_code=404, detail="AI Program not found")
         
         result = {}
         model_used = "gpt-4o"
         
         if request.analysis_type == "summary":
             result["summary"] = await ai_summarize_content(program["content"], program.get("language", "en"))
-            await db.programs.update_one(
+            await db.ai_programs.update_one(
                 {"id": program_id},
                 {"$set": {"summary": result["summary"], "updated_at": datetime.now(timezone.utc).isoformat()}}
             )
             
         elif request.analysis_type == "highlights":
             result["highlights"] = await ai_extract_highlights(program["content"], program.get("language", "en"))
-            await db.programs.update_one(
+            await db.ai_programs.update_one(
                 {"id": program_id},
                 {"$set": {"highlights": result["highlights"], "updated_at": datetime.now(timezone.utc).isoformat()}}
             )
             
         elif request.analysis_type == "keywords":
             result["keywords"] = await ai_extract_keywords(program["content"], program.get("language", "en"))
-            await db.programs.update_one(
+            await db.ai_programs.update_one(
                 {"id": program_id},
                 {"$set": {"keywords": result["keywords"], "updated_at": datetime.now(timezone.utc).isoformat()}}
             )
@@ -4557,7 +4557,7 @@ async def analyze_program(
             result["translation"] = translation
             result["target_language"] = target_lang
             
-            await db.programs.update_one(
+            await db.ai_programs.update_one(
                 {"id": program_id},
                 {"$set": {"translated_content": translated_content, "updated_at": datetime.now(timezone.utc).isoformat()}}
             )
@@ -4579,17 +4579,17 @@ async def analyze_program(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to analyze program: {e}")
-        raise HTTPException(status_code=500, detail="Failed to analyze program")
+        logger.error(f"Failed to analyze AI program: {e}")
+        raise HTTPException(status_code=500, detail="Failed to analyze AI program")
 
-@api_router.post("/programs/search")
-async def search_programs(
+@api_router.post("/ai-programs/search")
+async def search_ai_programs(
     request: ProgramSearchRequest,
     admin: str = Depends(authenticate_admin)
 ):
-    """AI-powered semantic search of programs"""
+    """AI-powered semantic search of AI programs"""
     try:
-        # Build MongoDB text search query
+        # Build MongoDB text search query on AI programs collection
         search_filter = {"$text": {"$search": request.query}}
         
         # Additional filters
@@ -4606,8 +4606,8 @@ async def search_programs(
             if date_filter:
                 search_filter["date_aired"] = date_filter
         
-        # Perform search
-        programs = await db.programs.find(
+        # Perform search on AI programs collection
+        programs = await db.ai_programs.find(
             search_filter,
             {"score": {"$meta": "textScore"}}
         ).sort([("score", {"$meta": "textScore"})]).limit(request.limit).to_list(request.limit)
@@ -4637,7 +4637,7 @@ async def search_programs(
                 if date_filter:
                     keyword_filter["date_aired"] = date_filter
             
-            programs = await db.programs.find(keyword_filter).sort("date_aired", -1).limit(request.limit).to_list(request.limit)
+            programs = await db.ai_programs.find(keyword_filter).sort("date_aired", -1).limit(request.limit).to_list(request.limit)
         
         return {
             "query": request.query,
@@ -4646,37 +4646,37 @@ async def search_programs(
         }
         
     except Exception as e:
-        logger.error(f"Program search failed: {e}")
-        raise HTTPException(status_code=500, detail="Program search failed")
+        logger.error(f"AI Program search failed: {e}")
+        raise HTTPException(status_code=500, detail="AI Program search failed")
 
-@api_router.get("/programs/stats/overview")
-async def get_program_stats(admin: str = Depends(authenticate_admin)):
-    """Get program statistics overview"""
+@api_router.get("/ai-programs/stats/overview")
+async def get_ai_program_stats(admin: str = Depends(authenticate_admin)):
+    """Get AI program statistics overview"""
     try:
-        # Get basic counts
-        total_programs = await db.programs.count_documents({})
+        # Get basic counts from AI programs collection
+        total_programs = await db.ai_programs.count_documents({})
         
         # Get counts by language
         language_pipeline = [
             {"$group": {"_id": "$language", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
-        language_stats = await db.programs.aggregate(language_pipeline).to_list(10)
+        language_stats = await db.ai_programs.aggregate(language_pipeline).to_list(10)
         
         # Get counts by program type
         type_pipeline = [
             {"$group": {"_id": "$program_type", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}}
         ]
-        type_stats = await db.programs.aggregate(type_pipeline).to_list(10)
+        type_stats = await db.ai_programs.aggregate(type_pipeline).to_list(10)
         
         # Get recent activity
-        recent_programs = await db.programs.find({}).sort("created_at", -1).limit(5).to_list(5)
+        recent_programs = await db.ai_programs.find({}).sort("created_at", -1).limit(5).to_list(5)
         
         # Calculate AI analysis coverage
-        programs_with_summary = await db.programs.count_documents({"summary": {"$exists": True, "$ne": None}})
-        programs_with_highlights = await db.programs.count_documents({"highlights": {"$exists": True, "$ne": []}})
-        programs_with_keywords = await db.programs.count_documents({"keywords": {"$exists": True, "$ne": []}})
+        programs_with_summary = await db.ai_programs.count_documents({"summary": {"$exists": True, "$ne": None}})
+        programs_with_highlights = await db.ai_programs.count_documents({"highlights": {"$exists": True, "$ne": []}})
+        programs_with_keywords = await db.ai_programs.count_documents({"keywords": {"$exists": True, "$ne": []}})
         
         return {
             "total_programs": total_programs,
@@ -4703,8 +4703,8 @@ async def get_program_stats(admin: str = Depends(authenticate_admin)):
         }
         
     except Exception as e:
-        logger.error(f"Failed to get program stats: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get program stats")
+        logger.error(f"Failed to get AI program stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get AI program stats")
 
 # Include the router in the main app
 app.include_router(api_router)
