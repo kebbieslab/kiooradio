@@ -562,6 +562,67 @@ export const labels = {
     confirmDeleteDonation: "Êtes-vous sûr de vouloir supprimer ce don?",
     donationSavedSuccessfully: "Don enregistré avec succès",
     donationDeletedSuccessfully: "Don supprimé avec succès",
+    
+    // Projects Management
+    projectsManagement: "Gestion des Projets",
+    projectsAccess: "Accès Projets",
+    projectsAccessDescription: "Veuillez saisir vos identifiants pour accéder au système de gestion des projets",
+    accessProjects: "Accéder aux Projets",
+    manageProjectRecords: "Gérer les dossiers de projets et suivre les progrès",
+    addProject: "Ajouter un Projet",
+    editProject: "Modifier le Projet",
+    updateProject: "Mettre à jour le Projet",
+    projectsList: "Liste des Projets",
+    noProjectsFound: "Aucun projet trouvé",
+    projectDetails: "Détails du Projet",
+    
+    // Project Fields
+    projectCode: "Code Projet",
+    projectName: "Nom du Projet",
+    description: "Description",
+    descriptionShort: "Description Courte",
+    startDate: "Date de Début",
+    endDate: "Date de Fin",
+    status: "Statut",
+    budgetCurrency: "Devise du Budget",
+    budgetAmount: "Montant du Budget",
+    manager: "Gestionnaire",
+    tags: "Étiquettes",
+    
+    // Project Status Options
+    planned: "Planifié",
+    active: "Actif",
+    completed: "Terminé",
+    onHold: "En Attente",
+    cancelled: "Annulé",
+    
+    // Project Filters
+    allStatuses: "Tous les Statuts",
+    allManagers: "Tous les Gestionnaires",
+    
+    // Project Details
+    projectDonations: "Dons du Projet",
+    recentDonations: "Dons Récents",
+    projectStories: "Histoires du Projet",
+    recentStories: "Histoires Récentes",
+    donationsTotals: "Totaux des Dons",
+    totalProjectDonations: "Total des Dons du Projet",
+    
+    // Validation Messages
+    projectCodeRequired: "Le code projet est requis",
+    projectCodeExists: "Le code projet existe déjà",
+    projectNameRequired: "Le nom du projet est requis",
+    invalidBudgetAmount: "Le montant du budget doit être positif",
+    invalidDateRange: "La date de fin doit être après la date de début",
+    
+    // Project Messages
+    failedToLoadProjects: "Échec du chargement des projets",
+    failedToSaveProject: "Échec de l'enregistrement du projet",
+    failedToDeleteProject: "Échec de la suppression du projet",
+    confirmDeleteProject: "Êtes-vous sûr de vouloir supprimer ce projet?",
+    projectSavedSuccessfully: "Projet enregistré avec succès",
+    projectDeletedSuccessfully: "Projet supprimé avec succès",
+    failedToLoadProjectDetails: "Échec du chargement des détails du projet",
     backToTop: "Retour en haut",
     
     // About Page
