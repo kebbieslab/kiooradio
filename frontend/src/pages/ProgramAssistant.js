@@ -68,7 +68,7 @@ const ProgramAssistant = () => {
       const auth = localStorage.getItem('programAssistantAuth');
       
       // Load programs
-      const programsResponse = await fetch(`${BACKEND_URL}/api/programs`, {
+      const programsResponse = await fetch(`${BACKEND_URL}/api/ai-programs`, {
         headers: { 'Authorization': `Basic ${auth}` }
       });
       if (programsResponse.ok) {
@@ -77,7 +77,7 @@ const ProgramAssistant = () => {
       }
 
       // Load stats
-      const statsResponse = await fetch(`${BACKEND_URL}/api/programs/stats/overview`, {
+      const statsResponse = await fetch(`${BACKEND_URL}/api/ai-programs/stats/overview`, {
         headers: { 'Authorization': `Basic ${auth}` }
       });
       if (statsResponse.ok) {
