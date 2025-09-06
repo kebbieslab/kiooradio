@@ -1143,6 +1143,21 @@ class EmailNotificationService:
             logger.error(f"Failed to send email to {to_email}: {e}")
             return False
 
+# Initialize user management services
+try:
+    user_manager = UserManager()
+    logger.info("User manager initialized successfully")
+except Exception as e:
+    logger.warning(f"Failed to initialize user manager: {e}")
+    user_manager = None
+
+try:
+    email_service = EmailNotificationService()
+    logger.info("Email notification service initialized successfully")
+except Exception as e:
+    logger.warning(f"Failed to initialize email service: {e}")
+    email_service = None
+
 class Program(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
