@@ -103,8 +103,20 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-KIOO RADIO VISITOR ANALYTICS DASHBOARD:
-User wants to complete the www.kiooradio.org/visitors analytics page with Google Analytics integration, using admin username "admin" and password "kioo2025!" for access. Need to set up Google Analytics tracking and create a comprehensive visitor analytics dashboard with real-time data.
+Create a new internal CRM page at /crm with specified UI, routing, and meta tag requirements. The CRM should provide comprehensive contact management functionality with authentication, database integration, and admin features.
+
+## backend:
+  - task: "CRM endpoints with authentication"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Added comprehensive CRM endpoints: GET/POST/PUT/DELETE /api/crm/contacts with Basic Auth (admin:kioo2025!). Added Contact models (Contact, ContactCreate, ContactUpdate) with fields for name, email, phone, organization, location, contact_type, source, notes, tags, timestamps. Added CRM stats endpoint /api/crm/stats and data import endpoint /api/crm/import-from-sources. Need to test all endpoints work correctly."
 
 ## backend:
   - task: "Visitor tracking endpoints"
