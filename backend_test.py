@@ -283,7 +283,7 @@ class KiooRadioAPITester:
             # Verify response structure
             if len(all_donations) > 0:
                 sample_donation = all_donations[0]
-                required_fields = ['id', 'date_iso', 'donor_name', 'method', 'amount_currency', 'amount']
+                required_fields = ['id', 'donor_name', 'donor_email', 'amount', 'currency', 'donation_type']
                 missing_fields = [field for field in required_fields if field not in sample_donation]
                 
                 if missing_fields:
