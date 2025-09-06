@@ -4778,30 +4778,54 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
             print(f"❌ Failed - Error: {str(e)}")
             return False, {}
 
-    def run_all_tests(self):
-        """Run AI Program Assistant System tests"""
-        print("🚀 Starting Kioo Radio AI Program Assistant System Tests...")
+    def run_enhanced_crm_tests(self):
+        """Run Enhanced CRM Projects System tests"""
+        print("🚀 Starting Enhanced CRM Projects Comprehensive Testing...")
         print(f"Testing against: {self.base_url}")
+        print("="*80)
         
-        # CRITICAL: Test AI Program Assistant System
-        self.test_ai_program_assistant_endpoints()  # PRIMARY FOCUS: AI Program Assistant System testing
+        # CRITICAL: Test Enhanced CRM Projects System
+        self.test_enhanced_crm_projects_system()  # PRIMARY FOCUS: Enhanced CRM Projects testing
+        
+        # Run basic endpoints to ensure system is working
+        self.test_basic_endpoints()
         
         # Print final results
-        print(f"\n📊 FINAL RESULTS:")
-        print(f"Tests passed: {self.tests_passed}/{self.tests_run}")
+        print(f"\n📊 ENHANCED CRM PROJECTS TEST SUMMARY:")
+        print(f"="*80)
+        print(f"Total tests run: {self.tests_run}")
+        print(f"Tests passed: {self.tests_passed}")
+        print(f"Tests failed: {self.tests_run - self.tests_passed}")
+        print(f"Success rate: {(self.tests_passed / self.tests_run * 100):.1f}%")
         
         if self.failed_tests:
-            print(f"\n❌ FAILED TESTS:")
-            for failed_test in self.failed_tests:
-                print(f"   - {failed_test}")
+            print(f"\nFAILED TESTS:")
+            for i, test in enumerate(self.failed_tests, 1):
+                print(f"{i:2d}. {test}")
+            
+            # Categorize failures
+            critical_failures = [t for t in self.failed_tests if any(x in t.lower() for x in ['authentication', 'service unavailable', 'missing fields'])]
+            service_failures = [t for t in self.failed_tests if '503' in t or 'service unavailable' in t.lower()]
+            
+            if critical_failures:
+                print(f"\n🚨 CRITICAL FAILURES ({len(critical_failures)}):")
+                for test in critical_failures:
+                    print(f"   - {test}")
+            
+            if service_failures:
+                print(f"\n⚠️  SERVICE AVAILABILITY ISSUES ({len(service_failures)}):")
+                for test in service_failures:
+                    print(f"   - {test}")
         else:
-            print("🎉 All tests passed!")
+            print(f"\n🎉 ALL ENHANCED CRM PROJECTS TESTS PASSED!")
+        
+        print(f"="*80)
         
         return 0 if self.tests_passed == self.tests_run else 1
 
 def main():
     tester = KiooRadioAPITester()
-    return tester.run_all_tests()
+    return tester.run_enhanced_crm_tests()
 
 if __name__ == "__main__":
     sys.exit(main())
