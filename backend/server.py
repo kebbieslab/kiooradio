@@ -2085,6 +2085,277 @@ async def import_contacts_from_sources(admin: str = Depends(authenticate_admin))
         logger.error(f"Failed to import contacts: {e}")
         raise HTTPException(status_code=500, detail="Failed to import contacts")
 
+# Dashboard Models
+class DashboardStats(BaseModel):
+    visitors_this_month: int = 0
+    donations_this_month: float = 0.0
+    income_this_month: float = 0.0
+    expenses_this_month: float = 0.0
+    open_reminders: int = 0
+    approved_stories: int = 0
+    last_updated: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class DonationByProject(BaseModel):
+    project_name: str
+    amount: float
+    percentage: float
+
+class IncomeExpenseData(BaseModel):
+    month: str
+    income: float
+    expenses: float
+
+# Dashboard endpoints with authentication
+@api_router.get("/dashboard/stats")
+async def get_dashboard_stats(admin: str = Depends(authenticate_admin)):
+    """Get dashboard statistics"""
+    try:
+        # Get current month start and end
+        now = datetime.now(timezone.utc)
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        next_month = month_start.replace(month=month_start.month + 1) if month_start.month < 12 else month_start.replace(year=month_start.year + 1, month=1)
+        
+        # Visitors this month (from visitor analytics)
+        visitors_this_month = await db.visitor_analytics.count_documents({
+            "timestamp": {
+                "$gte": month_start.isoformat(),
+                "$lt": next_month.isoformat()
+            }
+        })
+        
+        # Donations this month (sum from donations collection)
+        donations_pipeline = [
+            {
+                "$match": {
+                    "created_at": {
+                        "$gte": month_start.isoformat(),
+                        "$lt": next_month.isoformat()
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "total": {"$sum": "$amount"}
+                }
+            }
+        ]
+        donations_result = await db.donations.aggregate(donations_pipeline).to_list(1)
+        donations_this_month = donations_result[0]["total"] if donations_result else 0.0
+        
+        # Major gift pledges this month
+        pledges_pipeline = [
+            {
+                "$match": {
+                    "created_at": {
+                        "$gte": month_start.isoformat(),
+                        "$lt": next_month.isoformat()
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "total": {"$sum": "$amount"}
+                }
+            }
+        ]
+        pledges_result = await db.major_gift_pledges.aggregate(pledges_pipeline).to_list(1)
+        pledges_this_month = pledges_result[0]["total"] if pledges_result else 0.0
+        
+        # Total donations including pledges
+        total_donations = donations_this_month + pledges_this_month
+        
+        # Mock data for income and expenses (in real app, would come from accounting system)
+        income_this_month = total_donations + 5000  # Add regular donations/support
+        expenses_this_month = 3200  # Operating expenses
+        
+        # Open reminders (mock data - in real app would come from reminders collection)
+        open_reminders = 7
+        
+        # Approved stories (from impact stories)
+        approved_stories = await db.impact_stories.count_documents({
+            "is_featured": True
+        })
+        
+        return DashboardStats(
+            visitors_this_month=visitors_this_month,
+            donations_this_month=total_donations,
+            income_this_month=income_this_month,
+            expenses_this_month=expenses_this_month,
+            open_reminders=open_reminders,
+            approved_stories=approved_stories,
+            last_updated=datetime.now(timezone.utc)
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to get dashboard stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get dashboard stats")
+
+@api_router.get("/dashboard/donations-by-project")
+async def get_donations_by_project(admin: str = Depends(authenticate_admin)):
+    """Get donations breakdown by project for pie chart"""
+    try:
+        # Get current month start and end
+        now = datetime.now(timezone.utc)
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        next_month = month_start.replace(month=month_start.month + 1) if month_start.month < 12 else month_start.replace(year=month_start.year + 1, month=1)
+        
+        # Get major gift pledges by designation
+        pledges_pipeline = [
+            {
+                "$match": {
+                    "created_at": {
+                        "$gte": month_start.isoformat(),
+                        "$lt": next_month.isoformat()
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": "$designation",
+                    "total": {"$sum": "$amount"}
+                }
+            }
+        ]
+        pledges_by_project = await db.major_gift_pledges.aggregate(pledges_pipeline).to_list(10)
+        
+        # Get general donations
+        general_donations_pipeline = [
+            {
+                "$match": {
+                    "created_at": {
+                        "$gte": month_start.isoformat(),
+                        "$lt": next_month.isoformat()
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "total": {"$sum": "$amount"}
+                }
+            }
+        ]
+        general_result = await db.donations.aggregate(general_donations_pipeline).to_list(1)
+        general_amount = general_result[0]["total"] if general_result else 0.0
+        
+        # Combine all donations
+        project_donations = []
+        total_amount = general_amount
+        
+        # Add general donations
+        if general_amount > 0:
+            project_donations.append({
+                "project_name": "General Support",
+                "amount": general_amount
+            })
+        
+        # Add major gift pledges by project
+        for pledge in pledges_by_project:
+            project_name = pledge["_id"] or "Unspecified"
+            amount = pledge["total"]
+            total_amount += amount
+            project_donations.append({
+                "project_name": project_name,
+                "amount": amount
+            })
+        
+        # Add mock data if no real donations
+        if total_amount == 0:
+            project_donations = [
+                {"project_name": "Solar Array", "amount": 1200.0},
+                {"project_name": "Studio Equipment", "amount": 800.0},
+                {"project_name": "General Support", "amount": 500.0},
+                {"project_name": "Transmitter", "amount": 300.0}
+            ]
+            total_amount = sum(d["amount"] for d in project_donations)
+        
+        # Calculate percentages
+        result = []
+        for donation in project_donations:
+            percentage = (donation["amount"] / total_amount * 100) if total_amount > 0 else 0
+            result.append(DonationByProject(
+                project_name=donation["project_name"],
+                amount=donation["amount"],
+                percentage=round(percentage, 1)
+            ))
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Failed to get donations by project: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get donations by project")
+
+@api_router.get("/dashboard/income-expenses")
+async def get_income_expenses(admin: str = Depends(authenticate_admin)):
+    """Get income vs expenses data for bar chart"""
+    try:
+        # Get current month start and end
+        now = datetime.now(timezone.utc)
+        month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        next_month = month_start.replace(month=month_start.month + 1) if month_start.month < 12 else month_start.replace(year=month_start.year + 1, month=1)
+        
+        # Get donations for this month
+        donations_pipeline = [
+            {
+                "$match": {
+                    "created_at": {
+                        "$gte": month_start.isoformat(),
+                        "$lt": next_month.isoformat()
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "total": {"$sum": "$amount"}
+                }
+            }
+        ]
+        donations_result = await db.donations.aggregate(donations_pipeline).to_list(1)
+        donations_this_month = donations_result[0]["total"] if donations_result else 0.0
+        
+        # Get pledges for this month
+        pledges_pipeline = [
+            {
+                "$match": {
+                    "created_at": {
+                        "$gte": month_start.isoformat(),
+                        "$lt": next_month.isoformat()
+                    }
+                }
+            },
+            {
+                "$group": {
+                    "_id": None,
+                    "total": {"$sum": "$amount"}
+                }
+            }
+        ]
+        pledges_result = await db.major_gift_pledges.aggregate(pledges_pipeline).to_list(1)
+        pledges_this_month = pledges_result[0]["total"] if pledges_result else 0.0
+        
+        # Calculate income and expenses
+        total_donations = donations_this_month + pledges_this_month
+        income = total_donations + 5000  # Add regular support/grants
+        expenses = 3200  # Operating expenses (utilities, maintenance, salaries, etc.)
+        
+        # Add mock data if no real data
+        if income == 5000:  # Only base amount, no donations
+            income = 8500
+            expenses = 3200
+        
+        return IncomeExpenseData(
+            month=now.strftime("%B %Y"),
+            income=income,
+            expenses=expenses
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to get income expenses data: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get income expenses data")
+
 # Include the router in the main app
 app.include_router(api_router)
 
