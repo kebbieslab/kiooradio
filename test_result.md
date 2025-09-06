@@ -344,8 +344,7 @@ Create a comprehensive CSV import system for the existing CRM at /crm to handle 
 
 ## test_plan:
   current_focus:
-    - "CSV Import Backend Endpoints"
-    - "CSV Import Interface in CRM"
+    - "Visitor Management Backend Endpoints"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
