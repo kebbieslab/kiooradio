@@ -580,19 +580,49 @@ const CRMProjects = ({ crmAuth }) => {
                       <div className="text-xs">to {project.end_date ? new Date(project.end_date).toLocaleDateString() : 'TBD'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                      <div className="flex flex-wrap gap-1">
                         <button
                           onClick={() => {
                             loadProjectDetail(project.project_code);
                             setShowDetailModal(true);
                           }}
-                          className="text-purple-600 hover:text-purple-900"
+                          className="text-purple-600 hover:text-purple-900 text-xs px-2 py-1 rounded bg-purple-50"
                         >
                           👁️ {t('View') || 'View'}
                         </button>
                         <button
+                          onClick={() => {
+                            setSelectedProject(project);
+                            loadProjectFiles(project.project_code);
+                            setShowFileUploadModal(true);
+                          }}
+                          className="text-blue-600 hover:text-blue-900 text-xs px-2 py-1 rounded bg-blue-50"
+                        >
+                          📁 {t('Files') || 'Files'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedProject(project);
+                            loadProjectReceipts(project.project_code);
+                            setShowReceiptsModal(true);
+                          }}
+                          className="text-green-600 hover:text-green-900 text-xs px-2 py-1 rounded bg-green-50"
+                        >
+                          🧾 {t('Receipts') || 'Receipts'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedProject(project);
+                            loadProjectReports(project.project_code);
+                            setShowReportsModal(true);
+                          }}
+                          className="text-orange-600 hover:text-orange-900 text-xs px-2 py-1 rounded bg-orange-50"
+                        >
+                          📊 {t('Reports') || 'Reports'}
+                        </button>
+                        <button
                           onClick={() => handleDeleteProject(project.project_code)}
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 text-xs px-2 py-1 rounded bg-red-50"
                         >
                           🗑️ {t('Delete') || 'Delete'}
                         </button>
