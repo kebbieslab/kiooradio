@@ -994,24 +994,6 @@ async def get_news_updates(published_only: bool = True):
     news = await db.news_updates.find(filter_dict).sort("created_at", -1).to_list(1000)
     return [NewsUpdate(**news_item) for news_item in news]
 
-# Donations endpoints
-@api_router.post("/donations", response_model=Donation)
-async def create_donation(donation: DonationCreate):
-    donation_dict = donation.dict()
-    donation_obj = Donation(**donation_dict)
-    await db.donations.insert_one(donation_obj.dict())
-    return donation_obj
-
-@api_router.get("/donations/total")
-async def get_donation_total():
-    pipeline = [
-        {"$group": {"_id": None, "total": {"$sum": "$amount"}, "count": {"$sum": 1}}}
-    ]
-    result = await db.donations.aggregate(pipeline).to_list(1)
-    if result:
-        return {"total_amount": result[0]["total"], "donor_count": result[0]["count"]}
-    return {"total_amount": 0, "donor_count": 0}
-
 # Contact endpoints
 @api_router.post("/contact", response_model=ContactMessage)
 async def create_contact_message(message: ContactMessageCreate):
