@@ -174,6 +174,67 @@ export const labels = {
     donationSavedSuccessfully: "Donation saved successfully",
     donationDeletedSuccessfully: "Donation deleted successfully",
     
+    // Projects Management
+    projectsManagement: "Projects Management",
+    projectsAccess: "Projects Access",
+    projectsAccessDescription: "Please enter your credentials to access the Projects Management system",
+    accessProjects: "Access Projects",
+    manageProjectRecords: "Manage project records and track progress",
+    addProject: "Add Project",
+    editProject: "Edit Project", 
+    updateProject: "Update Project",
+    projectsList: "Projects List",
+    noProjectsFound: "No projects found",
+    projectDetails: "Project Details",
+    
+    // Project Fields
+    projectCode: "Project Code",
+    projectName: "Project Name",
+    description: "Description",
+    descriptionShort: "Short Description",
+    startDate: "Start Date",
+    endDate: "End Date",
+    status: "Status",
+    budgetCurrency: "Budget Currency",
+    budgetAmount: "Budget Amount",
+    manager: "Manager",
+    tags: "Tags",
+    
+    // Project Status Options
+    planned: "Planned",
+    active: "Active", 
+    completed: "Completed",
+    onHold: "On Hold",
+    cancelled: "Cancelled",
+    
+    // Project Filters
+    allStatuses: "All Statuses",
+    allManagers: "All Managers",
+    
+    // Project Details
+    projectDonations: "Project Donations",
+    recentDonations: "Recent Donations",
+    projectStories: "Project Stories",
+    recentStories: "Recent Stories",
+    donationsTotals: "Donations Totals",
+    totalProjectDonations: "Total Project Donations",
+    
+    // Validation Messages
+    projectCodeRequired: "Project code is required",
+    projectCodeExists: "Project code already exists",
+    projectNameRequired: "Project name is required",
+    invalidBudgetAmount: "Budget amount must be positive",
+    invalidDateRange: "End date must be after start date",
+    
+    // Project Messages
+    failedToLoadProjects: "Failed to load projects",
+    failedToSaveProject: "Failed to save project",
+    failedToDeleteProject: "Failed to delete project",
+    confirmDeleteProject: "Are you sure you want to delete this project?",
+    projectSavedSuccessfully: "Project saved successfully",
+    projectDeletedSuccessfully: "Project deleted successfully",
+    failedToLoadProjectDetails: "Failed to load project details",
+    
     // About Page
     aboutTitle: "About Kioo Radio",
     aboutSubtitle: "Broadcasting Faith, Hope and Love in Christ",
