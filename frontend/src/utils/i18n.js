@@ -1,6 +1,8 @@
 // Comprehensive i18n system for Kioo Radio
 // Language labels dictionary with English and French translations
 
+import { useState, useEffect } from 'react';
+
 export const labels = {
   en: {
     // Header Navigation
