@@ -32,3 +32,11 @@ python-crontab
 apscheduler
 openpyxl
 openai
+dropbox
+reportlab
+weasyprint
+python-docx
+docxtpl
+Jinja2
+matplotlib
+plotly
