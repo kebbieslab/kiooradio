@@ -1584,6 +1584,70 @@ def authenticate_admin(credentials: HTTPBasicCredentials = Depends(security)):
         )
     return credentials.username
 
+async def authenticate_user(credentials: HTTPBasicCredentials = Depends(security)):
+    """Enhanced authentication that supports both admin and regular users"""
+    # Check if it's the default admin
+    if credentials.username == "admin" and credentials.password == "kioo2025!":
+        return {
+            "username": "admin",
+            "role": "admin",
+            "permissions": {"all": True}
+        }
+    
+    # Check regular users if user manager is available
+    if user_manager:
+        try:
+            user = await user_manager.verify_user(credentials.username, credentials.password)
+            if user and user.is_active:
+                # Convert permissions to dict format
+                permissions = {}
+                for perm in user.permissions:
+                    permissions[perm.module] = {
+                        "can_read": perm.can_read,
+                        "can_write": perm.can_write,
+                        "can_delete": perm.can_delete,
+                        "can_export": perm.can_export
+                    }
+                
+                return {
+                    "username": user.username,
+                    "user_id": user.id,
+                    "role": user.role,
+                    "permissions": permissions,
+                    "user_info": user
+                }
+        except Exception as e:
+            logger.error(f"User authentication failed: {e}")
+    
+    # Authentication failed
+    raise HTTPException(
+        status_code=401,
+        detail="Invalid credentials",
+        headers={"WWW-Authenticate": "Basic"}
+    )
+
+def require_permission(module: str, action: str = "read"):
+    """Decorator to check if user has permission for specific module and action"""
+    async def check_permission(user_auth: dict = Depends(authenticate_user)):
+        # Admin has all permissions
+        if user_auth.get("role") == "admin":
+            return user_auth
+        
+        # Check specific permission
+        user_permissions = user_auth.get("permissions", {})
+        module_perms = user_permissions.get(module, {})
+        
+        permission_key = f"can_{action}"
+        if not module_perms.get(permission_key, False):
+            raise HTTPException(
+                status_code=403,
+                detail=f"Insufficient permissions for {module} {action}"
+            )
+        
+        return user_auth
+    
+    return check_permission
+
 # Visitor Analytics and Email Helper Functions
 async def send_simple_email(to_email: str, subject: str, body: str):
     """Send email using a simple SMTP approach"""
