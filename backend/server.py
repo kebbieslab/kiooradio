@@ -4583,6 +4583,455 @@ async def get_projects_filter_stats(admin: str = Depends(authenticate_admin)):
         logger.error(f"Failed to get projects filter stats: {e}")
         raise HTTPException(status_code=500, detail="Failed to get projects filter stats")
 
+# Enhanced CRM Projects Endpoints
+
+@api_router.post("/projects/{project_id}/upload")
+async def upload_project_file(
+    project_id: str,
+    file: UploadFile = File(...),
+    category: Optional[str] = Form(None),  # 'receipt', 'multimedia', 'document'
+    description: Optional[str] = Form(None),
+    admin: str = Depends(authenticate_admin)
+):
+    """Upload file to project with optional AI analysis for receipts"""
+    try:
+        # Validate file size (3MB limit)
+        if file.size and file.size > 3 * 1024 * 1024:
+            raise HTTPException(status_code=413, detail="File size exceeds 3MB limit")
+        
+        # Validate file type
+        allowed_types = [
+            'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+            'application/pdf', 'text/plain', 'text/csv',
+            'application/json', 'application/xml',
+            'application/msword', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ]
+        
+        if file.content_type not in allowed_types:
+            raise HTTPException(status_code=415, detail=f"Unsupported file type: {file.content_type}")
+        
+        # Read file content
+        file_content = await file.read()
+        
+        # Upload to Dropbox
+        upload_result = await dropbox_manager.upload_file(
+            file_content=file_content,
+            project_id=project_id,
+            filename=file.filename,
+            category=category or 'documents'
+        )
+        
+        # Create file record
+        file_record = {
+            'file_id': upload_result['file_id'],
+            'filename': upload_result['filename'],
+            'file_path': upload_result['file_path'],
+            'file_size': upload_result['file_size'],
+            'content_type': file.content_type,
+            'uploaded_at': datetime.now(timezone.utc).isoformat(),
+            'category': category or 'documents',
+            'description': description
+        }
+        
+        # Add to project files
+        await db.projects.update_one(
+            {'project_code': project_id},
+            {'$push': {'files': file_record}}
+        )
+        
+        response_data = {
+            'success': True,
+            'message': 'File uploaded successfully',
+            'file_info': file_record
+        }
+        
+        # If it's a receipt, perform AI analysis
+        if category == 'receipt' and file.content_type.startswith('image/'):
+            try:
+                analysis_result = await ai_analyzer.analyze_receipt(
+                    file_content=file_content,
+                    filename=file.filename,
+                    content_type=file.content_type
+                )
+                
+                # Create receipt analysis record
+                receipt_record = {
+                    'receipt_id': str(uuid.uuid4()),
+                    'file_id': upload_result['file_id'],
+                    'vendor': analysis_result.get('vendor'),
+                    'date': analysis_result.get('date'),
+                    'total_amount': analysis_result.get('total_amount'),
+                    'currency': analysis_result.get('currency'),
+                    'items': analysis_result.get('items', []),
+                    'category': analysis_result.get('category'),
+                    'expense_type': analysis_result.get('expense_type'),
+                    'tax_amount': analysis_result.get('tax_amount'),
+                    'analysis_confidence': analysis_result.get('analysis_confidence'),
+                    'analysis_date': datetime.now(timezone.utc).isoformat()
+                }
+                
+                # Add to project receipts
+                await db.projects.update_one(
+                    {'project_code': project_id},
+                    {'$push': {'receipts': receipt_record}}
+                )
+                
+                response_data['analysis'] = receipt_record
+                response_data['message'] = 'File uploaded and receipt analyzed successfully'
+                
+            except Exception as ai_error:
+                logger.error(f"Receipt analysis failed: {ai_error}")
+                response_data['message'] = 'File uploaded successfully, but receipt analysis failed'
+        
+        return JSONResponse(content=response_data, status_code=201)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"File upload failed: {e}")
+        raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
+
+@api_router.get("/projects/{project_id}/files")
+async def list_project_files(
+    project_id: str,
+    category: Optional[str] = None,
+    admin: str = Depends(authenticate_admin)
+):
+    """List all files for a project"""
+    try:
+        # Get project with files
+        project = await db.projects.find_one({'project_code': project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        files = project.get('files', [])
+        
+        # Filter by category if specified
+        if category:
+            files = [f for f in files if f.get('category') == category]
+        
+        return {
+            'project_id': project_id,
+            'files': files,
+            'total_files': len(files)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to list project files: {e}")
+        raise HTTPException(status_code=500, detail="Failed to list project files")
+
+@api_router.get("/projects/{project_id}/files/{file_id}/download")
+async def download_project_file(
+    project_id: str,
+    file_id: str,
+    admin: str = Depends(authenticate_admin)
+):
+    """Download a project file from Dropbox"""
+    try:
+        # Get project and find file
+        project = await db.projects.find_one({'project_code': project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        file_info = None
+        for f in project.get('files', []):
+            if f.get('file_id') == file_id:
+                file_info = f
+                break
+        
+        if not file_info:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Download from Dropbox
+        file_content, metadata = await dropbox_manager.download_file(file_info['file_path'])
+        
+        # Create streaming response
+        return StreamingResponse(
+            io.BytesIO(file_content),
+            media_type=file_info.get('content_type', 'application/octet-stream'),
+            headers={
+                'Content-Disposition': f'attachment; filename="{file_info["filename"]}"',
+                'Content-Length': str(len(file_content))
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to download project file: {e}")
+        raise HTTPException(status_code=500, detail="Failed to download project file")
+
+@api_router.get("/projects/{project_id}/receipts")
+async def get_project_receipts(
+    project_id: str,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get all receipt analyses for a project"""
+    try:
+        project = await db.projects.find_one({'project_code': project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        receipts = project.get('receipts', [])
+        total_expenses = sum(r.get('total_amount', 0) for r in receipts if r.get('total_amount'))
+        
+        # Group by category
+        expense_categories = {}
+        for receipt in receipts:
+            category = receipt.get('category', 'unknown')
+            amount = receipt.get('total_amount', 0)
+            expense_categories[category] = expense_categories.get(category, 0) + amount
+        
+        return {
+            'project_id': project_id,
+            'receipts': receipts,
+            'total_receipts': len(receipts),
+            'total_expenses': total_expenses,
+            'expense_categories': expense_categories
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get project receipts: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get project receipts")
+
+@api_router.post("/projects/{project_id}/reports/generate")
+async def generate_project_report(
+    project_id: str,
+    request: ReportGenerationRequest,
+    admin: str = Depends(authenticate_admin)
+):
+    """Generate comprehensive project report with AI insights"""
+    try:
+        # Get project data
+        project = await db.projects.find_one({'project_code': project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Get receipts
+        receipts = project.get('receipts', []) if request.include_receipts else []
+        
+        # Generate AI insights
+        ai_insights = {}
+        if request.include_ai_analysis:
+            ai_insights = await report_generator.generate_ai_insights(project, receipts)
+        
+        # Generate report based on format
+        if request.format == 'pdf':
+            report_path = await report_generator.generate_pdf_report(project, receipts, ai_insights, request.report_type)
+        elif request.format == 'docx':
+            report_path = await report_generator.generate_docx_report(project, receipts, ai_insights, request.report_type)
+        elif request.format == 'html':
+            report_path = await report_generator.generate_html_report(project, receipts, ai_insights, request.report_type)
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported report format")
+        
+        # Create report record
+        report_record = {
+            'report_id': str(uuid.uuid4()),
+            'project_id': project_id,
+            'report_type': request.report_type,
+            'format': request.format,
+            'file_path': report_path,
+            'generated_at': datetime.now(timezone.utc).isoformat(),
+            'ai_analysis': ai_insights if request.include_ai_analysis else None,
+            'metadata': {
+                'include_receipts': request.include_receipts,
+                'include_multimedia': request.include_multimedia,
+                'template_style': request.template_style
+            }
+        }
+        
+        # Add to project reports
+        await db.projects.update_one(
+            {'project_code': project_id},
+            {'$push': {'reports': report_record}}
+        )
+        
+        return {
+            'success': True,
+            'message': 'Report generated successfully',
+            'report': report_record
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to generate project report: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate project report: {str(e)}")
+
+@api_router.get("/projects/{project_id}/reports")
+async def list_project_reports(
+    project_id: str,
+    admin: str = Depends(authenticate_admin)
+):
+    """List all generated reports for a project"""
+    try:
+        project = await db.projects.find_one({'project_code': project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        reports = project.get('reports', [])
+        
+        return {
+            'project_id': project_id,
+            'reports': reports,
+            'total_reports': len(reports)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to list project reports: {e}")
+        raise HTTPException(status_code=500, detail="Failed to list project reports")
+
+@api_router.get("/projects/{project_id}/reports/{report_id}/download")
+async def download_project_report(
+    project_id: str,
+    report_id: str,
+    admin: str = Depends(authenticate_admin)
+):
+    """Download a generated project report"""
+    try:
+        # Get project and find report
+        project = await db.projects.find_one({'project_code': project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        report_info = None
+        for r in project.get('reports', []):
+            if r.get('report_id') == report_id:
+                report_info = r
+                break
+        
+        if not report_info:
+            raise HTTPException(status_code=404, detail="Report not found")
+        
+        # Check if file exists
+        file_path = Path(report_info['file_path'])
+        if not file_path.exists():
+            raise HTTPException(status_code=404, detail="Report file not found")
+        
+        # Determine content type based on format
+        content_types = {
+            'pdf': 'application/pdf',
+            'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'html': 'text/html'
+        }
+        
+        content_type = content_types.get(report_info['format'], 'application/octet-stream')
+        
+        # Read and stream file
+        def file_generator():
+            with open(file_path, "rb") as file:
+                while chunk := file.read(8192):
+                    yield chunk
+        
+        return StreamingResponse(
+            file_generator(),
+            media_type=content_type,
+            headers={
+                'Content-Disposition': f'attachment; filename="{file_path.name}"'
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to download project report: {e}")
+        raise HTTPException(status_code=500, detail="Failed to download project report")
+
+@api_router.get("/projects/{project_id}/analytics")
+async def get_project_analytics(
+    project_id: str,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get comprehensive analytics for a project"""
+    try:
+        project = await db.projects.find_one({'project_code': project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        files = project.get('files', [])
+        receipts = project.get('receipts', [])
+        reports = project.get('reports', [])
+        
+        # File analytics
+        file_categories = {}
+        total_file_size = 0
+        for f in files:
+            category = f.get('category', 'unknown')
+            file_categories[category] = file_categories.get(category, 0) + 1
+            total_file_size += f.get('file_size', 0)
+        
+        # Expense analytics
+        total_expenses = sum(r.get('total_amount', 0) for r in receipts if r.get('total_amount'))
+        expense_categories = {}
+        expense_by_month = {}
+        
+        for receipt in receipts:
+            category = receipt.get('category', 'unknown')
+            amount = receipt.get('total_amount', 0)
+            expense_categories[category] = expense_categories.get(category, 0) + amount
+            
+            # Group by month
+            if receipt.get('date'):
+                try:
+                    receipt_date = datetime.fromisoformat(receipt['date'])
+                    month_key = receipt_date.strftime('%Y-%m')
+                    expense_by_month[month_key] = expense_by_month.get(month_key, 0) + amount
+                except:
+                    pass
+        
+        # Budget analysis
+        budget = project.get('budget_amount', 0)
+        budget_used_percentage = (total_expenses / budget * 100) if budget > 0 else 0
+        budget_remaining = budget - total_expenses
+        
+        return {
+            'project_id': project_id,
+            'project_name': project.get('name'),
+            'status': project.get('status'),
+            'file_analytics': {
+                'total_files': len(files),
+                'total_size_mb': round(total_file_size / (1024 * 1024), 2),
+                'by_category': file_categories
+            },
+            'expense_analytics': {
+                'total_expenses': total_expenses,
+                'currency': project.get('budget_currency', 'USD'),
+                'total_receipts': len(receipts),
+                'by_category': expense_categories,
+                'by_month': expense_by_month
+            },
+            'budget_analytics': {
+                'budget_amount': budget,
+                'budget_used': total_expenses,
+                'budget_remaining': budget_remaining,
+                'budget_used_percentage': round(budget_used_percentage, 2)
+            },
+            'report_analytics': {
+                'total_reports': len(reports),
+                'by_format': {
+                    'pdf': len([r for r in reports if r.get('format') == 'pdf']),
+                    'docx': len([r for r in reports if r.get('format') == 'docx']),
+                    'html': len([r for r in reports if r.get('format') == 'html'])
+                }
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get project analytics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get project analytics")
+
 # Dashboard Models
 class DashboardStats(BaseModel):
     visitors_this_month: int = 0
