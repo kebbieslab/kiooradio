@@ -1129,6 +1129,495 @@ class KiooRadioAPITester:
         print(f"   Category: Educational")
         print(f"   Status: {'✅ VERIFIED' if len(spot_light_programs) == 5 else '❌ ISSUES FOUND'}")
 
+    def test_ai_program_assistant_endpoints(self):
+        """COMPREHENSIVE TEST: AI Program Assistant Backend Implementation"""
+        print("\n=== COMPREHENSIVE AI PROGRAM ASSISTANT TESTING ===")
+        print("Testing: Authentication, CRUD Operations, AI Analysis, Search, Analytics")
+        print("AI Integration: Emergent LLM with OpenAI GPT-4o, Claude-3-7-sonnet, Gemini")
+        
+        # Authentication credentials
+        admin_auth = ('admin', 'kioo2025!')
+        wrong_auth = ('wrong', 'credentials')
+        
+        # Store created program IDs for cleanup
+        created_program_ids = []
+        
+        # VERIFICATION 1: Test authentication for all AI Program Assistant endpoints
+        print(f"\n🔍 VERIFICATION 1: Authentication Testing")
+        
+        program_endpoints = [
+            ("programs", "Get Programs", "GET"),
+            ("programs", "Create Program", "POST"),
+            ("programs/stats/overview", "Program Stats", "GET"),
+            ("programs/search", "Program Search", "POST")
+        ]
+        
+        for endpoint, name, method in program_endpoints:
+            # Test without authentication (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401)
+            else:
+                test_data = {
+                    "title": "Test Program",
+                    "content": "This is test program content for AI analysis.",
+                    "language": "en",
+                    "presenter": "Test Presenter"
+                }
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401, data=test_data)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 without authentication")
+            else:
+                print(f"❌ {name}: Should return 401 without authentication")
+                self.failed_tests.append(f"{name} - Should require authentication")
+            
+            # Test with wrong credentials (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, auth=wrong_auth)
+            else:
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, data=test_data, auth=wrong_auth)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 with wrong credentials")
+            else:
+                print(f"❌ {name}: Should return 401 with wrong credentials")
+                self.failed_tests.append(f"{name} - Should reject wrong credentials")
+        
+        # VERIFICATION 2: Test POST /api/programs - Create program with auto AI analysis
+        print(f"\n🔍 VERIFICATION 2: Create Program with Auto AI Analysis")
+        
+        # Test valid program creation
+        valid_program_data = {
+            "title": "Morning Devotion - Faith and Hope",
+            "description": "Daily morning devotion focusing on building faith and hope in Christ",
+            "content": "Good morning, beloved listeners of Kioo Radio. Today we gather in the name of our Lord Jesus Christ to reflect on the power of faith and hope in our daily lives. The scripture tells us in Hebrews 11:1 that faith is the substance of things hoped for, the evidence of things not seen. In our communities across the Makona River Region, we face many challenges - economic hardships, health concerns, and social issues. But through faith in Christ, we find strength to persevere. Let us pray together for our families, our communities, and our nations of Liberia, Sierra Leone, and Guinea. May God's love shine through us as we serve others with compassion and kindness. Remember, dear listeners, that every trial is an opportunity for growth in faith. Trust in the Lord with all your heart, and He will direct your paths. This is Pastor Samuel from Kioo Radio, reminding you that you are loved, you are valued, and you have a purpose in God's kingdom.",
+            "language": "en",
+            "date_aired": "2025-01-15",
+            "duration_minutes": 30,
+            "presenter": "Pastor Samuel Johnson",
+            "program_type": "devotion",
+            "audio_url": "https://example.com/audio/morning-devotion-20250115.mp3"
+        }
+        
+        success, program_response = self.run_test("Create Program with AI Analysis", "POST", "programs", 200, data=valid_program_data, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Program created successfully with AI analysis")
+            program_id = program_response.get('id')
+            if program_id:
+                created_program_ids.append(program_id)
+                print(f"   Program ID: {program_id}")
+            
+            # Verify response structure
+            required_fields = ['id', 'title', 'content', 'language', 'presenter', 'created_at']
+            missing_fields = [field for field in required_fields if field not in program_response]
+            
+            if missing_fields:
+                print(f"❌ Create Program: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Create Program - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Create Program: All required fields present")
+            
+            # Check if AI analysis fields are present (may be generated asynchronously)
+            ai_fields = ['summary', 'highlights', 'keywords']
+            ai_fields_present = [field for field in ai_fields if program_response.get(field)]
+            print(f"✅ AI Analysis fields present: {ai_fields_present}")
+            
+        else:
+            print(f"❌ Failed to create program")
+            self.failed_tests.append("Create Program - Failed to create valid program")
+        
+        # Test data validation - missing required fields
+        invalid_program_data = {
+            "title": "Test Program",
+            # Missing content (required)
+            "language": "en"
+        }
+        
+        success, response = self.run_test("Create Program - Missing Content", "POST", "programs", 422, data=invalid_program_data, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects missing required fields")
+        else:
+            print(f"❌ Should reject missing required fields")
+            self.failed_tests.append("Validation - Should reject missing required fields")
+        
+        # Create additional test programs for search and analytics
+        test_programs = [
+            {
+                "title": "French Gospel Hour - L'Amour de Dieu",
+                "description": "Programme évangélique en français",
+                "content": "Bonjour chers auditeurs de Radio Kioo. Aujourd'hui, nous parlons de l'amour inconditionnel de Dieu pour chacun d'entre nous. Dans Jean 3:16, nous lisons que Dieu a tant aimé le monde qu'il a donné son Fils unique. Cet amour transforme nos vies et nous donne l'espérance. Prions ensemble pour nos familles et nos communautés en Guinée, Sierra Leone et Libéria.",
+                "language": "fr",
+                "date_aired": "2025-01-16",
+                "duration_minutes": 60,
+                "presenter": "Pasteur Jean Baptiste",
+                "program_type": "devotion"
+            },
+            {
+                "title": "Community Health Education",
+                "description": "Health tips and medical advice for rural communities",
+                "content": "Welcome to Community Health Education on Kioo Radio. Today we discuss preventive healthcare measures for families in rural areas. Clean water, proper sanitation, and vaccination are essential for community health. We encourage all listeners to visit local health centers for regular check-ups. Remember, prevention is better than cure. Stay healthy, stay blessed.",
+                "language": "en",
+                "date_aired": "2025-01-17",
+                "duration_minutes": 45,
+                "presenter": "Dr. Fatima Koroma",
+                "program_type": "educational"
+            }
+        ]
+        
+        for i, program_data in enumerate(test_programs):
+            success, response = self.run_test(f"Create Test Program {i+1}", "POST", "programs", 200, data=program_data, auth=admin_auth)
+            if success and response.get('id'):
+                created_program_ids.append(response['id'])
+        
+        print(f"✅ Created {len(created_program_ids)} test programs for analysis and search tests")
+        
+        # VERIFICATION 3: Test GET /api/programs - Get programs with filtering
+        print(f"\n🔍 VERIFICATION 3: Get Programs with Filtering")
+        
+        # Test get all programs
+        success, all_programs = self.run_test("Get All Programs", "GET", "programs", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Retrieved {len(all_programs)} programs")
+            
+            # Verify response structure
+            if len(all_programs) > 0:
+                sample_program = all_programs[0]
+                required_fields = ['id', 'title', 'content', 'language', 'created_at']
+                missing_fields = [field for field in required_fields if field not in sample_program]
+                
+                if missing_fields:
+                    print(f"❌ Get Programs: Missing fields in response: {missing_fields}")
+                    self.failed_tests.append(f"Get Programs - Missing fields: {missing_fields}")
+                else:
+                    print(f"✅ Get Programs: All required fields present in response")
+        
+        # Test filtering by language
+        success, french_programs = self.run_test("Get French Programs", "GET", "programs", 200, params={"language": "fr"}, auth=admin_auth)
+        if success:
+            print(f"✅ Language filtering working: found {len(french_programs)} French programs")
+            
+            # Verify all returned programs are French
+            wrong_language = [p for p in french_programs if p.get('language') != 'fr']
+            if wrong_language:
+                print(f"❌ French filter returned non-French programs: {len(wrong_language)}")
+                self.failed_tests.append("Language Filter - Returned non-French programs")
+            else:
+                print(f"✅ French language filter correctly returns only French programs")
+        
+        # Test filtering by program type
+        success, devotion_programs = self.run_test("Get Devotion Programs", "GET", "programs", 200, params={"program_type": "devotion"}, auth=admin_auth)
+        if success:
+            print(f"✅ Program type filtering working: found {len(devotion_programs)} devotion programs")
+        
+        # VERIFICATION 4: Test GET /api/programs/{id} - Get specific program
+        print(f"\n🔍 VERIFICATION 4: Get Specific Program")
+        
+        if created_program_ids:
+            test_program_id = created_program_ids[0]
+            success, specific_program = self.run_test("Get Specific Program", "GET", f"programs/{test_program_id}", 200, auth=admin_auth)
+            
+            if success:
+                print(f"✅ Retrieved specific program: {specific_program.get('title')}")
+                
+                # Verify the ID matches
+                if specific_program.get('id') == test_program_id:
+                    print(f"✅ Program ID matches requested ID")
+                else:
+                    print(f"❌ Program ID mismatch: expected {test_program_id}, got {specific_program.get('id')}")
+                    self.failed_tests.append("Get Specific Program - ID mismatch")
+            
+            # Test non-existent program ID
+            success, response = self.run_test("Get Non-existent Program", "GET", "programs/nonexistent-id", 404, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent program")
+            else:
+                print(f"❌ Should return 404 for non-existent program")
+                self.failed_tests.append("Get Specific Program - Should return 404 for non-existent ID")
+        
+        # VERIFICATION 5: Test POST /api/programs/{id}/analyze - AI Analysis
+        print(f"\n🔍 VERIFICATION 5: AI Analysis Endpoints")
+        
+        if created_program_ids:
+            test_program_id = created_program_ids[0]
+            
+            # Test summary analysis
+            summary_request = {
+                "program_id": test_program_id,
+                "analysis_type": "summary"
+            }
+            
+            success, summary_response = self.run_test("AI Summary Analysis", "POST", f"programs/{test_program_id}/analyze", 200, data=summary_request, auth=admin_auth)
+            
+            if success:
+                print(f"✅ AI Summary analysis completed")
+                
+                # Verify response structure
+                required_fields = ['program_id', 'analysis_type', 'result', 'processing_time', 'model_used']
+                missing_fields = [field for field in required_fields if field not in summary_response]
+                
+                if missing_fields:
+                    print(f"❌ AI Analysis: Missing fields: {missing_fields}")
+                    self.failed_tests.append(f"AI Analysis - Missing fields: {missing_fields}")
+                else:
+                    print(f"✅ AI Analysis: All required fields present")
+                
+                # Check if summary was generated
+                if summary_response.get('result', {}).get('summary'):
+                    print(f"✅ AI Summary generated successfully")
+                    print(f"   Model used: {summary_response.get('model_used')}")
+                    print(f"   Processing time: {summary_response.get('processing_time')}s")
+                else:
+                    print(f"❌ AI Summary not generated")
+                    self.failed_tests.append("AI Analysis - Summary not generated")
+            
+            # Test highlights analysis
+            highlights_request = {
+                "program_id": test_program_id,
+                "analysis_type": "highlights"
+            }
+            
+            success, highlights_response = self.run_test("AI Highlights Analysis", "POST", f"programs/{test_program_id}/analyze", 200, data=highlights_request, auth=admin_auth)
+            
+            if success:
+                print(f"✅ AI Highlights analysis completed")
+                highlights = highlights_response.get('result', {}).get('highlights', [])
+                if highlights and isinstance(highlights, list):
+                    print(f"✅ AI Highlights generated: {len(highlights)} highlights")
+                else:
+                    print(f"❌ AI Highlights not generated properly")
+                    self.failed_tests.append("AI Analysis - Highlights not generated")
+            
+            # Test keywords analysis
+            keywords_request = {
+                "program_id": test_program_id,
+                "analysis_type": "keywords"
+            }
+            
+            success, keywords_response = self.run_test("AI Keywords Analysis", "POST", f"programs/{test_program_id}/analyze", 200, data=keywords_request, auth=admin_auth)
+            
+            if success:
+                print(f"✅ AI Keywords analysis completed")
+                keywords = keywords_response.get('result', {}).get('keywords', [])
+                if keywords and isinstance(keywords, list):
+                    print(f"✅ AI Keywords generated: {len(keywords)} keywords")
+                else:
+                    print(f"❌ AI Keywords not generated properly")
+                    self.failed_tests.append("AI Analysis - Keywords not generated")
+            
+            # Test translation analysis
+            translation_request = {
+                "program_id": test_program_id,
+                "analysis_type": "translate",
+                "target_language": "fr"
+            }
+            
+            success, translation_response = self.run_test("AI Translation Analysis", "POST", f"programs/{test_program_id}/analyze", 200, data=translation_request, auth=admin_auth)
+            
+            if success:
+                print(f"✅ AI Translation analysis completed")
+                translation = translation_response.get('result', {}).get('translation')
+                if translation:
+                    print(f"✅ AI Translation generated to French")
+                    print(f"   Model used: {translation_response.get('model_used')}")
+                else:
+                    print(f"❌ AI Translation not generated")
+                    self.failed_tests.append("AI Analysis - Translation not generated")
+            
+            # Test invalid analysis type
+            invalid_request = {
+                "program_id": test_program_id,
+                "analysis_type": "invalid_type"
+            }
+            
+            success, response = self.run_test("AI Analysis - Invalid Type", "POST", f"programs/{test_program_id}/analyze", 400, data=invalid_request, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly rejects invalid analysis type")
+            else:
+                print(f"❌ Should reject invalid analysis type")
+                self.failed_tests.append("AI Analysis - Should reject invalid analysis type")
+        
+        # VERIFICATION 6: Test POST /api/programs/search - AI-powered search
+        print(f"\n🔍 VERIFICATION 6: AI-Powered Program Search")
+        
+        # Test basic search
+        search_request = {
+            "query": "faith hope Christ",
+            "limit": 10
+        }
+        
+        success, search_response = self.run_test("Program Search - Basic", "POST", "programs/search", 200, data=search_request, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Program search completed")
+            
+            # Verify response structure
+            required_fields = ['query', 'total_results', 'programs']
+            missing_fields = [field for field in required_fields if field not in search_response]
+            
+            if missing_fields:
+                print(f"❌ Search Response: Missing fields: {missing_fields}")
+                self.failed_tests.append(f"Program Search - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Search Response: All required fields present")
+            
+            total_results = search_response.get('total_results', 0)
+            programs = search_response.get('programs', [])
+            
+            print(f"✅ Search found {total_results} results")
+            
+            if programs and isinstance(programs, list):
+                print(f"✅ Search returned program list with {len(programs)} items")
+                
+                # Verify program structure
+                if len(programs) > 0:
+                    sample_program = programs[0]
+                    program_fields = ['id', 'title', 'content']
+                    missing_program_fields = [field for field in program_fields if field not in sample_program]
+                    
+                    if missing_program_fields:
+                        print(f"❌ Search Programs: Missing fields: {missing_program_fields}")
+                        self.failed_tests.append(f"Program Search - Program missing fields: {missing_program_fields}")
+                    else:
+                        print(f"✅ Search Programs: All required fields present")
+            else:
+                print(f"❌ Search programs not returned as list")
+                self.failed_tests.append("Program Search - Programs not returned as list")
+        
+        # Test search with filters
+        filtered_search_request = {
+            "query": "devotion",
+            "language": "en",
+            "program_type": "devotion",
+            "limit": 5
+        }
+        
+        success, filtered_search = self.run_test("Program Search - Filtered", "POST", "programs/search", 200, data=filtered_search_request, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Filtered search completed")
+            filtered_results = filtered_search.get('total_results', 0)
+            print(f"✅ Filtered search found {filtered_results} results")
+        
+        # Test search with date range
+        date_search_request = {
+            "query": "community",
+            "date_range": {
+                "start": "2025-01-01",
+                "end": "2025-01-31"
+            },
+            "limit": 10
+        }
+        
+        success, date_search = self.run_test("Program Search - Date Range", "POST", "programs/search", 200, data=date_search_request, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Date range search completed")
+            date_results = date_search.get('total_results', 0)
+            print(f"✅ Date range search found {date_results} results")
+        
+        # VERIFICATION 7: Test GET /api/programs/stats/overview - Analytics
+        print(f"\n🔍 VERIFICATION 7: Program Analytics Overview")
+        
+        success, stats_response = self.run_test("Program Analytics", "GET", "programs/stats/overview", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Program analytics retrieved successfully")
+            
+            # Verify response structure
+            required_fields = ['total_programs', 'ai_analysis_coverage', 'by_language', 'by_type', 'recent_programs']
+            missing_fields = [field for field in required_fields if field not in stats_response]
+            
+            if missing_fields:
+                print(f"❌ Analytics: Missing fields: {missing_fields}")
+                self.failed_tests.append(f"Program Analytics - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Analytics: All required fields present")
+            
+            # Verify AI analysis coverage
+            ai_coverage = stats_response.get('ai_analysis_coverage', {})
+            coverage_fields = ['with_summary', 'with_highlights', 'with_keywords', 'summary_percentage', 'highlights_percentage', 'keywords_percentage']
+            missing_coverage_fields = [field for field in coverage_fields if field not in ai_coverage]
+            
+            if missing_coverage_fields:
+                print(f"❌ AI Coverage: Missing fields: {missing_coverage_fields}")
+                self.failed_tests.append(f"AI Coverage - Missing fields: {missing_coverage_fields}")
+            else:
+                print(f"✅ AI Coverage: All required fields present")
+            
+            # Display analytics data
+            total_programs = stats_response.get('total_programs', 0)
+            print(f"   Total Programs: {total_programs}")
+            
+            if ai_coverage:
+                print(f"   AI Analysis Coverage:")
+                print(f"     - Summary: {ai_coverage.get('with_summary', 0)} ({ai_coverage.get('summary_percentage', 0)}%)")
+                print(f"     - Highlights: {ai_coverage.get('with_highlights', 0)} ({ai_coverage.get('highlights_percentage', 0)}%)")
+                print(f"     - Keywords: {ai_coverage.get('with_keywords', 0)} ({ai_coverage.get('keywords_percentage', 0)}%)")
+            
+            by_language = stats_response.get('by_language', {})
+            if by_language:
+                print(f"   Programs by Language: {by_language}")
+            
+            by_type = stats_response.get('by_type', {})
+            if by_type:
+                print(f"   Programs by Type: {by_type}")
+            
+            recent_programs = stats_response.get('recent_programs', [])
+            print(f"   Recent Programs: {len(recent_programs)} items")
+        
+        # VERIFICATION 8: Test Data Validation
+        print(f"\n🔍 VERIFICATION 8: Data Validation Testing")
+        
+        # Test invalid program data
+        invalid_data_tests = [
+            ({}, "Empty data"),
+            ({"title": ""}, "Empty title"),
+            ({"title": "Test", "content": ""}, "Empty content"),
+            ({"title": "Test", "content": "Content", "language": "invalid"}, "Invalid language"),
+            ({"title": "Test", "content": "Content", "duration_minutes": -30}, "Negative duration")
+        ]
+        
+        for invalid_data, test_name in invalid_data_tests:
+            success, response = self.run_test(f"Validation - {test_name}", "POST", "programs", 422, data=invalid_data, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly rejects {test_name.lower()}")
+            else:
+                print(f"❌ Should reject {test_name.lower()}")
+                self.failed_tests.append(f"Validation - Should reject {test_name.lower()}")
+        
+        # VERIFICATION 9: Test Error Handling
+        print(f"\n🔍 VERIFICATION 9: Error Handling")
+        
+        # Test analysis on non-existent program
+        success, response = self.run_test("Analysis - Non-existent Program", "POST", "programs/nonexistent-id/analyze", 404, 
+                                         data={"analysis_type": "summary"}, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly returns 404 for non-existent program analysis")
+        else:
+            print(f"❌ Should return 404 for non-existent program analysis")
+            self.failed_tests.append("Error Handling - Should return 404 for non-existent program")
+        
+        # Clean up test programs
+        print(f"\n🔍 CLEANUP: Removing Test Programs")
+        for program_id in created_program_ids:
+            # Note: DELETE endpoint not implemented in the AI Program Assistant, 
+            # so we'll clean up via direct database operation in a real scenario
+            print(f"   Test program {program_id[:8]}... would be cleaned up")
+        
+        # Final summary for AI Program Assistant
+        print(f"\n📊 AI PROGRAM ASSISTANT VERIFICATION SUMMARY:")
+        print(f"   Authentication: {'✅ WORKING' if len([t for t in self.failed_tests if 'authentication' in t.lower() and 'program' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Program CRUD: {'✅ WORKING' if len([t for t in self.failed_tests if any(op in t.lower() for op in ['create', 'get']) and 'program' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   AI Analysis: {'✅ WORKING' if len([t for t in self.failed_tests if 'ai analysis' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Search Function: {'✅ WORKING' if len([t for t in self.failed_tests if 'search' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Analytics: {'✅ WORKING' if len([t for t in self.failed_tests if 'analytics' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Data Validation: {'✅ WORKING' if len([t for t in self.failed_tests if 'validation' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Error Handling: {'✅ WORKING' if len([t for t in self.failed_tests if 'error handling' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Created Test Programs: {len(created_program_ids)}")
+        print(f"   Emergent LLM Integration: {'✅ CONFIGURED' if os.environ.get('EMERGENT_LLM_KEY') else '❌ NOT CONFIGURED'}")
+
     def test_new_french_programs_verification(self):
         """CRITICAL TEST: Verify the two new French programs added to Kioo Radio schedule"""
         print("\n=== CRITICAL VERIFICATION: NEW FRENCH PROGRAMS ===")
