@@ -10,6 +10,7 @@ const API = `${BACKEND_URL}/api`;
 const Home = () => {
   const [impactStories, setImpactStories] = useState([]);
   const [latestNews, setLatestNews] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchHomeData = async () => {
