@@ -1803,6 +1803,136 @@ class ContactUpdate(BaseModel):
     tags: Optional[List[str]] = None
     last_contact_date: Optional[datetime] = None
 
+# CSV Import Models
+class VisitorRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date_iso: str  # YYYY-MM-DD format
+    name: str
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    country: Optional[str] = None
+    county_or_prefecture: Optional[str] = None
+    city_town: Optional[str] = None
+    program: Optional[str] = None
+    language: Optional[str] = None
+    testimony: Optional[str] = None
+    source: str = "web"  # web/whatsapp/call
+    consent_y_n: str = "Y"  # Y/N
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class DonationRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date_iso: str  # YYYY-MM-DD format
+    donor_name: str
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    country: Optional[str] = None
+    method: str  # OrangeMoney/Lonestar/PayPal/Bank
+    amount_currency: str  # LRD/USD
+    amount: float
+    project_code: Optional[str] = None
+    note: Optional[str] = None
+    receipt_no: Optional[str] = None
+    anonymous_y_n: str = "N"  # Y/N
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ProjectRecord(BaseModel):
+    project_code: str
+    name: str
+    description_short: Optional[str] = None
+    start_date_iso: Optional[str] = None  # YYYY-MM-DD format
+    end_date_iso: Optional[str] = None  # YYYY-MM-DD format
+    status: str = "planned"  # planned/active/completed
+    budget_currency: str = "USD"  # LRD/USD
+    budget_amount: Optional[float] = None
+    manager: Optional[str] = None
+    country: Optional[str] = None
+    tags: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class FinanceRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date_iso: str  # YYYY-MM-DD format
+    type: str  # income/expense
+    category: str
+    subcategory: Optional[str] = None
+    amount_currency: str  # LRD/USD
+    amount: float
+    method: Optional[str] = None
+    reference: Optional[str] = None
+    project_code: Optional[str] = None
+    notes: Optional[str] = None
+    attachment_url: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class TaskReminderRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    due_date_iso: str  # YYYY-MM-DD format
+    agency: str  # LRA/LTA/MICAT/Business Registry/Other
+    description_short: str
+    amount_currency: Optional[str] = None  # LRD/USD
+    amount: Optional[float] = None
+    status: str = "open"  # open/done
+    recurrence: str = "one-time"  # annual/one-time
+    contact_person: Optional[str] = None
+    notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserRoleRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    role: str  # admin/finance/project/volunteer
+    email: EmailStr
+    country: Optional[str] = None
+    language_default: str = "en"  # en/fr
+    phone: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class InvoiceRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date_iso: str  # YYYY-MM-DD format
+    donor_name: str
+    contact: Optional[str] = None
+    project_code: Optional[str] = None
+    amount_currency: str  # LRD/USD
+    amount: float
+    status: str = "draft"  # draft/sent/paid
+    due_date_iso: Optional[str] = None  # YYYY-MM-DD format
+    receipt_no: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class StoryRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    date_iso: str  # YYYY-MM-DD format
+    name_or_anonymous: str
+    location: Optional[str] = None
+    country: Optional[str] = None
+    program: Optional[str] = None
+    language: Optional[str] = None
+    story_text: str
+    approved_y_n: str = "N"  # Y/N
+    publish_url: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+# CSV Import Response Models
+class ImportResult(BaseModel):
+    success: bool
+    imported_count: int
+    error_count: int
+    errors: List[str] = []
+    validation_errors: List[str] = []
+
+class ImportSchedule(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    file_type: str  # visitors, donations, projects, etc.
+    cron_expression: str  # e.g., "0 6 * * *" for daily at 6am
+    source_url: Optional[str] = None  # for recurring imports from URLs
+    last_run: Optional[datetime] = None
+    next_run: Optional[datetime] = None
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # CRM endpoints with authentication
 security = HTTPBasic()
 
