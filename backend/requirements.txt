@@ -40,3 +40,4 @@ docxtpl
 Jinja2
 matplotlib
 plotly
+seaborn
