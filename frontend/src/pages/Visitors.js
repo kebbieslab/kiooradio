@@ -50,7 +50,7 @@ const Visitors = () => {
       loadVisitors();
       loadStats();
     } else {
-      setError(t('invalid_credentials') || 'Invalid username or password');
+      setError(t('invalidCredentials') || 'Invalid username or password');
     }
   };
 
