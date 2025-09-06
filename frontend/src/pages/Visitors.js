@@ -312,7 +312,7 @@ const Visitors = () => {
     <>
       <Helmet>
         <meta name="robots" content="noindex,nofollow" />
-        <title>{t('visitors_management') || 'Visitors Management'} - Kioo Radio</title>
+        <title>{t('visitorsManagement') || 'Visitors Management'} - Kioo Radio</title>
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
