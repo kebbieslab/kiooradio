@@ -103,6 +103,7 @@ function App() {
             <Route path="/donations" element={<Donations />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/project-detail/:projectCode" element={<ProjectDetail />} />
+            <Route path="/program-assistant" element={<ProgramAssistant />} />
             <Route path="/crm" element={<CRM />} />
             <Route path="/admin" element={<Dashboard />} />
             <Route path="/admin-dashboard" element={<Dashboard />} />
