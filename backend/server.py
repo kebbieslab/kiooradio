@@ -1758,6 +1758,46 @@ async def get_coverage_areas():
         "signal_strength": "Strong FM signal covering 150+ mile radius"
     }
 
+# CRM Models
+class Contact(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    phone: Optional[str] = None
+    organization: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
+    contact_type: str = "general"  # general, church_partner, donor, volunteer, presenter
+    source: str = "manual"  # manual, contact_form, newsletter, church_partner
+    notes: Optional[str] = None
+    tags: List[str] = []
+    last_contact_date: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ContactCreate(BaseModel):
+    name: str
+    email: str
+    phone: Optional[str] = None
+    organization: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
+    contact_type: str = "general"
+    notes: Optional[str] = None
+    tags: List[str] = []
+
+class ContactUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    organization: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
+    contact_type: Optional[str] = None
+    notes: Optional[str] = None
+    tags: Optional[List[str]] = None
+    last_contact_date: Optional[datetime] = None
+
 # Include the router in the main app
 app.include_router(api_router)
 
