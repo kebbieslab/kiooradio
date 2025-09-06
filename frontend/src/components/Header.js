@@ -4,25 +4,25 @@ import { useTranslation, switchLanguage as switchLang } from '../utils/i18n';
 
 const Header = ({ setIsPlayerVisible }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState('en');
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const location = useLocation();
+  const { t, language, switchLanguage } = useTranslation();
 
-  // Reduced navigation - About moved right after Home
+  // Navigation items with translation keys
   const navigation = [
-    { name: 'Home', nameKey: 'navHome', path: '/', icon: '🏠' },
-    { name: 'About', nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
-    { name: 'Programs', nameKey: 'navPrograms', path: '/programs', icon: '📅' },
-    { name: 'Partner Churches', nameKey: 'navChurches', path: '/church-partners', icon: '⛪' },
-    { name: 'Impact', nameKey: 'navImpact', path: '/impact', icon: '💝' },
+    { name: t('navHome'), nameKey: 'navHome', path: '/', icon: '🏠' },
+    { name: t('navAbout'), nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
+    { name: t('navPrograms'), nameKey: 'navPrograms', path: '/programs', icon: '📅' },
+    { name: t('navChurches'), nameKey: 'navChurches', path: '/church-partners', icon: '⛪' },
+    { name: t('navImpact'), nameKey: 'navImpact', path: '/impact', icon: '💝' },
     { 
-      name: 'Donate', 
+      name: t('navDonate'), 
       nameKey: 'navDonate', 
       path: '/donate', 
       icon: '💖',
       dropdown: [
-        { name: 'General Giving', path: '/donate', icon: '💝' },
-        { name: 'Major Gifts', path: '/donate/major-gifts', icon: '🎁' }
+        { name: t('generalGiving'), path: '/donate', icon: '💝' },
+        { name: t('majorGifts'), path: '/donate/major-gifts', icon: '🎁' }
       ]
     },
   ];
