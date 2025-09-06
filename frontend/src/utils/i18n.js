@@ -162,7 +162,29 @@ export const labels = {
     
     // Language Switch
     switchToEnglish: "Switch to English",
-    switchToFrench: "Switch to French"
+    switchToFrench: "Switch to French",
+    
+    // Dashboard
+    dashboardAccess: "Dashboard Access",
+    dashboardAccessDesc: "Please enter your credentials to access the admin dashboard",
+    username: "Username",
+    password: "Password",
+    accessDashboard: "Access Dashboard",
+    kiooRadioDashboard: "Kioo Radio Dashboard",
+    adminOverview: "Administrative Overview",
+    lastUpdated: "Last updated",
+    refreshing: "Refreshing...",
+    refresh: "Refresh",
+    logout: "Logout",
+    visitorsThisMonth: "Visitors This Month",
+    donationsThisMonth: "Donations This Month",
+    netIncome: "Net Income",
+    openReminders: "Open Reminders",
+    approvedStories: "Approved Stories",
+    incomeVsExpenses: "Income vs Expenses",
+    income: "Income",
+    expenses: "Expenses",
+    donationsByProject: "Donations by Project"
   },
   
   fr: {
