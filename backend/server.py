@@ -4580,8 +4580,7 @@ async def analyze_ai_program(
 
 @api_router.post("/ai-programs/search")
 async def search_ai_programs(
-    request: ProgramSearchRequest,
-    admin: str = Depends(authenticate_admin)
+    request: ProgramSearchRequest
 ):
     """AI-powered semantic search of AI programs"""
     try:
