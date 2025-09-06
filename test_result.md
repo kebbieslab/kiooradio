@@ -457,10 +457,8 @@ Enhance CRM Projects section with receipt management, multimedia uploads, AI-pow
 
 ## test_plan:
   current_focus:
-    - "AI Program Assistant Backend Implementation"
-    - "AI Program Assistant Frontend Interface"
-  stuck_tasks:
-    - "AI Program Assistant Backend Implementation"
+    - "Enhanced CRM Projects with Dropbox Integration and AI Receipt Analysis"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
