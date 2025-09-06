@@ -169,6 +169,8 @@ const CRMMergeStatus = ({ onBack }) => {
       await runFallbackDiagnostics();
     } finally {
       setIsRunningDiagnostics(false);
+      setDiagnosticsProgress(0);
+      setCurrentlyAnalyzing('');
     }
   };
 
