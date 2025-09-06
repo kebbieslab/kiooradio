@@ -103,7 +103,7 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-Build comprehensive Visitors list + form system with table display (date_iso, name, phone, email, country, program, language, testimony, source, consent_y_n), filters (month, country, program, source), "Add Visitor/Testimony" form with required fields (date, country, program, testimony, consent), row actions (edit, delete, export CSV/XLSX), and bilingual labels via EN/FR toggle.
+Build comprehensive Donations list + form system with table display (date_iso, donor_name, country, method, amount_currency, amount, project_code, note, receipt_no, anonymous_y_n), filters (month, project_code, method, anonymous), "Add Donation" form with validation (amount > 0), running totals (this month, YTD), row actions (edit, delete, export CSV/XLSX), and bilingual labels via EN/FR toggle.
 
 ## backend:
   - task: "Visitors Management CRUD Endpoints"
