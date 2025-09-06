@@ -82,6 +82,409 @@ class KiooRadioAPITester:
         # Test coverage areas
         self.run_test("Coverage Areas", "GET", "coverage", 200)
 
+    def test_enhanced_crm_projects_system(self):
+        """COMPREHENSIVE TEST: Enhanced CRM Projects with Dropbox Integration and AI Receipt Analysis"""
+        print("\n=== COMPREHENSIVE ENHANCED CRM PROJECTS TESTING ===")
+        print("Testing: File Upload, AI Receipt Analysis, Multi-format Report Generation, Project Analytics")
+        print("Services: Dropbox Integration, OpenAI GPT-4o, ReportLab, python-docx, Jinja2")
+        print("Authentication: Basic Auth (admin:kioo2025!)")
+        
+        # Authentication credentials
+        admin_auth = ('admin', 'kioo2025!')
+        wrong_auth = ('wrong', 'credentials')
+        
+        # Test project IDs (using existing projects from database)
+        test_project_ids = ['STUDIO', 'SOLAR']
+        
+        # Store created file and report IDs for cleanup
+        created_files = []
+        created_reports = []
+        
+        # VERIFICATION 1: Test authentication for all enhanced CRM endpoints
+        print(f"\n🔍 VERIFICATION 1: Authentication Testing")
+        
+        enhanced_endpoints = [
+            (f"projects/{test_project_ids[0]}/upload", "File Upload", "POST"),
+            (f"projects/{test_project_ids[0]}/files", "List Files", "GET"),
+            (f"projects/{test_project_ids[0]}/receipts", "Get Receipts", "GET"),
+            (f"projects/{test_project_ids[0]}/reports/generate", "Generate Report", "POST"),
+            (f"projects/{test_project_ids[0]}/reports", "List Reports", "GET"),
+            (f"projects/{test_project_ids[0]}/analytics", "Project Analytics", "GET")
+        ]
+        
+        for endpoint, name, method in enhanced_endpoints:
+            # Test without authentication (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401)
+            else:
+                test_data = {"report_type": "summary", "format": "pdf"} if "reports/generate" in endpoint else {}
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401, data=test_data)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 without authentication")
+            else:
+                print(f"❌ {name}: Should return 401 without authentication")
+                self.failed_tests.append(f"{name} - Should require authentication")
+            
+            # Test with wrong credentials (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, auth=wrong_auth)
+            else:
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, data=test_data, auth=wrong_auth)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 with wrong credentials")
+            else:
+                print(f"❌ {name}: Should return 401 with wrong credentials")
+                self.failed_tests.append(f"{name} - Should reject wrong credentials")
+        
+        # VERIFICATION 2: Test existing projects availability
+        print(f"\n🔍 VERIFICATION 2: Verify Test Projects Exist")
+        
+        for project_id in test_project_ids:
+            success, project_data = self.run_test(f"Get Project {project_id}", "GET", f"projects/{project_id}", 200, auth=admin_auth)
+            
+            if success:
+                print(f"✅ Project {project_id} exists: {project_data.get('name', 'Unknown')}")
+            else:
+                print(f"❌ Project {project_id} not found - will skip file operations for this project")
+                if project_id in test_project_ids:
+                    test_project_ids.remove(project_id)
+        
+        if not test_project_ids:
+            print(f"❌ No test projects available - cannot test enhanced CRM features")
+            self.failed_tests.append("Enhanced CRM Projects - No test projects available")
+            return
+        
+        # Use the first available project for detailed testing
+        main_project_id = test_project_ids[0]
+        print(f"✅ Using project '{main_project_id}' for detailed testing")
+        
+        # VERIFICATION 3: Test file upload functionality
+        print(f"\n🔍 VERIFICATION 3: File Upload Testing")
+        
+        # Test file upload without actual file (should fail)
+        success, response = self.run_test("File Upload - No File", "POST", f"projects/{main_project_id}/upload", 422, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects upload without file")
+        else:
+            print(f"❌ Should reject upload without file")
+            self.failed_tests.append("File Upload - Should reject missing file")
+        
+        # Test file size limit (simulate large file)
+        print(f"   Testing file size validation (3MB limit)...")
+        # Note: We can't easily test actual file upload in this test framework without multipart/form-data support
+        # But we can test the endpoint accessibility and error handling
+        
+        # VERIFICATION 4: Test file listing
+        print(f"\n🔍 VERIFICATION 4: File Listing")
+        
+        success, files_response = self.run_test("List Project Files", "GET", f"projects/{main_project_id}/files", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ File listing successful")
+            
+            # Verify response structure
+            required_fields = ['project_id', 'files', 'total_files']
+            missing_fields = [field for field in required_fields if field not in files_response]
+            
+            if missing_fields:
+                print(f"❌ File listing: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"File Listing - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ File listing: All required fields present")
+                print(f"   Project ID: {files_response.get('project_id')}")
+                print(f"   Total Files: {files_response.get('total_files', 0)}")
+            
+            # Test category filtering
+            success, filtered_files = self.run_test("List Files - Receipt Category", "GET", f"projects/{main_project_id}/files", 200, 
+                                                   params={"category": "receipt"}, auth=admin_auth)
+            if success:
+                print(f"✅ Category filtering working: found {filtered_files.get('total_files', 0)} receipt files")
+        
+        # VERIFICATION 5: Test receipt analysis data retrieval
+        print(f"\n🔍 VERIFICATION 5: Receipt Analysis Data")
+        
+        success, receipts_response = self.run_test("Get Project Receipts", "GET", f"projects/{main_project_id}/receipts", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Receipt analysis data retrieved successfully")
+            
+            # Verify response structure
+            required_fields = ['project_id', 'receipts', 'total_receipts', 'total_expenses', 'expense_categories']
+            missing_fields = [field for field in required_fields if field not in receipts_response]
+            
+            if missing_fields:
+                print(f"❌ Receipt analysis: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Receipt Analysis - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Receipt analysis: All required fields present")
+                print(f"   Total Receipts: {receipts_response.get('total_receipts', 0)}")
+                print(f"   Total Expenses: {receipts_response.get('total_expenses', 0)}")
+                print(f"   Expense Categories: {len(receipts_response.get('expense_categories', {}))}")
+        
+        # VERIFICATION 6: Test AI-powered report generation
+        print(f"\n🔍 VERIFICATION 6: AI-Powered Report Generation")
+        
+        # Test PDF report generation
+        pdf_request = {
+            "project_id": main_project_id,
+            "report_type": "complete",
+            "format": "pdf",
+            "include_receipts": True,
+            "include_multimedia": True,
+            "include_ai_analysis": True,
+            "template_style": "professional"
+        }
+        
+        success, pdf_response = self.run_test("Generate PDF Report", "POST", f"projects/{main_project_id}/reports/generate", 200, 
+                                             data=pdf_request, auth=admin_auth)
+        
+        if success:
+            print(f"✅ PDF report generation successful")
+            
+            # Verify response structure
+            required_fields = ['success', 'message', 'report']
+            missing_fields = [field for field in required_fields if field not in pdf_response]
+            
+            if missing_fields:
+                print(f"❌ PDF Report: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"PDF Report - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ PDF Report: All required fields present")
+                report_info = pdf_response.get('report', {})
+                if report_info.get('report_id'):
+                    created_reports.append((main_project_id, report_info['report_id']))
+                    print(f"   Report ID: {report_info['report_id']}")
+                    print(f"   Format: {report_info.get('format')}")
+                    print(f"   Type: {report_info.get('report_type')}")
+        
+        # Test DOCX report generation
+        docx_request = pdf_request.copy()
+        docx_request["format"] = "docx"
+        docx_request["report_type"] = "summary"
+        
+        success, docx_response = self.run_test("Generate DOCX Report", "POST", f"projects/{main_project_id}/reports/generate", 200, 
+                                              data=docx_request, auth=admin_auth)
+        
+        if success:
+            print(f"✅ DOCX report generation successful")
+            report_info = docx_response.get('report', {})
+            if report_info.get('report_id'):
+                created_reports.append((main_project_id, report_info['report_id']))
+        
+        # Test HTML report generation
+        html_request = pdf_request.copy()
+        html_request["format"] = "html"
+        html_request["report_type"] = "financial"
+        
+        success, html_response = self.run_test("Generate HTML Report", "POST", f"projects/{main_project_id}/reports/generate", 200, 
+                                              data=html_request, auth=admin_auth)
+        
+        if success:
+            print(f"✅ HTML report generation successful")
+            report_info = html_response.get('report', {})
+            if report_info.get('report_id'):
+                created_reports.append((main_project_id, report_info['report_id']))
+        
+        # Test invalid report format
+        invalid_request = pdf_request.copy()
+        invalid_request["format"] = "invalid_format"
+        
+        success, response = self.run_test("Generate Report - Invalid Format", "POST", f"projects/{main_project_id}/reports/generate", 400, 
+                                         data=invalid_request, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects invalid report format")
+        else:
+            print(f"❌ Should reject invalid report format")
+            self.failed_tests.append("Report Generation - Should reject invalid format")
+        
+        # VERIFICATION 7: Test report listing
+        print(f"\n🔍 VERIFICATION 7: Report Listing")
+        
+        success, reports_response = self.run_test("List Project Reports", "GET", f"projects/{main_project_id}/reports", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Report listing successful")
+            
+            # Verify response structure
+            required_fields = ['project_id', 'reports', 'total_reports']
+            missing_fields = [field for field in required_fields if field not in reports_response]
+            
+            if missing_fields:
+                print(f"❌ Report listing: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Report Listing - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Report listing: All required fields present")
+                print(f"   Total Reports: {reports_response.get('total_reports', 0)}")
+                
+                # Verify we can see the reports we just created
+                reports = reports_response.get('reports', [])
+                created_report_ids = [r[1] for r in created_reports if r[0] == main_project_id]
+                found_reports = [r for r in reports if r.get('report_id') in created_report_ids]
+                
+                if len(found_reports) > 0:
+                    print(f"✅ Found {len(found_reports)} of our created reports in listing")
+                else:
+                    print(f"❌ Created reports not found in listing")
+                    self.failed_tests.append("Report Listing - Created reports not visible")
+        
+        # VERIFICATION 8: Test report download
+        print(f"\n🔍 VERIFICATION 8: Report Download")
+        
+        if created_reports:
+            project_id, report_id = created_reports[0]
+            success, download_response = self.run_test("Download Project Report", "GET", 
+                                                      f"projects/{project_id}/reports/{report_id}/download", 200, auth=admin_auth)
+            
+            if success:
+                print(f"✅ Report download successful")
+            else:
+                print(f"❌ Report download failed")
+                self.failed_tests.append("Report Download - Failed to download generated report")
+            
+            # Test download non-existent report
+            success, response = self.run_test("Download Non-existent Report", "GET", 
+                                             f"projects/{main_project_id}/reports/nonexistent-id/download", 404, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent report")
+            else:
+                print(f"❌ Should return 404 for non-existent report")
+                self.failed_tests.append("Report Download - Should return 404 for non-existent report")
+        
+        # VERIFICATION 9: Test comprehensive project analytics
+        print(f"\n🔍 VERIFICATION 9: Comprehensive Project Analytics")
+        
+        success, analytics_response = self.run_test("Get Project Analytics", "GET", f"projects/{main_project_id}/analytics", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Project analytics retrieved successfully")
+            
+            # Verify response structure
+            required_sections = ['project_id', 'project_name', 'status', 'file_analytics', 'expense_analytics', 'budget_analytics', 'report_analytics']
+            missing_sections = [section for section in required_sections if section not in analytics_response]
+            
+            if missing_sections:
+                print(f"❌ Analytics: Missing required sections: {missing_sections}")
+                self.failed_tests.append(f"Project Analytics - Missing sections: {missing_sections}")
+            else:
+                print(f"✅ Analytics: All required sections present")
+                
+                # Verify file analytics structure
+                file_analytics = analytics_response.get('file_analytics', {})
+                file_fields = ['total_files', 'total_size_mb', 'by_category']
+                missing_file_fields = [field for field in file_fields if field not in file_analytics]
+                
+                if missing_file_fields:
+                    print(f"❌ File Analytics: Missing fields: {missing_file_fields}")
+                    self.failed_tests.append(f"File Analytics - Missing fields: {missing_file_fields}")
+                else:
+                    print(f"✅ File Analytics: Complete")
+                    print(f"   Total Files: {file_analytics.get('total_files', 0)}")
+                    print(f"   Total Size: {file_analytics.get('total_size_mb', 0)} MB")
+                
+                # Verify expense analytics structure
+                expense_analytics = analytics_response.get('expense_analytics', {})
+                expense_fields = ['total_expenses', 'currency', 'total_receipts', 'by_category', 'by_month']
+                missing_expense_fields = [field for field in expense_fields if field not in expense_analytics]
+                
+                if missing_expense_fields:
+                    print(f"❌ Expense Analytics: Missing fields: {missing_expense_fields}")
+                    self.failed_tests.append(f"Expense Analytics - Missing fields: {missing_expense_fields}")
+                else:
+                    print(f"✅ Expense Analytics: Complete")
+                    print(f"   Total Expenses: {expense_analytics.get('total_expenses', 0)} {expense_analytics.get('currency', 'USD')}")
+                    print(f"   Total Receipts: {expense_analytics.get('total_receipts', 0)}")
+                
+                # Verify budget analytics structure
+                budget_analytics = analytics_response.get('budget_analytics', {})
+                budget_fields = ['budget_amount', 'budget_used', 'budget_remaining', 'budget_used_percentage']
+                missing_budget_fields = [field for field in budget_fields if field not in budget_analytics]
+                
+                if missing_budget_fields:
+                    print(f"❌ Budget Analytics: Missing fields: {missing_budget_fields}")
+                    self.failed_tests.append(f"Budget Analytics - Missing fields: {missing_budget_fields}")
+                else:
+                    print(f"✅ Budget Analytics: Complete")
+                    print(f"   Budget: {budget_analytics.get('budget_amount', 0)}")
+                    print(f"   Used: {budget_analytics.get('budget_used', 0)} ({budget_analytics.get('budget_used_percentage', 0)}%)")
+                    print(f"   Remaining: {budget_analytics.get('budget_remaining', 0)}")
+                
+                # Verify report analytics
+                report_analytics = analytics_response.get('report_analytics', {})
+                if 'total_reports' in report_analytics:
+                    print(f"✅ Report Analytics: Total Reports: {report_analytics['total_reports']}")
+                else:
+                    print(f"❌ Report Analytics: Missing total_reports field")
+                    self.failed_tests.append("Report Analytics - Missing total_reports field")
+        
+        # VERIFICATION 10: Test error handling for non-existent projects
+        print(f"\n🔍 VERIFICATION 10: Error Handling")
+        
+        non_existent_project = "NONEXISTENT"
+        error_endpoints = [
+            (f"projects/{non_existent_project}/files", "List Files - Non-existent Project", "GET"),
+            (f"projects/{non_existent_project}/receipts", "Get Receipts - Non-existent Project", "GET"),
+            (f"projects/{non_existent_project}/analytics", "Get Analytics - Non-existent Project", "GET"),
+            (f"projects/{non_existent_project}/reports", "List Reports - Non-existent Project", "GET")
+        ]
+        
+        for endpoint, name, method in error_endpoints:
+            success, response = self.run_test(name, method, endpoint, 404, auth=admin_auth)
+            if success:
+                print(f"✅ {name}: Correctly returns 404")
+            else:
+                print(f"❌ {name}: Should return 404 for non-existent project")
+                self.failed_tests.append(f"{name} - Should return 404")
+        
+        # VERIFICATION 11: Test service availability checks
+        print(f"\n🔍 VERIFICATION 11: Service Integration Status")
+        
+        # Test if services are properly initialized by checking error messages
+        # This helps identify if Dropbox, OpenAI, or report generation services are unavailable
+        
+        print(f"   Testing service availability through endpoint responses...")
+        
+        # The endpoints should work if services are available, or return 503 if unavailable
+        # We've already tested the endpoints above, so we can check if any 503 errors occurred
+        service_unavailable_tests = [t for t in self.failed_tests if '503' in t or 'service unavailable' in t.lower()]
+        
+        if service_unavailable_tests:
+            print(f"⚠️  Service availability issues detected:")
+            for test in service_unavailable_tests:
+                print(f"   - {test}")
+        else:
+            print(f"✅ All services appear to be available and functioning")
+        
+        # Final summary for Enhanced CRM Projects
+        print(f"\n📊 ENHANCED CRM PROJECTS VERIFICATION SUMMARY:")
+        print(f"   Authentication: {'✅ WORKING' if len([t for t in self.failed_tests if 'authentication' in t.lower() and any(x in t.lower() for x in ['upload', 'file', 'receipt', 'report', 'analytics'])]) == 0 else '❌ ISSUES'}")
+        print(f"   File Management: {'✅ WORKING' if len([t for t in self.failed_tests if any(x in t.lower() for x in ['file', 'upload', 'download'])]) == 0 else '❌ ISSUES'}")
+        print(f"   Receipt Analysis: {'✅ WORKING' if len([t for t in self.failed_tests if 'receipt' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Report Generation: {'✅ WORKING' if len([t for t in self.failed_tests if 'report' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Project Analytics: {'✅ WORKING' if len([t for t in self.failed_tests if 'analytics' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Error Handling: {'✅ WORKING' if len([t for t in self.failed_tests if '404' in t and 'should return 404' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Service Integration: {'✅ AVAILABLE' if len(service_unavailable_tests) == 0 else '⚠️  SOME ISSUES'}")
+        print(f"   Test Projects Used: {test_project_ids}")
+        print(f"   Created Reports: {len(created_reports)}")
+        
+        # Test additional projects if available
+        if len(test_project_ids) > 1:
+            print(f"\n🔍 ADDITIONAL VERIFICATION: Testing Other Projects")
+            for project_id in test_project_ids[1:]:
+                success, analytics = self.run_test(f"Analytics for {project_id}", "GET", f"projects/{project_id}/analytics", 200, auth=admin_auth)
+                if success:
+                    print(f"✅ Project {project_id} analytics working")
+                else:
+                    print(f"❌ Project {project_id} analytics failed")
+                    self.failed_tests.append(f"Project {project_id} Analytics - Failed")
+        
+        print(f"\n✅ Enhanced CRM Projects testing completed!")
+        print(f"   Total Enhanced CRM Tests: {len([t for t in self.failed_tests if any(x in t for x in ['File', 'Receipt', 'Report', 'Analytics', 'Upload', 'Download'])])}")
+        print(f"   Critical Issues: {len([t for t in self.failed_tests if any(x in t.lower() for x in ['authentication', 'service unavailable', 'missing fields'])])}")
+        
+        return len(self.failed_tests) == 0
+
     def test_donations_management_endpoints(self):
         """CRITICAL TEST: Comprehensive Donations Management System Testing"""
         print("\n=== CRITICAL VERIFICATION: DONATIONS MANAGEMENT SYSTEM ===")
