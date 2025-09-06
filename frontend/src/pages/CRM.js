@@ -448,6 +448,16 @@ const CRM = () => {
                   Import Data
                 </button>
                 <button
+                  onClick={() => setCurrentView('settings')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md ${
+                    currentView === 'settings' || currentView === 'merge-status'
+                      ? 'bg-kioo-primary text-white' 
+                      : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  Settings
+                </button>
+                <button
                   onClick={handleLogout}
                   className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
                 >
