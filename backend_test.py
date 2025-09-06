@@ -238,6 +238,7 @@ class KiooRadioAPITester:
         # Test required fields validation
         required_fields_data = {
             "donor_name": "Jane Doe",
+            "donor_email": "jane.doe@example.com",
             "method": "OrangeMoney",
             "amount_currency": "LRD",
             "amount": 1000.0
