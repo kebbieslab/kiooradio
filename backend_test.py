@@ -2527,6 +2527,9 @@ class KiooRadioAPITester:
         # CRITICAL: Test Visitor Analytics endpoints for /visitors dashboard
         self.test_visitor_analytics_endpoints()  # NEW: Test visitor analytics functionality
         
+        # CRITICAL: Test CRM endpoints for /crm dashboard
+        self.test_crm_endpoints()  # NEW: Test CRM functionality with authentication
+        
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
         print(f"Tests passed: {self.tests_passed}/{self.tests_run}")
