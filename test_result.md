@@ -462,7 +462,8 @@ Implement AI-Powered Program Assistant using combination of Emergent LLM and Cha
   current_focus:
     - "AI Program Assistant Backend Implementation"
     - "AI Program Assistant Frontend Interface"
-  stuck_tasks: []
+  stuck_tasks:
+    - "AI Program Assistant Backend Implementation"
   test_all: false
   test_priority: "high_first"
 
