@@ -1,0 +1,180 @@
+{
+  "kioo_radio_i18n_labels": {
+    "description": "Complete list of internationalization labels for Kioo Radio website with English and French translations",
+    "version": "1.0",
+    "last_updated": "2025-01-06",
+    "usage": "These labels are used in the i18n system at /frontend/src/utils/i18n.js",
+    "labels": {
+      "header_navigation": {
+        "navHome": {"en": "Home", "fr": "Accueil"},
+        "navAbout": {"en": "About", "fr": "À propos"},
+        "navPrograms": {"en": "Programs", "fr": "Programmes"},
+        "navChurches": {"en": "Partner Churches", "fr": "Églises Partenaires"},
+        "navImpact": {"en": "Impact", "fr": "Impact"},
+        "navDonate": {"en": "Donate", "fr": "Faire un don"},
+        "listen": {"en": "Listen Live", "fr": "Écouter en direct"}
+      },
+      "hero_section": {
+        "heroTitle": {"en": "Reaching Hearts across the Makona River Region", "fr": "Toucher les cœurs dans la région de la rivière Makona"},
+        "heroSubtitle": {"en": "Our signal covers over 150 miles, bringing Faith and Hope to the Kissi, Mandingo, Fulani, Gbandi and more.", "fr": "Notre signal couvre plus de 150 miles, apportant la Foi et l'Espérance aux Kissi, Mandingo, Peuls, Gbandi, et d'autres."},
+        "heroTagline": {"en": "Broadcasting Faith, Hope and Love in Christ across the Makona River Region", "fr": "Diffuser la Foi, l'Espérance et l'Amour en Christ dans la région de la rivière Makona"}
+      },
+      "common_actions": {
+        "learnMore": {"en": "Learn More", "fr": "En savoir plus"},
+        "getInvolved": {"en": "Get Involved", "fr": "S'impliquer"},
+        "volunteerToday": {"en": "Volunteer Today", "fr": "Devenir bénévole"},
+        "donate": {"en": "Donate", "fr": "Faire un don"},
+        "programs": {"en": "Programs", "fr": "Programmes"},
+        "contact": {"en": "Contact Us", "fr": "Nous contacter"},
+        "readMore": {"en": "Read More", "fr": "Lire la suite"},
+        "backToTop": {"en": "Back to Top", "fr": "Retour en haut"}
+      },
+      "about_page": {
+        "aboutTitle": {"en": "About Kioo Radio", "fr": "À propos de Kioo Radio"},
+        "aboutSubtitle": {"en": "Broadcasting Faith, Hope and Love in Christ", "fr": "Diffuser la Foi, l'Espérance et l'Amour en Christ"},
+        "ourVision": {"en": "Our Vision", "fr": "Notre Vision"},
+        "ourMission": {"en": "Our Mission", "fr": "Notre Mission"},
+        "ourTeam": {"en": "Our Team", "fr": "Notre Équipe"},
+        "ourStory": {"en": "Our Story", "fr": "Notre Histoire"}
+      },
+      "programs": {
+        "programsTitle": {"en": "Our Programs", "fr": "Nos Programmes"},
+        "programsSubtitle": {"en": "Diverse content that serves our community", "fr": "Contenu diversifié qui sert notre communauté"},
+        "programSchedule": {"en": "Program Schedule", "fr": "Grille des Programmes"},
+        "livePrograms": {"en": "Live Programs", "fr": "Programmes en direct"},
+        "preRecorded": {"en": "Pre-recorded", "fr": "Pré-enregistré"}
+      },
+      "impact": {
+        "impactTitle": {"en": "Our Impact", "fr": "Notre Impact"},
+        "impactSubtitle": {"en": "Making a difference across the Makona River Region", "fr": "Faire la différence dans la région de la rivière Makona"},
+        "impactCoverage": {"en": "Our Coverage at a Glance", "fr": "Notre Couverture en un Coup d'Œil"},
+        "testimonials": {"en": "Testimonials", "fr": "Témoignages"}
+      },
+      "donate": {
+        "donateTitle": {"en": "Support Kioo Radio", "fr": "Soutenir Kioo Radio"},
+        "donateSubtitle": {"en": "Your donation helps us continue broadcasting Hope and Faith", "fr": "Votre don nous aide à continuer de diffuser l'Espérance et la Foi"},
+        "donateBlurb": {"en": "Your donation helps us continue broadcasting Hope, Faith, and give vital information across the Makona River Region. Every contribution makes a difference in someone's life.", "fr": "Votre don nous aide à continuer de diffuser la Foi, l'Espérance et des informations essentielles dans la région de la rivière Makona. Chaque contribution change une vie."},
+        "generalGiving": {"en": "General Giving", "fr": "Don Général"},
+        "majorGifts": {"en": "Major Gifts", "fr": "Grands Dons"},
+        "donateNow": {"en": "Donate Now", "fr": "Faire un don maintenant"}
+      },
+      "contact": {
+        "contactTitle": {"en": "Contact Us", "fr": "Nous Contacter"},
+        "contactSubtitle": {"en": "Get in touch with the Kioo Radio team", "fr": "Entrez en contact avec l'équipe de Kioo Radio"},
+        "name": {"en": "Name", "fr": "Nom"},
+        "email": {"en": "Email", "fr": "Email"},
+        "phone": {"en": "Phone", "fr": "Téléphone"},
+        "subject": {"en": "Subject", "fr": "Sujet"},
+        "message": {"en": "Message", "fr": "Message"},
+        "sendMessage": {"en": "Send Message", "fr": "Envoyer le message"}
+      },
+      "footer": {
+        "footerTagline": {"en": "Broadcasting Faith, Hope and Love in Christ across the Makona River Region", "fr": "Diffuser la Foi, l'Espérance et l'Amour en Christ dans la région de la rivière Makona"},
+        "quickLinks": {"en": "Quick Links", "fr": "Liens Rapides"},
+        "followUs": {"en": "Follow Us", "fr": "Suivez-nous"},
+        "contactInfo": {"en": "Contact Information", "fr": "Informations de Contact"},
+        "copyright": {"en": "© 2025 Kioo Radio 98.1 FM. All rights reserved.", "fr": "© 2025 Kioo Radio 98.1 FM. Tous droits réservés."}
+      },
+      "partner_churches": {
+        "partnersTitle": {"en": "Our Partner Churches", "fr": "Nos Églises Partenaires"},
+        "partnersSubtitle": {"en": "Working together to spread the Gospel", "fr": "Travailler ensemble pour répandre l'Évangile"},
+        "churchPartners": {"en": "Church Partners", "fr": "Partenaires Églises"}
+      },
+      "media_gallery": {
+        "mediaTitle": {"en": "Media Gallery", "fr": "Galerie Média"},
+        "mediaSubtitle": {"en": "Photos and videos from our ministry", "fr": "Photos et vidéos de notre ministère"},
+        "photos": {"en": "Photos", "fr": "Photos"},
+        "videos": {"en": "Videos", "fr": "Vidéos"}
+      },
+      "volunteer": {
+        "volunteerTitle": {"en": "Volunteer with Us", "fr": "Faire du bénévolat avec nous"},
+        "volunteerSubtitle": {"en": "Join our mission to reach hearts with the Gospel", "fr": "Rejoignez notre mission pour toucher les cœurs avec l'Évangile"}
+      },
+      "news": {
+        "newsTitle": {"en": "Latest News", "fr": "Dernières Nouvelles"},
+        "newsSubtitle": {"en": "Stay updated with Kioo Radio", "fr": "Restez informé avec Kioo Radio"}
+      },
+      "presenters_dashboard": {
+        "dashboardTitle": {"en": "Presenters Dashboard", "fr": "Tableau de bord des Présentateurs"},
+        "weather": {"en": "Weather", "fr": "Météo"},
+        "schedule": {"en": "Schedule", "fr": "Horaire"},
+        "presenters": {"en": "Presenters", "fr": "Présentateurs"},
+        "social": {"en": "Social Media", "fr": "Réseaux Sociaux"},
+        "testimony": {"en": "Testimony Log", "fr": "Journal des Témoignages"},
+        "callLog": {"en": "Call Log", "fr": "Journal des Appels"},
+        "export": {"en": "Export", "fr": "Exporter"}
+      },
+      "forms": {
+        "required": {"en": "Required", "fr": "Requis"},
+        "optional": {"en": "Optional", "fr": "Optionnel"},
+        "submit": {"en": "Submit", "fr": "Soumettre"},
+        "cancel": {"en": "Cancel", "fr": "Annuler"},
+        "save": {"en": "Save", "fr": "Sauvegarder"},
+        "delete": {"en": "Delete", "fr": "Supprimer"},
+        "edit": {"en": "Edit", "fr": "Modifier"},
+        "close": {"en": "Close", "fr": "Fermer"}
+      },
+      "status_messages": {
+        "loading": {"en": "Loading...", "fr": "Chargement..."},
+        "error": {"en": "Error", "fr": "Erreur"},
+        "success": {"en": "Success", "fr": "Succès"},
+        "noData": {"en": "No data available", "fr": "Aucune donnée disponible"},
+        "comingSoon": {"en": "Coming Soon", "fr": "Bientôt disponible"}
+      },
+      "time_date": {
+        "today": {"en": "Today", "fr": "Aujourd'hui"},
+        "yesterday": {"en": "Yesterday", "fr": "Hier"},
+        "tomorrow": {"en": "Tomorrow", "fr": "Demain"},
+        "thisWeek": {"en": "This Week", "fr": "Cette semaine"},
+        "thisMonth": {"en": "This Month", "fr": "Ce mois-ci"}
+      },
+      "countries": {
+        "liberia": {"en": "Liberia", "fr": "Libéria"},
+        "sierraLeone": {"en": "Sierra Leone", "fr": "Sierra Leone"},
+        "guinea": {"en": "Guinea", "fr": "Guinée"}
+      },
+      "days_of_week": {
+        "monday": {"en": "Monday", "fr": "Lundi"},
+        "tuesday": {"en": "Tuesday", "fr": "Mardi"},
+        "wednesday": {"en": "Wednesday", "fr": "Mercredi"},
+        "thursday": {"en": "Thursday", "fr": "Jeudi"},
+        "friday": {"en": "Friday", "fr": "Vendredi"},
+        "saturday": {"en": "Saturday", "fr": "Samedi"},
+        "sunday": {"en": "Sunday", "fr": "Dimanche"}
+      },
+      "broadcasting": {
+        "live": {"en": "LIVE", "fr": "EN DIRECT"},
+        "onAir": {"en": "On Air", "fr": "À l'antenne"},
+        "offAir": {"en": "Off Air", "fr": "Hors antenne"},
+        "nowPlaying": {"en": "Now Playing", "fr": "En cours"},
+        "upNext": {"en": "Up Next", "fr": "À suivre"}
+      },
+      "crm": {
+        "contacts": {"en": "Contacts", "fr": "Contacts"},
+        "dashboard": {"en": "Dashboard", "fr": "Tableau de bord"},
+        "statistics": {"en": "Statistics", "fr": "Statistiques"}
+      },
+      "launch_related": {
+        "launchCountdown": {"en": "Launching Kioo Radio in", "fr": "Lancement de Kioo Radio dans"},
+        "launchDate": {"en": "November 13, 2025", "fr": "13 novembre 2025"},
+        "broadcastingInto": {"en": "Broadcasting into 3 nations", "fr": "Diffusion dans 3 nations"},
+        "reachingRegion": {"en": "Reaching the Makona River Region", "fr": "Atteindre la région de la rivière Makona"}
+      },
+      "language_switch": {
+        "switchToEnglish": {"en": "Switch to English", "fr": "Passer à l'anglais"},
+        "switchToFrench": {"en": "Switch to French", "fr": "Basculer en français"}
+      }
+    },
+    "implementation_notes": {
+      "storage_key": "kioo_lang",
+      "default_language": "en",
+      "supported_languages": ["en", "fr"],
+      "fallback_strategy": "If a key is not found in current language, fall back to English, then show the key itself",
+      "usage_examples": {
+        "react_component": "const { t } = useTranslation(); return <h1>{t('heroTitle')}</h1>;",
+        "html_attribute": "<span data-i18n=\"heroTitle\">Reaching Hearts...</span>",
+        "with_fallback": "t('someKey', 'Default text if key not found')"
+      }
+    }
+  }
+}
