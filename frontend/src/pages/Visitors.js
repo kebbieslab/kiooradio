@@ -128,7 +128,7 @@ const Visitors = () => {
         loadVisitors();
       } else {
         const errorData = await response.json();
-        setError(errorData.detail || (t('failed_to_save_visitor') || 'Failed to save visitor'));
+        setError(errorData.detail || (t('failedToSaveVisitor') || 'Failed to save visitor'));
       }
     } catch (error) {
       console.error('Failed to save visitor:', error);
