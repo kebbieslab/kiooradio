@@ -444,6 +444,63 @@ export const labels = {
     failedToDeleteVisitor: "Échec de la suppression du visiteur",
     failedToExport: "Échec de l'exportation des données",
     confirmDeleteVisitor: "Êtes-vous sûr de vouloir supprimer ce visiteur?",
+    
+    // Donations Management
+    donationsManagement: "Gestion des Dons",
+    donationsAccess: "Accès Dons",
+    donationsAccessDescription: "Veuillez saisir vos identifiants pour accéder au système de gestion des dons",
+    accessDonations: "Accéder aux Dons",
+    manageDonationRecords: "Gérer les dossiers de dons et suivre les contributions",
+    addDonation: "Ajouter un Don",
+    editDonation: "Modifier le Don",
+    updateDonation: "Mettre à jour le Don",
+    donationsList: "Liste des Dons",
+    noDonationsFound: "Aucun don trouvé",
+    
+    // Donation Fields
+    donorName: "Nom du Donateur",
+    paymentMethod: "Méthode de Paiement",
+    amount: "Montant",
+    amountCurrency: "Devise",
+    projectCode: "Code Projet",
+    note: "Note",
+    receiptNo: "Numéro de Reçu",
+    anonymous: "Anonyme",
+    
+    // Payment Methods
+    orangeMoney: "Orange Money",
+    lonestar: "Lonestar",
+    paypal: "PayPal",
+    bank: "Virement Bancaire",
+    
+    // Donation Filters
+    allProjects: "Tous les Projets",
+    allMethods: "Toutes les Méthodes",
+    allAnonymous: "Tous (Anonyme)",
+    anonymousYes: "Anonyme Seulement",
+    anonymousNo: "Public Seulement",
+    
+    // Donation Totals
+    thisMonth: "Ce Mois",
+    yearToDate: "Année à ce Jour",
+    totalDonations: "Total des Dons",
+    usdTotal: "Total USD",
+    lrdTotal: "Total LRD",
+    runningTotals: "Totaux Cumulés",
+    
+    // Validation Messages
+    amountMustBeGreaterThanZero: "Le montant doit être supérieur à 0",
+    invalidAmount: "Veuillez saisir un montant valide",
+    invalidCurrency: "La devise doit être USD ou LRD",
+    invalidPaymentMethod: "Veuillez sélectionner une méthode de paiement valide",
+    
+    // Donation Messages
+    failedToLoadDonations: "Échec du chargement des dons",
+    failedToSaveDonation: "Échec de l'enregistrement du don",
+    failedToDeleteDonation: "Échec de la suppression du don",
+    confirmDeleteDonation: "Êtes-vous sûr de vouloir supprimer ce don?",
+    donationSavedSuccessfully: "Don enregistré avec succès",
+    donationDeletedSuccessfully: "Don supprimé avec succès",
     backToTop: "Retour en haut",
     
     // About Page
