@@ -4153,6 +4153,71 @@ class ReportGenerationRequest(BaseModel):
     include_ai_analysis: bool = True
     template_style: Optional[str] = "professional"
 
+# User Management Models
+class ModulePermission(BaseModel):
+    """Model for module-specific permissions"""
+    module: str  # 'dashboard', 'contacts', 'visitors', 'donations', 'projects', 'settings'
+    can_read: bool = True
+    can_write: bool = False
+    can_delete: bool = False
+    can_export: bool = False
+
+class UserCreate(BaseModel):
+    """Model for creating new users"""
+    username: str = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=4)
+    email: str = Field(..., regex=r'^[^@]+@[^@]+\.[^@]+$')
+    full_name: str = Field(..., min_length=2, max_length=100)
+    role: str = Field(default="staff")  # 'admin', 'manager', 'staff', 'viewer'
+    is_active: bool = True
+    permissions: List[ModulePermission] = []
+    notes: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    """Model for updating existing users"""
+    email: Optional[str] = Field(None, regex=r'^[^@]+@[^@]+\.[^@]+$')
+    full_name: Optional[str] = Field(None, min_length=2, max_length=100)
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+    permissions: Optional[List[ModulePermission]] = None
+    notes: Optional[str] = None
+
+class UserRecord(BaseModel):
+    """Model for user records"""
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    username: str
+    email: str
+    full_name: str
+    role: str
+    is_active: bool
+    permissions: List[ModulePermission]
+    created_at: str
+    updated_at: str
+    last_login: Optional[str] = None
+    notes: Optional[str] = None
+
+class UserPasswordReset(BaseModel):
+    """Model for password reset"""
+    new_password: str = Field(..., min_length=4)
+
+class UserLoginResponse(BaseModel):
+    """Model for login response"""
+    user: UserRecord
+    auth_token: str
+    permissions: Dict[str, Dict[str, bool]]  # module -> permissions mapping
+
+class PasswordChangeRequest(BaseModel):
+    """Model for password change"""
+    current_password: str
+    new_password: str = Field(..., min_length=4)
+
+class UserNotificationRequest(BaseModel):
+    """Model for user notification"""
+    user_id: str
+    notification_type: str  # 'welcome', 'password_reset', 'account_update'
+    send_email: bool = True
+    custom_message: Optional[str] = None
+
 # Projects Management Endpoints
 @api_router.get("/projects", response_model=List[ProjectRecord])
 async def get_projects(
