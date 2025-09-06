@@ -3,9 +3,6 @@ import { useTranslation } from '../hooks/useTranslation';
 
 const ProgramAssistant = () => {
   const { t, language } = useTranslation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loginError, setLoginError] = useState('');
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [activeTab, setActiveTab] = useState('programs');
   const [programs, setPrograms] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -20,66 +17,19 @@ const ProgramAssistant = () => {
 
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
-  // Authentication
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoginError('');
-    
-    try {
-      const encodedCredentials = btoa(`${credentials.username}:${credentials.password}`);
-      const response = await fetch(`${BACKEND_URL}/api/ai-programs/stats/overview`, {
-        headers: {
-          'Authorization': `Basic ${encodedCredentials}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (response.ok) {
-        localStorage.setItem('programAssistantAuth', encodedCredentials);
-        setIsAuthenticated(true);
-        loadData();
-      } else {
-        setLoginError('Invalid credentials');
-      }
-    } catch (error) {
-      setLoginError('Connection error');
-    }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('programAssistantAuth');
-    setIsAuthenticated(false);
-    setCredentials({ username: '', password: '' });
-  };
-
-  // Check authentication on component mount
-  useEffect(() => {
-    const savedAuth = localStorage.getItem('programAssistantAuth');
-    if (savedAuth) {
-      setIsAuthenticated(true);
-      loadData();
-    }
-  }, []);
-
-  // Load programs and stats
+  // Load programs and stats (no authentication required)
   const loadData = async () => {
     setLoading(true);
     try {
-      const auth = localStorage.getItem('programAssistantAuth');
-      
-      // Load programs
-      const programsResponse = await fetch(`${BACKEND_URL}/api/ai-programs`, {
-        headers: { 'Authorization': `Basic ${auth}` }
-      });
+      // Load programs without authentication
+      const programsResponse = await fetch(`${BACKEND_URL}/api/ai-programs`);
       if (programsResponse.ok) {
         const programsData = await programsResponse.json();
         setPrograms(programsData);
       }
 
-      // Load stats
-      const statsResponse = await fetch(`${BACKEND_URL}/api/ai-programs/stats/overview`, {
-        headers: { 'Authorization': `Basic ${auth}` }
-      });
+      // Load stats without authentication
+      const statsResponse = await fetch(`${BACKEND_URL}/api/ai-programs/stats/overview`);
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setStats(statsData);
@@ -90,6 +40,11 @@ const ProgramAssistant = () => {
       setLoading(false);
     }
   };
+
+  // Load data on component mount
+  useEffect(() => {
+    loadData();
+  }, []);
 
   // Search programs
   const handleSearch = async (e) => {
