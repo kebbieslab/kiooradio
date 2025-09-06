@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
+import DiagnosticsService from '../services/DiagnosticsService';
 
 const CRMMergeStatus = ({ onBack }) => {
   const { t } = useTranslation();
