@@ -1163,20 +1163,23 @@ const CRM = () => {
                       </div>
                     </div>
                     
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow opacity-50">
+                    <div 
+                      onClick={() => setCurrentView('user-management')}
+                      className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow"
+                    >
                       <div className="flex items-center mb-3">
                         <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                          <span className="text-white text-xl">🔐</span>
+                          <span className="text-white text-xl">👥</span>
                         </div>
                         <h4 className="ml-3 text-lg font-semibold text-gray-900">
-                          Authentication Settings
+                          User Management
                         </h4>
                       </div>
                       <p className="text-gray-600 text-sm">
-                        Configure SSO, user roles, and access permissions across all CRM modules.
+                        Create staff accounts, assign permissions, manage roles, and configure access levels for CRM modules.
                       </p>
                       <div className="mt-4 flex items-center text-purple-600 text-sm font-medium">
-                        Coming Soon →
+                        Manage Users →
                       </div>
                     </div>
                     
