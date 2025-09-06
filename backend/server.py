@@ -3430,7 +3430,7 @@ async def export_donations_xlsx(
         logger.error(f"Failed to export donations XLSX: {e}")
         raise HTTPException(status_code=500, detail="Failed to export donations XLSX")
 
-@api_router.get("/donations/filter-stats")
+@api_router.get("/donations/management-stats")
 async def get_donations_filter_stats(admin: str = Depends(authenticate_admin)):
     """Get donation statistics for filters"""
     try:
