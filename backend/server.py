@@ -4417,14 +4417,23 @@ async def ai_translate_content(content: str, target_language: str = "fr") -> str
         return f"Translation to {target_language} unavailable"
 
 async def ai_summarize_content_openai(content: str, language: str = "en") -> str:
-    """Generate AI summary of program content using OpenAI directly"""
+    """Generate AI summary using your OpenAI API key directly"""
     try:
-        chat = await get_ai_client("openai")
+        from openai import OpenAI
         
-        prompt = f"""
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            logger.error("No OpenAI API key configured")
+            return "OpenAI API key not configured. Please check environment variables."
+        
+        client = OpenAI(api_key=api_key)
+        
+        system_prompt = "You are an AI assistant for Kioo Radio. Help analyze, summarize, and enhance radio program content. Focus on faith-based content, community impact, and spiritual growth themes."
+        
+        user_prompt = f"""
         Please create a concise summary of this radio program content in {language}:
         
-        Content: {content[:4000]}  # Limit content for token efficiency
+        Content: {content[:4000]}
         
         Focus on:
         - Main themes and messages
@@ -4435,20 +4444,37 @@ async def ai_summarize_content_openai(content: str, language: str = "en") -> str
         Keep the summary under 200 words and maintain the spiritual tone appropriate for Kioo Radio's faith-based mission.
         """
         
-        user_message = UserMessage(text=prompt)
-        response = await chat.send_message(user_message)
-        return response
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # Cost-effective for summaries
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            max_tokens=300,
+            temperature=0.7
+        )
+        
+        return response.choices[0].message.content.strip()
         
     except Exception as e:
         logger.error(f"OpenAI summarization failed: {e}")
         return "Summary generation failed. Please try again later."
 
 async def ai_extract_highlights_openai(content: str, language: str = "en") -> List[str]:
-    """Extract key highlights from program content using OpenAI"""
+    """Extract key highlights using your OpenAI API key directly"""
     try:
-        chat = await get_ai_client("openai")
+        from openai import OpenAI
         
-        prompt = f"""
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            logger.error("No OpenAI API key configured")
+            return ["OpenAI API key not configured"]
+        
+        client = OpenAI(api_key=api_key)
+        
+        system_prompt = "You are an AI assistant for Kioo Radio. Extract meaningful highlights from faith-based radio program content."
+        
+        user_prompt = f"""
         Extract 5-7 key highlights from this radio program content in {language}:
         
         Content: {content[:4000]}
@@ -4461,32 +4487,51 @@ async def ai_extract_highlights_openai(content: str, language: str = "en") -> Li
         - Practical spiritual advice
         
         Example format: ["Highlight 1", "Highlight 2", "Highlight 3"]
+        Return only the JSON array, no additional text.
         """
         
-        user_message = UserMessage(text=prompt)
-        response = await chat.send_message(user_message)
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            max_tokens=400,
+            temperature=0.5
+        )
+        
+        result = response.choices[0].message.content.strip()
         
         # Try to parse JSON response
         import json
         try:
-            highlights = json.loads(response)
+            highlights = json.loads(result)
             if isinstance(highlights, list):
                 return highlights[:7]  # Limit to 7 highlights
         except:
-            # If JSON parsing fails, split by lines
-            lines = response.strip().split('\n')
-            return [line.strip('- ').strip() for line in lines if line.strip()][:7]
+            # If JSON parsing fails, split by lines as fallback
+            lines = result.strip().split('\n')
+            return [line.strip('- ').strip().strip('"') for line in lines if line.strip()][:7]
             
     except Exception as e:
         logger.error(f"OpenAI highlight extraction failed: {e}")
         return ["Content analysis unavailable"]
 
 async def ai_extract_keywords_openai(content: str, language: str = "en") -> List[str]:
-    """Extract relevant keywords from program content using OpenAI"""
+    """Extract relevant keywords using your OpenAI API key directly"""
     try:
-        chat = await get_ai_client("openai")
+        from openai import OpenAI
         
-        prompt = f"""
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            logger.error("No OpenAI API key configured")
+            return ["openai", "api", "key", "not", "configured"]
+        
+        client = OpenAI(api_key=api_key)
+        
+        system_prompt = "You are an AI assistant for Kioo Radio. Extract relevant keywords from faith-based content."
+        
+        user_prompt = f"""
         Extract 10-15 relevant keywords from this radio program content in {language}:
         
         Content: {content[:4000]}
@@ -4501,11 +4546,20 @@ async def ai_extract_keywords_openai(content: str, language: str = "en") -> List
         Return as comma-separated keywords only, no explanations.
         """
         
-        user_message = UserMessage(text=prompt)
-        response = await chat.send_message(user_message)
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            max_tokens=200,
+            temperature=0.3
+        )
+        
+        result = response.choices[0].message.content.strip()
         
         # Parse keywords
-        keywords = [kw.strip() for kw in response.split(',') if kw.strip()]
+        keywords = [kw.strip() for kw in result.split(',') if kw.strip()]
         return keywords[:15]  # Limit to 15 keywords
         
     except Exception as e:
