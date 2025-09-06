@@ -5,6 +5,7 @@ import CRMMergeStatus from './CRMMergeStatus';
 import CRMVisitors from '../components/CRMVisitors';
 import CRMDonations from '../components/CRMDonations';
 import CRMProjects from '../components/CRMProjects';
+import UserManagement from '../components/UserManagement';
 
 const CRM = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
