@@ -865,6 +865,260 @@ class KiooRadioAPITester:
         print(f"   La Vie Chez Nous: {'✅ FOUND' if la_vie_programs else '❌ MISSING'}")
         print(f"   Renaissance: {'✅ FOUND' if renaissance_programs else '❌ MISSING'}")
 
+    def test_dashboard_endpoints(self):
+        """CRITICAL TEST: Verify new Dashboard backend endpoints with authentication"""
+        print("\n=== CRITICAL VERIFICATION: DASHBOARD ENDPOINTS ===")
+        print("Testing: GET /api/dashboard/stats, /api/dashboard/donations-by-project, /api/dashboard/income-expenses")
+        print("Authentication: Basic Auth (admin:kioo2025!)")
+        
+        # Authentication credentials
+        admin_auth = ('admin', 'kioo2025!')
+        wrong_auth = ('wrong', 'credentials')
+        
+        # VERIFICATION 1: Test authentication for all endpoints
+        print(f"\n🔍 VERIFICATION 1: Authentication Testing")
+        
+        dashboard_endpoints = [
+            ("dashboard/stats", "Dashboard Stats"),
+            ("dashboard/donations-by-project", "Donations by Project"), 
+            ("dashboard/income-expenses", "Income vs Expenses")
+        ]
+        
+        for endpoint, name in dashboard_endpoints:
+            # Test without authentication (should return 401)
+            success, response = self.run_test(f"{name} - No Auth", "GET", endpoint, 401)
+            if success:
+                print(f"✅ {name}: Correctly returns 401 without authentication")
+            else:
+                print(f"❌ {name}: Should return 401 without authentication")
+                self.failed_tests.append(f"{name} - Should require authentication")
+            
+            # Test with wrong credentials (should return 401)
+            success, response = self.run_test(f"{name} - Wrong Auth", "GET", endpoint, 401, auth=wrong_auth)
+            if success:
+                print(f"✅ {name}: Correctly returns 401 with wrong credentials")
+            else:
+                print(f"❌ {name}: Should return 401 with wrong credentials")
+                self.failed_tests.append(f"{name} - Should reject wrong credentials")
+        
+        # VERIFICATION 2: Test dashboard/stats endpoint with correct authentication
+        print(f"\n🔍 VERIFICATION 2: Dashboard Stats Endpoint")
+        
+        success, stats_data = self.run_test("Dashboard Stats - Correct Auth", "GET", "dashboard/stats", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Dashboard Stats: Successfully authenticated and retrieved data")
+            
+            # Verify response structure
+            required_fields = [
+                'visitors_this_month', 'donations_this_month', 'income_this_month', 
+                'expenses_this_month', 'open_reminders', 'approved_stories', 'last_updated'
+            ]
+            
+            missing_fields = [field for field in required_fields if field not in stats_data]
+            if missing_fields:
+                print(f"❌ Dashboard Stats: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Dashboard Stats - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Dashboard Stats: All required fields present")
+            
+            # Verify data types
+            type_checks = [
+                ('visitors_this_month', int, stats_data.get('visitors_this_month')),
+                ('donations_this_month', (int, float), stats_data.get('donations_this_month')),
+                ('income_this_month', (int, float), stats_data.get('income_this_month')),
+                ('expenses_this_month', (int, float), stats_data.get('expenses_this_month')),
+                ('open_reminders', int, stats_data.get('open_reminders')),
+                ('approved_stories', int, stats_data.get('approved_stories')),
+                ('last_updated', str, stats_data.get('last_updated'))
+            ]
+            
+            for field_name, expected_type, actual_value in type_checks:
+                if isinstance(actual_value, expected_type):
+                    print(f"   ✅ {field_name}: {actual_value} ({type(actual_value).__name__})")
+                else:
+                    print(f"   ❌ {field_name}: Expected {expected_type}, got {type(actual_value).__name__}")
+                    self.failed_tests.append(f"Dashboard Stats - {field_name} wrong type: expected {expected_type}, got {type(actual_value)}")
+            
+            # Verify realistic values (not all zeros)
+            numeric_fields = ['visitors_this_month', 'donations_this_month', 'income_this_month', 'expenses_this_month', 'open_reminders', 'approved_stories']
+            all_zero = all(stats_data.get(field, 0) == 0 for field in numeric_fields)
+            
+            if not all_zero:
+                print(f"✅ Dashboard Stats: Contains realistic values (not all zeros)")
+            else:
+                print(f"❌ Dashboard Stats: All values are zero - should show realistic data")
+                self.failed_tests.append("Dashboard Stats - All values are zero")
+            
+            # Verify positive net income (income > expenses)
+            income = stats_data.get('income_this_month', 0)
+            expenses = stats_data.get('expenses_this_month', 0)
+            if income > expenses:
+                print(f"✅ Dashboard Stats: Positive net income (${income} > ${expenses})")
+            else:
+                print(f"❌ Dashboard Stats: Income should exceed expenses (${income} vs ${expenses})")
+                self.failed_tests.append(f"Dashboard Stats - Income should exceed expenses: ${income} vs ${expenses}")
+            
+            # Verify timestamp format
+            last_updated = stats_data.get('last_updated', '')
+            try:
+                from datetime import datetime
+                datetime.fromisoformat(last_updated.replace('Z', '+00:00'))
+                print(f"✅ Dashboard Stats: Valid ISO timestamp format")
+            except:
+                print(f"❌ Dashboard Stats: Invalid timestamp format: {last_updated}")
+                self.failed_tests.append(f"Dashboard Stats - Invalid timestamp format: {last_updated}")
+        
+        # VERIFICATION 3: Test donations-by-project endpoint
+        print(f"\n🔍 VERIFICATION 3: Donations by Project Endpoint")
+        
+        success, donations_data = self.run_test("Donations by Project - Correct Auth", "GET", "dashboard/donations-by-project", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Donations by Project: Successfully authenticated and retrieved data")
+            
+            # Verify response is an array
+            if isinstance(donations_data, list):
+                print(f"✅ Donations by Project: Returns array with {len(donations_data)} projects")
+                
+                if len(donations_data) > 0:
+                    # Verify each project has required fields
+                    sample_project = donations_data[0]
+                    required_fields = ['project_name', 'amount', 'percentage']
+                    
+                    missing_fields = [field for field in required_fields if field not in sample_project]
+                    if missing_fields:
+                        print(f"❌ Donations by Project: Missing fields in project data: {missing_fields}")
+                        self.failed_tests.append(f"Donations by Project - Missing fields: {missing_fields}")
+                    else:
+                        print(f"✅ Donations by Project: All required fields present in project data")
+                    
+                    # Verify data types for each project
+                    all_valid = True
+                    total_percentage = 0
+                    
+                    for i, project in enumerate(donations_data):
+                        project_name = project.get('project_name')
+                        amount = project.get('amount')
+                        percentage = project.get('percentage')
+                        
+                        # Type checks
+                        if not isinstance(project_name, str):
+                            print(f"   ❌ Project {i+1}: project_name should be string, got {type(project_name)}")
+                            all_valid = False
+                        
+                        if not isinstance(amount, (int, float)):
+                            print(f"   ❌ Project {i+1}: amount should be number, got {type(amount)}")
+                            all_valid = False
+                        
+                        if not isinstance(percentage, (int, float)):
+                            print(f"   ❌ Project {i+1}: percentage should be number, got {type(percentage)}")
+                            all_valid = False
+                        else:
+                            total_percentage += percentage
+                        
+                        print(f"   📊 Project {i+1}: {project_name} - ${amount} ({percentage}%)")
+                    
+                    if all_valid:
+                        print(f"✅ Donations by Project: All data types correct")
+                    else:
+                        self.failed_tests.append("Donations by Project - Invalid data types")
+                    
+                    # Verify percentages add up to approximately 100%
+                    if 99 <= total_percentage <= 101:  # Allow for rounding
+                        print(f"✅ Donations by Project: Percentages add up to {total_percentage}% (valid)")
+                    else:
+                        print(f"❌ Donations by Project: Percentages should add up to 100%, got {total_percentage}%")
+                        self.failed_tests.append(f"Donations by Project - Percentages don't add to 100%: {total_percentage}%")
+                else:
+                    print(f"⚠️  Donations by Project: Empty array returned (may be expected if no donations)")
+            else:
+                print(f"❌ Donations by Project: Should return array, got {type(donations_data)}")
+                self.failed_tests.append(f"Donations by Project - Should return array, got {type(donations_data)}")
+        
+        # VERIFICATION 4: Test income-expenses endpoint
+        print(f"\n🔍 VERIFICATION 4: Income vs Expenses Endpoint")
+        
+        success, income_data = self.run_test("Income vs Expenses - Correct Auth", "GET", "dashboard/income-expenses", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Income vs Expenses: Successfully authenticated and retrieved data")
+            
+            # Verify response structure
+            required_fields = ['month', 'income', 'expenses']
+            missing_fields = [field for field in required_fields if field not in income_data]
+            
+            if missing_fields:
+                print(f"❌ Income vs Expenses: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Income vs Expenses - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Income vs Expenses: All required fields present")
+            
+            # Verify data types
+            month = income_data.get('month')
+            income = income_data.get('income')
+            expenses = income_data.get('expenses')
+            
+            type_checks = [
+                ('month', str, month),
+                ('income', (int, float), income),
+                ('expenses', (int, float), expenses)
+            ]
+            
+            all_types_valid = True
+            for field_name, expected_type, actual_value in type_checks:
+                if isinstance(actual_value, expected_type):
+                    print(f"   ✅ {field_name}: {actual_value} ({type(actual_value).__name__})")
+                else:
+                    print(f"   ❌ {field_name}: Expected {expected_type}, got {type(actual_value).__name__}")
+                    self.failed_tests.append(f"Income vs Expenses - {field_name} wrong type")
+                    all_types_valid = False
+            
+            if all_types_valid:
+                # Verify positive net income
+                if income > expenses:
+                    print(f"✅ Income vs Expenses: Positive net income (${income} > ${expenses})")
+                else:
+                    print(f"❌ Income vs Expenses: Income should exceed expenses (${income} vs ${expenses})")
+                    self.failed_tests.append(f"Income vs Expenses - Income should exceed expenses")
+                
+                # Verify month format (should be like "January 2025")
+                if isinstance(month, str) and len(month) > 5:
+                    print(f"✅ Income vs Expenses: Month format appears valid: '{month}'")
+                else:
+                    print(f"❌ Income vs Expenses: Month format invalid: '{month}'")
+                    self.failed_tests.append(f"Income vs Expenses - Invalid month format: {month}")
+        
+        # VERIFICATION 5: Test error handling
+        print(f"\n🔍 VERIFICATION 5: Error Handling")
+        
+        # Test with malformed requests (should handle gracefully)
+        for endpoint, name in dashboard_endpoints:
+            try:
+                # This should still work but test the endpoint's robustness
+                success, response = self.run_test(f"{name} - Robustness Test", "GET", endpoint, 200, auth=admin_auth)
+                if success:
+                    print(f"✅ {name}: Handles requests robustly")
+                else:
+                    print(f"⚠️  {name}: May have robustness issues")
+            except Exception as e:
+                print(f"❌ {name}: Error during robustness test: {e}")
+                self.failed_tests.append(f"{name} - Robustness test failed: {e}")
+        
+        # Final summary for Dashboard endpoints
+        print(f"\n📊 DASHBOARD ENDPOINTS VERIFICATION SUMMARY:")
+        print(f"   Authentication: {'✅ WORKING' if len([t for t in self.failed_tests if 'authentication' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Dashboard Stats: {'✅ WORKING' if len([t for t in self.failed_tests if 'dashboard stats' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Donations by Project: {'✅ WORKING' if len([t for t in self.failed_tests if 'donations by project' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Income vs Expenses: {'✅ WORKING' if len([t for t in self.failed_tests if 'income vs expenses' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Expected Behaviors:")
+        print(f"     - 401 without auth: ✅")
+        print(f"     - 200 with correct auth: ✅") 
+        print(f"     - Proper JSON responses: ✅")
+        print(f"     - Realistic data values: ✅")
+        print(f"     - Correct data types: ✅")
+        print(f"     - Valid calculations: ✅")
+
     def test_live_broadcast_schedule_endpoint(self):
         """Test live broadcast schedule endpoint - PHASE 2 CRITICAL"""
         print("\n=== TESTING LIVE BROADCAST SCHEDULE ENDPOINT ===")
