@@ -103,7 +103,7 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-Create a comprehensive CSV import system for the existing CRM at /crm to handle external data sources. Implement backend endpoints for parsing, validating, and importing CSV data into different collections (visitors, donations, projects, finance, tasks_reminders, users_roles, invoices, stories). Add frontend interface integrated into the existing CRM page with file upload, validation, preview, and scheduled import capabilities.
+Build comprehensive Visitors list + form system with table display (date_iso, name, phone, email, country, program, language, testimony, source, consent_y_n), filters (month, country, program, source), "Add Visitor/Testimony" form with required fields (date, country, program, testimony, consent), row actions (edit, delete, export CSV/XLSX), and bilingual labels via EN/FR toggle.
 
 ## backend:
   - task: "CSV Import Backend Endpoints"
