@@ -4416,6 +4416,102 @@ async def ai_translate_content(content: str, target_language: str = "fr") -> str
         logger.error(f"AI translation failed: {e}")
         return f"Translation to {target_language} unavailable"
 
+async def ai_summarize_content_openai(content: str, language: str = "en") -> str:
+    """Generate AI summary of program content using OpenAI directly"""
+    try:
+        chat = await get_ai_client("openai")
+        
+        prompt = f"""
+        Please create a concise summary of this radio program content in {language}:
+        
+        Content: {content[:4000]}  # Limit content for token efficiency
+        
+        Focus on:
+        - Main themes and messages
+        - Key spiritual insights
+        - Community impact mentioned
+        - Practical takeaways for listeners
+        
+        Keep the summary under 200 words and maintain the spiritual tone appropriate for Kioo Radio's faith-based mission.
+        """
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        return response
+        
+    except Exception as e:
+        logger.error(f"OpenAI summarization failed: {e}")
+        return "Summary generation failed. Please try again later."
+
+async def ai_extract_highlights_openai(content: str, language: str = "en") -> List[str]:
+    """Extract key highlights from program content using OpenAI"""
+    try:
+        chat = await get_ai_client("openai")
+        
+        prompt = f"""
+        Extract 5-7 key highlights from this radio program content in {language}:
+        
+        Content: {content[:4000]}
+        
+        Return highlights as a JSON array of strings. Focus on:
+        - Inspirational quotes
+        - Key spiritual messages
+        - Community announcements
+        - Prayer requests or testimonies
+        - Practical spiritual advice
+        
+        Example format: ["Highlight 1", "Highlight 2", "Highlight 3"]
+        """
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        
+        # Try to parse JSON response
+        import json
+        try:
+            highlights = json.loads(response)
+            if isinstance(highlights, list):
+                return highlights[:7]  # Limit to 7 highlights
+        except:
+            # If JSON parsing fails, split by lines
+            lines = response.strip().split('\n')
+            return [line.strip('- ').strip() for line in lines if line.strip()][:7]
+            
+    except Exception as e:
+        logger.error(f"OpenAI highlight extraction failed: {e}")
+        return ["Content analysis unavailable"]
+
+async def ai_extract_keywords_openai(content: str, language: str = "en") -> List[str]:
+    """Extract relevant keywords from program content using OpenAI"""
+    try:
+        chat = await get_ai_client("openai")
+        
+        prompt = f"""
+        Extract 10-15 relevant keywords from this radio program content in {language}:
+        
+        Content: {content[:4000]}
+        
+        Focus on:
+        - Spiritual themes
+        - Biblical references
+        - Community topics
+        - Faith concepts
+        - Practical life topics
+        
+        Return as comma-separated keywords only, no explanations.
+        """
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        
+        # Parse keywords
+        keywords = [kw.strip() for kw in response.split(',') if kw.strip()]
+        return keywords[:15]  # Limit to 15 keywords
+        
+    except Exception as e:
+        logger.error(f"OpenAI keyword extraction failed: {e}")
+        return ["faith", "community", "spiritual growth"]
+
 # AI Program Assistant API Endpoints
 
 @api_router.post("/ai-programs", response_model=ProgramContent)
