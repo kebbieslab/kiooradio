@@ -51,6 +51,8 @@ const CRM = () => {
     setError('');
     
     if (credentials.username === 'admin' && credentials.password === 'kioo2025!') {
+      const authHeader = btoa('admin:kioo2025!');
+      localStorage.setItem('crmAuth', authHeader);
       setIsAuthenticated(true);
       loadCRMData();
     } else {
