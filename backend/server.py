@@ -4671,41 +4671,42 @@ async def upload_project_file(
         
         # If it's a receipt, perform AI analysis
         if category == 'receipt' and file.content_type.startswith('image/'):
-            try:
-                analysis_result = await ai_analyzer.analyze_receipt(
-                    file_content=file_content,
-                    filename=file.filename,
-                    content_type=file.content_type
-                )
-                
-                # Create receipt analysis record
-                receipt_record = {
-                    'receipt_id': str(uuid.uuid4()),
-                    'file_id': upload_result['file_id'],
-                    'vendor': analysis_result.get('vendor'),
-                    'date': analysis_result.get('date'),
-                    'total_amount': analysis_result.get('total_amount'),
-                    'currency': analysis_result.get('currency'),
-                    'items': analysis_result.get('items', []),
-                    'category': analysis_result.get('category'),
-                    'expense_type': analysis_result.get('expense_type'),
-                    'tax_amount': analysis_result.get('tax_amount'),
-                    'analysis_confidence': analysis_result.get('analysis_confidence'),
-                    'analysis_date': datetime.now(timezone.utc).isoformat()
-                }
-                
-                # Add to project receipts
-                await db.projects.update_one(
-                    {'project_code': project_id},
-                    {'$push': {'receipts': receipt_record}}
-                )
-                
-                response_data['analysis'] = receipt_record
-                response_data['message'] = 'File uploaded and receipt analyzed successfully'
-                
-            except Exception as ai_error:
-                logger.error(f"Receipt analysis failed: {ai_error}")
-                response_data['message'] = 'File uploaded successfully, but receipt analysis failed'
+            if ai_analyzer:
+                try:
+                    analysis_result = await ai_analyzer.analyze_receipt(
+                        file_content=file_content,
+                        filename=file.filename,
+                        content_type=file.content_type
+                    )
+                    
+                    # Create receipt analysis record
+                    receipt_record = {
+                        'receipt_id': str(uuid.uuid4()),
+                        'file_id': upload_result['file_id'],
+                        'vendor': analysis_result.get('vendor'),
+                        'date': analysis_result.get('date'),
+                        'total_amount': analysis_result.get('total_amount'),
+                        'currency': analysis_result.get('currency'),
+                        'items': analysis_result.get('items', []),
+                        'category': analysis_result.get('category'),
+                        'expense_type': analysis_result.get('expense_type'),
+                        'tax_amount': analysis_result.get('tax_amount'),
+                        'analysis_confidence': analysis_result.get('analysis_confidence'),
+                        'analysis_date': datetime.now(timezone.utc).isoformat()
+                    }
+                    
+                    # Add to project receipts
+                    await db.projects.update_one(
+                        {'project_code': project_id},
+                        {'$push': {'receipts': receipt_record}}
+                    )
+                    
+                    response_data['analysis'] = receipt_record
+                    response_data['message'] = 'File uploaded and receipt analyzed successfully'
+                    
+                except Exception as ai_error:
+                    logger.error(f"Receipt analysis failed: {ai_error}")
+                    response_data['message'] = 'File uploaded successfully, but receipt analysis failed'
         
         return JSONResponse(content=response_data, status_code=201)
         
