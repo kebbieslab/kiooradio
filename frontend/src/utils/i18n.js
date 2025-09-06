@@ -678,6 +678,9 @@ export const labels = {
     "Auto-fix functionality coming soon!": "Fonctionnalité d'auto-correction bientôt disponible!",
     "Analyzing": "Analyse en cours",
     "Performing comprehensive integration analysis...": "Exécution d'une analyse d'intégration complète...",
+    "Integrated": "Intégré",
+    "External": "Externe",
+    "Unknown": "Inconnu",
     
     // Visitors Management
     visitorsManagement: "Gestion des Visiteurs",
