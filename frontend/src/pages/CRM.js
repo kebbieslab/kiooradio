@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const CRM = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
