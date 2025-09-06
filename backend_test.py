@@ -175,16 +175,16 @@ class KiooRadioAPITester:
             print(f"❌ Failed to create valid donation")
             self.failed_tests.append("Create Donation - Failed to create valid donation")
         
-        # Test data validation - invalid date format
-        invalid_date_data = valid_donation_data.copy()
-        invalid_date_data["date_iso"] = "2025/01/15"  # Wrong format
+        # Test data validation - invalid donation type
+        invalid_type_data = valid_donation_data.copy()
+        invalid_type_data["donation_type"] = "invalid_type"  # Should be "one-time" or "monthly"
         
-        success, response = self.run_test("Create Donation - Invalid Date", "POST", "donations", 400, data=invalid_date_data, auth=admin_auth)
+        success, response = self.run_test("Create Donation - Invalid Type", "POST", "donations", 400, data=invalid_type_data, auth=admin_auth)
         if success:
-            print(f"✅ Correctly rejects invalid date format")
+            print(f"✅ Correctly rejects invalid donation type")
         else:
-            print(f"❌ Should reject invalid date format (YYYY/MM/DD)")
-            self.failed_tests.append("Validation - Should reject invalid date format")
+            print(f"❌ Should reject invalid donation type")
+            self.failed_tests.append("Validation - Should reject invalid donation type")
         
         # Test data validation - invalid amount (negative)
         invalid_amount_data = valid_donation_data.copy()
