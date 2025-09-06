@@ -22,6 +22,7 @@ import MediaGallery from "./pages/MediaGallery";
 import PresentersDashboard from "./pages/PresentersDashboard";
 import Volunteer from "./pages/Volunteer";
 import Visitors from "./pages/Visitors";
+import Donations from "./pages/Donations";
 import CRM from "./pages/CRM";
 import Dashboard from "./pages/Dashboard";
 
