@@ -4376,12 +4376,12 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
             return False, {}
 
     def run_all_tests(self):
-        """Run Donations Management System tests"""
-        print("🚀 Starting Kioo Radio Donations Management System Tests...")
+        """Run AI Program Assistant System tests"""
+        print("🚀 Starting Kioo Radio AI Program Assistant System Tests...")
         print(f"Testing against: {self.base_url}")
         
-        # CRITICAL: Test Donations Management System
-        self.test_donations_management_endpoints()  # PRIMARY FOCUS: Donations Management System testing
+        # CRITICAL: Test AI Program Assistant System
+        self.test_ai_program_assistant_endpoints()  # PRIMARY FOCUS: AI Program Assistant System testing
         
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
