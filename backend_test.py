@@ -208,16 +208,20 @@ class KiooRadioAPITester:
             print(f"❌ Should reject invalid currency (only USD allowed)")
             self.failed_tests.append("Validation - Should reject invalid currency")
         
-        # Test data validation - invalid method
-        invalid_method_data = valid_donation_data.copy()
-        invalid_method_data["method"] = "Bitcoin"  # Only OrangeMoney/Lonestar/PayPal/Bank allowed
+        # Test data validation - missing required field
+        missing_field_data = {
+            "donor_name": "Jane Doe",
+            "amount": 100.0,
+            "currency": "USD"
+            # Missing donor_email and donation_type (required)
+        }
         
-        success, response = self.run_test("Create Donation - Invalid Method", "POST", "donations", 400, data=invalid_method_data, auth=admin_auth)
+        success, response = self.run_test("Create Donation - Missing Required Fields", "POST", "donations", 422, data=missing_field_data, auth=admin_auth)
         if success:
-            print(f"✅ Correctly rejects invalid payment method")
+            print(f"✅ Correctly rejects missing required fields")
         else:
-            print(f"❌ Should reject invalid payment method")
-            self.failed_tests.append("Validation - Should reject invalid payment method")
+            print(f"❌ Should reject missing required fields")
+            self.failed_tests.append("Validation - Should reject missing required fields")
         
         # Test data validation - invalid anonymous flag
         invalid_anonymous_data = valid_donation_data.copy()
