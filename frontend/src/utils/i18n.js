@@ -345,7 +345,29 @@ export const labels = {
     
     // Language Switch
     switchToEnglish: "Passer à l'anglais",
-    switchToFrench: "Basculer en français"
+    switchToFrench: "Basculer en français",
+    
+    // Dashboard
+    dashboardAccess: "Accès au Tableau de Bord",
+    dashboardAccessDesc: "Veuillez entrer vos identifiants pour accéder au tableau de bord administrateur",
+    username: "Nom d'utilisateur",
+    password: "Mot de passe",
+    accessDashboard: "Accéder au Tableau de Bord",
+    kiooRadioDashboard: "Tableau de Bord Kioo Radio",
+    adminOverview: "Aperçu Administratif",
+    lastUpdated: "Dernière mise à jour",
+    refreshing: "Actualisation...",
+    refresh: "Actualiser",
+    logout: "Déconnexion",
+    visitorsThisMonth: "Visiteurs ce Mois",
+    donationsThisMonth: "Dons ce Mois",
+    netIncome: "Revenu Net",
+    openReminders: "Rappels Ouverts",
+    approvedStories: "Histoires Approuvées",
+    incomeVsExpenses: "Revenus vs Dépenses",
+    income: "Revenus",
+    expenses: "Dépenses",
+    donationsByProject: "Dons par Projet"
   }
 };
 
