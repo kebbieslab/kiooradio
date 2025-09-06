@@ -1254,8 +1254,8 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
             try:
                 response = requests.post(url, data=import_data, auth=admin_auth, timeout=10)
                 
-                if response.status_code in [200, 400]:
-                    if response.status_code == 400:
+                if response.status_code == expected_status:
+                    if expected_status == 400:
                         print(f"      ✅ {test_name}: Correctly rejected (HTTP 400)")
                     else:
                         result = response.json()
@@ -1266,8 +1266,8 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
                             print(f"      ❌ {test_name}: Should have been rejected")
                             self.failed_tests.append(f"CSV Validation - {test_name} should have been rejected")
                 else:
-                    print(f"      ❌ {test_name}: Unexpected HTTP {response.status_code}")
-                    self.failed_tests.append(f"CSV Validation - {test_name} unexpected status: {response.status_code}")
+                    print(f"      ❌ {test_name}: Expected HTTP {expected_status}, got {response.status_code}")
+                    self.failed_tests.append(f"CSV Validation - {test_name} unexpected status: expected {expected_status}, got {response.status_code}")
                     
             except Exception as e:
                 print(f"      ❌ {test_name}: Error - {str(e)}")
