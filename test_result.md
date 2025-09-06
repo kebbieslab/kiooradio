@@ -379,6 +379,18 @@ Build comprehensive Visitors list + form system with table display (date_iso, na
   test_all: false
   test_priority: "high_first"
 
+  - task: "Donations Management CRUD Endpoints"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "COMPREHENSIVE DONATIONS MANAGEMENT TESTING COMPLETED ❌: Critical backend issues found requiring main agent attention! Authentication Issues: ❌ POST /api/donations endpoint (line 998) doesn't require authentication - accepts donations without credentials (should return 401). Data Validation Issues: ❌ Old endpoint accepts invalid data: negative amounts (-50.0), invalid currencies (EUR), invalid donation types (invalid_type). Backend Route Conflicts: ❌ Two POST /api/donations endpoints exist (lines 998 & 3040) - first one (old model) is being used instead of new donations management endpoint. GET Endpoints Failing: ❌ GET /api/donations returns 500 'Failed to get donations', GET /api/donations/{id} returns 500 'Failed to get donation', PUT /api/donations/{id} returns 500 'Failed to update donation'. Export Issues: ❌ CSV export returns 500 'Failed to export donations CSV'. Filter Stats Issues: ❌ GET /api/donations/filter-stats returns 404 'Donation not found'. Totals Format Issues: ❌ GET /api/donations/totals/summary returns different format than expected (nested month/ytd structure vs flat structure). Working Features: ✅ DELETE /api/donations/{id} works correctly, ✅ XLSX export works, ✅ Some validation works (missing required fields, invalid boolean). Root Cause: Backend has conflicting donation endpoints - old simple model (lines 998-1003) vs new donations management system (lines 3040+). Old endpoint is being used, causing authentication bypass and validation issues. New endpoints have implementation bugs causing 500 errors. URGENT: Main agent needs to fix route conflicts and debug new donations management endpoints."
+
 ## agent_communication:
     - agent: "main"
       message: "VISITOR ANALYTICS IMPLEMENTATION COMPLETED: ✅ Backend visitor tracking endpoints: /api/track-visitor, /api/track-click, /api/visitors/stats, /api/visitors/recent, /api/visitors/clicks with admin authentication (admin/kioo2025!). ✅ Frontend: Complete visitor analytics dashboard at /visitors with password protection, real-time stats, recent visitors table, click analytics, and auto-refresh. ✅ Google Analytics 4 integration with react-ga4, automatic page tracking, and event tracking. ✅ Email endpoints for newsletter and contact form submissions. ✅ Environment variable REACT_APP_GA4_MEASUREMENT_ID configured (currently set to placeholder). Ready for comprehensive backend testing to verify all new endpoints work correctly."
