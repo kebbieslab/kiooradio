@@ -8,6 +8,8 @@ const CRMMergeStatus = ({ onBack }) => {
   const [isRunningDiagnostics, setIsRunningDiagnostics] = useState(false);
   const [selectedModule, setSelectedModule] = useState(null);
   const [showFixPlanModal, setShowFixPlanModal] = useState(false);
+  const [diagnosticsProgress, setDiagnosticsProgress] = useState(0);
+  const [currentlyAnalyzing, setCurrentlyAnalyzing] = useState('');
 
   // Initialize modules data with current CRM structure
   const initializeCRMModules = () => {
