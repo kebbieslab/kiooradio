@@ -158,7 +158,7 @@ const Visitors = () => {
   };
 
   const handleDelete = async (visitorId) => {
-    if (!window.confirm(t('confirm_delete_visitor') || 'Are you sure you want to delete this visitor?')) {
+    if (!window.confirm(t('confirmDeleteVisitor') || 'Are you sure you want to delete this visitor?')) {
       return;
     }
 
