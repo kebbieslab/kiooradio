@@ -23,6 +23,7 @@ import PresentersDashboard from "./pages/PresentersDashboard";
 import Volunteer from "./pages/Volunteer";
 import Visitors from "./pages/Visitors";
 import CRM from "./pages/CRM";
+import Dashboard from "./pages/Dashboard";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const STREAM_URL = process.env.REACT_APP_STREAM_URL || "https://radio.galcom.org/?station=VOXRadio";
