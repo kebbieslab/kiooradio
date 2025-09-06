@@ -5380,6 +5380,57 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
             print(f"❌ Failed - Error: {str(e)}")
             return False, {}
 
+    def run_user_management_tests(self):
+        """Run User Management System tests"""
+        print("🚀 Starting User Management System Comprehensive Testing...")
+        print(f"Testing against: {self.base_url}")
+        print("="*80)
+        
+        # CRITICAL: Test User Management System
+        self.test_user_management_system()  # PRIMARY FOCUS: User Management testing
+        
+        # Run basic endpoints to ensure system is working
+        self.test_basic_endpoints()
+        
+        # Print final results
+        print(f"\n📊 USER MANAGEMENT SYSTEM TEST SUMMARY:")
+        print(f"="*80)
+        print(f"Total tests run: {self.tests_run}")
+        print(f"Tests passed: {self.tests_passed}")
+        print(f"Tests failed: {self.tests_run - self.tests_passed}")
+        print(f"Success rate: {(self.tests_passed / self.tests_run * 100):.1f}%")
+        
+        if self.failed_tests:
+            print(f"\nFAILED TESTS:")
+            for i, test in enumerate(self.failed_tests, 1):
+                print(f"{i:2d}. {test}")
+            
+            # Categorize failures
+            critical_failures = [t for t in self.failed_tests if any(x in t.lower() for x in ['authentication', 'service unavailable', 'missing fields'])]
+            service_failures = [t for t in self.failed_tests if '503' in t or 'service unavailable' in t.lower()]
+            user_management_failures = [t for t in self.failed_tests if any(x in t.lower() for x in ['user', 'login', 'password', 'auth'])]
+            
+            if critical_failures:
+                print(f"\n🚨 CRITICAL FAILURES ({len(critical_failures)}):")
+                for test in critical_failures:
+                    print(f"   - {test}")
+            
+            if service_failures:
+                print(f"\n⚠️  SERVICE AVAILABILITY ISSUES ({len(service_failures)}):")
+                for test in service_failures:
+                    print(f"   - {test}")
+            
+            if user_management_failures:
+                print(f"\n👤 USER MANAGEMENT ISSUES ({len(user_management_failures)}):")
+                for test in user_management_failures:
+                    print(f"   - {test}")
+        else:
+            print(f"\n🎉 ALL USER MANAGEMENT TESTS PASSED!")
+        
+        print(f"="*80)
+        
+        return 0 if self.tests_passed == self.tests_run else 1
+
     def run_enhanced_crm_tests(self):
         """Run Enhanced CRM Projects System tests"""
         print("🚀 Starting Enhanced CRM Projects Comprehensive Testing...")
