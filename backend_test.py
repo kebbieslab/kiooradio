@@ -3396,12 +3396,12 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
             return False, {}
 
     def run_all_tests(self):
-        """Run CSV Import System tests"""
-        print("🚀 Starting Kioo Radio CSV Import System Tests...")
+        """Run Visitors Management System tests"""
+        print("🚀 Starting Kioo Radio Visitors Management System Tests...")
         print(f"Testing against: {self.base_url}")
         
-        # CRITICAL: Test CSV Import System
-        self.test_csv_import_endpoints()  # PRIMARY FOCUS: CSV Import System testing
+        # CRITICAL: Test Visitors Management System
+        self.test_visitors_management_endpoints()  # PRIMARY FOCUS: Visitors Management System testing
         
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
