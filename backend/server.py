@@ -740,6 +740,52 @@ except Exception as e:
     report_generator = None
 
 # Models
+
+# User Management Models
+class UserRole(str, Enum):
+    ADMIN = "admin"
+    MANAGER = "manager"
+    EDITOR = "editor"
+    VIEWER = "viewer"
+
+class ModulePermission(BaseModel):
+    module: str
+    can_read: bool = True
+    can_write: bool = False
+    can_delete: bool = False
+    can_export: bool = False
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+    email: EmailStr
+    full_name: str
+    role: UserRole
+    is_active: bool = True
+    permissions: List[ModulePermission] = []
+    notes: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    role: Optional[UserRole] = None
+    is_active: Optional[bool] = None
+    permissions: Optional[List[ModulePermission]] = None
+    notes: Optional[str] = None
+
+class UserRecord(BaseModel):
+    id: str
+    username: str
+    email: str
+    full_name: str
+    role: UserRole
+    is_active: bool
+    permissions: List[ModulePermission]
+    created_at: str
+    updated_at: str
+    last_login: Optional[str] = None
+    notes: Optional[str] = None
+
 class Program(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     title: str
