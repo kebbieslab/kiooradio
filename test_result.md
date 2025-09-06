@@ -103,7 +103,7 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-Create a new internal CRM page at /crm with specified UI, routing, and meta tag requirements. The CRM should provide comprehensive contact management functionality with authentication, database integration, and admin features.
+Create a comprehensive CSV import system for the existing CRM at /crm to handle external data sources. Implement backend endpoints for parsing, validating, and importing CSV data into different collections (visitors, donations, projects, finance, tasks_reminders, users_roles, invoices, stories). Add frontend interface integrated into the existing CRM page with file upload, validation, preview, and scheduled import capabilities.
 
 ## backend:
   - task: "CRM endpoints with authentication"
