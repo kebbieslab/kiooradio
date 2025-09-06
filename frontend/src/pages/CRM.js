@@ -1,53 +1,34 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CRM = () => {
-  const [activeSection, setActiveSection] = useState('dashboard');
-  const [language, setLanguage] = useState('en');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [contacts, setContacts] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, contacts, add-contact
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [filters, setFilters] = useState({
+    contact_type: '',
+    source: '',
+    country: '',
+    search: ''
+  });
 
-  // Load language preference
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('kioo-crm-language') || 'en';
-    setLanguage(savedLanguage);
-  }, []);
-
-  // Toggle language
-  const toggleLanguage = () => {
-    const newLanguage = language === 'en' ? 'fr' : 'en';
-    setLanguage(newLanguage);
-    localStorage.setItem('kioo-crm-language', newLanguage);
-  };
-
-  // Translations
-  const t = {
-    en: {
-      title: 'Kioo CRM',
-      dashboard: 'Dashboard',
-      visitors: 'Visitors',
-      donations: 'Donations',
-      projects: 'Projects',
-      finance: 'Finance',
-      invoices: 'Invoices & Receipts',
-      reminders: 'Reminders',
-      stories: 'Stories',
-      settings: 'Settings',
-      menu: 'Menu',
-      close: 'Close'
-    },
-    fr: {
-      title: 'Kioo CRM',
-      dashboard: 'Tableau de bord',
-      visitors: 'Visiteurs',
-      donations: 'Dons',
-      projects: 'Projets',
-      finance: 'Finance',
-      invoices: 'Factures et reçus',
-      reminders: 'Rappels',
-      stories: 'Histoires',
-      settings: 'Paramètres',
-      menu: 'Menu',
-      close: 'Fermer'
-    }
+  // New contact form data
+  const [newContact, setNewContact] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    organization: '',
+    city: '',
+    country: '',
+    contact_type: 'general',
+    notes: '',
+    tags: []
+  });
   };
 
   const sidebarItems = [
