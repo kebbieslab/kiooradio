@@ -158,7 +158,11 @@ export const labels = {
     launchCountdown: "Launching Kioo Radio in",
     launchDate: "November 13, 2025",
     broadcastingInto: "Broadcasting into 3 nations",
-    reachingRegion: "Reaching the Makona River Region"
+    reachingRegion: "Reaching the Makona River Region",
+    
+    // Language Switch
+    switchToEnglish: "Switch to English",
+    switchToFrench: "Switch to French"
   },
   
   fr: {
