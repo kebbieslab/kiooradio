@@ -219,6 +219,90 @@ const CRM = () => {
     setCurrentView('dashboard');
   };
 
+  // CSV Import Functions
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === 'text/csv') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImportData(prev => ({
+          ...prev,
+          csv_content: e.target.result
+        }));
+      };
+      reader.readAsText(file);
+    } else {
+      setError('Please select a valid CSV file');
+    }
+  };
+
+  const handleImportCSV = async () => {
+    if (!importData.csv_content) {
+      setError('Please upload a CSV file first');
+      return;
+    }
+
+    setImportData(prev => ({ ...prev, is_importing: true }));
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file_type', importData.file_type);
+      formData.append('csv_content', importData.csv_content);
+
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/crm/import-csv`, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + btoa('admin:kioo2025!')
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setImportData(prev => ({ 
+          ...prev, 
+          import_result: result,
+          csv_content: '' // Clear the content after successful import
+        }));
+        
+        // Reset file input
+        const fileInput = document.getElementById('csv-file-input');
+        if (fileInput) fileInput.value = '';
+        
+        // Refresh CRM data if contacts were imported
+        if (importData.file_type === 'visitors' && result.success) {
+          loadCRMData();
+        }
+      } else {
+        const errorData = await response.json();
+        setError(errorData.detail || 'Failed to import CSV data');
+      }
+    } catch (error) {
+      console.error('Failed to import CSV:', error);
+      setError('Failed to import CSV data');
+    } finally {
+      setImportData(prev => ({ ...prev, is_importing: false }));
+    }
+  };
+
+  const loadImportHistory = async () => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/crm/import-history`, {
+        headers: {
+          'Authorization': 'Basic ' + btoa('admin:kioo2025!')
+        }
+      });
+
+      if (response.ok) {
+        const history = await response.json();
+        setImportData(prev => ({ ...prev, import_history: history }));
+      }
+    } catch (error) {
+      console.error('Failed to load import history:', error);
+    }
+  };
+
   // Filter contacts based on search
   const filteredContacts = contacts.filter(contact => {
     if (!filters.search) return true;
