@@ -85,7 +85,7 @@
 
 ## 🌐 **LIVE WEBSITE RESULTS**
 
-**URL:** https://faith-broadcast-1.preview.emergentagent.com
+**URL:** https://mission-crm.preview.emergentagent.com
 
 ### **Homepage Changes:**
 - ✅ Clean hero section without "Currently Playing" banner

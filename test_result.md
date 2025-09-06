@@ -217,7 +217,7 @@ User wants to complete the www.kiooradio.org/visitors analytics page with Google
           comment: "Partner Churches page showing 'Coming Soon' placeholder data instead of real church partner data from database. API has 79 partners but frontend shows placeholders."
         - working: true
           agent: "main"
-          comment: "✅ FIXED: Root cause was REACT_APP_BACKEND_URL pointing to production URL (https://faith-broadcast-1.preview.emergentagent.com) instead of local development URL. Updated to http://localhost:8001 and restarted frontend. Page now shows 79 real partner churches instead of placeholders."
+          comment: "✅ FIXED: Root cause was REACT_APP_BACKEND_URL pointing to production URL (https://mission-crm.preview.emergentagent.com) instead of local development URL. Updated to http://localhost:8001 and restarted frontend. Page now shows 79 real partner churches instead of placeholders."
 
   - task: "Verify Presenters Dashboard Functionality"
     implemented: true

@@ -9,7 +9,7 @@ import json
 from datetime import datetime
 import sys
 
-BACKEND_URL = "https://faith-broadcast-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://mission-crm.preview.emergentagent.com/api"
 
 def print_header(title):
     print(f"\n{'='*50}")

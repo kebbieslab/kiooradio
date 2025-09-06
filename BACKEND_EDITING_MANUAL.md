@@ -27,7 +27,7 @@ The MongoDB database contains these collections:
 
 **Option A: Via API (Recommended)**
 ```bash
-curl -X POST "https://faith-broadcast-1.preview.emergentagent.com/api/programs" \
+curl -X POST "https://mission-crm.preview.emergentagent.com/api/programs" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Evening Devotions",
@@ -76,7 +76,7 @@ async def add_program():
 ### 2. Adding Impact Stories
 
 ```bash
-curl -X POST "https://faith-broadcast-1.preview.emergentagent.com/api/impact-stories" \
+curl -X POST "https://mission-crm.preview.emergentagent.com/api/impact-stories" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Radio Changed My Life",
@@ -90,7 +90,7 @@ curl -X POST "https://faith-broadcast-1.preview.emergentagent.com/api/impact-sto
 ### 3. Adding News Updates
 
 ```bash
-curl -X POST "https://faith-broadcast-1.preview.emergentagent.com/api/news" \
+curl -X POST "https://mission-crm.preview.emergentagent.com/api/news" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Studio Expansion Complete", 
@@ -105,12 +105,12 @@ curl -X POST "https://faith-broadcast-1.preview.emergentagent.com/api/news" \
 
 View donation totals:
 ```bash
-curl "https://faith-broadcast-1.preview.emergentagent.com/api/donations/total"
+curl "https://mission-crm.preview.emergentagent.com/api/donations/total"
 ```
 
 Add new donation record:
 ```bash
-curl -X POST "https://faith-broadcast-1.preview.emergentagent.com/api/donations" \
+curl -X POST "https://mission-crm.preview.emergentagent.com/api/donations" \
   -H "Content-Type: application/json" \
   -d '{
     "donor_name": "John Smith",
@@ -278,10 +278,10 @@ CORS_ORIGINS="*"
 ### Test API Endpoint
 ```bash
 # Test if endpoint works
-curl "https://faith-broadcast-1.preview.emergentagent.com/api/your-new-endpoint"
+curl "https://mission-crm.preview.emergentagent.com/api/your-new-endpoint"
 
 # Test with data
-curl -X POST "https://faith-broadcast-1.preview.emergentagent.com/api/your-endpoint" \
+curl -X POST "https://mission-crm.preview.emergentagent.com/api/your-endpoint" \
   -H "Content-Type: application/json" \
   -d '{"test": "data"}'
 ```
@@ -325,7 +325,7 @@ mongo mongodb://localhost:27017
 ### API Not Responding
 ```bash
 # Check if backend is running
-curl "https://faith-broadcast-1.preview.emergentagent.com/api/"
+curl "https://mission-crm.preview.emergentagent.com/api/"
 
 # Should return: {"message":"Kioo Radio API - The Gift of Good News","version":"1.0.0"}
 ```
@@ -353,7 +353,7 @@ mongo mongodb://localhost:27017/test_database --eval "
 ### Performance Monitoring
 ```bash
 # Check API response times
-curl -w "@/dev/stdin" "https://faith-broadcast-1.preview.emergentagent.com/api/" <<< "
+curl -w "@/dev/stdin" "https://mission-crm.preview.emergentagent.com/api/" <<< "
      time_namelookup:  %{time_namelookup}\n
         time_connect:  %{time_connect}\n  
      time_appconnect:  %{time_appconnect}\n
@@ -405,7 +405,7 @@ async def get_events():
 
 3. **Test New Feature**:
 ```bash
-curl -X POST "https://faith-broadcast-1.preview.emergentagent.com/api/events" \
+curl -X POST "https://mission-crm.preview.emergentagent.com/api/events" \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Community Outreach",
