@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import { HelmetProvider } from 'react-helmet-async';
 import ReactGA from 'react-ga4';
 import "./App.css";
+import { initI18n } from "./utils/i18n";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ContactPopup from "./components/ContactPopup";
