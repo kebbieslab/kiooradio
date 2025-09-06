@@ -4507,8 +4507,7 @@ async def get_ai_program(
 @api_router.post("/ai-programs/{program_id}/analyze", response_model=AIAnalysisResponse)
 async def analyze_ai_program(
     program_id: str,
-    request: AIAnalysisRequest,
-    admin: str = Depends(authenticate_admin)
+    request: AIAnalysisRequest
 ):
     """Trigger AI analysis for a specific AI program"""
     try:
