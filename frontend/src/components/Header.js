@@ -27,40 +27,6 @@ const Header = ({ setIsPlayerVisible }) => {
     },
   ];
 
-  // Language system initialization
-  useEffect(() => {
-    const initLanguage = () => {
-      const saved = localStorage.getItem('lang');
-      if (saved) {
-        setCurrentLanguage(saved);
-        return;
-      }
-      
-      // Auto-detect based on browser language
-      const nav = (navigator.language || 'en').toLowerCase();
-      const defaultLang = nav.startsWith('fr') ? 'fr' : 'en';
-      setCurrentLanguage(defaultLang);
-      localStorage.setItem('lang', defaultLang);
-    };
-
-    initLanguage();
-  }, []);
-
-  // Apply i18n translations
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.applyI18n) {
-      window.applyI18n();
-    }
-  }, [currentLanguage]);
-
-  const switchLanguage = (lang) => {
-    setCurrentLanguage(lang);
-    localStorage.setItem('lang', lang);
-    if (typeof window !== 'undefined' && window.setLang) {
-      window.setLang(lang);
-    }
-  };
-
   const isActive = (path) => location.pathname === path;
 
   return (
