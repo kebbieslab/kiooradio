@@ -1233,7 +1233,7 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
         
         # Test with invalid CSV format
         invalid_csv_tests = [
-            ("Empty CSV", "visitors", "", 400),  # Empty CSV should return 400
+            ("Empty CSV", "visitors", "", 422),  # Empty CSV should return 422 (validation error)
             ("Invalid Date Format", "visitors", "name,email,date_iso\nJohn,john@test.com,invalid-date", 200),
             ("Invalid Currency", "donations", "donor_name,amount_currency,amount,date_iso\nJohn,INVALID,100,2025-01-15", 200),
             ("Missing Required Field", "visitors", "email\njohn@test.com", 200),
