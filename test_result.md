@@ -103,7 +103,7 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-Build comprehensive Donations list + form system with table display (date_iso, donor_name, country, method, amount_currency, amount, project_code, note, receipt_no, anonymous_y_n), filters (month, project_code, method, anonymous), "Add Donation" form with validation (amount > 0), running totals (this month, YTD), row actions (edit, delete, export CSV/XLSX), and bilingual labels via EN/FR toggle.
+Build comprehensive Projects list + detail system with list view displaying (project_code, name, status, budget_currency, budget_amount), detail page showing (description, start/end dates, manager, donations linked to project totaled, recent stories linked to project), and actions (add/edit project, export list). Admin-only access with authentication.
 
 ## backend:
   - task: "Donations Management CRUD Endpoints"
