@@ -218,6 +218,7 @@ const CRM = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('crmAuth');
     setIsAuthenticated(false);
     setCredentials({ username: '', password: '' });
     setContacts([]);
