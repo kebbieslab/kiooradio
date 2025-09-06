@@ -447,6 +447,42 @@ const CRM = () => {
                 >
                   Import Data
                 </button>
+                
+                {/* Integrated Module Navigation */}
+                <div className="border-l border-gray-300 h-8 mx-2"></div>
+                
+                <button
+                  onClick={() => setCurrentView('visitors')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md ${
+                    currentView === 'visitors' 
+                      ? 'bg-blue-600 text-white' 
+                      : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  👥 Visitors
+                </button>
+                <button
+                  onClick={() => setCurrentView('donations')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md ${
+                    currentView === 'donations' 
+                      ? 'bg-green-600 text-white' 
+                      : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  💝 Donations
+                </button>
+                <button
+                  onClick={() => setCurrentView('projects')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md ${
+                    currentView === 'projects' 
+                      ? 'bg-purple-600 text-white' 
+                      : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  📋 Projects
+                </button>
+                
+                <div className="border-l border-gray-300 h-8 mx-2"></div>
                 <button
                   onClick={() => setCurrentView('settings')}
                   className={`px-4 py-2 text-sm font-medium rounded-md ${
