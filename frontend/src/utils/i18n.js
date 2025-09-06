@@ -117,6 +117,63 @@ export const labels = {
     failedToExport: "Failed to export data",
     confirmDeleteVisitor: "Are you sure you want to delete this visitor?",
     
+    // Donations Management
+    donationsManagement: "Donations Management",
+    donationsAccess: "Donations Access", 
+    donationsAccessDescription: "Please enter your credentials to access the Donations Management system",
+    accessDonations: "Access Donations",
+    manageDonationRecords: "Manage donation records and track contributions",
+    addDonation: "Add Donation",
+    editDonation: "Edit Donation",
+    updateDonation: "Update Donation",
+    donationsList: "Donations List",
+    noDonationsFound: "No donations found",
+    
+    // Donation Fields
+    donorName: "Donor Name",
+    paymentMethod: "Payment Method",
+    amount: "Amount",
+    amountCurrency: "Currency",
+    projectCode: "Project Code",
+    note: "Note",
+    receiptNo: "Receipt Number",
+    anonymous: "Anonymous",
+    
+    // Payment Methods
+    orangeMoney: "Orange Money",
+    lonestar: "Lonestar",
+    paypal: "PayPal",
+    bank: "Bank Transfer",
+    
+    // Donation Filters
+    allProjects: "All Projects",
+    allMethods: "All Methods",
+    allAnonymous: "All (Anonymous)",
+    anonymousYes: "Anonymous Only",
+    anonymousNo: "Public Only",
+    
+    // Donation Totals
+    thisMonth: "This Month",
+    yearToDate: "Year to Date",
+    totalDonations: "Total Donations",
+    usdTotal: "USD Total",
+    lrdTotal: "LRD Total",
+    runningTotals: "Running Totals",
+    
+    // Validation Messages
+    amountMustBeGreaterThanZero: "Amount must be greater than 0",
+    invalidAmount: "Please enter a valid amount",
+    invalidCurrency: "Currency must be USD or LRD",
+    invalidPaymentMethod: "Please select a valid payment method",
+    
+    // Donation Messages  
+    failedToLoadDonations: "Failed to load donations",
+    failedToSaveDonation: "Failed to save donation",
+    failedToDeleteDonation: "Failed to delete donation",
+    confirmDeleteDonation: "Are you sure you want to delete this donation?",
+    donationSavedSuccessfully: "Donation saved successfully",
+    donationDeletedSuccessfully: "Donation deleted successfully",
+    
     // About Page
     aboutTitle: "About Kioo Radio",
     aboutSubtitle: "Broadcasting Faith, Hope and Love in Christ",
