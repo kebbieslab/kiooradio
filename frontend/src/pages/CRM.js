@@ -10,7 +10,7 @@ const CRM = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, contacts, add-contact, import-data, settings, merge-status
+  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, contacts, add-contact, import-data, settings, merge-status, visitors, donations, projects
   const [selectedContact, setSelectedContact] = useState(null);
   const [filters, setFilters] = useState({
     contact_type: '',
