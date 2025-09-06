@@ -110,13 +110,16 @@ Implement AI-Powered Program Assistant using combination of Emergent LLM and Cha
     implemented: true
     working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: false
           agent: "main"
           comment: "Implemented comprehensive AI Program Assistant backend system with Emergent LLM integration. Added ProgramContent, ProgramCreate, AIAnalysisRequest, AIAnalysisResponse, ProgramSearchRequest Pydantic models. Created AI helper functions: get_ai_client() for OpenAI/Claude/Gemini model selection, ai_summarize_content(), ai_extract_highlights(), ai_extract_keywords(), ai_translate_content() using emergentintegrations library. Implemented API endpoints: POST /api/programs (create program with auto AI analysis), GET /api/programs (list with filtering), GET /api/programs/{id} (get specific program), POST /api/programs/{id}/analyze (trigger specific AI analysis), POST /api/programs/search (AI-powered semantic search), GET /api/programs/stats/overview (analytics). Added MongoDB text search indexes for content search. Configured Emergent LLM key in environment (sk-emergent-1C7B6656227E90702C). Uses combination of OpenAI GPT-4o for summaries/keywords, Claude-3-7-sonnet for highlights/translation. Ready for comprehensive backend testing."
+        - working: false
+          agent: "testing"
+          comment: "COMPREHENSIVE AI PROGRAM ASSISTANT TESTING COMPLETED ❌: Critical backend implementation issues found requiring main agent attention! Model Conflicts: ❌ Backend has conflicting Program models - old radio schedule Program model vs new AI Program Assistant ProgramContent model. AI endpoints are incorrectly using old Program model expecting fields like 'host', 'description', 'category', 'day_of_week', 'start_time' instead of new ProgramContent fields like 'content', 'presenter', 'program_type'. Authentication Issues: ❌ GET /api/programs endpoint doesn't require authentication (returns 200 instead of 401) - security vulnerability. Language Enum Mismatch: ❌ Backend expects 'french' but API uses 'fr' - enum validation failing. Missing Content Field: ❌ GET programs endpoint doesn't return 'content' field essential for AI analysis. Search Functionality Broken: ❌ All search endpoints return 500 errors indicating backend implementation failures. AI Analysis Request Issues: ❌ Analyze endpoint expects different request structure causing 422 validation errors. Environment Configuration: ❌ EMERGENT_LLM_KEY not configured in environment preventing AI integration. Working Features: ✅ Program analytics endpoint working correctly ✅ Data validation working for Pydantic models ✅ Basic endpoint routing functional. URGENT ACTION REQUIRED: Main agent must 1) Resolve model conflicts between old Program and new ProgramContent models 2) Fix authentication on GET /api/programs endpoint 3) Align language enum values (fr vs french) 4) Ensure content field is returned in program responses 5) Debug and fix search endpoint 500 errors 6) Configure EMERGENT_LLM_KEY environment variable 7) Fix AI analysis request model structure. Backend has serious implementation conflicts preventing AI Program Assistant functionality."
     implemented: true
     working: true
     file: "/app/backend/server.py"
