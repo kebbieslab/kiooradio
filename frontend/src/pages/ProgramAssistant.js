@@ -46,18 +46,16 @@ const ProgramAssistant = () => {
     loadData();
   }, []);
 
-  // Search programs
+  // Search programs (no authentication required)
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
     
     setLoading(true);
     try {
-      const auth = localStorage.getItem('programAssistantAuth');
       const response = await fetch(`${BACKEND_URL}/api/ai-programs/search`, {
         method: 'POST',
         headers: {
-          'Authorization': `Basic ${auth}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -79,15 +77,13 @@ const ProgramAssistant = () => {
     }
   };
 
-  // Analyze program
+  // Analyze program (no authentication required)
   const analyzeProgram = async (programId, type) => {
     setLoading(true);
     try {
-      const auth = localStorage.getItem('programAssistantAuth');
       const response = await fetch(`${BACKEND_URL}/api/ai-programs/${programId}/analyze`, {
         method: 'POST',
         headers: {
-          'Authorization': `Basic ${auth}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
