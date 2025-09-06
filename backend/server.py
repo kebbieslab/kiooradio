@@ -2512,6 +2512,437 @@ async def delete_import_schedule(schedule_id: str, admin: str = Depends(authenti
         logger.error(f"Failed to delete import schedule: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete import schedule")
 
+# Visitors Management Models
+class VisitorCreate(BaseModel):
+    date_iso: str
+    name: str
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    country: str
+    county_or_prefecture: Optional[str] = None
+    city_town: Optional[str] = None
+    program: str
+    language: Optional[str] = None
+    testimony: str
+    source: str = "web"
+    consent_y_n: str = "Y"
+
+class VisitorUpdate(BaseModel):
+    date_iso: Optional[str] = None
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    country: Optional[str] = None
+    county_or_prefecture: Optional[str] = None
+    city_town: Optional[str] = None
+    program: Optional[str] = None
+    language: Optional[str] = None
+    testimony: Optional[str] = None
+    source: Optional[str] = None
+    consent_y_n: Optional[str] = None
+
+# Visitors Management Endpoints
+@api_router.get("/visitors", response_model=List[VisitorRecord])
+async def get_visitors(
+    month: Optional[str] = None,  # YYYY-MM format
+    country: Optional[str] = None,
+    program: Optional[str] = None,
+    source: Optional[str] = None,
+    limit: int = 100,
+    skip: int = 0,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get visitors with optional filtering"""
+    try:
+        filter_dict = {}
+        
+        # Month filter (YYYY-MM format)
+        if month:
+            try:
+                year, month_num = month.split('-')
+                start_date = f"{year}-{month_num.zfill(2)}-01"
+                # Calculate end date (first day of next month)
+                if month_num == "12":
+                    end_date = f"{int(year) + 1}-01-01"
+                else:
+                    end_date = f"{year}-{str(int(month_num) + 1).zfill(2)}-01"
+                
+                filter_dict["date_iso"] = {
+                    "$gte": start_date,
+                    "$lt": end_date
+                }
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid month format. Use YYYY-MM")
+        
+        # Other filters
+        if country:
+            filter_dict["country"] = country
+        if program:
+            filter_dict["program"] = program
+        if source:
+            filter_dict["source"] = source
+        
+        # Get visitors with pagination
+        visitors = await db.visitors.find(filter_dict).sort("date_iso", -1).skip(skip).limit(limit).to_list(limit)
+        
+        # Convert MongoDB documents to API format
+        result = []
+        for visitor in visitors:
+            if '_id' in visitor:
+                del visitor['_id']
+            # Convert datetime strings to datetime objects if needed
+            if 'created_at' in visitor and isinstance(visitor['created_at'], str):
+                try:
+                    visitor['created_at'] = datetime.fromisoformat(visitor['created_at'].replace('Z', '+00:00'))
+                except ValueError:
+                    pass
+            result.append(VisitorRecord(**visitor))
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get visitors: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get visitors")
+
+@api_router.post("/visitors", response_model=VisitorRecord)
+async def create_visitor(visitor: VisitorCreate, admin: str = Depends(authenticate_admin)):
+    """Create a new visitor"""
+    try:
+        # Validate date format
+        try:
+            datetime.strptime(visitor.date_iso, '%Y-%m-%d')
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+        
+        # Validate consent
+        if visitor.consent_y_n not in ['Y', 'N']:
+            raise HTTPException(status_code=400, detail="Consent must be Y or N")
+        
+        # Create visitor record
+        visitor_dict = visitor.dict()
+        visitor_obj = VisitorRecord(**visitor_dict)
+        
+        # Prepare for MongoDB storage
+        visitor_data = visitor_obj.dict()
+        for field in ['created_at']:
+            if field in visitor_data and visitor_data[field]:
+                visitor_data[field] = visitor_data[field].isoformat() if isinstance(visitor_data[field], datetime) else visitor_data[field]
+        
+        await db.visitors.insert_one(visitor_data)
+        return visitor_obj
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to create visitor: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create visitor")
+
+@api_router.get("/visitors/{visitor_id}", response_model=VisitorRecord)
+async def get_visitor(visitor_id: str, admin: str = Depends(authenticate_admin)):
+    """Get a specific visitor by ID"""
+    try:
+        visitor = await db.visitors.find_one({"id": visitor_id})
+        if not visitor:
+            raise HTTPException(status_code=404, detail="Visitor not found")
+        
+        if '_id' in visitor:
+            del visitor['_id']
+        
+        # Convert datetime strings to datetime objects if needed
+        if 'created_at' in visitor and isinstance(visitor['created_at'], str):
+            try:
+                visitor['created_at'] = datetime.fromisoformat(visitor['created_at'].replace('Z', '+00:00'))
+            except ValueError:
+                pass
+        
+        return VisitorRecord(**visitor)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get visitor: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get visitor")
+
+@api_router.put("/visitors/{visitor_id}", response_model=VisitorRecord)
+async def update_visitor(visitor_id: str, visitor_update: VisitorUpdate, admin: str = Depends(authenticate_admin)):
+    """Update an existing visitor"""
+    try:
+        # Get existing visitor
+        existing_visitor = await db.visitors.find_one({"id": visitor_id})
+        if not existing_visitor:
+            raise HTTPException(status_code=404, detail="Visitor not found")
+        
+        # Prepare update data
+        update_data = visitor_update.dict(exclude_unset=True)
+        
+        # Validate date format if provided
+        if "date_iso" in update_data and update_data["date_iso"]:
+            try:
+                datetime.strptime(update_data["date_iso"], '%Y-%m-%d')
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
+        
+        # Validate consent if provided
+        if "consent_y_n" in update_data and update_data["consent_y_n"] not in ['Y', 'N']:
+            raise HTTPException(status_code=400, detail="Consent must be Y or N")
+        
+        # Update in database
+        await db.visitors.update_one(
+            {"id": visitor_id},
+            {"$set": update_data}
+        )
+        
+        # Get updated visitor
+        updated_visitor = await db.visitors.find_one({"id": visitor_id})
+        if '_id' in updated_visitor:
+            del updated_visitor['_id']
+        
+        # Convert datetime strings to datetime objects if needed
+        if 'created_at' in updated_visitor and isinstance(updated_visitor['created_at'], str):
+            try:
+                updated_visitor['created_at'] = datetime.fromisoformat(updated_visitor['created_at'].replace('Z', '+00:00'))
+            except ValueError:
+                pass
+        
+        return VisitorRecord(**updated_visitor)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update visitor: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update visitor")
+
+@api_router.delete("/visitors/{visitor_id}")
+async def delete_visitor(visitor_id: str, admin: str = Depends(authenticate_admin)):
+    """Delete a visitor"""
+    try:
+        result = await db.visitors.delete_one({"id": visitor_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Visitor not found")
+        return {"message": "Visitor deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete visitor: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete visitor")
+
+@api_router.get("/visitors/export/csv")
+async def export_visitors_csv(
+    month: Optional[str] = None,
+    country: Optional[str] = None,
+    program: Optional[str] = None,
+    source: Optional[str] = None,
+    admin: str = Depends(authenticate_admin)
+):
+    """Export visitors as CSV"""
+    try:
+        # Build filter
+        filter_dict = {}
+        if month:
+            try:
+                year, month_num = month.split('-')
+                start_date = f"{year}-{month_num.zfill(2)}-01"
+                if month_num == "12":
+                    end_date = f"{int(year) + 1}-01-01"
+                else:
+                    end_date = f"{year}-{str(int(month_num) + 1).zfill(2)}-01"
+                filter_dict["date_iso"] = {"$gte": start_date, "$lt": end_date}
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid month format. Use YYYY-MM")
+        
+        if country:
+            filter_dict["country"] = country
+        if program:
+            filter_dict["program"] = program
+        if source:
+            filter_dict["source"] = source
+        
+        # Get all matching visitors
+        visitors = await db.visitors.find(filter_dict).sort("date_iso", -1).to_list(10000)
+        
+        # Create CSV content
+        csv_content = "date_iso,name,phone,email,country,county_or_prefecture,city_town,program,language,testimony,source,consent_y_n\n"
+        
+        for visitor in visitors:
+            row = [
+                visitor.get("date_iso", ""),
+                visitor.get("name", ""),
+                visitor.get("phone", ""),
+                visitor.get("email", ""),
+                visitor.get("country", ""),
+                visitor.get("county_or_prefecture", ""),
+                visitor.get("city_town", ""),
+                visitor.get("program", ""),
+                visitor.get("language", ""),
+                visitor.get("testimony", "").replace('"', '""'),  # Escape quotes
+                visitor.get("source", ""),
+                visitor.get("consent_y_n", "")
+            ]
+            csv_content += '"' + '","'.join(row) + '"\n'
+        
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"visitors_export_{timestamp}.csv"
+        
+        return Response(
+            content=csv_content,
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to export visitors CSV: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export visitors CSV")
+
+@api_router.get("/visitors/export/xlsx")
+async def export_visitors_xlsx(
+    month: Optional[str] = None,
+    country: Optional[str] = None,
+    program: Optional[str] = None,
+    source: Optional[str] = None,
+    admin: str = Depends(authenticate_admin)
+):
+    """Export visitors as XLSX"""
+    try:
+        # Build filter
+        filter_dict = {}
+        if month:
+            try:
+                year, month_num = month.split('-')
+                start_date = f"{year}-{month_num.zfill(2)}-01"
+                if month_num == "12":
+                    end_date = f"{int(year) + 1}-01-01"
+                else:
+                    end_date = f"{year}-{str(int(month_num) + 1).zfill(2)}-01"
+                filter_dict["date_iso"] = {"$gte": start_date, "$lt": end_date}
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid month format. Use YYYY-MM")
+        
+        if country:
+            filter_dict["country"] = country
+        if program:
+            filter_dict["program"] = program
+        if source:
+            filter_dict["source"] = source
+        
+        # Get all matching visitors
+        visitors = await db.visitors.find(filter_dict).sort("date_iso", -1).to_list(10000)
+        
+        # Create Excel workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Visitors"
+        
+        # Headers
+        headers = ["Date", "Name", "Phone", "Email", "Country", "County/Prefecture", "City/Town", "Program", "Language", "Testimony", "Source", "Consent"]
+        ws.append(headers)
+        
+        # Style headers
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+        
+        for col_num, _ in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Add data
+        for visitor in visitors:
+            row = [
+                visitor.get("date_iso", ""),
+                visitor.get("name", ""),
+                visitor.get("phone", ""),
+                visitor.get("email", ""),
+                visitor.get("country", ""),
+                visitor.get("county_or_prefecture", ""),
+                visitor.get("city_town", ""),
+                visitor.get("program", ""),
+                visitor.get("language", ""),
+                visitor.get("testimony", ""),
+                visitor.get("source", ""),
+                visitor.get("consent_y_n", "")
+            ]
+            ws.append(row)
+        
+        # Auto-adjust column widths
+        for column in ws.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min((max_length + 2), 50)
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Save to BytesIO
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"visitors_export_{timestamp}.xlsx"
+        
+        return Response(
+            content=output.read(),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to export visitors XLSX: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export visitors XLSX")
+
+@api_router.get("/visitors/stats")
+async def get_visitors_stats(admin: str = Depends(authenticate_admin)):
+    """Get visitors statistics for filters"""
+    try:
+        # Get unique countries
+        countries = await db.visitors.distinct("country")
+        countries = [c for c in countries if c]  # Remove empty/null values
+        
+        # Get unique programs
+        programs = await db.visitors.distinct("program")
+        programs = [p for p in programs if p]  # Remove empty/null values
+        
+        # Get unique sources
+        sources = await db.visitors.distinct("source")
+        sources = [s for s in sources if s]  # Remove empty/null values
+        
+        # Get date range for month filter
+        date_pipeline = [
+            {"$group": {
+                "_id": None,
+                "min_date": {"$min": "$date_iso"},
+                "max_date": {"$max": "$date_iso"}
+            }}
+        ]
+        date_result = await db.visitors.aggregate(date_pipeline).to_list(1)
+        date_range = date_result[0] if date_result else {"min_date": None, "max_date": None}
+        
+        return {
+            "countries": sorted(countries),
+            "programs": sorted(programs),
+            "sources": sorted(sources),
+            "date_range": date_range,
+            "total_visitors": await db.visitors.count_documents({})
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get visitors stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get visitors stats")
+
 # Dashboard Models
 class DashboardStats(BaseModel):
     visitors_this_month: int = 0
