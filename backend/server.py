@@ -3464,6 +3464,479 @@ async def get_donations_filter_stats(admin: str = Depends(authenticate_admin)):
         logger.error(f"Failed to get donations filter stats: {e}")
         raise HTTPException(status_code=500, detail="Failed to get donations filter stats")
 
+# Projects Management Models  
+class ProjectCreate(BaseModel):
+    project_code: str
+    name: str
+    description_short: Optional[str] = None
+    start_date_iso: Optional[str] = None
+    end_date_iso: Optional[str] = None
+    status: str = "planned"  # planned/active/completed/on-hold/cancelled
+    budget_currency: str = "USD"
+    budget_amount: Optional[float] = None
+    manager: Optional[str] = None
+    country: Optional[str] = None
+    tags: Optional[str] = None
+
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+    description_short: Optional[str] = None
+    start_date_iso: Optional[str] = None
+    end_date_iso: Optional[str] = None
+    status: Optional[str] = None
+    budget_currency: Optional[str] = None
+    budget_amount: Optional[float] = None
+    manager: Optional[str] = None
+    country: Optional[str] = None
+    tags: Optional[str] = None
+
+# Projects Management Endpoints
+@api_router.get("/projects", response_model=List[ProjectRecord])
+async def get_projects(
+    status: Optional[str] = None,
+    country: Optional[str] = None,
+    manager: Optional[str] = None,
+    limit: int = 100,
+    skip: int = 0,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get projects with optional filtering"""
+    try:
+        filter_dict = {}
+        
+        if status:
+            filter_dict["status"] = status
+        if country:
+            filter_dict["country"] = country
+        if manager:
+            filter_dict["manager"] = manager
+        
+        # Get projects with pagination
+        projects = await db.projects.find(filter_dict).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+        
+        # Convert MongoDB documents to API format
+        result = []
+        for project in projects:
+            if '_id' in project:
+                del project['_id']
+            # Convert datetime strings to datetime objects if needed
+            if 'created_at' in project and isinstance(project['created_at'], str):
+                try:
+                    project['created_at'] = datetime.fromisoformat(project['created_at'].replace('Z', '+00:00'))
+                except ValueError:
+                    pass
+            result.append(ProjectRecord(**project))
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get projects: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get projects")
+
+@api_router.post("/projects", response_model=ProjectRecord)
+async def create_project(project: ProjectCreate, admin: str = Depends(authenticate_admin)):
+    """Create a new project"""
+    try:
+        # Validate project code uniqueness
+        existing_project = await db.projects.find_one({"project_code": project.project_code})
+        if existing_project:
+            raise HTTPException(status_code=400, detail="Project code already exists")
+        
+        # Validate dates if provided
+        if project.start_date_iso:
+            try:
+                datetime.strptime(project.start_date_iso, '%Y-%m-%d')
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid start date format. Use YYYY-MM-DD")
+        
+        if project.end_date_iso:
+            try:
+                datetime.strptime(project.end_date_iso, '%Y-%m-%d')
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid end date format. Use YYYY-MM-DD")
+        
+        # Validate status
+        valid_statuses = ['planned', 'active', 'completed', 'on-hold', 'cancelled']
+        if project.status not in valid_statuses:
+            raise HTTPException(status_code=400, detail=f"Status must be one of: {', '.join(valid_statuses)}")
+        
+        # Validate currency
+        if project.budget_currency not in ['USD', 'LRD']:
+            raise HTTPException(status_code=400, detail="Budget currency must be USD or LRD")
+        
+        # Validate budget amount if provided
+        if project.budget_amount is not None and project.budget_amount < 0:
+            raise HTTPException(status_code=400, detail="Budget amount must be positive")
+        
+        # Create project record
+        project_dict = project.dict()
+        project_obj = ProjectRecord(**project_dict)
+        
+        # Prepare for MongoDB storage
+        project_data = project_obj.dict()
+        for field in ['created_at']:
+            if field in project_data and project_data[field]:
+                project_data[field] = project_data[field].isoformat() if isinstance(project_data[field], datetime) else project_data[field]
+        
+        await db.projects.insert_one(project_data)
+        return project_obj
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to create project: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create project")
+
+@api_router.get("/projects/{project_code}", response_model=ProjectRecord)
+async def get_project(project_code: str, admin: str = Depends(authenticate_admin)):
+    """Get a specific project by code"""
+    try:
+        project = await db.projects.find_one({"project_code": project_code})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        if '_id' in project:
+            del project['_id']
+        
+        # Convert datetime strings to datetime objects if needed
+        if 'created_at' in project and isinstance(project['created_at'], str):
+            try:
+                project['created_at'] = datetime.fromisoformat(project['created_at'].replace('Z', '+00:00'))
+            except ValueError:
+                pass
+        
+        return ProjectRecord(**project)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get project: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get project")
+
+@api_router.put("/projects/{project_code}", response_model=ProjectRecord)
+async def update_project(project_code: str, project_update: ProjectUpdate, admin: str = Depends(authenticate_admin)):
+    """Update an existing project"""
+    try:
+        # Get existing project
+        existing_project = await db.projects.find_one({"project_code": project_code})
+        if not existing_project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Prepare update data
+        update_data = project_update.dict(exclude_unset=True)
+        
+        # Validate dates if provided
+        for date_field in ['start_date_iso', 'end_date_iso']:
+            if date_field in update_data and update_data[date_field]:
+                try:
+                    datetime.strptime(update_data[date_field], '%Y-%m-%d')
+                except ValueError:
+                    raise HTTPException(status_code=400, detail=f"Invalid {date_field.replace('_', ' ')} format. Use YYYY-MM-DD")
+        
+        # Validate status if provided
+        if "status" in update_data and update_data["status"]:
+            valid_statuses = ['planned', 'active', 'completed', 'on-hold', 'cancelled']
+            if update_data["status"] not in valid_statuses:
+                raise HTTPException(status_code=400, detail=f"Status must be one of: {', '.join(valid_statuses)}")
+        
+        # Validate currency if provided
+        if "budget_currency" in update_data and update_data["budget_currency"]:
+            if update_data["budget_currency"] not in ['USD', 'LRD']:
+                raise HTTPException(status_code=400, detail="Budget currency must be USD or LRD")
+        
+        # Validate budget amount if provided
+        if "budget_amount" in update_data and update_data["budget_amount"] is not None:
+            if update_data["budget_amount"] < 0:
+                raise HTTPException(status_code=400, detail="Budget amount must be positive")
+        
+        # Update in database
+        await db.projects.update_one(
+            {"project_code": project_code},
+            {"$set": update_data}
+        )
+        
+        # Get updated project
+        updated_project = await db.projects.find_one({"project_code": project_code})
+        if '_id' in updated_project:
+            del updated_project['_id']
+        
+        # Convert datetime strings to datetime objects if needed
+        if 'created_at' in updated_project and isinstance(updated_project['created_at'], str):
+            try:
+                updated_project['created_at'] = datetime.fromisoformat(updated_project['created_at'].replace('Z', '+00:00'))
+            except ValueError:
+                pass
+        
+        return ProjectRecord(**updated_project)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update project: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update project")
+
+@api_router.delete("/projects/{project_code}")
+async def delete_project(project_code: str, admin: str = Depends(authenticate_admin)):
+    """Delete a project"""
+    try:
+        result = await db.projects.delete_one({"project_code": project_code})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Project not found")
+        return {"message": "Project deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete project: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete project")
+
+@api_router.get("/projects/{project_code}/donations")
+async def get_project_donations(project_code: str, admin: str = Depends(authenticate_admin)):
+    """Get donations totaled by project"""
+    try:
+        # Aggregate donations by currency for this project
+        pipeline = [
+            {"$match": {"project_code": project_code}},
+            {"$group": {
+                "_id": "$amount_currency",
+                "total": {"$sum": "$amount"},
+                "count": {"$sum": 1}
+            }}
+        ]
+        
+        donation_results = await db.donations.aggregate(pipeline).to_list(10)
+        
+        # Format results
+        totals = {"USD": 0, "LRD": 0, "total_donations": 0}
+        for result in donation_results:
+            currency = result["_id"] or "USD"
+            totals[currency] = result["total"]
+            totals["total_donations"] += result["count"]
+        
+        # Get recent donations for this project
+        recent_donations = await db.donations.find(
+            {"project_code": project_code}
+        ).sort("date_iso", -1).limit(5).to_list(5)
+        
+        # Clean up MongoDB _id fields
+        for donation in recent_donations:
+            if '_id' in donation:
+                del donation['_id']
+        
+        return {
+            "project_code": project_code,
+            "totals": totals,
+            "recent_donations": recent_donations
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get project donations: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get project donations")
+
+@api_router.get("/projects/{project_code}/stories")
+async def get_project_stories(project_code: str, admin: str = Depends(authenticate_admin)):
+    """Get recent stories linked to this project"""
+    try:
+        # For now, we'll link stories by matching project code in story text or location
+        # This is a simple implementation - in a real system you'd have explicit project links
+        recent_stories = await db.stories.find({
+            "$or": [
+                {"story_text": {"$regex": project_code, "$options": "i"}},
+                {"location": {"$regex": project_code, "$options": "i"}}
+            ]
+        }).sort("date_iso", -1).limit(5).to_list(5)
+        
+        # Clean up MongoDB _id fields
+        for story in recent_stories:
+            if '_id' in story:
+                del story['_id']
+        
+        return {
+            "project_code": project_code,
+            "recent_stories": recent_stories,
+            "total_stories": len(recent_stories)
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get project stories: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get project stories")
+
+@api_router.get("/projects/export/csv")
+async def export_projects_csv(
+    status: Optional[str] = None,
+    country: Optional[str] = None,
+    manager: Optional[str] = None,
+    admin: str = Depends(authenticate_admin)
+):
+    """Export projects as CSV"""
+    try:
+        # Build filter
+        filter_dict = {}
+        if status:
+            filter_dict["status"] = status
+        if country:
+            filter_dict["country"] = country
+        if manager:
+            filter_dict["manager"] = manager
+        
+        # Get all matching projects
+        projects = await db.projects.find(filter_dict).sort("created_at", -1).to_list(10000)
+        
+        # Create CSV content
+        csv_content = "project_code,name,description_short,start_date_iso,end_date_iso,status,budget_currency,budget_amount,manager,country,tags\n"
+        
+        for project in projects:
+            row = [
+                project.get("project_code", ""),
+                project.get("name", ""),
+                project.get("description_short", "").replace('"', '""'),  # Escape quotes
+                project.get("start_date_iso", ""),
+                project.get("end_date_iso", ""),
+                project.get("status", ""),
+                project.get("budget_currency", ""),
+                str(project.get("budget_amount", "")),
+                project.get("manager", ""),
+                project.get("country", ""),
+                project.get("tags", "")
+            ]
+            csv_content += '"' + '","'.join(row) + '"\n'
+        
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"projects_export_{timestamp}.csv"
+        
+        return Response(
+            content=csv_content,
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to export projects CSV: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export projects CSV")
+
+@api_router.get("/projects/export/xlsx")
+async def export_projects_xlsx(
+    status: Optional[str] = None,
+    country: Optional[str] = None,
+    manager: Optional[str] = None,
+    admin: str = Depends(authenticate_admin)
+):
+    """Export projects as XLSX"""
+    try:
+        # Build filter
+        filter_dict = {}
+        if status:
+            filter_dict["status"] = status
+        if country:
+            filter_dict["country"] = country
+        if manager:
+            filter_dict["manager"] = manager
+        
+        # Get all matching projects
+        projects = await db.projects.find(filter_dict).sort("created_at", -1).to_list(10000)
+        
+        # Create Excel workbook
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Projects"
+        
+        # Headers
+        headers = ["Project Code", "Name", "Description", "Start Date", "End Date", "Status", "Budget Currency", "Budget Amount", "Manager", "Country", "Tags"]
+        ws.append(headers)
+        
+        # Style headers
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+        
+        for col_num, _ in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal="center")
+        
+        # Add data
+        for project in projects:
+            row = [
+                project.get("project_code", ""),
+                project.get("name", ""),
+                project.get("description_short", ""),
+                project.get("start_date_iso", ""),
+                project.get("end_date_iso", ""),
+                project.get("status", ""),
+                project.get("budget_currency", ""),
+                project.get("budget_amount", ""),
+                project.get("manager", ""),
+                project.get("country", ""),
+                project.get("tags", "")
+            ]
+            ws.append(row)
+        
+        # Auto-adjust column widths
+        for column in ws.columns:
+            max_length = 0
+            column_letter = column[0].column_letter
+            for cell in column:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = min((max_length + 2), 50)
+            ws.column_dimensions[column_letter].width = adjusted_width
+        
+        # Save to BytesIO
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"projects_export_{timestamp}.xlsx"
+        
+        return Response(
+            content=output.read(),
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to export projects XLSX: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export projects XLSX")
+
+@api_router.get("/projects/filter-stats")
+async def get_projects_filter_stats(admin: str = Depends(authenticate_admin)):
+    """Get projects statistics for filters"""
+    try:
+        # Get unique statuses
+        statuses = await db.projects.distinct("status")
+        statuses = [s for s in statuses if s]  # Remove empty/null values
+        
+        # Get unique countries
+        countries = await db.projects.distinct("country")
+        countries = [c for c in countries if c]  # Remove empty/null values
+        
+        # Get unique managers
+        managers = await db.projects.distinct("manager")
+        managers = [m for m in managers if m]  # Remove empty/null values
+        
+        return {
+            "statuses": sorted(statuses),
+            "countries": sorted(countries),
+            "managers": sorted(managers),
+            "total_projects": await db.projects.count_documents({})
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get projects filter stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get projects filter stats")
+
 # Dashboard Models
 class DashboardStats(BaseModel):
     visitors_this_month: int = 0
