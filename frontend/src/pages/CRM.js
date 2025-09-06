@@ -865,6 +865,217 @@ const CRM = () => {
             </div>
           )}
 
+          {/* Import Data View */}
+          {currentView === 'import-data' && (
+            <div>
+              <div className="bg-white shadow rounded-lg">
+                <div className="px-4 py-5 sm:p-6">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+                    Import CSV Data
+                  </h3>
+                  
+                  {/* File Type Selection */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Select Data Type
+                    </label>
+                    <select
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-kioo-primary focus:border-kioo-primary sm:text-sm"
+                      value={importData.file_type}
+                      onChange={(e) => setImportData(prev => ({ ...prev, file_type: e.target.value, import_result: null }))}
+                    >
+                      <option value="visitors">Visitors</option>
+                      <option value="donations">Donations</option>
+                      <option value="projects">Projects</option>
+                      <option value="finance">Finance Records</option>
+                      <option value="tasks_reminders">Tasks & Reminders</option>
+                      <option value="users_roles">Users & Roles</option>
+                      <option value="invoices">Invoices</option>
+                      <option value="stories">Stories</option>
+                    </select>
+                  </div>
+
+                  {/* File Upload */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Upload CSV File
+                    </label>
+                    <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                      <div className="space-y-1 text-center">
+                        <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"/>
+                        </svg>
+                        <div className="flex text-sm text-gray-600">
+                          <label htmlFor="csv-file-input" className="relative cursor-pointer bg-white rounded-md font-medium text-kioo-primary hover:text-kioo-primary-dark focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-kioo-primary">
+                            <span>Upload a file</span>
+                            <input
+                              id="csv-file-input"
+                              name="csv-file"
+                              type="file"
+                              accept=".csv"
+                              className="sr-only"
+                              onChange={handleFileUpload}
+                            />
+                          </label>
+                          <p className="pl-1">or drag and drop</p>
+                        </div>
+                        <p className="text-xs text-gray-500">CSV files only</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Preview */}
+                  {importData.csv_content && (
+                    <div className="mb-6">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        CSV Preview (first 5 lines)
+                      </label>
+                      <div className="bg-gray-50 rounded-md p-3 overflow-x-auto">
+                        <pre className="text-xs whitespace-pre-wrap">
+                          {importData.csv_content.split('\n').slice(0, 5).join('\n')}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Import Button */}
+                  <div className="mb-6">
+                    <button
+                      onClick={handleImportCSV}
+                      disabled={!importData.csv_content || importData.is_importing}
+                      className="w-full sm:w-auto px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-kioo-primary hover:bg-kioo-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kioo-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {importData.is_importing ? 'Importing...' : 'Import CSV Data'}
+                    </button>
+                  </div>
+
+                  {/* Import Results */}
+                  {importData.import_result && (
+                    <div className={`mb-6 p-4 rounded-md ${importData.import_result.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                      <h4 className={`font-medium ${importData.import_result.success ? 'text-green-800' : 'text-red-800'} mb-2`}>
+                        Import {importData.import_result.success ? 'Successful' : 'Failed'}
+                      </h4>
+                      <div className={`text-sm ${importData.import_result.success ? 'text-green-700' : 'text-red-700'}`}>
+                        <p>Imported: {importData.import_result.imported_count} records</p>
+                        {importData.import_result.error_count > 0 && (
+                          <p>Errors: {importData.import_result.error_count}</p>
+                        )}
+                        
+                        {/* Show validation errors */}
+                        {importData.import_result.validation_errors && importData.import_result.validation_errors.length > 0 && (
+                          <div className="mt-2">
+                            <p className="font-medium">Validation Errors:</p>
+                            <ul className="list-disc list-inside mt-1">
+                              {importData.import_result.validation_errors.slice(0, 10).map((error, index) => (
+                                <li key={index}>{error}</li>
+                              ))}
+                              {importData.import_result.validation_errors.length > 10 && (
+                                <li>... and {importData.import_result.validation_errors.length - 10} more errors</li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        {/* Show processing errors */}
+                        {importData.import_result.errors && importData.import_result.errors.length > 0 && (
+                          <div className="mt-2">
+                            <p className="font-medium">Processing Errors:</p>
+                            <ul className="list-disc list-inside mt-1">
+                              {importData.import_result.errors.slice(0, 10).map((error, index) => (
+                                <li key={index}>{error}</li>
+                              ))}
+                              {importData.import_result.errors.length > 10 && (
+                                <li>... and {importData.import_result.errors.length - 10} more errors</li>
+                              )}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Import History Button */}
+                  <div className="mb-6">
+                    <button
+                      onClick={loadImportHistory}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Load Import History
+                    </button>
+                  </div>
+
+                  {/* Import History */}
+                  {importData.import_history && (
+                    <div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-4">Import Statistics</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {Object.entries(importData.import_history.import_statistics).map(([type, stats]) => (
+                          <div key={type} className="bg-gray-50 rounded-lg p-4">
+                            <h5 className="font-medium text-gray-900 capitalize mb-2">
+                              {type.replace('_', ' ')}
+                            </h5>
+                            <div className="space-y-1 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Total:</span>
+                                <span className="font-medium">{stats.total_records}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Recent:</span>
+                                <span className="font-medium">{stats.recent_records}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-4">
+                        Last updated: {new Date(importData.import_history.last_updated).toLocaleString()}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* CSV Format Guide */}
+                  <div className="mt-8 border-t pt-6">
+                    <h4 className="text-lg font-medium text-gray-900 mb-4">CSV Format Guide</h4>
+                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+                      <h5 className="font-medium text-blue-900 mb-2">Required Format for {importData.file_type}:</h5>
+                      <div className="text-sm text-blue-800">
+                        {importData.file_type === 'visitors' && (
+                          <p>Headers: id, date_iso, name, phone, email, country, county_or_prefecture, city_town, program, language, testimony, source, consent_y_n</p>
+                        )}
+                        {importData.file_type === 'donations' && (
+                          <p>Headers: id, date_iso, donor_name, phone, email, country, method, amount_currency, amount, project_code, note, receipt_no, anonymous_y_n</p>
+                        )}
+                        {importData.file_type === 'projects' && (
+                          <p>Headers: project_code, name, description_short, start_date_iso, end_date_iso, status, budget_currency, budget_amount, manager, country, tags</p>
+                        )}
+                        {importData.file_type === 'finance' && (
+                          <p>Headers: id, date_iso, type, category, subcategory, amount_currency, amount, method, reference, project_code, notes, attachment_url</p>
+                        )}
+                        {importData.file_type === 'tasks_reminders' && (
+                          <p>Headers: id, due_date_iso, agency, description_short, amount_currency, amount, status, recurrence, contact_person, notes</p>
+                        )}
+                        {importData.file_type === 'users_roles' && (
+                          <p>Headers: id, name, role, email, country, language_default, phone</p>
+                        )}
+                        {importData.file_type === 'invoices' && (
+                          <p>Headers: id, date_iso, donor_name, contact, project_code, amount_currency, amount, status, due_date_iso, receipt_no</p>
+                        )}
+                        {importData.file_type === 'stories' && (
+                          <p>Headers: id, date_iso, name_or_anonymous, location, country, program, language, story_text, approved_y_n, publish_url</p>
+                        )}
+                      </div>
+                      <div className="mt-2 text-xs text-blue-700">
+                        <p>• Dates should be in YYYY-MM-DD format</p>
+                        <p>• Currency codes: USD or LRD</p>
+                        <p>• Y/N fields: Use Y or N only</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Contact Detail Modal */}
           {selectedContact && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
