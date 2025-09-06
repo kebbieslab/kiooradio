@@ -1255,7 +1255,9 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
                 response = requests.post(url, data=import_data, auth=admin_auth, timeout=10)
                 
                 if response.status_code == expected_status:
-                    if expected_status == 400:
+                    if expected_status == 422:
+                        print(f"      ✅ {test_name}: Correctly rejected (HTTP 422 - Validation Error)")
+                    elif expected_status == 400:
                         print(f"      ✅ {test_name}: Correctly rejected (HTTP 400)")
                     else:
                         result = response.json()
