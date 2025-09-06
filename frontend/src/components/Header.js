@@ -132,9 +132,9 @@ const Header = ({ setIsPlayerVisible }) => {
                 <button
                   onClick={() => switchLanguage('en')}
                   className={`px-2 py-1 text-sm font-medium rounded ${
-                    currentLanguage === 'en' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
+                    language === 'en' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
                   }`}
-                  aria-label="Switch to English"
+                  aria-label={t('switchToEnglish', 'Switch to English')}
                 >
                   EN
                 </button>
@@ -142,9 +142,9 @@ const Header = ({ setIsPlayerVisible }) => {
                 <button
                   onClick={() => switchLanguage('fr')}
                   className={`px-2 py-1 text-sm font-medium rounded ${
-                    currentLanguage === 'fr' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
+                    language === 'fr' ? 'text-kioo-primary font-bold' : 'text-gray-600 hover:text-kioo-primary'
                   }`}
-                  aria-label="Basculer en français"
+                  aria-label={t('switchToFrench', 'Basculer en français')}
                 >
                   FR
                 </button>
@@ -156,7 +156,7 @@ const Header = ({ setIsPlayerVisible }) => {
                 className="btn-primary hidden sm:flex items-center space-x-2 text-sm"
               >
                 <span className="w-2 h-2 bg-red-500 rounded-full live-pulse"></span>
-                <span data-i18n="listen">Listen Live</span>
+                <span>{t('listen')}</span>
               </button>
 
               {/* Mobile Menu Button */}
