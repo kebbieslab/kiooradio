@@ -31,3 +31,4 @@ httpx
 python-crontab
 apscheduler
 openpyxl
+emergentintegrations
