@@ -3954,12 +3954,12 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
             return False, {}
 
     def run_all_tests(self):
-        """Run Visitors Management System tests"""
-        print("🚀 Starting Kioo Radio Visitors Management System Tests...")
+        """Run Donations Management System tests"""
+        print("🚀 Starting Kioo Radio Donations Management System Tests...")
         print(f"Testing against: {self.base_url}")
         
-        # CRITICAL: Test Visitors Management System
-        self.test_visitors_management_endpoints()  # PRIMARY FOCUS: Visitors Management System testing
+        # CRITICAL: Test Donations Management System
+        self.test_donations_management_endpoints()  # PRIMARY FOCUS: Donations Management System testing
         
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
