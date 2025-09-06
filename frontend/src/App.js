@@ -66,67 +66,20 @@ function App() {
   };
 
   useEffect(() => {
-    // Initialize i18n system
-    window.I18N = {
-      en: {
-        heroTitle: "Reaching Hearts across the Makona River Region",
-        heroSub: "Our signal covers over 150 miles, bringing Faith and Hope to the Kissi, Mandingo, Fulani, Gbandi and more.",
-        navHome: "Home", navListen: "Listen", navPrograms: "Programs",
-        navChurchPartners: "Partner Churches", navImpact: "Impact", navDonate: "Donate", navAbout: "About",
-        listen: "Listen Live", programs: "Programs", donate: "Donate",
-        donateBlurb: "Your donation helps us continue broadcasting Hope, Faith, and give vital information across the Makona River Region. Every contribution makes a difference in someone's life.",
-        impactTitle: "Our Coverage at a Glance",
-        contact: "Contact Us",
-        partnersTitle: "Our Partners"
-      },
-      fr: {
-        heroTitle: "Toucher les cœurs dans la région de la rivière Makona",
-        heroSub: "Notre signal couvre plus de 150 miles, apportant la Foi et l'Espérance aux Kissi, Mandingo, Peuls, Gbandi, et d'autres.",
-        navHome: "Accueil", navListen: "Écouter", navPrograms: "Programmes",
-        navChurchPartners: "Églises Partenaires", navImpact: "Impact", navDonate: "Don", navAbout: "À propos", 
-        listen: "Écouter en direct", programs: "Programmes", donate: "Faire un don",
-        donateBlurb: "Votre don nous aide à continuer de diffuser la Foi, l'Espérance et des informations essentielles dans la région de la rivière Makona. Chaque contribution change une vie.",
-        impactTitle: "Notre Couverture en un Coup d'Œil",
-        contact: "Nous Contacter",
-        partnersTitle: "Nos partenaires"
-      }
-    };
-
-    let currentLang = 'en';
-
-    function pickLang() {
-      const saved = localStorage.getItem('lang');
-      if (saved) return saved;
-      const nav = (navigator.language || 'en').toLowerCase();
-      const browserDefault = nav.startsWith('fr') ? 'fr' : 'en';
-      return browserDefault;
+    // Initialize new i18n system
+    initI18n();
+    
+    // Initialize Google Analytics
+    const gaId = process.env.REACT_APP_GA4_MEASUREMENT_ID;
+    if (gaId && gaId !== 'G-PLACEHOLDER123') {
+      ReactGA.initialize(gaId);
+      console.log('Google Analytics initialized with ID:', gaId);
+    } else {
+      console.log('Google Analytics not initialized - please set REACT_APP_GA4_MEASUREMENT_ID');
     }
-
-    function applyI18n() {
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        const value = window.I18N[currentLang]?.[key];
-        if (value) el.textContent = value;
-      });
-    }
-
-    function setLang(lang) {
-      currentLang = lang;
-      localStorage.setItem('lang', lang);
-      applyI18n();
-    }
-
-    async function initLang() {
-      currentLang = pickLang();
-      applyI18n();
-    }
-
-    // Make functions global for header component
-    window.setLang = setLang;
-    window.applyI18n = applyI18n;
+    
+    // Make contact popup function global
     window.openContactPopup = () => setIsContactPopupOpen(true);
-
-    initLang();
   }, []);
 
   return (
