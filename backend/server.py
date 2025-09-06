@@ -4843,6 +4843,10 @@ async def generate_project_report(
         # Get receipts
         receipts = project.get('receipts', []) if request.include_receipts else []
         
+        # Check if report generator is available
+        if not report_generator:
+            raise HTTPException(status_code=503, detail="Report generation service unavailable")
+        
         # Generate AI insights
         ai_insights = {}
         if request.include_ai_analysis:
