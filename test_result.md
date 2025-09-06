@@ -463,7 +463,7 @@ Enhance CRM Projects section with receipt management, multimedia uploads, AI-pow
 
 ## test_plan:
   current_focus:
-    - "Enhanced CRM Projects with Dropbox Integration and AI Receipt Analysis"
+    - "User Management System with Authentication and Permissions"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
