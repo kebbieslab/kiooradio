@@ -105,55 +105,6 @@ const ProgramAssistant = () => {
     }
   };
 
-  // Login Form
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-              {t('AI Program Assistant Access') || 'AI Program Assistant Access'}
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
-              {t('Sign in to access the AI-powered program management system') || 'Sign in to access the AI-powered program management system'}
-            </p>
-          </div>
-          <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-            <div>
-              <input
-                type="text"
-                required
-                value={credentials.username}
-                onChange={(e) => setCredentials({...credentials, username: e.target.value})}
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                placeholder={t('Username') || 'Username'}
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                required
-                value={credentials.password}
-                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                placeholder={t('Password') || 'Password'}
-              />
-            </div>
-            {loginError && (
-              <div className="text-red-600 text-sm text-center">{loginError}</div>
-            )}
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              {t('Sign In') || 'Sign In'}
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
   // Main Dashboard
   return (
     <div className="min-h-screen bg-gray-50">
