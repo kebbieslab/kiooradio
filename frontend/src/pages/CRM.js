@@ -1269,6 +1269,19 @@ const CRM = () => {
             <CRMMergeStatus onBack={() => setCurrentView('settings')} />
           )}
 
+          {/* Integrated CRM Modules */}
+          {currentView === 'visitors' && (
+            <CRMVisitors crmAuth={localStorage.getItem('crmAuth')} />
+          )}
+
+          {currentView === 'donations' && (
+            <CRMDonations crmAuth={localStorage.getItem('crmAuth')} />
+          )}
+
+          {currentView === 'projects' && (
+            <CRMProjects crmAuth={localStorage.getItem('crmAuth')} />
+          )}
+
           {/* Contact Detail Modal */}
           {selectedContact && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
