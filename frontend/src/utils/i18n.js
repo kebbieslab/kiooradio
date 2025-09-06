@@ -408,9 +408,9 @@ export const updateAllLabels = () => {
 
 // React hook for using translations in components
 export const useTranslation = () => {
-  const [language, setLanguage] = React.useState(getCurrentLanguage());
+  const [language, setLanguage] = useState(getCurrentLanguage());
   
-  React.useEffect(() => {
+  useEffect(() => {
     const handleLanguageChange = (event) => {
       setLanguage(event.detail.language);
     };
