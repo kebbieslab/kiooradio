@@ -262,7 +262,7 @@ const Visitors = () => {
                 {t('visitorsAccess') || 'Visitors Access'}
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600">
-                {t('visitors_access_description') || 'Please enter your credentials to access the Visitors Management system'}
+                {t('visitorsAccessDescription') || 'Please enter your credentials to access the Visitors Management system'}
               </p>
             </div>
             <form className="mt-8 space-y-6" onSubmit={handleLogin}>
