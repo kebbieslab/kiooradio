@@ -49,6 +49,29 @@ function App() {
     window.openContactPopup = () => setIsContactPopupOpen(true);
   }, []);
 
+  // Component for tracking page views with GA
+  const GoogleAnalyticsTracker = () => {
+    const location = useLocation();
+    
+    useEffect(() => {
+      const gaId = process.env.REACT_APP_GA4_MEASUREMENT_ID;
+      if (gaId && gaId !== 'G-PLACEHOLDER123') {
+        ReactGA.send({ 
+          hitType: 'pageview', 
+          page: location.pathname + location.search 
+        });
+      }
+    }, [location]);
+
+    return null;
+  };
+
+  // Create a component to handle visitor tracking inside Router
+  const VisitorTracker = () => {
+    useVisitorTracking();
+    return null;
+  };
+
   return (
     <HelmetProvider>
       <div className="App min-h-screen bg-white">
