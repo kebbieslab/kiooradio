@@ -9,13 +9,22 @@ const CRM = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, contacts, add-contact
+  const [currentView, setCurrentView] = useState('dashboard'); // dashboard, contacts, add-contact, import-data
   const [selectedContact, setSelectedContact] = useState(null);
   const [filters, setFilters] = useState({
     contact_type: '',
     source: '',
     country: '',
     search: ''
+  });
+
+  // CSV Import state
+  const [importData, setImportData] = useState({
+    file_type: 'visitors',
+    csv_content: '',
+    is_importing: false,
+    import_result: null,
+    import_history: null
   });
 
   // New contact form data
