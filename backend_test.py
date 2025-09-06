@@ -1346,13 +1346,19 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
                 
                 # Test DELETE /api/crm/schedules/{id}
                 if schedule_id:
-                    success, delete_result = self.run_test("Delete Schedule", "DELETE", f"crm/schedules/{schedule_id}", 200, auth=admin_auth)
-                    
-                    if success:
-                        print(f"✅ Delete Schedule: Successfully deleted schedule")
-                    else:
-                        print(f"❌ Delete Schedule: Failed to delete schedule")
-                        self.failed_tests.append("Schedule Management - Failed to delete schedule")
+                    try:
+                        delete_url = f"{self.base_url}/crm/schedules/{schedule_id}"
+                        response = requests.delete(delete_url, auth=admin_auth, timeout=10)
+                        
+                        if response.status_code == 200:
+                            print(f"✅ Delete Schedule: Successfully deleted schedule")
+                        else:
+                            print(f"❌ Delete Schedule: HTTP {response.status_code}")
+                            print(f"   Response: {response.text[:200]}")
+                            self.failed_tests.append(f"Schedule Management - Delete failed: HTTP {response.status_code}")
+                    except Exception as e:
+                        print(f"❌ Delete Schedule: Error - {str(e)}")
+                        self.failed_tests.append(f"Schedule Management - Delete error: {str(e)}")
             else:
                 print(f"❌ Create Schedule: HTTP {response.status_code}")
                 print(f"   Response: {response.text[:200]}")
