@@ -4723,6 +4723,19 @@ async def startup_db_client():
         # Test the connection
         await client.admin.command('ping')
         logger.info("Successfully connected to MongoDB")
+        
+        # Create text indexes for program search
+        try:
+            await db.programs.create_index([
+                ("title", "text"),
+                ("description", "text"),
+                ("content", "text"),
+                ("keywords", "text")
+            ])
+            logger.info("Created text search indexes for programs collection")
+        except Exception as index_error:
+            logger.warning(f"Failed to create search indexes: {index_error}")
+            
     except Exception as e:
         logger.error(f"Failed to connect to MongoDB: {e}")
         raise
