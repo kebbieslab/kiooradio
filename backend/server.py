@@ -4648,7 +4648,7 @@ class UserCreate(BaseModel):
     """Model for creating new users"""
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=4)
-    email: str = Field(..., regex=r'^[^@]+@[^@]+\.[^@]+$')
+    email: str = Field(..., pattern=r'^[^@]+@[^@]+\.[^@]+$')
     full_name: str = Field(..., min_length=2, max_length=100)
     role: str = Field(default="staff")  # 'admin', 'manager', 'staff', 'viewer'
     is_active: bool = True
@@ -4657,7 +4657,7 @@ class UserCreate(BaseModel):
 
 class UserUpdate(BaseModel):
     """Model for updating existing users"""
-    email: Optional[str] = Field(None, regex=r'^[^@]+@[^@]+\.[^@]+$')
+    email: Optional[str] = Field(None, pattern=r'^[^@]+@[^@]+\.[^@]+$')
     full_name: Optional[str] = Field(None, min_length=2, max_length=100)
     role: Optional[str] = None
     is_active: Optional[bool] = None
