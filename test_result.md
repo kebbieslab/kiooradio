@@ -103,7 +103,7 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-Implement AI-Powered Program Assistant using combination of Emergent LLM and ChatGPT for intelligent program analysis, content summarization, highlight extraction, keyword identification, translation, and smart search functionality. Features should include program archive management, AI-powered analysis tools, multilingual support (EN/FR), and comprehensive analytics dashboard.
+Enhance CRM Projects section with receipt management, multimedia uploads, AI-powered receipt analysis, and multi-format report generation. Integrate Dropbox for cloud storage (files up to 3MB), implement AI-driven receipt analysis to detail expenses and project stages, and generate reports in PDF, MS Word, and HTML formats with project-based file organization.
 
 ## backend:
   - task: "AI Program Assistant Backend Implementation"
