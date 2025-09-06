@@ -29,6 +29,94 @@ export const labels = {
     readMore: "Read More",
     backToTop: "Back to Top",
     
+    // Authentication & Access
+    username: "Username",
+    password: "Password",
+    login: "Login",
+    logout: "Logout",
+    loading: "Loading...",
+    saving: "Saving...",
+    cancel: "Cancel",
+    save: "Save",
+    edit: "Edit",
+    delete: "Delete",
+    add: "Add",
+    update: "Update",
+    
+    // Visitors Management
+    visitorsManagement: "Visitors Management",
+    visitorsAccess: "Visitors Access",
+    visitorsAccessDescription: "Please enter your credentials to access the Visitors Management system",
+    accessVisitors: "Access Visitors",
+    visitorsTestimonies: "Visitors & Testimonies",
+    manageVisitorRecords: "Manage visitor records and testimonies",
+    addVisitorTestimony: "Add Visitor/Testimony",
+    editVisitor: "Edit Visitor",
+    updateVisitor: "Update Visitor",
+    addVisitor: "Add Visitor",
+    visitorsList: "Visitors List",
+    noVisitorsFound: "No visitors found",
+    
+    // Form Fields
+    date: "Date",
+    name: "Name",
+    phone: "Phone",
+    email: "Email",
+    country: "Country",
+    countyPrefecture: "County/Prefecture",
+    cityTown: "City/Town",
+    program: "Program",
+    language: "Language",
+    testimony: "Testimony",
+    testimonyPlaceholder: "Share how Kioo Radio has impacted your life...",
+    source: "Source",
+    consent: "Consent",
+    actions: "Actions",
+    
+    // Filter Options
+    filters: "Filters",
+    month: "Month",
+    allCountries: "All Countries",
+    allPrograms: "All Programs",
+    allSources: "All Sources",
+    clearFilters: "Clear Filters",
+    
+    // Select Options
+    selectCountry: "Select Country",
+    selectProgram: "Select Program",
+    other: "Other",
+    
+    // Programs
+    morningDevotion: "Morning Devotion",
+    frenchGospel: "French Gospel",  
+    eveningPrayer: "Evening Prayer",
+    youthHour: "Youth Hour",
+    sundayService: "Sunday Service",
+    bibleStudy: "Bible Study",
+    
+    // Sources
+    website: "Website",
+    phoneCall: "Phone Call",
+    inPerson: "In Person",
+    
+    // Consent
+    yes: "Yes",
+    no: "No",
+    yesConsent: "Yes - Consent given",
+    noConsent: "No - Consent not given",
+    
+    // Export
+    exportCsv: "Export CSV",
+    exportXlsx: "Export XLSX",
+    
+    // Messages
+    invalidCredentials: "Invalid username or password",
+    failedToLoadVisitors: "Failed to load visitors",
+    failedToSaveVisitor: "Failed to save visitor",
+    failedToDeleteVisitor: "Failed to delete visitor",
+    failedToExport: "Failed to export data",
+    confirmDeleteVisitor: "Are you sure you want to delete this visitor?",
+    
     // About Page
     aboutTitle: "About Kioo Radio",
     aboutSubtitle: "Broadcasting Faith, Hope and Love in Christ",
