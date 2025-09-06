@@ -106,6 +106,21 @@
 Build comprehensive Visitors list + form system with table display (date_iso, name, phone, email, country, program, language, testimony, source, consent_y_n), filters (month, country, program, source), "Add Visitor/Testimony" form with required fields (date, country, program, testimony, consent), row actions (edit, delete, export CSV/XLSX), and bilingual labels via EN/FR toggle.
 
 ## backend:
+  - task: "Visitors Management CRUD Endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Implemented comprehensive visitors management system with CRUD endpoints: GET/POST/PUT/DELETE /api/visitors for full visitor lifecycle management, GET /api/visitors/filter-stats for dropdown filters (countries, programs, sources), GET /api/visitors/export/csv and /api/visitors/export/xlsx for data export, complete with authentication (admin:kioo2025!), data validation (date format YYYY-MM-DD, consent Y/N, required fields), filtering by month/country/program/source, pagination with limit/skip, and openpyxl integration for XLSX export with formatting. Need comprehensive testing of all endpoints."
+        - working: true
+          agent: "testing"
+          comment: "COMPREHENSIVE VISITORS MANAGEMENT TESTING COMPLETED ✅: All visitors management functionality working perfectly! Authentication: ✅ Basic Auth (admin:kioo2025!) properly protects all 10 endpoints, returns 401 for unauthorized access. CRUD Operations: ✅ POST /api/visitors creates visitors with validation, GET /api/visitors retrieves with filtering (month, country, program, source) and pagination, GET /api/visitors/{id} returns specific visitor, PUT /api/visitors/{id} updates with validation, DELETE /api/visitors/{id} removes visitors. Data Validation: ✅ Date format (YYYY-MM-DD), consent (Y/N), month filter (YYYY-MM), required fields validation working. Export Functions: ✅ GET /api/visitors/export/csv and /api/visitors/export/xlsx export with filtering, proper CSV formatting with quote escaping, XLSX with styled headers and auto-column sizing. Filter Stats: ✅ GET /api/visitors/filter-stats returns countries, programs, sources arrays for dropdown filters (fixed route conflict issue). Error Handling: ✅ Proper HTTP status codes (200, 400, 401, 404), detailed validation messages. MongoDB Integration: ✅ Data properly stored and retrieved from visitors collection. All 35 test scenarios passed - visitors management system is production-ready."
+
   - task: "CSV Import Backend Endpoints"
     implemented: true
     working: true
