@@ -31,6 +31,9 @@ import csv
 from io import StringIO
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+import openpyxl
+from openpyxl.styles import Font, PatternFill, Alignment
+from io import BytesIO
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
