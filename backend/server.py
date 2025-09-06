@@ -4529,14 +4529,14 @@ async def create_ai_program(
         
         # Start AI analysis in background (non-blocking for user experience)
         try:
-            # Generate summary
-            program_doc.summary = await ai_summarize_content(program.content, program.language)
+            # Generate summary using OpenAI directly
+            program_doc.summary = await ai_summarize_content_openai(program.content, program.language)
             
-            # Extract highlights
-            program_doc.highlights = await ai_extract_highlights(program.content, program.language)
+            # Extract highlights using OpenAI
+            program_doc.highlights = await ai_extract_highlights_openai(program.content, program.language)
             
-            # Extract keywords
-            program_doc.keywords = await ai_extract_keywords(program.content, program.language)
+            # Extract keywords using OpenAI
+            program_doc.keywords = await ai_extract_keywords_openai(program.content, program.language)
             
             # Update document with AI analysis
             program_doc.updated_at = datetime.now(timezone.utc).isoformat()
