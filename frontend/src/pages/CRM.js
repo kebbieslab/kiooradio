@@ -1275,6 +1275,11 @@ const CRM = () => {
             <CRMMergeStatus onBack={() => setCurrentView('settings')} />
           )}
 
+          {/* User Management View */}
+          {currentView === 'user-management' && (
+            <UserManagement onBack={() => setCurrentView('settings')} />
+          )}
+
           {/* Integrated CRM Modules */}
           {currentView === 'visitors' && (
             <CRMVisitors crmAuth={localStorage.getItem('crmAuth')} />
