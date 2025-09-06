@@ -88,7 +88,7 @@ const Donations = () => {
 
   const loadStats = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/donations/filter-stats`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/donations/management-stats`, {
         headers: {
           'Authorization': 'Basic ' + btoa('admin:kioo2025!')
         }
