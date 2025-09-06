@@ -170,6 +170,558 @@ class DayOfWeek(str, Enum):
     SATURDAY = "saturday"
     SUNDAY = "sunday"
 
+# Service Classes for Enhanced CRM Projects
+class DropboxFileManager:
+    """Service class for Dropbox file operations"""
+    
+    def __init__(self):
+        self.access_token = os.getenv('DROPBOX_ACCESS_TOKEN')
+        if not self.access_token:
+            raise ValueError("DROPBOX_ACCESS_TOKEN not found in environment variables")
+        self.client = dropbox.Dropbox(self.access_token)
+    
+    async def upload_file(self, file_content: bytes, project_id: str, filename: str, category: str = None) -> Dict[str, Any]:
+        """Upload file to Dropbox organized by project"""
+        try:
+            # Organize files by project and category
+            if category:
+                dropbox_path = f"/projects/{project_id}/{category}/{filename}"
+            else:
+                dropbox_path = f"/projects/{project_id}/{filename}"
+            
+            # Upload file
+            result = self.client.files_upload(
+                file_content,
+                dropbox_path,
+                mode=dropbox.files.WriteMode('add'),
+                autorename=True
+            )
+            
+            return {
+                'file_id': result.id,
+                'filename': result.name,
+                'file_path': result.path_display,
+                'file_size': result.size,
+                'content_hash': result.content_hash,
+                'server_modified': result.server_modified.isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Dropbox upload error: {e}")
+            raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
+    
+    async def download_file(self, file_path: str) -> tuple[bytes, Dict[str, Any]]:
+        """Download file from Dropbox"""
+        try:
+            metadata, response = self.client.files_download(file_path)
+            return response.content, {
+                'filename': metadata.name,
+                'size': metadata.size,
+                'modified': metadata.server_modified.isoformat()
+            }
+        except Exception as e:
+            logger.error(f"Dropbox download error: {e}")
+            raise HTTPException(status_code=500, detail=f"File download failed: {str(e)}")
+    
+    async def list_project_files(self, project_id: str) -> List[Dict[str, Any]]:
+        """List all files for a project"""
+        try:
+            project_path = f"/projects/{project_id}"
+            result = self.client.files_list_folder(project_path)
+            
+            files = []
+            for entry in result.entries:
+                if isinstance(entry, dropbox.files.FileMetadata):
+                    files.append({
+                        'file_id': entry.id,
+                        'filename': entry.name,
+                        'file_path': entry.path_display,
+                        'file_size': entry.size,
+                        'modified': entry.server_modified.isoformat()
+                    })
+            
+            return files
+        except dropbox.exceptions.ApiError as e:
+            if e.error.is_path_not_found():
+                return []  # Project folder doesn't exist yet
+            logger.error(f"Dropbox list error: {e}")
+            raise HTTPException(status_code=500, detail=f"File listing failed: {str(e)}")
+
+class AIReceiptAnalyzer:
+    """Service class for AI-powered receipt analysis using OpenAI"""
+    
+    def __init__(self):
+        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+    
+    async def analyze_receipt(self, file_content: bytes, filename: str, content_type: str) -> Dict[str, Any]:
+        """Analyze receipt using OpenAI GPT-4o vision"""
+        try:
+            # Convert file content to base64 for OpenAI API
+            base64_image = base64.b64encode(file_content).decode('utf-8')
+            
+            # Create the analysis prompt
+            prompt = """
+            Analyze this receipt and extract the following information in JSON format:
+            {
+                "vendor": "Name of the vendor/store",
+                "date": "Date in YYYY-MM-DD format if found",
+                "total_amount": "Total amount as a number",
+                "currency": "Currency code (USD, LRD, etc.)",
+                "items": [
+                    {
+                        "description": "Item description",
+                        "quantity": "Quantity if specified",
+                        "unit_price": "Unit price if specified",
+                        "total_price": "Total price for this item"
+                    }
+                ],
+                "category": "Expense category (office_supplies, equipment, travel, food, etc.)",
+                "expense_type": "Type of expense (operating, capital, etc.)",
+                "tax_amount": "Tax amount if specified",
+                "analysis_confidence": "Confidence level from 0.0 to 1.0"
+            }
+            
+            If any information is not clearly visible or cannot be determined, use null for that field.
+            Focus on accuracy and only extract information you can clearly see.
+            """
+            
+            # Call OpenAI API
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": prompt},
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:{content_type};base64,{base64_image}"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                max_tokens=1000
+            )
+            
+            # Parse the response
+            analysis_text = response.choices[0].message.content
+            
+            # Try to extract JSON from the response
+            import json
+            import re
+            json_match = re.search(r'\{.*\}', analysis_text, re.DOTALL)
+            if json_match:
+                analysis_data = json.loads(json_match.group())
+            else:
+                # Fallback if JSON parsing fails
+                analysis_data = {
+                    "vendor": None,
+                    "date": None,
+                    "total_amount": None,
+                    "currency": None,
+                    "items": [],
+                    "category": "unknown",
+                    "expense_type": "operating",
+                    "tax_amount": None,
+                    "analysis_confidence": 0.5,
+                    "raw_text": analysis_text
+                }
+            
+            return analysis_data
+            
+        except Exception as e:
+            logger.error(f"Receipt analysis error: {e}")
+            return {
+                "vendor": None,
+                "date": None,
+                "total_amount": None,
+                "currency": None,
+                "items": [],
+                "category": "unknown",
+                "expense_type": "operating",
+                "tax_amount": None,
+                "analysis_confidence": 0.0,
+                "error": str(e)
+            }
+
+class ReportGenerator:
+    """Service class for generating project reports in multiple formats"""
+    
+    def __init__(self):
+        self.openai_client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+        self.temp_dir = Path(tempfile.gettempdir()) / "kioo_reports"
+        self.temp_dir.mkdir(exist_ok=True)
+    
+    async def generate_ai_insights(self, project_data: Dict[str, Any], receipts: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Generate AI insights for the project report"""
+        try:
+            # Prepare project summary for AI analysis
+            project_summary = f"""
+            Project: {project_data.get('name', 'Unknown')}
+            Status: {project_data.get('status', 'Unknown')}
+            Budget: {project_data.get('budget_amount', 0)} {project_data.get('budget_currency', 'USD')}
+            Manager: {project_data.get('manager', 'Unknown')}
+            Start Date: {project_data.get('start_date_iso', 'Unknown')}
+            End Date: {project_data.get('end_date_iso', 'Unknown')}
+            
+            Receipt Analysis:
+            Total Receipts: {len(receipts)}
+            """
+            
+            # Add receipt details
+            total_expenses = 0
+            expense_categories = {}
+            for receipt in receipts:
+                if receipt.get('total_amount'):
+                    total_expenses += receipt.get('total_amount', 0)
+                category = receipt.get('category', 'unknown')
+                expense_categories[category] = expense_categories.get(category, 0) + receipt.get('total_amount', 0)
+            
+            project_summary += f"""
+            Total Expenses from Receipts: {total_expenses}
+            Expense Categories: {expense_categories}
+            """
+            
+            # Generate AI insights
+            prompt = f"""
+            Analyze this project data and provide insights in JSON format:
+            {project_summary}
+            
+            Provide the following analysis:
+            {{
+                "executive_summary": "Brief executive summary of the project status and performance",
+                "financial_analysis": "Analysis of expenses vs budget, spending patterns, cost efficiency",
+                "progress_assessment": "Assessment of project progress based on available data",
+                "key_findings": ["List of key findings and observations"],
+                "recommendations": ["List of actionable recommendations"],
+                "risk_assessment": "Assessment of potential risks or concerns",
+                "budget_variance": "Analysis of budget vs actual spending",
+                "expense_breakdown": "Breakdown of expense categories and patterns"
+            }}
+            """
+            
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=1500
+            )
+            
+            # Parse AI response
+            analysis_text = response.choices[0].message.content
+            try:
+                import json
+                import re
+                json_match = re.search(r'\{.*\}', analysis_text, re.DOTALL)
+                if json_match:
+                    ai_insights = json.loads(json_match.group())
+                else:
+                    ai_insights = {"executive_summary": analysis_text}
+            except:
+                ai_insights = {"executive_summary": analysis_text}
+            
+            return ai_insights
+            
+        except Exception as e:
+            logger.error(f"AI insights generation error: {e}")
+            return {
+                "executive_summary": "AI analysis unavailable",
+                "error": str(e)
+            }
+    
+    async def generate_pdf_report(self, project_data: Dict[str, Any], receipts: List[Dict[str, Any]], 
+                                ai_insights: Dict[str, Any], report_type: str = "complete") -> str:
+        """Generate PDF report using ReportLab"""
+        try:
+            # Create temporary file
+            filename = f"project_report_{project_data.get('project_code', 'unknown')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            filepath = self.temp_dir / filename
+            
+            # Create PDF document
+            doc = SimpleDocTemplate(str(filepath), pagesize=letter)
+            styles = getSampleStyleSheet()
+            story = []
+            
+            # Title
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontSize=20,
+                spaceAfter=30,
+                alignment=1  # Center alignment
+            )
+            story.append(Paragraph(f"Project Report: {project_data.get('name', 'Unknown')}", title_style))
+            story.append(Spacer(1, 20))
+            
+            # Project Overview
+            story.append(Paragraph("Project Overview", styles['Heading2']))
+            project_info = [
+                ['Project Code:', project_data.get('project_code', 'N/A')],
+                ['Status:', project_data.get('status', 'N/A')],
+                ['Manager:', project_data.get('manager', 'N/A')],
+                ['Budget:', f"{project_data.get('budget_amount', 0)} {project_data.get('budget_currency', 'USD')}"],
+                ['Start Date:', project_data.get('start_date_iso', 'N/A')],
+                ['End Date:', project_data.get('end_date_iso', 'N/A')],
+            ]
+            
+            project_table = Table(project_info, colWidths=[2*inch, 4*inch])
+            project_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+                ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 12),
+                ('BACKGROUND', (1, 0), (1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ]))
+            story.append(project_table)
+            story.append(Spacer(1, 20))
+            
+            # AI Insights
+            if ai_insights.get('executive_summary'):
+                story.append(Paragraph("Executive Summary", styles['Heading2']))
+                story.append(Paragraph(ai_insights['executive_summary'], styles['Normal']))
+                story.append(Spacer(1, 15))
+            
+            # Financial Analysis
+            if receipts:
+                story.append(Paragraph("Financial Analysis", styles['Heading2']))
+                total_expenses = sum(r.get('total_amount', 0) for r in receipts)
+                story.append(Paragraph(f"Total Expenses: {total_expenses} {project_data.get('budget_currency', 'USD')}", styles['Normal']))
+                story.append(Paragraph(f"Number of Receipts: {len(receipts)}", styles['Normal']))
+                story.append(Spacer(1, 15))
+                
+                # Receipt summary table
+                receipt_data = [['Date', 'Vendor', 'Amount', 'Category']]
+                for receipt in receipts[:10]:  # Limit to first 10 receipts
+                    receipt_data.append([
+                        receipt.get('date', 'N/A'),
+                        receipt.get('vendor', 'N/A')[:30],  # Truncate long names
+                        f"{receipt.get('total_amount', 0)} {receipt.get('currency', 'USD')}",
+                        receipt.get('category', 'N/A')
+                    ])
+                
+                receipt_table = Table(receipt_data, colWidths=[1.2*inch, 2*inch, 1.3*inch, 1.5*inch])
+                receipt_table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 10),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                ]))
+                story.append(receipt_table)
+            
+            # Build PDF
+            doc.build(story)
+            
+            return str(filepath)
+            
+        except Exception as e:
+            logger.error(f"PDF generation error: {e}")
+            raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
+    
+    async def generate_docx_report(self, project_data: Dict[str, Any], receipts: List[Dict[str, Any]], 
+                                 ai_insights: Dict[str, Any], report_type: str = "complete") -> str:
+        """Generate DOCX report using python-docx"""
+        try:
+            # Create temporary file
+            filename = f"project_report_{project_data.get('project_code', 'unknown')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.docx"
+            filepath = self.temp_dir / filename
+            
+            # Create document
+            doc = Document()
+            
+            # Add title
+            title = doc.add_heading(f"Project Report: {project_data.get('name', 'Unknown')}", 0)
+            title.alignment = 1  # Center alignment
+            
+            # Project Overview
+            doc.add_heading('Project Overview', level=1)
+            overview_table = doc.add_table(rows=6, cols=2)
+            overview_table.style = 'Light Shading Accent 1'
+            
+            cells = overview_table.rows
+            cells[0].cells[0].text = 'Project Code:'
+            cells[0].cells[1].text = project_data.get('project_code', 'N/A')
+            cells[1].cells[0].text = 'Status:'
+            cells[1].cells[1].text = project_data.get('status', 'N/A')
+            cells[2].cells[0].text = 'Manager:'
+            cells[2].cells[1].text = project_data.get('manager', 'N/A')
+            cells[3].cells[0].text = 'Budget:'
+            cells[3].cells[1].text = f"{project_data.get('budget_amount', 0)} {project_data.get('budget_currency', 'USD')}"
+            cells[4].cells[0].text = 'Start Date:'
+            cells[4].cells[1].text = project_data.get('start_date_iso', 'N/A')
+            cells[5].cells[0].text = 'End Date:'
+            cells[5].cells[1].text = project_data.get('end_date_iso', 'N/A')
+            
+            # AI Insights
+            if ai_insights.get('executive_summary'):
+                doc.add_heading('Executive Summary', level=1)
+                doc.add_paragraph(ai_insights['executive_summary'])
+            
+            # Financial Analysis
+            if receipts:
+                doc.add_heading('Financial Analysis', level=1)
+                total_expenses = sum(r.get('total_amount', 0) for r in receipts)
+                doc.add_paragraph(f"Total Expenses: {total_expenses} {project_data.get('budget_currency', 'USD')}")
+                doc.add_paragraph(f"Number of Receipts: {len(receipts)}")
+                
+                # Receipt summary table
+                receipt_table = doc.add_table(rows=1, cols=4)
+                receipt_table.style = 'Light Grid Accent 1'
+                hdr_cells = receipt_table.rows[0].cells
+                hdr_cells[0].text = 'Date'
+                hdr_cells[1].text = 'Vendor'
+                hdr_cells[2].text = 'Amount'
+                hdr_cells[3].text = 'Category'
+                
+                for receipt in receipts[:10]:  # Limit to first 10 receipts
+                    row_cells = receipt_table.add_row().cells
+                    row_cells[0].text = receipt.get('date', 'N/A')
+                    row_cells[1].text = receipt.get('vendor', 'N/A')[:30]
+                    row_cells[2].text = f"{receipt.get('total_amount', 0)} {receipt.get('currency', 'USD')}"
+                    row_cells[3].text = receipt.get('category', 'N/A')
+            
+            # Save document
+            doc.save(str(filepath))
+            
+            return str(filepath)
+            
+        except Exception as e:
+            logger.error(f"DOCX generation error: {e}")
+            raise HTTPException(status_code=500, detail=f"DOCX generation failed: {str(e)}")
+    
+    async def generate_html_report(self, project_data: Dict[str, Any], receipts: List[Dict[str, Any]], 
+                                 ai_insights: Dict[str, Any], report_type: str = "complete") -> str:
+        """Generate HTML report using Jinja2"""
+        try:
+            # Create temporary file
+            filename = f"project_report_{project_data.get('project_code', 'unknown')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+            filepath = self.temp_dir / filename
+            
+            # HTML template
+            html_template = """
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Project Report: {{ project.name }}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+                    .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+                    .section { margin-bottom: 30px; }
+                    h1 { color: #2c3e50; font-size: 28px; }
+                    h2 { color: #34495e; font-size: 22px; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; }
+                    table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+                    th { background-color: #f2f2f2; font-weight: bold; }
+                    .overview-table { max-width: 600px; }
+                    .financial-summary { background-color: #e8f5e8; padding: 15px; border-radius: 5px; }
+                    .ai-insights { background-color: #f0f8ff; padding: 15px; border-radius: 5px; border-left: 4px solid #0066cc; }
+                    .receipt-row:nth-child(even) { background-color: #f9f9f9; }
+                    .amount { font-weight: bold; color: #27ae60; }
+                    .date { color: #7f8c8d; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>Project Report: {{ project.name }}</h1>
+                    <p class="date">Generated on {{ generated_date }}</p>
+                </div>
+                
+                <div class="section">
+                    <h2>Project Overview</h2>
+                    <table class="overview-table">
+                        <tr><th>Project Code</th><td>{{ project.project_code }}</td></tr>
+                        <tr><th>Status</th><td>{{ project.status }}</td></tr>
+                        <tr><th>Manager</th><td>{{ project.manager or 'N/A' }}</td></tr>
+                        <tr><th>Budget</th><td>{{ project.budget_amount or 0 }} {{ project.budget_currency }}</td></tr>
+                        <tr><th>Start Date</th><td>{{ project.start_date_iso or 'N/A' }}</td></tr>
+                        <tr><th>End Date</th><td>{{ project.end_date_iso or 'N/A' }}</td></tr>
+                    </table>
+                </div>
+                
+                {% if ai_insights.executive_summary %}
+                <div class="section">
+                    <h2>Executive Summary</h2>
+                    <div class="ai-insights">
+                        <p>{{ ai_insights.executive_summary }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if receipts %}
+                <div class="section">
+                    <h2>Financial Analysis</h2>
+                    <div class="financial-summary">
+                        <p><strong>Total Expenses:</strong> <span class="amount">{{ total_expenses }} {{ project.budget_currency }}</span></p>
+                        <p><strong>Number of Receipts:</strong> {{ receipts|length }}</p>
+                    </div>
+                    
+                    <h3>Receipt Summary</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Vendor</th>
+                                <th>Amount</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for receipt in receipts[:10] %}
+                            <tr class="receipt-row">
+                                <td class="date">{{ receipt.date or 'N/A' }}</td>
+                                <td>{{ receipt.vendor or 'N/A' }}</td>
+                                <td class="amount">{{ receipt.total_amount or 0 }} {{ receipt.currency or 'USD' }}</td>
+                                <td>{{ receipt.category or 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+                
+                <div class="section">
+                    <h2>Report Information</h2>
+                    <p><em>This report was generated automatically by the Kioo Radio CRM system.</em></p>
+                </div>
+            </body>
+            </html>
+            """
+            
+            # Render template
+            template = Template(html_template)
+            total_expenses = sum(r.get('total_amount', 0) for r in receipts)
+            
+            html_content = template.render(
+                project=project_data,
+                receipts=receipts,
+                ai_insights=ai_insights,
+                total_expenses=total_expenses,
+                generated_date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            )
+            
+            # Save HTML file
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(html_content)
+            
+            return str(filepath)
+            
+        except Exception as e:
+            logger.error(f"HTML generation error: {e}")
+            raise HTTPException(status_code=500, detail=f"HTML generation failed: {str(e)}")
+
+# Initialize services
+dropbox_manager = DropboxFileManager()
+ai_analyzer = AIReceiptAnalyzer()
+report_generator = ReportGenerator()
+
 # Models
 class Program(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
