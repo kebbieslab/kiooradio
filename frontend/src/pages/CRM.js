@@ -234,11 +234,10 @@ const CRM = () => {
   if (!isAuthenticated) {
     return (
       <>
-        {/* SEO Meta Tags */}
-        <head>
+        <Helmet>
           <meta name="robots" content="noindex,nofollow" />
           <title>Kioo CRM - Internal System</title>
-        </head>
+        </Helmet>
 
         <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-md w-full space-y-8">
