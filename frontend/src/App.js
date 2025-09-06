@@ -97,6 +97,8 @@ function App() {
             <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/visitors" element={<Visitors />} />
             <Route path="/crm" element={<CRM />} />
+            <Route path="/admin" element={<Dashboard />} />
+            <Route path="/admin-dashboard" element={<Dashboard />} />
             <Route path="/dashboard" element={<PresentersDashboard />} />
             <Route path="/kioo-presenters-dashboard-1981" element={<PresentersDashboard />} />
           </Routes>
