@@ -210,7 +210,7 @@ const Visitors = () => {
       }
     } catch (error) {
       console.error('Failed to export:', error);
-      setError(t('failed_to_export') || 'Failed to export data');
+      setError(t('failedToExport') || 'Failed to export data');
     }
   };
 
