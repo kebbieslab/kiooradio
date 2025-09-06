@@ -668,7 +668,7 @@ async def track_click(click_data: dict):
         return {"status": "error", "message": "Failed to track click"}
 
 # Visitor analytics dashboard endpoints (protected)
-@api_router.get("/visitors/stats")
+@api_router.get("/visitors/management-stats")
 async def get_visitor_stats(credentials: HTTPBasicCredentials = Depends(authenticate_admin)):
     """Get visitor statistics for the analytics dashboard"""
     try:
