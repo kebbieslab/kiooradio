@@ -673,6 +673,8 @@ export const labels = {
     "Close": "Fermer",
     "Start Auto-Fix": "Démarrer Auto-Correction",
     "Auto-fix functionality coming soon!": "Fonctionnalité d'auto-correction bientôt disponible!",
+    "Analyzing": "Analyse en cours",
+    "Performing comprehensive integration analysis...": "Exécution d'une analyse d'intégration complète...",
     
     // Visitors Management
     visitorsManagement: "Gestion des Visiteurs",
