@@ -81,6 +81,526 @@ class KiooRadioAPITester:
         # Test coverage areas
         self.run_test("Coverage Areas", "GET", "coverage", 200)
 
+    def test_donations_management_endpoints(self):
+        """CRITICAL TEST: Comprehensive Donations Management System Testing"""
+        print("\n=== CRITICAL VERIFICATION: DONATIONS MANAGEMENT SYSTEM ===")
+        print("Testing: GET/POST/PUT/DELETE /api/donations, Totals, Export, Filter Stats endpoints")
+        print("Authentication: Basic Auth (admin:kioo2025!)")
+        
+        # Authentication credentials
+        admin_auth = ('admin', 'kioo2025!')
+        wrong_auth = ('wrong', 'credentials')
+        
+        # Store created donation IDs for cleanup
+        created_donation_ids = []
+        
+        # VERIFICATION 1: Test authentication for all donation endpoints
+        print(f"\n🔍 VERIFICATION 1: Authentication Testing")
+        
+        donation_endpoints = [
+            ("donations", "Get Donations", "GET"),
+            ("donations", "Create Donation", "POST"),
+            ("donations/totals/summary", "Donations Totals", "GET"),
+            ("donations/export/csv", "Export CSV", "GET"),
+            ("donations/export/xlsx", "Export XLSX", "GET"),
+            ("donations/filter-stats", "Filter Stats", "GET")
+        ]
+        
+        for endpoint, name, method in donation_endpoints:
+            # Test without authentication (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401)
+            else:
+                test_data = {
+                    "date_iso": "2025-01-15",
+                    "donor_name": "Test Donor",
+                    "method": "PayPal",
+                    "amount_currency": "USD",
+                    "amount": 100.0
+                }
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401, data=test_data)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 without authentication")
+            else:
+                print(f"❌ {name}: Should return 401 without authentication")
+                self.failed_tests.append(f"{name} - Should require authentication")
+            
+            # Test with wrong credentials (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, auth=wrong_auth)
+            else:
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, data=test_data, auth=wrong_auth)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 with wrong credentials")
+            else:
+                print(f"❌ {name}: Should return 401 with wrong credentials")
+                self.failed_tests.append(f"{name} - Should reject wrong credentials")
+        
+        # VERIFICATION 2: Test POST /api/donations - Create new donations with validation
+        print(f"\n🔍 VERIFICATION 2: Create Donations with Validation")
+        
+        # Test valid donation creation
+        valid_donation_data = {
+            "date_iso": "2025-01-15",
+            "donor_name": "John Smith",
+            "phone": "+1234567890",
+            "email": "john.smith@example.com",
+            "country": "Liberia",
+            "method": "PayPal",
+            "amount_currency": "USD",
+            "amount": 250.0,
+            "project_code": "SOLAR2025",
+            "note": "For solar panel project",
+            "receipt_no": "RCP001",
+            "anonymous_y_n": "N"
+        }
+        
+        success, donation_response = self.run_test("Create Valid Donation", "POST", "donations", 200, data=valid_donation_data, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Valid donation created successfully")
+            donation_id = donation_response.get('id')
+            if donation_id:
+                created_donation_ids.append(donation_id)
+                print(f"   Donation ID: {donation_id}")
+            
+            # Verify response structure
+            required_fields = ['id', 'date_iso', 'donor_name', 'method', 'amount_currency', 'amount', 'created_at']
+            missing_fields = [field for field in required_fields if field not in donation_response]
+            
+            if missing_fields:
+                print(f"❌ Create Donation: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Create Donation - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Create Donation: All required fields present")
+        else:
+            print(f"❌ Failed to create valid donation")
+            self.failed_tests.append("Create Donation - Failed to create valid donation")
+        
+        # Test data validation - invalid date format
+        invalid_date_data = valid_donation_data.copy()
+        invalid_date_data["date_iso"] = "2025/01/15"  # Wrong format
+        
+        success, response = self.run_test("Create Donation - Invalid Date", "POST", "donations", 400, data=invalid_date_data, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects invalid date format")
+        else:
+            print(f"❌ Should reject invalid date format (YYYY/MM/DD)")
+            self.failed_tests.append("Validation - Should reject invalid date format")
+        
+        # Test data validation - invalid amount (negative)
+        invalid_amount_data = valid_donation_data.copy()
+        invalid_amount_data["amount"] = -50.0
+        
+        success, response = self.run_test("Create Donation - Negative Amount", "POST", "donations", 400, data=invalid_amount_data, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects negative amount")
+        else:
+            print(f"❌ Should reject negative amount")
+            self.failed_tests.append("Validation - Should reject negative amount")
+        
+        # Test data validation - invalid currency
+        invalid_currency_data = valid_donation_data.copy()
+        invalid_currency_data["amount_currency"] = "EUR"  # Only USD/LRD allowed
+        
+        success, response = self.run_test("Create Donation - Invalid Currency", "POST", "donations", 400, data=invalid_currency_data, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects invalid currency (EUR)")
+        else:
+            print(f"❌ Should reject invalid currency (only USD/LRD allowed)")
+            self.failed_tests.append("Validation - Should reject invalid currency")
+        
+        # Test data validation - invalid method
+        invalid_method_data = valid_donation_data.copy()
+        invalid_method_data["method"] = "Bitcoin"  # Only OrangeMoney/Lonestar/PayPal/Bank allowed
+        
+        success, response = self.run_test("Create Donation - Invalid Method", "POST", "donations", 400, data=invalid_method_data, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects invalid payment method")
+        else:
+            print(f"❌ Should reject invalid payment method")
+            self.failed_tests.append("Validation - Should reject invalid payment method")
+        
+        # Test data validation - invalid anonymous flag
+        invalid_anonymous_data = valid_donation_data.copy()
+        invalid_anonymous_data["anonymous_y_n"] = "Maybe"  # Only Y/N allowed
+        
+        success, response = self.run_test("Create Donation - Invalid Anonymous Flag", "POST", "donations", 400, data=invalid_anonymous_data, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects invalid anonymous flag")
+        else:
+            print(f"❌ Should reject invalid anonymous flag (only Y/N allowed)")
+            self.failed_tests.append("Validation - Should reject invalid anonymous flag")
+        
+        # Test required fields validation
+        required_fields_data = {
+            "donor_name": "Jane Doe",
+            "method": "OrangeMoney",
+            "amount_currency": "LRD",
+            "amount": 1000.0
+            # Missing date_iso (required)
+        }
+        
+        success, response = self.run_test("Create Donation - Missing Required Field", "POST", "donations", 400, data=required_fields_data, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects missing required field (date_iso)")
+        else:
+            print(f"❌ Should reject missing required field")
+            self.failed_tests.append("Validation - Should reject missing required field")
+        
+        # Create additional test donations for filtering and export tests
+        test_donations = [
+            {
+                "date_iso": "2025-01-10",
+                "donor_name": "Marie Camara",
+                "method": "OrangeMoney",
+                "amount_currency": "LRD",
+                "amount": 5000.0,
+                "project_code": "STUDIO2025",
+                "anonymous_y_n": "N"
+            },
+            {
+                "date_iso": "2025-01-20",
+                "donor_name": "Anonymous Donor",
+                "method": "Bank",
+                "amount_currency": "USD",
+                "amount": 500.0,
+                "project_code": "GENERAL",
+                "anonymous_y_n": "Y"
+            },
+            {
+                "date_iso": "2024-12-15",
+                "donor_name": "Emmanuel Koroma",
+                "method": "Lonestar",
+                "amount_currency": "LRD",
+                "amount": 2500.0,
+                "project_code": "SOLAR2025",
+                "anonymous_y_n": "N"
+            }
+        ]
+        
+        for i, donation_data in enumerate(test_donations):
+            success, response = self.run_test(f"Create Test Donation {i+1}", "POST", "donations", 200, data=donation_data, auth=admin_auth)
+            if success and response.get('id'):
+                created_donation_ids.append(response['id'])
+        
+        print(f"✅ Created {len(created_donation_ids)} test donations for filtering/export tests")
+        
+        # VERIFICATION 3: Test GET /api/donations - Get donations with filtering
+        print(f"\n🔍 VERIFICATION 3: Get Donations with Filtering")
+        
+        # Test get all donations
+        success, all_donations = self.run_test("Get All Donations", "GET", "donations", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Retrieved {len(all_donations)} donations")
+            
+            # Verify response structure
+            if len(all_donations) > 0:
+                sample_donation = all_donations[0]
+                required_fields = ['id', 'date_iso', 'donor_name', 'method', 'amount_currency', 'amount']
+                missing_fields = [field for field in required_fields if field not in sample_donation]
+                
+                if missing_fields:
+                    print(f"❌ Get Donations: Missing fields in response: {missing_fields}")
+                    self.failed_tests.append(f"Get Donations - Missing fields: {missing_fields}")
+                else:
+                    print(f"✅ Get Donations: All required fields present in response")
+        
+        # Test month filtering (YYYY-MM format)
+        success, jan_donations = self.run_test("Get Donations - January 2025", "GET", "donations", 200, params={"month": "2025-01"}, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Month filter working: found {len(jan_donations)} donations for January 2025")
+            
+            # Verify all returned donations are from January 2025
+            wrong_month_donations = []
+            for donation in jan_donations:
+                date_iso = donation.get('date_iso', '')
+                if not date_iso.startswith('2025-01'):
+                    wrong_month_donations.append(f"{donation.get('donor_name')} ({date_iso})")
+            
+            if wrong_month_donations:
+                print(f"❌ Month filter returned wrong month donations: {wrong_month_donations}")
+                self.failed_tests.append(f"Month Filter - Wrong month donations: {wrong_month_donations}")
+            else:
+                print(f"✅ Month filter correctly returns only January 2025 donations")
+        
+        # Test project_code filtering
+        success, solar_donations = self.run_test("Get Donations - Solar Project", "GET", "donations", 200, params={"project_code": "SOLAR2025"}, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Project code filter working: found {len(solar_donations)} donations for SOLAR2025")
+            
+            # Verify all returned donations are for SOLAR2025
+            wrong_project_donations = []
+            for donation in solar_donations:
+                project_code = donation.get('project_code', '')
+                if project_code != 'SOLAR2025':
+                    wrong_project_donations.append(f"{donation.get('donor_name')} ({project_code})")
+            
+            if wrong_project_donations:
+                print(f"❌ Project filter returned wrong project donations: {wrong_project_donations}")
+                self.failed_tests.append(f"Project Filter - Wrong project donations: {wrong_project_donations}")
+            else:
+                print(f"✅ Project filter correctly returns only SOLAR2025 donations")
+        
+        # Test method filtering
+        success, paypal_donations = self.run_test("Get Donations - PayPal Method", "GET", "donations", 200, params={"method": "PayPal"}, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Method filter working: found {len(paypal_donations)} PayPal donations")
+        
+        # Test anonymous filtering
+        success, anonymous_donations = self.run_test("Get Donations - Anonymous", "GET", "donations", 200, params={"anonymous": "Y"}, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Anonymous filter working: found {len(anonymous_donations)} anonymous donations")
+        
+        # Test combination of filters
+        success, filtered_donations = self.run_test("Get Donations - Multiple Filters", "GET", "donations", 200, 
+                                                   params={"month": "2025-01", "method": "PayPal", "anonymous": "N"}, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Multiple filters working: found {len(filtered_donations)} donations")
+        
+        # VERIFICATION 4: Test GET /api/donations/{id} - Get specific donation
+        print(f"\n🔍 VERIFICATION 4: Get Specific Donation")
+        
+        if created_donation_ids:
+            test_donation_id = created_donation_ids[0]
+            success, specific_donation = self.run_test("Get Specific Donation", "GET", f"donations/{test_donation_id}", 200, auth=admin_auth)
+            
+            if success:
+                print(f"✅ Retrieved specific donation: {specific_donation.get('donor_name')}")
+                
+                # Verify the ID matches
+                if specific_donation.get('id') == test_donation_id:
+                    print(f"✅ Donation ID matches requested ID")
+                else:
+                    print(f"❌ Donation ID mismatch: expected {test_donation_id}, got {specific_donation.get('id')}")
+                    self.failed_tests.append("Get Specific Donation - ID mismatch")
+            
+            # Test non-existent donation ID
+            success, response = self.run_test("Get Non-existent Donation", "GET", "donations/nonexistent-id", 404, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent donation")
+            else:
+                print(f"❌ Should return 404 for non-existent donation")
+                self.failed_tests.append("Get Specific Donation - Should return 404 for non-existent ID")
+        
+        # VERIFICATION 5: Test PUT /api/donations/{id} - Update donation
+        print(f"\n🔍 VERIFICATION 5: Update Donation")
+        
+        if created_donation_ids:
+            test_donation_id = created_donation_ids[0]
+            update_data = {
+                "donor_name": "John Smith Updated",
+                "amount": 300.0,
+                "note": "Updated donation note"
+            }
+            
+            success, updated_donation = self.run_test("Update Donation", "PUT", f"donations/{test_donation_id}", 200, data=update_data, auth=admin_auth)
+            
+            if success:
+                print(f"✅ Donation updated successfully")
+                
+                # Verify the updates were applied
+                if updated_donation.get('donor_name') == "John Smith Updated":
+                    print(f"✅ Donor name updated correctly")
+                else:
+                    print(f"❌ Donor name not updated: expected 'John Smith Updated', got '{updated_donation.get('donor_name')}'")
+                    self.failed_tests.append("Update Donation - Donor name not updated")
+                
+                if updated_donation.get('amount') == 300.0:
+                    print(f"✅ Amount updated correctly")
+                else:
+                    print(f"❌ Amount not updated: expected 300.0, got {updated_donation.get('amount')}")
+                    self.failed_tests.append("Update Donation - Amount not updated")
+            
+            # Test update with invalid data
+            invalid_update_data = {
+                "amount": -100.0  # Negative amount should be rejected
+            }
+            
+            success, response = self.run_test("Update Donation - Invalid Data", "PUT", f"donations/{test_donation_id}", 400, data=invalid_update_data, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly rejects invalid update data")
+            else:
+                print(f"❌ Should reject invalid update data")
+                self.failed_tests.append("Update Donation - Should reject invalid data")
+            
+            # Test update non-existent donation
+            success, response = self.run_test("Update Non-existent Donation", "PUT", "donations/nonexistent-id", 404, data=update_data, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent donation update")
+            else:
+                print(f"❌ Should return 404 for non-existent donation update")
+                self.failed_tests.append("Update Donation - Should return 404 for non-existent ID")
+        
+        # VERIFICATION 6: Test GET /api/donations/totals/summary - Donations totals
+        print(f"\n🔍 VERIFICATION 6: Donations Totals Summary")
+        
+        success, totals_data = self.run_test("Get Donations Totals", "GET", "donations/totals/summary", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Donations totals retrieved successfully")
+            
+            # Verify response structure
+            required_fields = ['this_month_usd', 'this_month_lrd', 'ytd_usd', 'ytd_lrd', 'total_donations', 'last_updated']
+            missing_fields = [field for field in required_fields if field not in totals_data]
+            
+            if missing_fields:
+                print(f"❌ Donations Totals: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Donations Totals - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Donations Totals: All required fields present")
+            
+            # Verify data types
+            type_checks = [
+                ('this_month_usd', (int, float), totals_data.get('this_month_usd')),
+                ('this_month_lrd', (int, float), totals_data.get('this_month_lrd')),
+                ('ytd_usd', (int, float), totals_data.get('ytd_usd')),
+                ('ytd_lrd', (int, float), totals_data.get('ytd_lrd')),
+                ('total_donations', int, totals_data.get('total_donations')),
+                ('last_updated', str, totals_data.get('last_updated'))
+            ]
+            
+            for field_name, expected_type, actual_value in type_checks:
+                if isinstance(actual_value, expected_type):
+                    print(f"   ✅ {field_name}: {actual_value} ({type(actual_value).__name__})")
+                else:
+                    print(f"   ❌ {field_name}: Expected {expected_type}, got {type(actual_value).__name__}")
+                    self.failed_tests.append(f"Donations Totals - {field_name} wrong type")
+            
+            # Verify totals are non-negative
+            numeric_fields = ['this_month_usd', 'this_month_lrd', 'ytd_usd', 'ytd_lrd', 'total_donations']
+            for field in numeric_fields:
+                value = totals_data.get(field, 0)
+                if value >= 0:
+                    print(f"   ✅ {field}: Non-negative value ({value})")
+                else:
+                    print(f"   ❌ {field}: Should be non-negative, got {value}")
+                    self.failed_tests.append(f"Donations Totals - {field} should be non-negative")
+        
+        # VERIFICATION 7: Test GET /api/donations/export/csv - Export CSV
+        print(f"\n🔍 VERIFICATION 7: Export Donations as CSV")
+        
+        success, csv_response = self.run_test("Export Donations CSV", "GET", "donations/export/csv", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ CSV export successful")
+            
+            # Test CSV export with filters
+            success, filtered_csv = self.run_test("Export Donations CSV - Filtered", "GET", "donations/export/csv", 200, 
+                                                 params={"month": "2025-01", "method": "PayPal"}, auth=admin_auth)
+            if success:
+                print(f"✅ Filtered CSV export successful")
+        
+        # VERIFICATION 8: Test GET /api/donations/export/xlsx - Export XLSX
+        print(f"\n🔍 VERIFICATION 8: Export Donations as XLSX")
+        
+        success, xlsx_response = self.run_test("Export Donations XLSX", "GET", "donations/export/xlsx", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ XLSX export successful")
+            
+            # Test XLSX export with filters
+            success, filtered_xlsx = self.run_test("Export Donations XLSX - Filtered", "GET", "donations/export/xlsx", 200, 
+                                                  params={"month": "2025-01", "anonymous": "N"}, auth=admin_auth)
+            if success:
+                print(f"✅ Filtered XLSX export successful")
+        
+        # VERIFICATION 9: Test GET /api/donations/filter-stats - Filter statistics
+        print(f"\n🔍 VERIFICATION 9: Donations Filter Statistics")
+        
+        success, filter_stats = self.run_test("Get Filter Statistics", "GET", "donations/filter-stats", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Filter statistics retrieved successfully")
+            
+            # Verify response structure
+            required_fields = ['project_codes', 'methods']
+            missing_fields = [field for field in required_fields if field not in filter_stats]
+            
+            if missing_fields:
+                print(f"❌ Filter Stats: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Filter Stats - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Filter Stats: All required fields present")
+            
+            # Verify data types (should be arrays)
+            project_codes = filter_stats.get('project_codes', [])
+            methods = filter_stats.get('methods', [])
+            
+            if isinstance(project_codes, list):
+                print(f"   ✅ project_codes: Array with {len(project_codes)} items")
+            else:
+                print(f"   ❌ project_codes: Should be array, got {type(project_codes)}")
+                self.failed_tests.append("Filter Stats - project_codes should be array")
+            
+            if isinstance(methods, list):
+                print(f"   ✅ methods: Array with {len(methods)} items")
+                # Verify expected methods are present
+                expected_methods = ['OrangeMoney', 'Lonestar', 'PayPal', 'Bank']
+                found_methods = [method for method in expected_methods if method in methods]
+                if len(found_methods) > 0:
+                    print(f"   ✅ Found expected payment methods: {found_methods}")
+                else:
+                    print(f"   ❌ No expected payment methods found in: {methods}")
+                    self.failed_tests.append("Filter Stats - No expected payment methods found")
+            else:
+                print(f"   ❌ methods: Should be array, got {type(methods)}")
+                self.failed_tests.append("Filter Stats - methods should be array")
+        
+        # VERIFICATION 10: Test DELETE /api/donations/{id} - Delete donation
+        print(f"\n🔍 VERIFICATION 10: Delete Donation")
+        
+        if created_donation_ids:
+            # Keep one donation for final verification, delete the rest
+            donations_to_delete = created_donation_ids[1:]  # Delete all but the first one
+            
+            for donation_id in donations_to_delete:
+                success, response = self.run_test(f"Delete Donation {donation_id[:8]}...", "DELETE", f"donations/{donation_id}", 200, auth=admin_auth)
+                
+                if success:
+                    print(f"✅ Donation deleted successfully")
+                    
+                    # Verify donation is actually deleted
+                    success, get_response = self.run_test(f"Verify Deletion {donation_id[:8]}...", "GET", f"donations/{donation_id}", 404, auth=admin_auth)
+                    if success:
+                        print(f"✅ Donation properly deleted (404 on GET)")
+                    else:
+                        print(f"❌ Donation still exists after deletion")
+                        self.failed_tests.append("Delete Donation - Donation still exists after deletion")
+            
+            # Test delete non-existent donation
+            success, response = self.run_test("Delete Non-existent Donation", "DELETE", "donations/nonexistent-id", 404, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent donation deletion")
+            else:
+                print(f"❌ Should return 404 for non-existent donation deletion")
+                self.failed_tests.append("Delete Donation - Should return 404 for non-existent ID")
+        
+        # Final summary for Donations Management
+        print(f"\n📊 DONATIONS MANAGEMENT VERIFICATION SUMMARY:")
+        print(f"   Authentication: {'✅ WORKING' if len([t for t in self.failed_tests if 'authentication' in t.lower() and 'donation' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   CRUD Operations: {'✅ WORKING' if len([t for t in self.failed_tests if any(op in t.lower() for op in ['create', 'get', 'update', 'delete']) and 'donation' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Data Validation: {'✅ WORKING' if len([t for t in self.failed_tests if 'validation' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Filtering: {'✅ WORKING' if len([t for t in self.failed_tests if 'filter' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Export Functions: {'✅ WORKING' if len([t for t in self.failed_tests if 'export' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Totals Calculation: {'✅ WORKING' if len([t for t in self.failed_tests if 'totals' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Created Test Donations: {len(created_donation_ids)}")
+        print(f"   Remaining Test Donations: {1 if created_donation_ids else 0} (for cleanup)")
+        
+        # Clean up remaining test donation
+        if created_donation_ids:
+            remaining_id = created_donation_ids[0]
+            self.run_test("Cleanup Final Test Donation", "DELETE", f"donations/{remaining_id}", 200, auth=admin_auth)
+            print(f"✅ Cleaned up final test donation")
+
     def test_programs_endpoints(self):
         """Test programs-related endpoints with PHASE 2 SCHEDULE MODIFICATIONS FOCUS"""
         print("\n=== TESTING PROGRAMS ENDPOINTS - PHASE 2 SCHEDULE MODIFICATIONS ===")
