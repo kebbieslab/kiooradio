@@ -4489,8 +4489,7 @@ async def get_ai_programs(
 
 @api_router.get("/ai-programs/{program_id}", response_model=ProgramContent)
 async def get_ai_program(
-    program_id: str,
-    admin: str = Depends(authenticate_admin)
+    program_id: str
 ):
     """Get specific AI program by ID"""
     try:
