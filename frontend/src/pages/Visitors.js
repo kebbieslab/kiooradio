@@ -242,9 +242,6 @@ const Visitors = () => {
   // Apply filters
   useEffect(() => {
     if (isAuthenticated) {
-      if (currentView === 'import-data' && !importData.import_history) {
-        loadImportHistory();
-      }
       loadVisitors();
     }
   }, [filters]);
