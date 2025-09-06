@@ -134,6 +134,9 @@ const CRMMergeStatus = ({ onBack }) => {
       
       for (let i = 0; i < modules.length; i++) {
         const module = modules[i];
+        setCurrentlyAnalyzing(module.name);
+        setDiagnosticsProgress(((i) / modules.length) * 100);
+        
         console.log(`[${i + 1}/${modules.length}] Analyzing ${module.name}...`);
         
         // Add realistic delay for UX
@@ -150,8 +153,11 @@ const CRMMergeStatus = ({ onBack }) => {
           newModules[i] = diagnosticResults;
           return newModules;
         });
+        
+        setDiagnosticsProgress(((i + 1) / modules.length) * 100);
       }
       
+      setCurrentlyAnalyzing('');
       console.log('✅ Diagnostics completed successfully');
       
       // Final update with all results
