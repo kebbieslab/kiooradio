@@ -263,8 +263,8 @@ Create a new internal CRM page at /crm with specified UI, routing, and meta tag 
 
 ## test_plan:
   current_focus:
-    - "Visitor Analytics Dashboard (/visitors page)"
-    - "Google Analytics 4 Integration"
+    - "CRM endpoints with authentication" 
+    - "CRM Page Implementation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
