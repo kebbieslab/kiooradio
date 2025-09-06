@@ -1805,7 +1805,7 @@ class KiooRadioAPITester:
         else:
             print(f"❌ Weather API endpoint failed")
 
-    def test_dashboard_endpoints(self):
+    def test_other_dashboard_endpoints(self):
         """Test All Dashboard Endpoints - COMPREHENSIVE TESTING"""
         print("\n=== TESTING ALL DASHBOARD ENDPOINTS ===")
         
