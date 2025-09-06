@@ -104,6 +104,7 @@ function App() {
             <Route path="/projects" element={<Projects />} />
             <Route path="/project-detail/:projectCode" element={<ProjectDetail />} />
             <Route path="/program-assistant" element={<ProgramAssistant />} />
+            <Route path="/ai" element={<ProgramAssistant />} />
             <Route path="/crm" element={<CRM />} />
             <Route path="/admin" element={<Dashboard />} />
             <Route path="/admin-dashboard" element={<Dashboard />} />
