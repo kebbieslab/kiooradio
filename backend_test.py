@@ -2776,7 +2776,8 @@ class KiooRadioAPITester:
         
         # CRITICAL: Test Presenters Dashboard API endpoints
         self.test_dashboard_weather_api()  # PRIMARY FOCUS: Weather API integration
-        self.test_dashboard_endpoints()    # Test all dashboard endpoints comprehensively
+        self.test_dashboard_endpoints()    # Test new Dashboard endpoints (stats, donations-by-project, income-expenses)
+        self.test_other_dashboard_endpoints()  # Test other dashboard endpoints (schedule, presenters, etc.)
         
         # CRITICAL: Test Visitor Analytics endpoints for /visitors dashboard
         self.test_visitor_analytics_endpoints()  # NEW: Test visitor analytics functionality
