@@ -1798,6 +1798,293 @@ class ContactUpdate(BaseModel):
     tags: Optional[List[str]] = None
     last_contact_date: Optional[datetime] = None
 
+# CRM endpoints with authentication
+security = HTTPBasic()
+
+def authenticate_admin(credentials: HTTPBasicCredentials = Depends(security)):
+    """Simple authentication for CRM endpoints"""
+    if credentials.username != "admin" or credentials.password != "kioo2025!":
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    return credentials.username
+
+@api_router.get("/crm/contacts", response_model=List[Contact])
+async def get_contacts(
+    contact_type: Optional[str] = None,
+    source: Optional[str] = None,
+    country: Optional[str] = None,
+    limit: int = 100,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get all contacts with optional filtering"""
+    try:
+        filter_dict = {}
+        if contact_type:
+            filter_dict["contact_type"] = contact_type
+        if source:
+            filter_dict["source"] = source
+        if country:
+            filter_dict["country"] = country
+        
+        contacts = await db.contacts.find(filter_dict).sort("created_at", -1).limit(limit).to_list(limit)
+        
+        # Convert MongoDB documents to API format
+        result = []
+        for contact in contacts:
+            if '_id' in contact:
+                del contact['_id']
+            # Convert datetime strings to datetime objects if needed
+            for field in ['created_at', 'updated_at', 'last_contact_date']:
+                if field in contact and isinstance(contact[field], str):
+                    try:
+                        contact[field] = datetime.fromisoformat(contact[field].replace('Z', '+00:00'))
+                    except ValueError:
+                        pass
+            result.append(Contact(**contact))
+        
+        return result
+    except Exception as e:
+        logger.error(f"Failed to get contacts: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get contacts")
+
+@api_router.post("/crm/contacts", response_model=Contact)
+async def create_contact(contact: ContactCreate, admin: str = Depends(authenticate_admin)):
+    """Create a new contact"""
+    try:
+        contact_dict = contact.dict()
+        contact_obj = Contact(**contact_dict)
+        
+        # Check if contact with same email already exists
+        existing = await db.contacts.find_one({"email": contact_obj.email})
+        if existing:
+            raise HTTPException(status_code=400, detail="Contact with this email already exists")
+        
+        # Prepare for MongoDB storage
+        contact_data = contact_obj.dict()
+        for field in ['created_at', 'updated_at', 'last_contact_date']:
+            if field in contact_data and contact_data[field]:
+                contact_data[field] = contact_data[field].isoformat() if isinstance(contact_data[field], datetime) else contact_data[field]
+        
+        await db.contacts.insert_one(contact_data)
+        return contact_obj
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to create contact: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create contact")
+
+@api_router.get("/crm/contacts/{contact_id}", response_model=Contact)
+async def get_contact(contact_id: str, admin: str = Depends(authenticate_admin)):
+    """Get a specific contact by ID"""
+    try:
+        contact = await db.contacts.find_one({"id": contact_id})
+        if not contact:
+            raise HTTPException(status_code=404, detail="Contact not found")
+        
+        if '_id' in contact:
+            del contact['_id']
+        
+        # Convert datetime strings to datetime objects if needed
+        for field in ['created_at', 'updated_at', 'last_contact_date']:
+            if field in contact and isinstance(contact[field], str):
+                try:
+                    contact[field] = datetime.fromisoformat(contact[field].replace('Z', '+00:00'))
+                except ValueError:
+                    pass
+        
+        return Contact(**contact)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get contact: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get contact")
+
+@api_router.put("/crm/contacts/{contact_id}", response_model=Contact)
+async def update_contact(contact_id: str, contact_update: ContactUpdate, admin: str = Depends(authenticate_admin)):
+    """Update an existing contact"""
+    try:
+        # Get existing contact
+        existing_contact = await db.contacts.find_one({"id": contact_id})
+        if not existing_contact:
+            raise HTTPException(status_code=404, detail="Contact not found")
+        
+        # Prepare update data
+        update_data = contact_update.dict(exclude_unset=True)
+        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        
+        # Check for email conflicts if email is being updated
+        if "email" in update_data and update_data["email"] != existing_contact.get("email"):
+            email_conflict = await db.contacts.find_one({"email": update_data["email"], "id": {"$ne": contact_id}})
+            if email_conflict:
+                raise HTTPException(status_code=400, detail="Contact with this email already exists")
+        
+        # Update in database
+        await db.contacts.update_one(
+            {"id": contact_id},
+            {"$set": update_data}
+        )
+        
+        # Get updated contact
+        updated_contact = await db.contacts.find_one({"id": contact_id})
+        if '_id' in updated_contact:
+            del updated_contact['_id']
+        
+        # Convert datetime strings to datetime objects if needed
+        for field in ['created_at', 'updated_at', 'last_contact_date']:
+            if field in updated_contact and isinstance(updated_contact[field], str):
+                try:
+                    updated_contact[field] = datetime.fromisoformat(updated_contact[field].replace('Z', '+00:00'))
+                except ValueError:
+                    pass
+        
+        return Contact(**updated_contact)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to update contact: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update contact")
+
+@api_router.delete("/crm/contacts/{contact_id}")
+async def delete_contact(contact_id: str, admin: str = Depends(authenticate_admin)):
+    """Delete a contact"""
+    try:
+        result = await db.contacts.delete_one({"id": contact_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Contact not found")
+        return {"message": "Contact deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete contact: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete contact")
+
+@api_router.get("/crm/stats")
+async def get_crm_stats(admin: str = Depends(authenticate_admin)):
+    """Get CRM statistics"""
+    try:
+        # Contact counts by type
+        total_contacts = await db.contacts.count_documents({})
+        
+        # Count by contact type
+        contact_types = await db.contacts.aggregate([
+            {"$group": {"_id": "$contact_type", "count": {"$sum": 1}}}
+        ]).to_list(100)
+        
+        # Count by source
+        contact_sources = await db.contacts.aggregate([
+            {"$group": {"_id": "$source", "count": {"$sum": 1}}}
+        ]).to_list(100)
+        
+        # Count by country
+        contact_countries = await db.contacts.aggregate([
+            {"$group": {"_id": "$country", "count": {"$sum": 1}}}
+        ]).to_list(100)
+        
+        # Recent contacts (last 30 days)
+        thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+        recent_contacts = await db.contacts.count_documents({
+            "created_at": {"$gte": thirty_days_ago.isoformat()}
+        })
+        
+        # Newsletter subscribers count
+        newsletter_count = await db.newsletter_subscriptions.count_documents({})
+        
+        # Contact form submissions count
+        contact_form_count = await db.contact_form_submissions.count_documents({})
+        
+        # Church partners count
+        church_partners_count = await db.church_partners.count_documents({})
+        
+        return {
+            "total_contacts": total_contacts,
+            "recent_contacts": recent_contacts,
+            "newsletter_subscribers": newsletter_count,
+            "contact_form_submissions": contact_form_count,
+            "church_partners": church_partners_count,
+            "by_type": {item["_id"]: item["count"] for item in contact_types},
+            "by_source": {item["_id"]: item["count"] for item in contact_sources},
+            "by_country": {item["_id"]: item["count"] for item in contact_countries}
+        }
+    except Exception as e:
+        logger.error(f"Failed to get CRM stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get CRM stats")
+
+@api_router.post("/crm/import-from-sources")
+async def import_contacts_from_sources(admin: str = Depends(authenticate_admin)):
+    """Import contacts from existing data sources (newsletter, contact forms, church partners)"""
+    try:
+        imported_count = 0
+        
+        # Import from newsletter subscriptions
+        newsletter_subs = await db.newsletter_subscriptions.find().to_list(1000)
+        for sub in newsletter_subs:
+            existing = await db.contacts.find_one({"email": sub.get("email")})
+            if not existing and sub.get("email"):
+                contact = Contact(
+                    name=sub.get("email", "").split("@")[0],  # Use email prefix as name
+                    email=sub.get("email"),
+                    contact_type="newsletter",
+                    source="newsletter",
+                    notes=f"Imported from newsletter subscription on {sub.get('timestamp', '')}"
+                )
+                contact_data = contact.dict()
+                for field in ['created_at', 'updated_at', 'last_contact_date']:
+                    if field in contact_data and contact_data[field]:
+                        contact_data[field] = contact_data[field].isoformat() if isinstance(contact_data[field], datetime) else contact_data[field]
+                
+                await db.contacts.insert_one(contact_data)
+                imported_count += 1
+        
+        # Import from contact form submissions
+        contact_forms = await db.contact_form_submissions.find().to_list(1000)
+        for form in contact_forms:
+            existing = await db.contacts.find_one({"email": form.get("email")})
+            if not existing and form.get("email"):
+                contact = Contact(
+                    name=form.get("name", form.get("email", "").split("@")[0]),
+                    email=form.get("email"),
+                    contact_type="general",
+                    source="contact_form",
+                    notes=f"Contact form: {form.get('subject', '')} - {form.get('message', '')[:100]}..."
+                )
+                contact_data = contact.dict()
+                for field in ['created_at', 'updated_at', 'last_contact_date']:
+                    if field in contact_data and contact_data[field]:
+                        contact_data[field] = contact_data[field].isoformat() if isinstance(contact_data[field], datetime) else contact_data[field]
+                
+                await db.contacts.insert_one(contact_data)
+                imported_count += 1
+        
+        # Import from church partners
+        church_partners = await db.church_partners.find().to_list(1000)
+        for partner in church_partners:
+            partner_email = partner.get("pastorEmail") or partner.get("churchEmail")
+            if partner_email:
+                existing = await db.contacts.find_one({"email": partner_email})
+                if not existing:
+                    contact = Contact(
+                        name=f"Pastor {partner.get('pastorName', 'Unknown')}",
+                        email=partner_email,
+                        phone=partner.get("contactPhone"),
+                        organization=partner.get("churchName"),
+                        city=partner.get("city"),
+                        country=partner.get("country"),
+                        contact_type="church_partner",
+                        source="church_partner",
+                        notes=f"Church: {partner.get('churchName', '')} - {partner.get('aboutChurch', '')[:100]}..."
+                    )
+                    contact_data = contact.dict()
+                    for field in ['created_at', 'updated_at', 'last_contact_date']:
+                        if field in contact_data and contact_data[field]:
+                            contact_data[field] = contact_data[field].isoformat() if isinstance(contact_data[field], datetime) else contact_data[field]
+                    
+                    await db.contacts.insert_one(contact_data)
+                    imported_count += 1
+        
+        return {"message": f"Successfully imported {imported_count} contacts from existing sources"}
+    except Exception as e:
+        logger.error(f"Failed to import contacts: {e}")
+        raise HTTPException(status_code=500, detail="Failed to import contacts")
+
 # Include the router in the main app
 app.include_router(api_router)
 
