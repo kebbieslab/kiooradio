@@ -1,12 +1,12 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Response, Form, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, Response, Form, Depends, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse, StreamingResponse
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Union
 import uuid
 import os
 import json
@@ -34,6 +34,22 @@ from apscheduler.triggers.cron import CronTrigger
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 from io import BytesIO
+
+# Enhanced CRM Projects imports
+import dropbox
+from openai import OpenAI
+import base64
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+from reportlab.lib.units import inch
+from docx import Document
+from docx.shared import Inches
+from jinja2 import Template
+import matplotlib.pyplot as plt
+import seaborn as sns
+import tempfile
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
