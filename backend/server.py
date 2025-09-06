@@ -4420,8 +4420,7 @@ async def ai_translate_content(content: str, target_language: str = "fr") -> str
 
 @api_router.post("/ai-programs", response_model=ProgramContent)
 async def create_ai_program(
-    program: ProgramCreate,
-    admin: str = Depends(authenticate_admin)
+    program: ProgramCreate
 ):
     """Create a new AI program with AI analysis"""
     try:
