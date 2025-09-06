@@ -4648,7 +4648,7 @@ async def search_ai_programs(
         raise HTTPException(status_code=500, detail="AI Program search failed")
 
 @api_router.get("/ai-programs/stats/overview")
-async def get_ai_program_stats(admin: str = Depends(authenticate_admin)):
+async def get_ai_program_stats():
     """Get AI program statistics overview"""
     try:
         # Get basic counts from AI programs collection
