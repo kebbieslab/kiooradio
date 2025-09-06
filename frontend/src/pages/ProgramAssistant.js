@@ -618,7 +618,7 @@ const AddProgramForm = ({ onSuccess, t, BACKEND_URL }) => {
     
     try {
       const auth = localStorage.getItem('programAssistantAuth');
-      const response = await fetch(`${BACKEND_URL}/api/programs`, {
+      const response = await fetch(`${BACKEND_URL}/api/ai-programs`, {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,
