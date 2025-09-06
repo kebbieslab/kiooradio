@@ -542,8 +542,24 @@ const CRMMergeStatus = ({ onBack }) => {
               </div>
               
               <div className="mt-6 p-3 bg-gray-50 rounded-md">
-                <div className="text-xs text-gray-600">
-                  {t('Last Check') || 'Last Check'}: {modules.length > 0 ? new Date(modules[0].lastCheck).toLocaleString() : 'Never'}
+                <div className="flex items-center justify-between text-xs text-gray-600">
+                  <div>
+                    {t('Last Check') || 'Last Check'}: {modules.length > 0 ? new Date(modules[0].lastCheck).toLocaleString() : 'Never'}
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span className="flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                      {integratedCount} {t('Integrated') || 'Integrated'}
+                    </span>
+                    <span className="flex items-center">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-1"></div>
+                      {externalCount} {t('External') || 'External'}
+                    </span>
+                    <span className="flex items-center">
+                      <div className="w-2 h-2 bg-amber-500 rounded-full mr-1"></div>
+                      {unknownCount} {t('Unknown') || 'Unknown'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
