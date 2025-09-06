@@ -3506,6 +3506,84 @@ class ProjectUpdate(BaseModel):
     country: Optional[str] = None
     tags: Optional[str] = None
 
+# Enhanced CRM Projects Models
+class ProjectFileUpload(BaseModel):
+    """Model for project file uploads"""
+    file_id: str
+    filename: str
+    file_path: str
+    file_size: int
+    content_type: str
+    uploaded_at: str
+    category: Optional[str] = None  # 'receipt', 'multimedia', 'document'
+    description: Optional[str] = None
+
+class ReceiptAnalysis(BaseModel):
+    """Model for AI-powered receipt analysis"""
+    receipt_id: str
+    vendor: Optional[str] = None
+    date: Optional[str] = None
+    total_amount: Optional[float] = None
+    currency: Optional[str] = None
+    items: Optional[List[Dict[str, Any]]] = None
+    category: Optional[str] = None
+    expense_type: Optional[str] = None
+    tax_amount: Optional[float] = None
+    analysis_confidence: Optional[float] = None
+    raw_text: Optional[str] = None
+    analysis_date: str
+
+class ProjectReport(BaseModel):
+    """Model for generated project reports"""
+    report_id: str
+    project_id: str
+    report_type: str  # 'summary', 'financial', 'progress', 'complete'
+    format: str  # 'pdf', 'docx', 'html'
+    file_path: Optional[str] = None
+    generated_at: str
+    ai_analysis: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, Any]] = None
+
+class ProjectEnhanced(BaseModel):
+    """Enhanced project model with file management"""
+    id: str
+    project_code: str
+    name: str
+    description_short: Optional[str] = None
+    start_date_iso: Optional[str] = None
+    end_date_iso: Optional[str] = None
+    status: str
+    budget_currency: str
+    budget_amount: Optional[float] = None
+    manager: Optional[str] = None
+    country: Optional[str] = None
+    tags: Optional[str] = None
+    created_at: str
+    updated_at: str
+    files: Optional[List[ProjectFileUpload]] = []
+    receipts: Optional[List[ReceiptAnalysis]] = []
+    reports: Optional[List[ProjectReport]] = []
+    total_files: Optional[int] = 0
+    total_receipts: Optional[int] = 0
+    total_expenses: Optional[float] = 0
+
+class FileUploadResponse(BaseModel):
+    """Response model for file uploads"""
+    success: bool
+    message: str
+    file_info: Optional[ProjectFileUpload] = None
+    analysis: Optional[ReceiptAnalysis] = None
+
+class ReportGenerationRequest(BaseModel):
+    """Request model for report generation"""
+    project_id: str
+    report_type: str = "complete"  # 'summary', 'financial', 'progress', 'complete'
+    format: str = "pdf"  # 'pdf', 'docx', 'html'
+    include_receipts: bool = True
+    include_multimedia: bool = True
+    include_ai_analysis: bool = True
+    template_style: Optional[str] = "professional"
+
 # Projects Management Endpoints
 @api_router.get("/projects", response_model=List[ProjectRecord])
 async def get_projects(
