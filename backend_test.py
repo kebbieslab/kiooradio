@@ -1119,6 +1119,333 @@ class KiooRadioAPITester:
         print(f"     - Correct data types: ✅")
         print(f"     - Valid calculations: ✅")
 
+    def test_visitors_management_endpoints(self):
+        """CRITICAL TEST: Comprehensive Visitors Management System Testing"""
+        print("\n=== CRITICAL VERIFICATION: VISITORS MANAGEMENT SYSTEM ===")
+        print("Testing: GET/POST/PUT/DELETE /api/visitors, Export endpoints, Stats endpoint")
+        print("Authentication: Basic Auth (admin:kioo2025!)")
+        
+        # Authentication credentials
+        admin_auth = ('admin', 'kioo2025!')
+        wrong_auth = ('wrong', 'credentials')
+        
+        # VERIFICATION 1: Test authentication for all visitor endpoints
+        print(f"\n🔍 VERIFICATION 1: Authentication Testing")
+        
+        visitor_endpoints = [
+            ("visitors", "Get Visitors", "GET"),
+            ("visitors", "Create Visitor", "POST"),
+            ("visitors/stats", "Visitor Stats", "GET"),
+            ("visitors/export/csv", "Export CSV", "GET"),
+            ("visitors/export/xlsx", "Export XLSX", "GET")
+        ]
+        
+        for endpoint, name, method in visitor_endpoints:
+            # Test without authentication (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401)
+            else:
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401, data={})
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 without authentication")
+            else:
+                print(f"❌ {name}: Should return 401 without authentication")
+                self.failed_tests.append(f"{name} - Should require authentication")
+            
+            # Test with wrong credentials (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, auth=wrong_auth)
+            else:
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, data={}, auth=wrong_auth)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 with wrong credentials")
+            else:
+                print(f"❌ {name}: Should return 401 with wrong credentials")
+                self.failed_tests.append(f"{name} - Should reject wrong credentials")
+        
+        # VERIFICATION 2: Test visitor stats endpoint
+        print(f"\n🔍 VERIFICATION 2: Visitor Stats Endpoint")
+        
+        success, stats_data = self.run_test("Visitor Stats - Correct Auth", "GET", "visitors/stats", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Visitor Stats: Successfully authenticated and retrieved data")
+            
+            # Verify response structure
+            required_fields = ['countries', 'programs', 'sources', 'date_range', 'total_visitors']
+            missing_fields = [field for field in required_fields if field not in stats_data]
+            
+            if missing_fields:
+                print(f"❌ Visitor Stats: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Visitor Stats - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Visitor Stats: All required fields present")
+            
+            # Verify data types
+            if isinstance(stats_data.get('countries'), list):
+                print(f"✅ Countries: List with {len(stats_data['countries'])} items")
+            else:
+                print(f"❌ Countries: Should be list, got {type(stats_data.get('countries'))}")
+                self.failed_tests.append("Visitor Stats - Countries should be list")
+            
+            if isinstance(stats_data.get('programs'), list):
+                print(f"✅ Programs: List with {len(stats_data['programs'])} items")
+            else:
+                print(f"❌ Programs: Should be list, got {type(stats_data.get('programs'))}")
+                self.failed_tests.append("Visitor Stats - Programs should be list")
+            
+            if isinstance(stats_data.get('sources'), list):
+                print(f"✅ Sources: List with {len(stats_data['sources'])} items")
+            else:
+                print(f"❌ Sources: Should be list, got {type(stats_data.get('sources'))}")
+                self.failed_tests.append("Visitor Stats - Sources should be list")
+            
+            if isinstance(stats_data.get('total_visitors'), int):
+                print(f"✅ Total Visitors: {stats_data['total_visitors']} (integer)")
+            else:
+                print(f"❌ Total Visitors: Should be integer, got {type(stats_data.get('total_visitors'))}")
+                self.failed_tests.append("Visitor Stats - Total visitors should be integer")
+        
+        # VERIFICATION 3: Test creating visitors with validation
+        print(f"\n🔍 VERIFICATION 3: Create Visitor with Validation")
+        
+        # Test valid visitor creation
+        valid_visitor_data = {
+            "date_iso": "2025-01-15",
+            "name": "John Doe",
+            "phone": "+231777123456",
+            "email": "john.doe@example.com",
+            "country": "Liberia",
+            "county_or_prefecture": "Lofa County",
+            "city_town": "Foya",
+            "program": "Morning Devotion",
+            "language": "English",
+            "testimony": "I was blessed by the morning prayer program. It helped me start my day with faith and hope.",
+            "source": "web",
+            "consent_y_n": "Y"
+        }
+        
+        success, created_visitor = self.run_test("Create Valid Visitor", "POST", "visitors", 200, data=valid_visitor_data, auth=admin_auth)
+        
+        visitor_id = None
+        if success:
+            print(f"✅ Create Visitor: Successfully created visitor")
+            visitor_id = created_visitor.get('id')
+            
+            # Verify response structure
+            required_fields = ['id', 'date_iso', 'name', 'country', 'program', 'testimony', 'source', 'consent_y_n', 'created_at']
+            missing_fields = [field for field in required_fields if field not in created_visitor]
+            
+            if missing_fields:
+                print(f"❌ Create Visitor: Missing fields in response: {missing_fields}")
+                self.failed_tests.append(f"Create Visitor - Missing response fields: {missing_fields}")
+            else:
+                print(f"✅ Create Visitor: All required fields present in response")
+        
+        # Test invalid date format
+        invalid_date_visitor = valid_visitor_data.copy()
+        invalid_date_visitor["date_iso"] = "2025/01/15"  # Wrong format
+        
+        success, response = self.run_test("Create Visitor - Invalid Date", "POST", "visitors", 400, data=invalid_date_visitor, auth=admin_auth)
+        if success:
+            print(f"✅ Date Validation: Correctly rejects invalid date format")
+        else:
+            print(f"❌ Date Validation: Should reject invalid date format")
+            self.failed_tests.append("Date Validation - Should reject invalid format")
+        
+        # Test invalid consent value
+        invalid_consent_visitor = valid_visitor_data.copy()
+        invalid_consent_visitor["consent_y_n"] = "Maybe"  # Should be Y or N
+        
+        success, response = self.run_test("Create Visitor - Invalid Consent", "POST", "visitors", 400, data=invalid_consent_visitor, auth=admin_auth)
+        if success:
+            print(f"✅ Consent Validation: Correctly rejects invalid consent value")
+        else:
+            print(f"❌ Consent Validation: Should reject invalid consent value")
+            self.failed_tests.append("Consent Validation - Should reject invalid values")
+        
+        # VERIFICATION 4: Test GET visitors with filters
+        print(f"\n🔍 VERIFICATION 4: Get Visitors with Filters")
+        
+        # Test get all visitors
+        success, all_visitors = self.run_test("Get All Visitors", "GET", "visitors", 200, auth=admin_auth)
+        if success:
+            print(f"✅ Get All Visitors: Retrieved {len(all_visitors)} visitors")
+        
+        # Test month filter
+        success, month_visitors = self.run_test("Get Visitors - Month Filter", "GET", "visitors", 200, params={"month": "2025-01"}, auth=admin_auth)
+        if success:
+            print(f"✅ Month Filter: Retrieved {len(month_visitors)} visitors for 2025-01")
+        
+        # Test country filter
+        success, country_visitors = self.run_test("Get Visitors - Country Filter", "GET", "visitors", 200, params={"country": "Liberia"}, auth=admin_auth)
+        if success:
+            print(f"✅ Country Filter: Retrieved {len(country_visitors)} visitors for Liberia")
+        
+        # Test program filter
+        success, program_visitors = self.run_test("Get Visitors - Program Filter", "GET", "visitors", 200, params={"program": "Morning Devotion"}, auth=admin_auth)
+        if success:
+            print(f"✅ Program Filter: Retrieved {len(program_visitors)} visitors for Morning Devotion")
+        
+        # Test source filter
+        success, source_visitors = self.run_test("Get Visitors - Source Filter", "GET", "visitors", 200, params={"source": "web"}, auth=admin_auth)
+        if success:
+            print(f"✅ Source Filter: Retrieved {len(source_visitors)} visitors for web source")
+        
+        # Test combined filters
+        success, filtered_visitors = self.run_test("Get Visitors - Combined Filters", "GET", "visitors", 200, 
+                                                 params={"month": "2025-01", "country": "Liberia", "source": "web"}, auth=admin_auth)
+        if success:
+            print(f"✅ Combined Filters: Retrieved {len(filtered_visitors)} visitors with multiple filters")
+        
+        # Test pagination
+        success, paginated_visitors = self.run_test("Get Visitors - Pagination", "GET", "visitors", 200, 
+                                                   params={"limit": 5, "skip": 0}, auth=admin_auth)
+        if success:
+            print(f"✅ Pagination: Retrieved {len(paginated_visitors)} visitors (limit 5)")
+        
+        # Test invalid month format
+        success, response = self.run_test("Get Visitors - Invalid Month", "GET", "visitors", 400, params={"month": "2025/01"}, auth=admin_auth)
+        if success:
+            print(f"✅ Month Validation: Correctly rejects invalid month format")
+        else:
+            print(f"❌ Month Validation: Should reject invalid month format")
+            self.failed_tests.append("Month Filter - Should reject invalid format")
+        
+        # VERIFICATION 5: Test individual visitor operations (if we created one)
+        if visitor_id:
+            print(f"\n🔍 VERIFICATION 5: Individual Visitor Operations")
+            
+            # Test get specific visitor
+            success, specific_visitor = self.run_test("Get Specific Visitor", "GET", f"visitors/{visitor_id}", 200, auth=admin_auth)
+            if success:
+                print(f"✅ Get Specific Visitor: Retrieved visitor {visitor_id}")
+                
+                # Verify it's the same visitor we created
+                if specific_visitor.get('name') == valid_visitor_data['name']:
+                    print(f"✅ Visitor Data: Matches created visitor data")
+                else:
+                    print(f"❌ Visitor Data: Doesn't match created visitor")
+                    self.failed_tests.append("Get Specific Visitor - Data mismatch")
+            
+            # Test update visitor
+            update_data = {
+                "testimony": "Updated testimony: The program continues to bless my life daily.",
+                "phone": "+231777654321"
+            }
+            
+            success, updated_visitor = self.run_test("Update Visitor", "PUT", f"visitors/{visitor_id}", 200, data=update_data, auth=admin_auth)
+            if success:
+                print(f"✅ Update Visitor: Successfully updated visitor")
+                
+                # Verify update took effect
+                if updated_visitor.get('testimony') == update_data['testimony']:
+                    print(f"✅ Update Verification: Testimony updated correctly")
+                else:
+                    print(f"❌ Update Verification: Testimony not updated")
+                    self.failed_tests.append("Update Visitor - Testimony not updated")
+                
+                if updated_visitor.get('phone') == update_data['phone']:
+                    print(f"✅ Update Verification: Phone updated correctly")
+                else:
+                    print(f"❌ Update Verification: Phone not updated")
+                    self.failed_tests.append("Update Visitor - Phone not updated")
+            
+            # Test update with invalid data
+            invalid_update = {"date_iso": "invalid-date"}
+            success, response = self.run_test("Update Visitor - Invalid Date", "PUT", f"visitors/{visitor_id}", 400, data=invalid_update, auth=admin_auth)
+            if success:
+                print(f"✅ Update Validation: Correctly rejects invalid date in update")
+            else:
+                print(f"❌ Update Validation: Should reject invalid date in update")
+                self.failed_tests.append("Update Validation - Should reject invalid date")
+            
+            # Test delete visitor
+            success, response = self.run_test("Delete Visitor", "DELETE", f"visitors/{visitor_id}", 200, auth=admin_auth)
+            if success:
+                print(f"✅ Delete Visitor: Successfully deleted visitor")
+                
+                # Verify visitor is deleted
+                success, response = self.run_test("Verify Deletion", "GET", f"visitors/{visitor_id}", 404, auth=admin_auth)
+                if success:
+                    print(f"✅ Delete Verification: Visitor no longer exists")
+                else:
+                    print(f"❌ Delete Verification: Visitor still exists after deletion")
+                    self.failed_tests.append("Delete Visitor - Visitor still exists")
+        
+        # VERIFICATION 6: Test export endpoints
+        print(f"\n🔍 VERIFICATION 6: Export Endpoints")
+        
+        # Test CSV export
+        success, csv_response = self.run_test("Export CSV", "GET", "visitors/export/csv", 200, auth=admin_auth)
+        if success:
+            print(f"✅ CSV Export: Successfully exported visitors as CSV")
+        
+        # Test CSV export with filters
+        success, filtered_csv = self.run_test("Export CSV - Filtered", "GET", "visitors/export/csv", 200, 
+                                            params={"country": "Liberia", "month": "2025-01"}, auth=admin_auth)
+        if success:
+            print(f"✅ CSV Export with Filters: Successfully exported filtered visitors")
+        
+        # Test XLSX export
+        success, xlsx_response = self.run_test("Export XLSX", "GET", "visitors/export/xlsx", 200, auth=admin_auth)
+        if success:
+            print(f"✅ XLSX Export: Successfully exported visitors as XLSX")
+        
+        # Test XLSX export with filters
+        success, filtered_xlsx = self.run_test("Export XLSX - Filtered", "GET", "visitors/export/xlsx", 200, 
+                                             params={"country": "Liberia", "source": "web"}, auth=admin_auth)
+        if success:
+            print(f"✅ XLSX Export with Filters: Successfully exported filtered visitors")
+        
+        # Test export with invalid month format
+        success, response = self.run_test("Export CSV - Invalid Month", "GET", "visitors/export/csv", 400, 
+                                        params={"month": "invalid"}, auth=admin_auth)
+        if success:
+            print(f"✅ Export Validation: Correctly rejects invalid month format in export")
+        else:
+            print(f"❌ Export Validation: Should reject invalid month format")
+            self.failed_tests.append("Export Validation - Should reject invalid month")
+        
+        # VERIFICATION 7: Test error handling for non-existent resources
+        print(f"\n🔍 VERIFICATION 7: Error Handling")
+        
+        # Test get non-existent visitor
+        success, response = self.run_test("Get Non-existent Visitor", "GET", "visitors/non-existent-id", 404, auth=admin_auth)
+        if success:
+            print(f"✅ Error Handling: Correctly returns 404 for non-existent visitor")
+        else:
+            print(f"❌ Error Handling: Should return 404 for non-existent visitor")
+            self.failed_tests.append("Error Handling - Should return 404 for non-existent visitor")
+        
+        # Test update non-existent visitor
+        success, response = self.run_test("Update Non-existent Visitor", "PUT", "visitors/non-existent-id", 404, 
+                                        data={"name": "Test"}, auth=admin_auth)
+        if success:
+            print(f"✅ Error Handling: Correctly returns 404 for updating non-existent visitor")
+        else:
+            print(f"❌ Error Handling: Should return 404 for updating non-existent visitor")
+            self.failed_tests.append("Error Handling - Should return 404 for updating non-existent visitor")
+        
+        # Test delete non-existent visitor
+        success, response = self.run_test("Delete Non-existent Visitor", "DELETE", "visitors/non-existent-id", 404, auth=admin_auth)
+        if success:
+            print(f"✅ Error Handling: Correctly returns 404 for deleting non-existent visitor")
+        else:
+            print(f"❌ Error Handling: Should return 404 for deleting non-existent visitor")
+            self.failed_tests.append("Error Handling - Should return 404 for deleting non-existent visitor")
+        
+        # Final summary for Visitors Management
+        print(f"\n📊 VISITORS MANAGEMENT VERIFICATION SUMMARY:")
+        print(f"   Authentication: {'✅ WORKING' if len([t for t in self.failed_tests if 'authentication' in t.lower() and 'visitor' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   CRUD Operations: {'✅ WORKING' if len([t for t in self.failed_tests if any(op in t.lower() for op in ['create', 'get', 'update', 'delete']) and 'visitor' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Filtering: {'✅ WORKING' if len([t for t in self.failed_tests if 'filter' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Validation: {'✅ WORKING' if len([t for t in self.failed_tests if 'validation' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Export Functions: {'✅ WORKING' if len([t for t in self.failed_tests if 'export' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Error Handling: {'✅ WORKING' if len([t for t in self.failed_tests if 'error handling' in t.lower()]) == 0 else '❌ ISSUES'}")
+
     def test_csv_import_endpoints(self):
         """CRITICAL TEST: Comprehensive CSV Import System Testing"""
         print("\n=== CRITICAL VERIFICATION: CSV IMPORT SYSTEM ===")
