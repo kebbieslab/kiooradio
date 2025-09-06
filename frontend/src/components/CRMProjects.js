@@ -8,6 +8,17 @@ const CRMProjects = ({ crmAuth }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  
+  // Enhanced state for file management
+  const [showFileUploadModal, setShowFileUploadModal] = useState(false);
+  const [showReceiptsModal, setShowReceiptsModal] = useState(false);
+  const [showReportsModal, setShowReportsModal] = useState(false);
+  const [projectFiles, setProjectFiles] = useState([]);
+  const [projectReceipts, setProjectReceipts] = useState([]);
+  const [projectReports, setProjectReports] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  
   const [filters, setFilters] = useState({
     search: '',
     status: '',
