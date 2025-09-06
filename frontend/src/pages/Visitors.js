@@ -74,7 +74,7 @@ const Visitors = () => {
         const data = await response.json();
         setVisitors(data);
       } else {
-        setError(t('failed_to_load_visitors') || 'Failed to load visitors');
+        setError(t('failedToLoadVisitors') || 'Failed to load visitors');
       }
     } catch (error) {
       console.error('Failed to load visitors:', error);
