@@ -901,7 +901,519 @@ const CRMProjects = ({ crmAuth }) => {
           </div>
         </div>
       )}
+
+      {/* File Upload Modal */}
+      {showFileUploadModal && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-full overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-bold text-gray-900">
+                  📁 {t('Project Files') || 'Project Files'}: {selectedProject.name}
+                </h2>
+                <button
+                  onClick={() => setShowFileUploadModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* File Upload Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">{t('Upload New File') || 'Upload New File'}</h3>
+                  <FileUploadForm 
+                    projectId={selectedProject.project_code}
+                    onUpload={handleFileUpload}
+                    onSuccess={() => loadProjectFiles(selectedProject.project_code)}
+                  />
+                </div>
+
+                {/* Files List Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">{t('Uploaded Files') || 'Uploaded Files'}</h3>
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {projectFiles.length === 0 ? (
+                      <p className="text-gray-500 text-sm">{t('No files uploaded yet') || 'No files uploaded yet'}</p>
+                    ) : (
+                      projectFiles.map(file => (
+                        <div key={file.file_id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex-1">
+                            <div className="text-sm font-medium">{file.filename}</div>
+                            <div className="text-xs text-gray-500">
+                              {file.category} • {Math.round(file.file_size / 1024)} KB • {new Date(file.uploaded_at).toLocaleDateString()}
+                            </div>
+                            {file.description && (
+                              <div className="text-xs text-gray-600 mt-1">{file.description}</div>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => downloadFile(selectedProject.project_code, file.file_id, file.filename)}
+                            className="text-blue-600 hover:text-blue-800 text-sm px-2 py-1 rounded"
+                          >
+                            📥 {t('Download') || 'Download'}
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6 pt-4 border-t">
+                <button
+                  onClick={() => setShowFileUploadModal(false)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                >
+                  {t('Close') || 'Close'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Receipts Modal */}
+      {showReceiptsModal && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-6xl w-full max-h-full overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-bold text-gray-900">
+                  🧾 {t('Project Receipts & Expenses') || 'Project Receipts & Expenses'}: {selectedProject.name}
+                </h2>
+                <button
+                  onClick={() => setShowReceiptsModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Upload Receipt Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">{t('Upload Receipt') || 'Upload Receipt'}</h3>
+                  <ReceiptUploadForm 
+                    projectId={selectedProject.project_code}
+                    onUpload={handleFileUpload}
+                    onSuccess={() => {
+                      loadProjectFiles(selectedProject.project_code);
+                      loadProjectReceipts(selectedProject.project_code);
+                    }}
+                  />
+                </div>
+
+                {/* Receipts Analysis Section */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">{t('Receipt Analysis') || 'Receipt Analysis'}</h3>
+                    <div className="text-sm text-gray-600">
+                      {t('Total Expenses') || 'Total Expenses'}: 
+                      <span className="font-semibold text-green-600 ml-1">
+                        {selectedProject.budget_currency} {projectReceipts.reduce((sum, r) => sum + (r.total_amount || 0), 0).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {projectReceipts.length === 0 ? (
+                      <p className="text-gray-500 text-sm">{t('No receipts analyzed yet') || 'No receipts analyzed yet'}</p>
+                    ) : (
+                      projectReceipts.map(receipt => (
+                        <div key={receipt.receipt_id} className="border rounded-lg p-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <div className="text-sm font-medium">{receipt.vendor || 'Unknown Vendor'}</div>
+                              <div className="text-xs text-gray-500">{receipt.date || 'No date'} • {receipt.category || 'uncategorized'}</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm font-semibold text-green-600">
+                                {receipt.currency || selectedProject.budget_currency} {receipt.total_amount?.toLocaleString() || '0'}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {t('Confidence') || 'Confidence'}: {Math.round((receipt.analysis_confidence || 0) * 100)}%
+                              </div>
+                            </div>
+                          </div>
+                          {receipt.items && receipt.items.length > 0 && (
+                            <div className="mt-2 pt-2 border-t">
+                              <div className="text-xs text-gray-600">
+                                {receipt.items.slice(0, 3).map((item, idx) => (
+                                  <div key={idx}>{item.description} - {item.total_price}</div>
+                                ))}
+                                {receipt.items.length > 3 && <div>... and {receipt.items.length - 3} more items</div>}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6 pt-4 border-t">
+                <button
+                  onClick={() => setShowReceiptsModal(false)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                >
+                  {t('Close') || 'Close'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reports Modal */}
+      {showReportsModal && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-full overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-bold text-gray-900">
+                  📊 {t('Project Reports') || 'Project Reports'}: {selectedProject.name}
+                </h2>
+                <button
+                  onClick={() => setShowReportsModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Generate Report Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">{t('Generate New Report') || 'Generate New Report'}</h3>
+                  <ReportGenerationForm 
+                    projectId={selectedProject.project_code}
+                    onGenerate={generateProjectReport}
+                    isGenerating={isGeneratingReport}
+                    onSuccess={() => loadProjectReports(selectedProject.project_code)}
+                  />
+                </div>
+
+                {/* Generated Reports Section */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">{t('Generated Reports') || 'Generated Reports'}</h3>
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {projectReports.length === 0 ? (
+                      <p className="text-gray-500 text-sm">{t('No reports generated yet') || 'No reports generated yet'}</p>
+                    ) : (
+                      projectReports.map(report => (
+                        <div key={report.report_id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex-1">
+                            <div className="text-sm font-medium">
+                              {report.report_type.charAt(0).toUpperCase() + report.report_type.slice(1)} Report
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {report.format.toUpperCase()} • {new Date(report.generated_at).toLocaleDateString()}
+                            </div>
+                            {report.ai_analysis && (
+                              <div className="text-xs text-blue-600 mt-1">✨ {t('Includes AI Analysis') || 'Includes AI Analysis'}</div>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => downloadReport(selectedProject.project_code, report.report_id, `${selectedProject.project_code}_${report.report_type}_report.${report.format}`)}
+                            className="text-blue-600 hover:text-blue-800 text-sm px-2 py-1 rounded"
+                          >
+                            📥 {t('Download') || 'Download'}
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6 pt-4 border-t">
+                <button
+                  onClick={() => setShowReportsModal(false)}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                >
+                  {t('Close') || 'Close'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  );
+};
+
+// Helper Components
+const FileUploadForm = ({ projectId, onUpload, onSuccess }) => {
+  const { t } = useTranslation();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [category, setCategory] = useState('documents');
+  const [description, setDescription] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedFile) return;
+
+    setUploading(true);
+    try {
+      await onUpload(projectId, selectedFile, category, description);
+      setSelectedFile(null);
+      setDescription('');
+      onSuccess();
+    } catch (error) {
+      alert(error.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Select File') || 'Select File'} (Max 3MB)
+        </label>
+        <input
+          type="file"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+          accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt,.csv"
+          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+          required
+        />
+        {selectedFile && (
+          <div className="mt-2 text-sm text-gray-600">
+            Selected: {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
+          </div>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Category') || 'Category'}
+        </label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          <option value="documents">{t('Documents') || 'Documents'}</option>
+          <option value="multimedia">{t('Multimedia') || 'Multimedia'}</option>
+          <option value="receipt">{t('Receipt') || 'Receipt'}</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Description') || 'Description'} ({t('Optional') || 'Optional'})
+        </label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+          rows="3"
+          placeholder={t('Brief description of the file...') || 'Brief description of the file...'}
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={!selectedFile || uploading}
+        className="w-full px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50"
+      >
+        {uploading ? (t('Uploading...') || 'Uploading...') : (t('Upload File') || 'Upload File')}
+      </button>
+    </form>
+  );
+};
+
+const ReceiptUploadForm = ({ projectId, onUpload, onSuccess }) => {
+  const { t } = useTranslation();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [description, setDescription] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedFile) return;
+
+    setUploading(true);
+    try {
+      const result = await onUpload(projectId, selectedFile, 'receipt', description);
+      setSelectedFile(null);
+      setDescription('');
+      onSuccess();
+      
+      if (result.analysis) {
+        alert(`Receipt uploaded and analyzed! Vendor: ${result.analysis.vendor || 'Unknown'}, Amount: ${result.analysis.total_amount || 0}`);
+      }
+    } catch (error) {
+      alert(error.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Receipt Image') || 'Receipt Image'} (Max 3MB)
+        </label>
+        <input
+          type="file"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+          accept="image/jpeg,image/jpg,image/png,image/webp"
+          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-medium file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+          required
+        />
+        {selectedFile && (
+          <div className="mt-2 text-sm text-gray-600">
+            Selected: {selectedFile.name} ({Math.round(selectedFile.size / 1024)} KB)
+          </div>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Description') || 'Description'} ({t('Optional') || 'Optional'})
+        </label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          rows="2"
+          placeholder={t('What was this expense for?') || 'What was this expense for?'}
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={!selectedFile || uploading}
+        className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+      >
+        {uploading ? (
+          <span>
+            🤖 {t('Analyzing Receipt...') || 'Analyzing Receipt...'}
+          </span>
+        ) : (
+          <span>
+            📤 {t('Upload & Analyze Receipt') || 'Upload & Analyze Receipt'}
+          </span>
+        )}
+      </button>
+    </form>
+  );
+};
+
+const ReportGenerationForm = ({ projectId, onGenerate, isGenerating, onSuccess }) => {
+  const { t } = useTranslation();
+  const [reportConfig, setReportConfig] = useState({
+    report_type: 'complete',
+    format: 'pdf',
+    include_receipts: true,
+    include_multimedia: true,
+    include_ai_analysis: true,
+    template_style: 'professional'
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await onGenerate(projectId, reportConfig);
+      onSuccess();
+      alert(t('Report generated successfully!') || 'Report generated successfully!');
+    } catch (error) {
+      alert(error.message || 'Report generation failed');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Report Type') || 'Report Type'}
+        </label>
+        <select
+          value={reportConfig.report_type}
+          onChange={(e) => setReportConfig({...reportConfig, report_type: e.target.value})}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+        >
+          <option value="summary">{t('Summary Report') || 'Summary Report'}</option>
+          <option value="financial">{t('Financial Report') || 'Financial Report'}</option>
+          <option value="progress">{t('Progress Report') || 'Progress Report'}</option>
+          <option value="complete">{t('Complete Report') || 'Complete Report'}</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Format') || 'Format'}
+        </label>
+        <select
+          value={reportConfig.format}
+          onChange={(e) => setReportConfig({...reportConfig, format: e.target.value})}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+        >
+          <option value="pdf">PDF</option>
+          <option value="docx">MS Word (DOCX)</option>
+          <option value="html">HTML</option>
+        </select>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          {t('Include Options') || 'Include Options'}
+        </label>
+        <div className="space-y-1">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={reportConfig.include_receipts}
+              onChange={(e) => setReportConfig({...reportConfig, include_receipts: e.target.checked})}
+              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+            />
+            <span className="ml-2 text-sm">{t('Include Receipts & Expenses') || 'Include Receipts & Expenses'}</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={reportConfig.include_multimedia}
+              onChange={(e) => setReportConfig({...reportConfig, include_multimedia: e.target.checked})}
+              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+            />
+            <span className="ml-2 text-sm">{t('Include Multimedia Files') || 'Include Multimedia Files'}</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              checked={reportConfig.include_ai_analysis}
+              onChange={(e) => setReportConfig({...reportConfig, include_ai_analysis: e.target.checked})}
+              className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+            />
+            <span className="ml-2 text-sm">✨ {t('Include AI Analysis & Insights') || 'Include AI Analysis & Insights'}</span>
+          </label>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        disabled={isGenerating}
+        className="w-full px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-50"
+      >
+        {isGenerating ? (
+          <span>
+            ⚙️ {t('Generating Report...') || 'Generating Report...'}
+          </span>
+        ) : (
+          <span>
+            📊 {t('Generate Report') || 'Generate Report'}
+          </span>
+        )}
+      </button>
+    </form>
   );
 };
 
