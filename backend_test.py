@@ -257,6 +257,7 @@ class KiooRadioAPITester:
             {
                 "date_iso": "2025-01-10",
                 "donor_name": "Marie Camara",
+                "donor_email": "marie.camara@example.com",
                 "method": "OrangeMoney",
                 "amount_currency": "LRD",
                 "amount": 5000.0,
@@ -266,6 +267,7 @@ class KiooRadioAPITester:
             {
                 "date_iso": "2025-01-20",
                 "donor_name": "Anonymous Donor",
+                "donor_email": "anonymous@example.com",
                 "method": "Bank",
                 "amount_currency": "USD",
                 "amount": 500.0,
@@ -275,6 +277,7 @@ class KiooRadioAPITester:
             {
                 "date_iso": "2024-12-15",
                 "donor_name": "Emmanuel Koroma",
+                "donor_email": "emmanuel.koroma@example.com",
                 "method": "Lonestar",
                 "amount_currency": "LRD",
                 "amount": 2500.0,
