@@ -78,7 +78,7 @@ const Visitors = () => {
       }
     } catch (error) {
       console.error('Failed to load visitors:', error);
-      setError(t('failed_to_load_visitors') || 'Failed to load visitors');
+      setError(t('failedToLoadVisitors') || 'Failed to load visitors');
     } finally {
       setLoading(false);
     }
