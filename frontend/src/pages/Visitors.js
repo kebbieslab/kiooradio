@@ -132,7 +132,7 @@ const Visitors = () => {
       }
     } catch (error) {
       console.error('Failed to save visitor:', error);
-      setError(t('failed_to_save_visitor') || 'Failed to save visitor');
+      setError(t('failedToSaveVisitor') || 'Failed to save visitor');
     } finally {
       setLoading(false);
     }
