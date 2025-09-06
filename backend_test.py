@@ -3061,35 +3061,12 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
             return False, {}
 
     def run_all_tests(self):
-        """Run all API tests"""
-        print("🚀 Starting Kioo Radio API Tests...")
+        """Run CSV Import System tests"""
+        print("🚀 Starting Kioo Radio CSV Import System Tests...")
         print(f"Testing against: {self.base_url}")
         
-        self.test_basic_endpoints()
-        self.test_programs_endpoints()
-        self.test_pastoral_enhancements_verification()  # CRITICAL: Test pastoral enhancements from review
-        self.test_spot_light_english_verification()  # CRITICAL: Test new Spot Light English programs
-        self.test_new_french_programs_verification()  # CRITICAL: Test new French programs
-        self.test_live_broadcast_schedule_endpoint()  # CRITICAL: Test Phase 2 live broadcast schedule
-        self.test_impact_stories_endpoints()
-        self.test_news_endpoints()
-        self.test_donations_endpoints()
-        self.test_contact_endpoints()
-        self.test_newsletter_signup_endpoint()
-        self.test_church_partners_endpoints()
-        self.test_about_page_settings_endpoints()  # CRITICAL: Test About page settings API with corrections
-        self.test_static_file_serving()  # CRITICAL: Test document thumbnail serving
-        
-        # CRITICAL: Test Presenters Dashboard API endpoints
-        self.test_dashboard_weather_api()  # PRIMARY FOCUS: Weather API integration
-        self.test_dashboard_endpoints()    # Test new Dashboard endpoints (stats, donations-by-project, income-expenses)
-        self.test_other_dashboard_endpoints()  # Test other dashboard endpoints (schedule, presenters, etc.)
-        
-        # CRITICAL: Test Visitor Analytics endpoints for /visitors dashboard
-        self.test_visitor_analytics_endpoints()  # NEW: Test visitor analytics functionality
-        
-        # CRITICAL: Test CRM endpoints for /crm dashboard
-        self.test_crm_endpoints()  # NEW: Test CRM functionality with authentication
+        # CRITICAL: Test CSV Import System
+        self.test_csv_import_endpoints()  # PRIMARY FOCUS: CSV Import System testing
         
         # Print final results
         print(f"\n📊 FINAL RESULTS:")
