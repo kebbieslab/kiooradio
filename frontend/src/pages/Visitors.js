@@ -173,7 +173,7 @@ const Visitors = () => {
       if (response.ok) {
         loadVisitors();
       } else {
-        setError(t('failed_to_delete_visitor') || 'Failed to delete visitor');
+        setError(t('failedToDeleteVisitor') || 'Failed to delete visitor');
       }
     } catch (error) {
       console.error('Failed to delete visitor:', error);
