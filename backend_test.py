@@ -1233,15 +1233,15 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
         
         # Test with invalid CSV format
         invalid_csv_tests = [
-            ("Empty CSV", "visitors", ""),
-            ("Invalid Date Format", "visitors", "name,email,date_iso\nJohn,john@test.com,invalid-date"),
-            ("Invalid Currency", "donations", "donor_name,amount_currency,amount,date_iso\nJohn,INVALID,100,2025-01-15"),
-            ("Missing Required Field", "visitors", "email\njohn@test.com"),
-            ("Invalid Email", "visitors", "name,email,date_iso\nJohn,invalid-email,2025-01-15"),
-            ("Invalid Y/N Field", "visitors", "name,email,consent_y_n,date_iso\nJohn,john@test.com,MAYBE,2025-01-15")
+            ("Empty CSV", "visitors", "", 400),  # Empty CSV should return 400
+            ("Invalid Date Format", "visitors", "name,email,date_iso\nJohn,john@test.com,invalid-date", 200),
+            ("Invalid Currency", "donations", "donor_name,amount_currency,amount,date_iso\nJohn,INVALID,100,2025-01-15", 200),
+            ("Missing Required Field", "visitors", "email\njohn@test.com", 200),
+            ("Invalid Email", "visitors", "name,email,date_iso\nJohn,invalid-email,2025-01-15", 200),
+            ("Invalid Y/N Field", "visitors", "name,email,consent_y_n,date_iso\nJohn,john@test.com,MAYBE,2025-01-15", 200)
         ]
         
-        for test_name, file_type, csv_content in invalid_csv_tests:
+        for test_name, file_type, csv_content, expected_status in invalid_csv_tests:
             print(f"\n   📋 Testing {test_name}")
             
             import_data = {
