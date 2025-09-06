@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation, switchLanguage as switchLang } from '../utils/i18n';
 
 const Header = ({ setIsPlayerVisible }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
