@@ -237,34 +237,31 @@ class KiooRadioAPITester:
         # Create additional test donations for filtering and export tests
         test_donations = [
             {
-                "date_iso": "2025-01-10",
                 "donor_name": "Marie Camara",
                 "donor_email": "marie.camara@example.com",
-                "method": "OrangeMoney",
-                "amount_currency": "LRD",
-                "amount": 5000.0,
-                "project_code": "STUDIO2025",
-                "anonymous_y_n": "N"
+                "amount": 250.0,
+                "currency": "USD",
+                "donation_type": "one-time",
+                "message": "For studio equipment",
+                "is_anonymous": False
             },
             {
-                "date_iso": "2025-01-20",
                 "donor_name": "Anonymous Donor",
                 "donor_email": "anonymous@example.com",
-                "method": "Bank",
-                "amount_currency": "USD",
                 "amount": 500.0,
-                "project_code": "GENERAL",
-                "anonymous_y_n": "Y"
+                "currency": "USD",
+                "donation_type": "monthly",
+                "message": "General support",
+                "is_anonymous": True
             },
             {
-                "date_iso": "2024-12-15",
                 "donor_name": "Emmanuel Koroma",
                 "donor_email": "emmanuel.koroma@example.com",
-                "method": "Lonestar",
-                "amount_currency": "LRD",
-                "amount": 2500.0,
-                "project_code": "SOLAR2025",
-                "anonymous_y_n": "N"
+                "amount": 100.0,
+                "currency": "USD",
+                "donation_type": "one-time",
+                "message": "For solar project",
+                "is_anonymous": False
             }
         ]
         
