@@ -199,13 +199,13 @@ class KiooRadioAPITester:
         
         # Test data validation - invalid currency
         invalid_currency_data = valid_donation_data.copy()
-        invalid_currency_data["amount_currency"] = "EUR"  # Only USD/LRD allowed
+        invalid_currency_data["currency"] = "EUR"  # Only USD allowed in old model
         
         success, response = self.run_test("Create Donation - Invalid Currency", "POST", "donations", 400, data=invalid_currency_data, auth=admin_auth)
         if success:
             print(f"✅ Correctly rejects invalid currency (EUR)")
         else:
-            print(f"❌ Should reject invalid currency (only USD/LRD allowed)")
+            print(f"❌ Should reject invalid currency (only USD allowed)")
             self.failed_tests.append("Validation - Should reject invalid currency")
         
         # Test data validation - invalid method
