@@ -5545,6 +5545,258 @@ async def get_project_analytics(
         logger.error(f"Failed to get project analytics: {e}")
         raise HTTPException(status_code=500, detail="Failed to get project analytics")
 
+# User Management Endpoints
+
+@api_router.post("/users", response_model=UserRecord)
+async def create_user(
+    user_data: UserCreate,
+    admin: str = Depends(authenticate_admin)
+):
+    """Create a new user (admin only)"""
+    if not user_manager:
+        raise HTTPException(status_code=503, detail="User management service unavailable")
+    
+    try:
+        # Create user
+        user = await user_manager.create_user(user_data)
+        
+        # Send welcome email if email service is available
+        if email_service:
+            try:
+                await email_service.send_welcome_email(user, user_data.password)
+                logger.info(f"Welcome email sent to {user.email}")
+            except Exception as e:
+                logger.warning(f"Failed to send welcome email: {e}")
+        
+        return user
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"User creation failed: {e}")
+        raise HTTPException(status_code=500, detail="User creation failed")
+
+@api_router.get("/users", response_model=List[UserRecord])
+async def list_users(
+    include_inactive: bool = False,
+    admin: str = Depends(authenticate_admin)
+):
+    """List all users (admin only)"""
+    if not user_manager:
+        raise HTTPException(status_code=503, detail="User management service unavailable")
+    
+    try:
+        users = await user_manager.list_users(include_inactive=include_inactive)
+        return users
+    except Exception as e:
+        logger.error(f"Failed to list users: {e}")
+        raise HTTPException(status_code=500, detail="Failed to list users")
+
+@api_router.get("/users/{user_id}", response_model=UserRecord)
+async def get_user(
+    user_id: str,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get user by ID (admin only)"""
+    if not user_manager:
+        raise HTTPException(status_code=503, detail="User management service unavailable")
+    
+    try:
+        user = await user_manager.get_user(user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get user: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get user")
+
+@api_router.put("/users/{user_id}", response_model=UserRecord)
+async def update_user(
+    user_id: str,
+    user_update: UserUpdate,
+    admin: str = Depends(authenticate_admin)
+):
+    """Update user (admin only)"""
+    if not user_manager:
+        raise HTTPException(status_code=503, detail="User management service unavailable")
+    
+    try:
+        user = await user_manager.update_user(user_id, user_update)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"User update failed: {e}")
+        raise HTTPException(status_code=500, detail="User update failed")
+
+@api_router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    admin: str = Depends(authenticate_admin)
+):
+    """Delete user (admin only)"""
+    if not user_manager:
+        raise HTTPException(status_code=503, detail="User management service unavailable")
+    
+    try:
+        success = await user_manager.delete_user(user_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="User not found")
+        return {"message": "User deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"User deletion failed: {e}")
+        raise HTTPException(status_code=500, detail="User deletion failed")
+
+@api_router.post("/users/{user_id}/reset-password")
+async def reset_user_password(
+    user_id: str,
+    password_reset: UserPasswordReset,
+    admin: str = Depends(authenticate_admin)
+):
+    """Reset user password (admin only)"""
+    if not user_manager:
+        raise HTTPException(status_code=503, detail="User management service unavailable")
+    
+    try:
+        # Get user info for email
+        user = await user_manager.get_user(user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        # Reset password
+        success = await user_manager.reset_password(user_id, password_reset.new_password)
+        if not success:
+            raise HTTPException(status_code=500, detail="Password reset failed")
+        
+        # Send email notification if service is available
+        if email_service:
+            try:
+                await email_service.send_password_reset_email(user, password_reset.new_password)
+                logger.info(f"Password reset email sent to {user.email}")
+            except Exception as e:
+                logger.warning(f"Failed to send password reset email: {e}")
+        
+        return {"message": "Password reset successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Password reset failed: {e}")
+        raise HTTPException(status_code=500, detail="Password reset failed")
+
+@api_router.post("/auth/login", response_model=UserLoginResponse)
+async def login_user(credentials: HTTPBasicCredentials = Depends(security)):
+    """Authenticate user and return user info with permissions"""
+    if not user_manager:
+        raise HTTPException(status_code=503, detail="User management service unavailable")
+    
+    try:
+        # Check if it's the default admin login
+        if credentials.username == "admin" and credentials.password == "kioo2025!":
+            # Return default admin response
+            admin_permissions = {
+                "dashboard": {"can_read": True, "can_write": True, "can_delete": True, "can_export": True},
+                "contacts": {"can_read": True, "can_write": True, "can_delete": True, "can_export": True},
+                "visitors": {"can_read": True, "can_write": True, "can_delete": True, "can_export": True},
+                "donations": {"can_read": True, "can_write": True, "can_delete": True, "can_export": True},
+                "projects": {"can_read": True, "can_write": True, "can_delete": True, "can_export": True},
+                "settings": {"can_read": True, "can_write": True, "can_delete": True, "can_export": True}
+            }
+            
+            admin_user = UserRecord(
+                id="admin",
+                username="admin",
+                email="admin@kiooradio.com",
+                full_name="System Administrator",
+                role="admin",
+                is_active=True,
+                permissions=[],
+                created_at=datetime.now(timezone.utc).isoformat(),
+                updated_at=datetime.now(timezone.utc).isoformat()
+            )
+            
+            return UserLoginResponse(
+                user=admin_user,
+                auth_token=base64.b64encode(f"{credentials.username}:{credentials.password}".encode()).decode(),
+                permissions=admin_permissions
+            )
+        
+        # Verify user credentials
+        user = await user_manager.verify_user(credentials.username, credentials.password)
+        if not user:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid credentials",
+                headers={"WWW-Authenticate": "Basic"}
+            )
+        
+        # Convert permissions to response format
+        permissions = {}
+        for perm in user.permissions:
+            permissions[perm.module] = {
+                "can_read": perm.can_read,
+                "can_write": perm.can_write,
+                "can_delete": perm.can_delete,
+                "can_export": perm.can_export
+            }
+        
+        return UserLoginResponse(
+            user=user,
+            auth_token=base64.b64encode(f"{credentials.username}:{credentials.password}".encode()).decode(),
+            permissions=permissions
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Login failed: {e}")
+        raise HTTPException(status_code=500, detail="Login failed")
+
+@api_router.get("/users/stats")
+async def get_user_stats(admin: str = Depends(authenticate_admin)):
+    """Get user management statistics (admin only)"""
+    if not user_manager:
+        raise HTTPException(status_code=503, detail="User management service unavailable")
+    
+    try:
+        all_users = await user_manager.list_users(include_inactive=True)
+        active_users = [u for u in all_users if u.is_active]
+        inactive_users = [u for u in all_users if not u.is_active]
+        
+        # Count by role
+        role_counts = {}
+        for user in active_users:
+            role_counts[user.role] = role_counts.get(user.role, 0) + 1
+        
+        # Recent logins (last 30 days)
+        thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+        recent_logins = [
+            u for u in active_users 
+            if u.last_login and datetime.fromisoformat(u.last_login) > thirty_days_ago
+        ]
+        
+        return {
+            "total_users": len(all_users),
+            "active_users": len(active_users),
+            "inactive_users": len(inactive_users),
+            "role_distribution": role_counts,
+            "recent_logins_30_days": len(recent_logins),
+            "users_created_this_month": len([
+                u for u in all_users 
+                if datetime.fromisoformat(u.created_at).month == datetime.now().month
+            ])
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get user stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get user stats")
+
 # Dashboard Models
 class DashboardStats(BaseModel):
     visitors_this_month: int = 0
