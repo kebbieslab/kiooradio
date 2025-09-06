@@ -25,6 +25,7 @@ import Visitors from "./pages/Visitors";
 import Donations from "./pages/Donations";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
+import ProgramAssistant from "./pages/ProgramAssistant";
 import CRM from "./pages/CRM";
 import Dashboard from "./pages/Dashboard";
 
