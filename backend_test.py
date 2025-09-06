@@ -144,19 +144,13 @@ class KiooRadioAPITester:
         
         # Test valid donation creation
         valid_donation_data = {
-            "date_iso": "2025-01-15",
             "donor_name": "John Smith",
             "donor_email": "john.smith@example.com",
-            "phone": "+1234567890",
-            "email": "john.smith@example.com",
-            "country": "Liberia",
-            "method": "PayPal",
-            "amount_currency": "USD",
             "amount": 250.0,
-            "project_code": "SOLAR2025",
-            "note": "For solar panel project",
-            "receipt_no": "RCP001",
-            "anonymous_y_n": "N"
+            "currency": "USD",
+            "donation_type": "one-time",
+            "message": "For solar panel project",
+            "is_anonymous": False
         }
         
         success, donation_response = self.run_test("Create Valid Donation", "POST", "donations", 200, data=valid_donation_data, auth=admin_auth)
