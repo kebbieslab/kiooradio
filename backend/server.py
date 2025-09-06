@@ -717,10 +717,27 @@ class ReportGenerator:
             logger.error(f"HTML generation error: {e}")
             raise HTTPException(status_code=500, detail=f"HTML generation failed: {str(e)}")
 
-# Initialize services
-dropbox_manager = DropboxFileManager()
-ai_analyzer = AIReceiptAnalyzer()
-report_generator = ReportGenerator()
+# Initialize services (conditionally to avoid startup errors)
+try:
+    dropbox_manager = DropboxFileManager()
+    logger.info("Dropbox file manager initialized successfully")
+except Exception as e:
+    logger.warning(f"Failed to initialize Dropbox manager: {e}")
+    dropbox_manager = None
+
+try:
+    ai_analyzer = AIReceiptAnalyzer()
+    logger.info("AI receipt analyzer initialized successfully")
+except Exception as e:
+    logger.warning(f"Failed to initialize AI analyzer: {e}")
+    ai_analyzer = None
+
+try:
+    report_generator = ReportGenerator()
+    logger.info("Report generator initialized successfully")
+except Exception as e:
+    logger.warning(f"Failed to initialize report generator: {e}")
+    report_generator = None
 
 # Models
 class Program(BaseModel):
