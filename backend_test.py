@@ -1157,11 +1157,11 @@ class KiooRadioAPITester:
         # Sample CSV data for each file type
         csv_samples = {
             'visitors': """name,email,phone,country,county_or_prefecture,city_town,program,language,testimony,source,consent_y_n,date_iso
-John Doe,john@example.com,+231777123456,Liberia,Lofa,Foya,Morning Devotion,English,Great program,web,Y,2025-01-15
-Marie Camara,marie@example.com,+224123456789,Guinea,Nzerekore,Lola,French Gospel,French,Merci beaucoup,whatsapp,Y,2025-01-16""",
+John Doe,john@example.com,"+231777123456",Liberia,Lofa,Foya,Morning Devotion,English,Great program,web,Y,2025-01-15
+Marie Camara,marie@example.com,"+224123456789",Guinea,Nzerekore,Lola,French Gospel,French,Merci beaucoup,whatsapp,Y,2025-01-16""",
             
             'donations': """donor_name,email,phone,country,method,amount_currency,amount,project_code,note,receipt_no,anonymous_y_n,date_iso
-Sarah Johnson,sarah@example.com,+1234567890,USA,PayPal,USD,100.00,SOLAR,For solar project,REC001,N,2025-01-15
+Sarah Johnson,sarah@example.com,"+1234567890",USA,PayPal,USD,100.00,SOLAR,For solar project,REC001,N,2025-01-15
 Anonymous Donor,,,,Bank,USD,500.00,STUDIO,Studio equipment,REC002,Y,2025-01-16""",
             
             'projects': """project_code,name,description_short,start_date_iso,end_date_iso,status,budget_currency,budget_amount,manager,country,tags
@@ -1177,8 +1177,8 @@ expense,equipment,audio,USD,500.00,Cash,INV001,STUDIO,Microphone purchase,2025-0
 2025-02-28,LTA,Frequency Coordination,LRD,5000.00,open,one-time,Mary Johnson,Frequency allocation fee""",
             
             'users_roles': """name,role,email,country,language_default,phone
-Joseph Kebbie,admin,joseph@kiooradio.org,Liberia,en,+231777123456
-Marie Camara,project,marie@kiooradio.org,Guinea,fr,+224123456789""",
+Joseph Kebbie,admin,joseph@kiooradio.org,Liberia,en,"+231777123456"
+Marie Camara,project,marie@kiooradio.org,Guinea,fr,"+224123456789" """,
             
             'invoices': """donor_name,contact,project_code,amount_currency,amount,status,due_date_iso,receipt_no,date_iso
 ABC Foundation,contact@abc.org,SOLAR,USD,5000.00,sent,2025-02-15,INV001,2025-01-15
