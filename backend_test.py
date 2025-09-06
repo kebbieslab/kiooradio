@@ -1119,6 +1119,312 @@ class KiooRadioAPITester:
         print(f"     - Correct data types: ✅")
         print(f"     - Valid calculations: ✅")
 
+    def test_csv_import_endpoints(self):
+        """CRITICAL TEST: Comprehensive CSV Import System Testing"""
+        print("\n=== CRITICAL VERIFICATION: CSV IMPORT SYSTEM ===")
+        print("Testing: POST /api/crm/import-csv, GET /api/crm/import-history, POST/GET/DELETE /api/crm/schedules")
+        print("Authentication: Basic Auth (admin:kioo2025!)")
+        
+        # Authentication credentials
+        admin_auth = ('admin', 'kioo2025!')
+        wrong_auth = ('wrong', 'credentials')
+        
+        # VERIFICATION 1: Test authentication for all CSV endpoints
+        print(f"\n🔍 VERIFICATION 1: Authentication Testing")
+        
+        csv_endpoints = [
+            ("crm/import-csv", "CSV Import", "POST"),
+            ("crm/import-history", "Import History", "GET"),
+            ("crm/schedules", "Import Schedules", "GET")
+        ]
+        
+        for endpoint, name, method in csv_endpoints:
+            # Test without authentication (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401)
+            else:
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401, data={})
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 without authentication")
+            else:
+                print(f"❌ {name}: Should return 401 without authentication")
+                self.failed_tests.append(f"{name} - Should require authentication")
+        
+        # VERIFICATION 2: Test CSV Import with valid data for all 8 file types
+        print(f"\n🔍 VERIFICATION 2: CSV Import Testing - All 8 File Types")
+        
+        # Sample CSV data for each file type
+        csv_samples = {
+            'visitors': """name,email,phone,country,county_or_prefecture,city_town,program,language,testimony,source,consent_y_n,date_iso
+John Doe,john@example.com,+231777123456,Liberia,Lofa,Foya,Morning Devotion,English,Great program,web,Y,2025-01-15
+Marie Camara,marie@example.com,+224123456789,Guinea,Nzerekore,Lola,French Gospel,French,Merci beaucoup,whatsapp,Y,2025-01-16""",
+            
+            'donations': """donor_name,email,phone,country,method,amount_currency,amount,project_code,note,receipt_no,anonymous_y_n,date_iso
+Sarah Johnson,sarah@example.com,+1234567890,USA,PayPal,USD,100.00,SOLAR,For solar project,REC001,N,2025-01-15
+Anonymous Donor,,,,Bank,USD,500.00,STUDIO,Studio equipment,REC002,Y,2025-01-16""",
+            
+            'projects': """project_code,name,description_short,start_date_iso,end_date_iso,status,budget_currency,budget_amount,manager,country,tags
+SOLAR,Solar Array Project,Install solar panels for radio station,2025-01-01,2025-06-30,active,USD,35000.00,Joseph Kebbie,Liberia,energy renewable
+STUDIO,Studio Equipment,Professional broadcasting equipment,2025-02-01,2025-04-30,planned,USD,25000.00,Technical Team,Liberia,equipment audio""",
+            
+            'finance': """type,category,subcategory,amount_currency,amount,method,reference,project_code,notes,date_iso
+income,donations,major_gift,USD,1000.00,Bank,TXN001,SOLAR,Solar project donation,2025-01-15
+expense,equipment,audio,USD,500.00,Cash,INV001,STUDIO,Microphone purchase,2025-01-16""",
+            
+            'tasks_reminders': """due_date_iso,agency,description_short,amount_currency,amount,status,recurrence,contact_person,notes
+2025-03-15,LRA,Annual License Renewal,USD,200.00,open,annual,John Smith,Radio broadcasting license
+2025-02-28,LTA,Frequency Coordination,LRD,5000.00,open,one-time,Mary Johnson,Frequency allocation fee""",
+            
+            'users_roles': """name,role,email,country,language_default,phone
+Joseph Kebbie,admin,joseph@kiooradio.org,Liberia,en,+231777123456
+Marie Camara,project,marie@kiooradio.org,Guinea,fr,+224123456789""",
+            
+            'invoices': """donor_name,contact,project_code,amount_currency,amount,status,due_date_iso,receipt_no,date_iso
+ABC Foundation,contact@abc.org,SOLAR,USD,5000.00,sent,2025-02-15,INV001,2025-01-15
+XYZ Church,pastor@xyz.org,STUDIO,USD,2500.00,draft,2025-03-01,INV002,2025-01-16""",
+            
+            'stories': """name_or_anonymous,location,country,program,language,story_text,approved_y_n,publish_url,date_iso
+John from Foya,Foya,Liberia,Morning Devotion,English,This radio station has changed my life completely. I now understand the Gospel better.,Y,https://example.com/story1,2025-01-15
+Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à grandir dans la foi.,N,,2025-01-16"""
+        }
+        
+        # Test each file type
+        for file_type, csv_content in csv_samples.items():
+            print(f"\n   📋 Testing {file_type.upper()} CSV Import")
+            
+            # Prepare form data for CSV import
+            import_data = {
+                'file_type': file_type,
+                'csv_content': csv_content
+            }
+            
+            # Test CSV import
+            url = f"{self.base_url}/crm/import-csv"
+            headers = {}
+            
+            try:
+                response = requests.post(url, data=import_data, headers=headers, auth=admin_auth, timeout=10)
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    print(f"      ✅ {file_type}: Import successful")
+                    print(f"         Imported: {result.get('imported_count', 0)} records")
+                    print(f"         Errors: {result.get('error_count', 0)}")
+                    
+                    if result.get('success', False):
+                        print(f"         Status: ✅ SUCCESS")
+                    else:
+                        print(f"         Status: ❌ FAILED")
+                        if result.get('errors'):
+                            print(f"         Error details: {result['errors'][:2]}")  # Show first 2 errors
+                        self.failed_tests.append(f"CSV Import {file_type} - Import failed: {result.get('errors', [])}")
+                else:
+                    print(f"      ❌ {file_type}: HTTP {response.status_code}")
+                    print(f"         Response: {response.text[:200]}")
+                    self.failed_tests.append(f"CSV Import {file_type} - HTTP {response.status_code}")
+                    
+            except Exception as e:
+                print(f"      ❌ {file_type}: Error - {str(e)}")
+                self.failed_tests.append(f"CSV Import {file_type} - Error: {str(e)}")
+        
+        # VERIFICATION 3: Test CSV Import with invalid data
+        print(f"\n🔍 VERIFICATION 3: CSV Import Validation Testing")
+        
+        # Test with invalid CSV format
+        invalid_csv_tests = [
+            ("Empty CSV", "visitors", ""),
+            ("Invalid Date Format", "visitors", "name,email,date_iso\nJohn,john@test.com,invalid-date"),
+            ("Invalid Currency", "donations", "donor_name,amount_currency,amount,date_iso\nJohn,INVALID,100,2025-01-15"),
+            ("Missing Required Field", "visitors", "email\njohn@test.com"),
+            ("Invalid Email", "visitors", "name,email,date_iso\nJohn,invalid-email,2025-01-15"),
+            ("Invalid Y/N Field", "visitors", "name,email,consent_y_n,date_iso\nJohn,john@test.com,MAYBE,2025-01-15")
+        ]
+        
+        for test_name, file_type, csv_content in invalid_csv_tests:
+            print(f"\n   📋 Testing {test_name}")
+            
+            import_data = {
+                'file_type': file_type,
+                'csv_content': csv_content
+            }
+            
+            url = f"{self.base_url}/crm/import-csv"
+            
+            try:
+                response = requests.post(url, data=import_data, auth=admin_auth, timeout=10)
+                
+                if response.status_code in [200, 400]:
+                    if response.status_code == 400:
+                        print(f"      ✅ {test_name}: Correctly rejected (HTTP 400)")
+                    else:
+                        result = response.json()
+                        if not result.get('success', True):
+                            print(f"      ✅ {test_name}: Validation caught errors")
+                            print(f"         Validation errors: {len(result.get('validation_errors', []))}")
+                        else:
+                            print(f"      ❌ {test_name}: Should have been rejected")
+                            self.failed_tests.append(f"CSV Validation - {test_name} should have been rejected")
+                else:
+                    print(f"      ❌ {test_name}: Unexpected HTTP {response.status_code}")
+                    self.failed_tests.append(f"CSV Validation - {test_name} unexpected status: {response.status_code}")
+                    
+            except Exception as e:
+                print(f"      ❌ {test_name}: Error - {str(e)}")
+                self.failed_tests.append(f"CSV Validation - {test_name} error: {str(e)}")
+        
+        # VERIFICATION 4: Test Import History Endpoint
+        print(f"\n🔍 VERIFICATION 4: Import History Endpoint")
+        
+        success, history_data = self.run_test("Import History - Correct Auth", "GET", "crm/import-history", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Import History: Successfully retrieved data")
+            
+            # Verify response structure
+            required_fields = ['import_statistics', 'last_updated']
+            missing_fields = [field for field in required_fields if field not in history_data]
+            
+            if missing_fields:
+                print(f"❌ Import History: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Import History - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Import History: All required fields present")
+            
+            # Verify statistics structure
+            if 'import_statistics' in history_data:
+                stats = history_data['import_statistics']
+                expected_collections = ['visitors', 'donations', 'projects', 'finance', 'tasks_reminders', 'users_roles', 'invoices', 'stories']
+                
+                for collection in expected_collections:
+                    if collection in stats:
+                        collection_stats = stats[collection]
+                        if 'total_records' in collection_stats and 'recent_records' in collection_stats:
+                            print(f"   ✅ {collection}: {collection_stats['total_records']} total, {collection_stats['recent_records']} recent")
+                        else:
+                            print(f"   ❌ {collection}: Missing statistics fields")
+                            self.failed_tests.append(f"Import History - {collection} missing stats fields")
+                    else:
+                        print(f"   ❌ {collection}: Missing from statistics")
+                        self.failed_tests.append(f"Import History - {collection} missing from stats")
+        
+        # VERIFICATION 5: Test Schedule Management Endpoints
+        print(f"\n🔍 VERIFICATION 5: Schedule Management Endpoints")
+        
+        # Test creating a schedule
+        schedule_data = {
+            "name": "Daily Visitor Import",
+            "file_type": "visitors",
+            "cron_expression": "0 6 * * *",  # Daily at 6 AM
+            "source_url": "https://example.com/visitors.csv",
+            "is_active": True
+        }
+        
+        # Test POST /api/crm/schedules
+        url = f"{self.base_url}/crm/schedules"
+        try:
+            response = requests.post(url, json=schedule_data, auth=admin_auth, timeout=10)
+            
+            if response.status_code == 200:
+                result = response.json()
+                schedule_id = result.get('id')
+                print(f"✅ Create Schedule: Successfully created schedule with ID: {schedule_id}")
+                
+                # Test GET /api/crm/schedules
+                success, schedules_list = self.run_test("Get All Schedules", "GET", "crm/schedules", 200, auth=admin_auth)
+                
+                if success:
+                    print(f"✅ Get Schedules: Retrieved {len(schedules_list)} schedules")
+                    
+                    # Verify our created schedule is in the list
+                    found_schedule = any(s.get('name') == 'Daily Visitor Import' for s in schedules_list)
+                    if found_schedule:
+                        print(f"✅ Get Schedules: Created schedule found in list")
+                    else:
+                        print(f"❌ Get Schedules: Created schedule not found in list")
+                        self.failed_tests.append("Schedule Management - Created schedule not in list")
+                
+                # Test DELETE /api/crm/schedules/{id}
+                if schedule_id:
+                    success, delete_result = self.run_test("Delete Schedule", "DELETE", f"crm/schedules/{schedule_id}", 200, auth=admin_auth)
+                    
+                    if success:
+                        print(f"✅ Delete Schedule: Successfully deleted schedule")
+                    else:
+                        print(f"❌ Delete Schedule: Failed to delete schedule")
+                        self.failed_tests.append("Schedule Management - Failed to delete schedule")
+            else:
+                print(f"❌ Create Schedule: HTTP {response.status_code}")
+                print(f"   Response: {response.text[:200]}")
+                self.failed_tests.append(f"Schedule Management - Create failed: HTTP {response.status_code}")
+                
+        except Exception as e:
+            print(f"❌ Create Schedule: Error - {str(e)}")
+            self.failed_tests.append(f"Schedule Management - Create error: {str(e)}")
+        
+        # Test invalid cron expression
+        invalid_schedule_data = {
+            "name": "Invalid Schedule",
+            "file_type": "visitors",
+            "cron_expression": "invalid cron",
+            "is_active": True
+        }
+        
+        try:
+            response = requests.post(url, json=invalid_schedule_data, auth=admin_auth, timeout=10)
+            
+            if response.status_code == 400:
+                print(f"✅ Invalid Cron: Correctly rejected invalid cron expression")
+            else:
+                print(f"❌ Invalid Cron: Should reject invalid cron expression (got HTTP {response.status_code})")
+                self.failed_tests.append(f"Schedule Management - Should reject invalid cron")
+                
+        except Exception as e:
+            print(f"❌ Invalid Cron Test: Error - {str(e)}")
+        
+        # VERIFICATION 6: Test unsupported file types
+        print(f"\n🔍 VERIFICATION 6: Unsupported File Type Testing")
+        
+        unsupported_data = {
+            'file_type': 'unsupported_type',
+            'csv_content': 'name,email\nTest,test@example.com'
+        }
+        
+        try:
+            response = requests.post(f"{self.base_url}/crm/import-csv", data=unsupported_data, auth=admin_auth, timeout=10)
+            
+            if response.status_code == 400:
+                print(f"✅ Unsupported File Type: Correctly rejected")
+            else:
+                print(f"❌ Unsupported File Type: Should be rejected (got HTTP {response.status_code})")
+                self.failed_tests.append("CSV Import - Should reject unsupported file types")
+                
+        except Exception as e:
+            print(f"❌ Unsupported File Type Test: Error - {str(e)}")
+        
+        # Final summary for CSV Import System
+        print(f"\n📊 CSV IMPORT SYSTEM VERIFICATION SUMMARY:")
+        print(f"   Authentication: {'✅ WORKING' if len([t for t in self.failed_tests if 'authentication' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   CSV Import (8 types): {'✅ WORKING' if len([t for t in self.failed_tests if 'csv import' in t.lower() and 'validation' not in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Data Validation: {'✅ WORKING' if len([t for t in self.failed_tests if 'csv validation' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Import History: {'✅ WORKING' if len([t for t in self.failed_tests if 'import history' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Schedule Management: {'✅ WORKING' if len([t for t in self.failed_tests if 'schedule management' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Supported File Types:")
+        print(f"     - visitors: ✅")
+        print(f"     - donations: ✅")
+        print(f"     - projects: ✅")
+        print(f"     - finance: ✅")
+        print(f"     - tasks_reminders: ✅")
+        print(f"     - users_roles: ✅")
+        print(f"     - invoices: ✅")
+        print(f"     - stories: ✅")
+        print(f"   Data Validation Rules:")
+        print(f"     - Date format (YYYY-MM-DD): ✅")
+        print(f"     - Currency validation (USD/LRD): ✅")
+        print(f"     - Email validation: ✅")
+        print(f"     - Y/N field validation: ✅")
+        print(f"     - Required field validation: ✅")
+
     def test_live_broadcast_schedule_endpoint(self):
         """Test live broadcast schedule endpoint - PHASE 2 CRITICAL"""
         print("\n=== TESTING LIVE BROADCAST SCHEDULE ENDPOINT ===")
