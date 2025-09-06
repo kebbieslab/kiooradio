@@ -106,6 +106,18 @@
 Create a comprehensive CSV import system for the existing CRM at /crm to handle external data sources. Implement backend endpoints for parsing, validating, and importing CSV data into different collections (visitors, donations, projects, finance, tasks_reminders, users_roles, invoices, stories). Add frontend interface integrated into the existing CRM page with file upload, validation, preview, and scheduled import capabilities.
 
 ## backend:
+  - task: "CSV Import Backend Endpoints"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Implemented comprehensive CSV import system with data models for 8 CSV types (visitors, donations, projects, finance, tasks_reminders, users_roles, invoices, stories). Added validation functions with data type checking, date format validation, currency validation, and business logic checks. Created import endpoints: POST /api/crm/import-csv for processing CSV data, GET /api/crm/import-history for statistics, POST/GET/DELETE /api/crm/schedules for scheduled imports. Added pandas dependency for CSV processing and apscheduler for recurring imports. Need comprehensive testing of all endpoints and validation logic."
+
   - task: "CRM endpoints with authentication"
     implemented: true
     working: true
