@@ -27,7 +27,7 @@ const ProgramAssistant = () => {
     
     try {
       const encodedCredentials = btoa(`${credentials.username}:${credentials.password}`);
-      const response = await fetch(`${BACKEND_URL}/api/programs/stats/overview`, {
+      const response = await fetch(`${BACKEND_URL}/api/ai-programs/stats/overview`, {
         headers: {
           'Authorization': `Basic ${encodedCredentials}`,
           'Content-Type': 'application/json'
