@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import CRMMergeStatus from './CRMMergeStatus';
+import CRMVisitors from '../components/CRMVisitors';
+import CRMDonations from '../components/CRMDonations';
+import CRMProjects from '../components/CRMProjects';
 
 const CRM = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
