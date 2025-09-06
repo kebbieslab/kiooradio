@@ -206,7 +206,7 @@ const Visitors = () => {
         a.click();
         window.URL.revokeObjectURL(url);
       } else {
-        setError(t('failed_to_export') || 'Failed to export data');
+        setError(t('failedToExport') || 'Failed to export data');
       }
     } catch (error) {
       console.error('Failed to export:', error);
