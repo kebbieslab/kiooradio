@@ -145,6 +145,7 @@ class KiooRadioAPITester:
         valid_donation_data = {
             "date_iso": "2025-01-15",
             "donor_name": "John Smith",
+            "donor_email": "john.smith@example.com",
             "phone": "+1234567890",
             "email": "john.smith@example.com",
             "country": "Liberia",
