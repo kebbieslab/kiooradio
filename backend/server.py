@@ -2220,6 +2220,295 @@ async def import_contacts_from_sources(admin: str = Depends(authenticate_admin))
         logger.error(f"Failed to import contacts: {e}")
         raise HTTPException(status_code=500, detail="Failed to import contacts")
 
+# CSV Import Helper Functions
+def validate_csv_data(df: pd.DataFrame, file_type: str) -> List[str]:
+    """Validate CSV data and return list of errors"""
+    errors = []
+    
+    # Define required fields for each file type
+    required_fields = {
+        'visitors': ['name', 'email'],
+        'donations': ['donor_name', 'amount', 'amount_currency'],
+        'projects': ['project_code', 'name'],
+        'finance': ['type', 'category', 'amount', 'amount_currency'],
+        'tasks_reminders': ['due_date_iso', 'agency', 'description_short'],
+        'users_roles': ['name', 'role', 'email'],
+        'invoices': ['donor_name', 'amount', 'amount_currency'],
+        'stories': ['name_or_anonymous', 'story_text']
+    }
+    
+    # Check required fields
+    if file_type in required_fields:
+        for field in required_fields[file_type]:
+            if field not in df.columns:
+                errors.append(f"Missing required field: {field}")
+    
+    # Validate data types and formats
+    for index, row in df.iterrows():
+        row_num = index + 2  # +2 for header and 0-based indexing
+        
+        # Validate email format
+        if 'email' in row and pd.notna(row['email']):
+            if '@' not in str(row['email']):
+                errors.append(f"Row {row_num}: Invalid email format: {row['email']}")
+        
+        # Validate date format (ISO dates should be YYYY-MM-DD)
+        date_fields = ['date_iso', 'start_date_iso', 'end_date_iso', 'due_date_iso']
+        for date_field in date_fields:
+            if date_field in row and pd.notna(row[date_field]):
+                try:
+                    datetime.strptime(str(row[date_field]), '%Y-%m-%d')
+                except ValueError:
+                    errors.append(f"Row {row_num}: Invalid date format in {date_field}: {row[date_field]}. Expected YYYY-MM-DD")
+        
+        # Validate currency codes
+        if 'amount_currency' in row and pd.notna(row['amount_currency']):
+            if str(row['amount_currency']).upper() not in ['USD', 'LRD']:
+                errors.append(f"Row {row_num}: Invalid currency code: {row['amount_currency']}. Must be USD or LRD")
+        
+        # Validate amounts are numeric
+        if 'amount' in row and pd.notna(row['amount']):
+            try:
+                float(row['amount'])
+            except ValueError:
+                errors.append(f"Row {row_num}: Amount must be numeric: {row['amount']}")
+        
+        # Validate Y/N fields
+        yn_fields = ['consent_y_n', 'anonymous_y_n', 'approved_y_n']
+        for yn_field in yn_fields:
+            if yn_field in row and pd.notna(row[yn_field]):
+                if str(row[yn_field]).upper() not in ['Y', 'N']:
+                    errors.append(f"Row {row_num}: {yn_field} must be Y or N: {row[yn_field]}")
+    
+    return errors
+
+async def process_csv_import(df: pd.DataFrame, file_type: str) -> ImportResult:
+    """Process CSV data and import into appropriate collection"""
+    imported_count = 0
+    error_count = 0
+    errors = []
+    
+    try:
+        collection_map = {
+            'visitors': db.visitors,
+            'donations': db.donations,
+            'projects': db.projects,
+            'finance': db.finance,
+            'tasks_reminders': db.tasks_reminders,
+            'users_roles': db.users_roles,
+            'invoices': db.invoices,
+            'stories': db.stories
+        }
+        
+        model_map = {
+            'visitors': VisitorRecord,
+            'donations': DonationRecord,
+            'projects': ProjectRecord,
+            'finance': FinanceRecord,
+            'tasks_reminders': TaskReminderRecord,
+            'users_roles': UserRoleRecord,
+            'invoices': InvoiceRecord,
+            'stories': StoryRecord
+        }
+        
+        if file_type not in collection_map:
+            return ImportResult(
+                success=False,
+                imported_count=0,
+                error_count=0,
+                errors=[f"Unsupported file type: {file_type}"]
+            )
+        
+        collection = collection_map[file_type]
+        model_class = model_map[file_type]
+        
+        # Process each row
+        for index, row in df.iterrows():
+            try:
+                # Convert row to dict and handle NaN values
+                row_dict = row.to_dict()
+                for key, value in row_dict.items():
+                    if pd.isna(value):
+                        row_dict[key] = None
+                
+                # Create model instance
+                record = model_class(**row_dict)
+                
+                # Prepare for MongoDB storage
+                record_data = record.dict()
+                for field in ['created_at']:
+                    if field in record_data and record_data[field]:
+                        record_data[field] = record_data[field].isoformat() if isinstance(record_data[field], datetime) else record_data[field]
+                
+                # Insert into database
+                await collection.insert_one(record_data)
+                imported_count += 1
+                
+            except Exception as e:
+                error_count += 1
+                errors.append(f"Row {index + 2}: {str(e)}")
+                logger.error(f"Failed to import row {index + 2}: {e}")
+        
+        return ImportResult(
+            success=error_count == 0,
+            imported_count=imported_count,
+            error_count=error_count,
+            errors=errors
+        )
+        
+    except Exception as e:
+        logger.error(f"Failed to process CSV import: {e}")
+        return ImportResult(
+            success=False,
+            imported_count=imported_count,
+            error_count=error_count,
+            errors=[f"Import processing error: {str(e)}"]
+        )
+
+# CSV Import Endpoints
+@api_router.post("/crm/import-csv", response_model=ImportResult)
+async def import_csv_data(
+    file_type: str = Form(...),
+    csv_content: str = Form(...),
+    admin: str = Depends(authenticate_admin)
+):
+    """Import data from CSV content"""
+    try:
+        # Validate file type
+        valid_types = ['visitors', 'donations', 'projects', 'finance', 'tasks_reminders', 'users_roles', 'invoices', 'stories']
+        if file_type not in valid_types:
+            raise HTTPException(status_code=400, detail=f"Invalid file type. Must be one of: {', '.join(valid_types)}")
+        
+        # Parse CSV content
+        try:
+            df = pd.read_csv(StringIO(csv_content))
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid CSV format: {str(e)}")
+        
+        if df.empty:
+            raise HTTPException(status_code=400, detail="CSV file is empty")
+        
+        # Validate CSV data
+        validation_errors = validate_csv_data(df, file_type)
+        if validation_errors:
+            return ImportResult(
+                success=False,
+                imported_count=0,
+                error_count=len(validation_errors),
+                validation_errors=validation_errors
+            )
+        
+        # Process import
+        result = await process_csv_import(df, file_type)
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to import CSV data: {e}")
+        raise HTTPException(status_code=500, detail="Failed to import CSV data")
+
+@api_router.get("/crm/import-history")
+async def get_import_history(admin: str = Depends(authenticate_admin)):
+    """Get import history and statistics"""
+    try:
+        # Get counts from each collection
+        collections = {
+            'visitors': db.visitors,
+            'donations': db.donations,
+            'projects': db.projects,
+            'finance': db.finance,
+            'tasks_reminders': db.tasks_reminders,
+            'users_roles': db.users_roles,
+            'invoices': db.invoices,
+            'stories': db.stories
+        }
+        
+        stats = {}
+        for collection_name, collection in collections.items():
+            count = await collection.count_documents({})
+            recent_count = await collection.count_documents({
+                "created_at": {"$gte": (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()}
+            })
+            stats[collection_name] = {
+                "total_records": count,
+                "recent_records": recent_count
+            }
+        
+        return {
+            "import_statistics": stats,
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get import history: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get import history")
+
+@api_router.post("/crm/schedules", response_model=ImportSchedule)
+async def create_import_schedule(schedule: ImportSchedule, admin: str = Depends(authenticate_admin)):
+    """Create a scheduled import job"""
+    try:
+        # Validate cron expression
+        try:
+            CronTrigger.from_crontab(schedule.cron_expression)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Invalid cron expression: {str(e)}")
+        
+        # Save schedule to database
+        schedule_data = schedule.dict()
+        for field in ['created_at', 'last_run', 'next_run']:
+            if field in schedule_data and schedule_data[field]:
+                schedule_data[field] = schedule_data[field].isoformat() if isinstance(schedule_data[field], datetime) else schedule_data[field]
+        
+        await db.import_schedules.insert_one(schedule_data)
+        return schedule
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to create import schedule: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create import schedule")
+
+@api_router.get("/crm/schedules", response_model=List[ImportSchedule])
+async def get_import_schedules(admin: str = Depends(authenticate_admin)):
+    """Get all import schedules"""
+    try:
+        schedules = await db.import_schedules.find().to_list(100)
+        
+        result = []
+        for schedule in schedules:
+            if '_id' in schedule:
+                del schedule['_id']
+            # Convert datetime strings to datetime objects if needed
+            for field in ['created_at', 'last_run', 'next_run']:
+                if field in schedule and isinstance(schedule[field], str):
+                    try:
+                        schedule[field] = datetime.fromisoformat(schedule[field].replace('Z', '+00:00'))
+                    except ValueError:
+                        pass
+            result.append(ImportSchedule(**schedule))
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Failed to get import schedules: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get import schedules")
+
+@api_router.delete("/crm/schedules/{schedule_id}")
+async def delete_import_schedule(schedule_id: str, admin: str = Depends(authenticate_admin)):
+    """Delete an import schedule"""
+    try:
+        result = await db.import_schedules.delete_one({"id": schedule_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Schedule not found")
+        return {"message": "Schedule deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete import schedule: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete import schedule")
+
 # Dashboard Models
 class DashboardStats(BaseModel):
     visitors_this_month: int = 0
