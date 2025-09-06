@@ -4769,6 +4769,10 @@ async def download_project_file(
         if not file_info:
             raise HTTPException(status_code=404, detail="File not found")
         
+        # Check if Dropbox manager is available
+        if not dropbox_manager:
+            raise HTTPException(status_code=503, detail="File download service unavailable")
+        
         # Download from Dropbox
         file_content, metadata = await dropbox_manager.download_file(file_info['file_path'])
         
