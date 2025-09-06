@@ -4633,6 +4633,10 @@ async def upload_project_file(
         # Read file content
         file_content = await file.read()
         
+        # Check if Dropbox manager is available
+        if not dropbox_manager:
+            raise HTTPException(status_code=503, detail="File upload service unavailable")
+        
         # Upload to Dropbox
         upload_result = await dropbox_manager.upload_file(
             file_content=file_content,
