@@ -298,7 +298,7 @@ const Visitors = () => {
                   type="submit"
                   className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-kioo-primary hover:bg-kioo-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kioo-primary"
                 >
-                  {t('access_visitors') || 'Access Visitors'}
+                  {t('accessVisitors') || 'Access Visitors'}
                 </button>
               </div>
             </form>
