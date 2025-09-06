@@ -4208,6 +4208,504 @@ async def get_income_expenses(admin: str = Depends(authenticate_admin)):
         logger.error(f"Failed to get income expenses data: {e}")
         raise HTTPException(status_code=500, detail="Failed to get income expenses data")
 
+# =============================================================================
+# AI PROGRAM ASSISTANT ENDPOINTS
+# =============================================================================
+
+# Import AI integration libraries
+from emergentintegrations.llm.chat import LlmChat, UserMessage
+
+# Pydantic models for AI Program Assistant
+class ProgramContent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: Optional[str] = None
+    content: str  # Original program content/transcript
+    summary: Optional[str] = None  # AI-generated summary
+    highlights: Optional[List[str]] = None  # AI-generated highlights
+    keywords: Optional[List[str]] = None  # AI-extracted keywords
+    language: str = "en"  # Original language
+    translated_content: Optional[Dict[str, str]] = None  # Translations {"fr": "content"}
+    date_aired: Optional[str] = None  # YYYY-MM-DD format
+    duration_minutes: Optional[int] = None
+    presenter: Optional[str] = None
+    program_type: Optional[str] = None  # e.g., "devotion", "music", "news"
+    audio_url: Optional[str] = None
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class ProgramCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    content: str
+    language: str = "en"
+    date_aired: Optional[str] = None
+    duration_minutes: Optional[int] = None
+    presenter: Optional[str] = None
+    program_type: Optional[str] = None
+    audio_url: Optional[str] = None
+
+class AIAnalysisRequest(BaseModel):
+    program_id: str
+    analysis_type: str = "summary"  # "summary", "highlights", "keywords", "translate"
+    target_language: Optional[str] = "fr"  # For translation requests
+
+class AIAnalysisResponse(BaseModel):
+    program_id: str
+    analysis_type: str
+    result: Dict[str, Any]
+    processing_time: float
+    model_used: str
+
+class ProgramSearchRequest(BaseModel):
+    query: str
+    language: Optional[str] = None
+    program_type: Optional[str] = None
+    date_range: Optional[Dict[str, str]] = None  # {"start": "YYYY-MM-DD", "end": "YYYY-MM-DD"}
+    limit: int = 10
+
+# AI Helper Functions
+async def get_ai_client(model_type: str = "openai"):
+    """Initialize AI client with Emergent LLM key"""
+    api_key = os.environ.get('EMERGENT_LLM_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+    
+    session_id = f"kioo_program_assistant_{datetime.now().timestamp()}"
+    
+    if model_type == "openai":
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=session_id,
+            system_message="You are an AI assistant for Kioo Radio. Help analyze, summarize, and enhance radio program content. Focus on faith-based content, community impact, and spiritual growth themes."
+        ).with_model("openai", "gpt-4o")
+    elif model_type == "claude":
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=session_id,
+            system_message="You are Claude, an AI assistant for Kioo Radio. Help analyze, summarize, and enhance faith-based radio program content with accuracy and cultural sensitivity."
+        ).with_model("anthropic", "claude-3-7-sonnet-20250219")
+    else:
+        # Default to OpenAI
+        chat = LlmChat(
+            api_key=api_key,
+            session_id=session_id,
+            system_message="You are an AI assistant for Kioo Radio. Help analyze, summarize, and enhance radio program content."
+        ).with_model("openai", "gpt-4o-mini")
+    
+    return chat
+
+async def ai_summarize_content(content: str, language: str = "en") -> str:
+    """Generate AI summary of program content"""
+    try:
+        chat = await get_ai_client("openai")
+        
+        prompt = f"""
+        Please create a concise summary of this radio program content in {language}:
+        
+        Content: {content[:4000]}  # Limit content for token efficiency
+        
+        Focus on:
+        - Main themes and messages
+        - Key spiritual insights
+        - Community impact mentioned
+        - Practical takeaways for listeners
+        
+        Keep the summary under 200 words and maintain the spiritual tone appropriate for Kioo Radio's faith-based mission.
+        """
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        return response
+        
+    except Exception as e:
+        logger.error(f"AI summarization failed: {e}")
+        return "Summary generation failed. Please try again later."
+
+async def ai_extract_highlights(content: str, language: str = "en") -> List[str]:
+    """Extract key highlights from program content"""
+    try:
+        chat = await get_ai_client("claude")
+        
+        prompt = f"""
+        Extract 5-7 key highlights from this radio program content in {language}:
+        
+        Content: {content[:4000]}
+        
+        Return highlights as a JSON array of strings. Focus on:
+        - Inspirational quotes
+        - Key spiritual messages
+        - Community announcements
+        - Prayer requests or testimonies
+        - Practical spiritual advice
+        
+        Example format: ["Highlight 1", "Highlight 2", "Highlight 3"]
+        """
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        
+        # Try to parse JSON response
+        import json
+        try:
+            highlights = json.loads(response)
+            if isinstance(highlights, list):
+                return highlights[:7]  # Limit to 7 highlights
+        except:
+            # If JSON parsing fails, split by lines
+            lines = response.strip().split('\n')
+            return [line.strip('- ').strip() for line in lines if line.strip()][:7]
+            
+    except Exception as e:
+        logger.error(f"AI highlight extraction failed: {e}")
+        return ["Content analysis unavailable"]
+
+async def ai_extract_keywords(content: str, language: str = "en") -> List[str]:
+    """Extract relevant keywords from program content"""
+    try:
+        chat = await get_ai_client("openai")
+        
+        prompt = f"""
+        Extract 10-15 relevant keywords from this radio program content in {language}:
+        
+        Content: {content[:4000]}
+        
+        Focus on:
+        - Spiritual themes
+        - Biblical references
+        - Community topics
+        - Faith concepts
+        - Practical life topics
+        
+        Return as comma-separated keywords only, no explanations.
+        """
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        
+        # Parse keywords
+        keywords = [kw.strip() for kw in response.split(',') if kw.strip()]
+        return keywords[:15]  # Limit to 15 keywords
+        
+    except Exception as e:
+        logger.error(f"AI keyword extraction failed: {e}")
+        return ["faith", "community", "spiritual growth"]
+
+async def ai_translate_content(content: str, target_language: str = "fr") -> str:
+    """Translate program content to target language"""
+    try:
+        chat = await get_ai_client("claude")
+        
+        lang_names = {"fr": "French", "en": "English"}
+        target_lang_name = lang_names.get(target_language, target_language)
+        
+        prompt = f"""
+        Translate the following radio program content to {target_lang_name}. 
+        Maintain the spiritual tone and cultural context appropriate for African French-speaking audiences:
+        
+        Content: {content[:3000]}
+        
+        Provide only the translation, no additional commentary.
+        """
+        
+        user_message = UserMessage(text=prompt)
+        response = await chat.send_message(user_message)
+        return response
+        
+    except Exception as e:
+        logger.error(f"AI translation failed: {e}")
+        return f"Translation to {target_language} unavailable"
+
+# AI Program Assistant API Endpoints
+
+@api_router.post("/programs", response_model=ProgramContent)
+async def create_program(
+    program: ProgramCreate,
+    admin: str = Depends(authenticate_admin)
+):
+    """Create a new program with AI analysis"""
+    try:
+        # Create program document
+        program_doc = ProgramContent(**program.dict())
+        
+        # Store in database
+        result = await db.programs.insert_one(program_doc.dict())
+        program_doc.id = str(result.inserted_id) if hasattr(result, 'inserted_id') else program_doc.id
+        
+        # Start AI analysis in background (non-blocking for user experience)
+        try:
+            # Generate summary
+            program_doc.summary = await ai_summarize_content(program.content, program.language)
+            
+            # Extract highlights
+            program_doc.highlights = await ai_extract_highlights(program.content, program.language)
+            
+            # Extract keywords
+            program_doc.keywords = await ai_extract_keywords(program.content, program.language)
+            
+            # Update document with AI analysis
+            program_doc.updated_at = datetime.now(timezone.utc).isoformat()
+            await db.programs.update_one(
+                {"id": program_doc.id},
+                {"$set": program_doc.dict()}
+            )
+            
+        except Exception as ai_error:
+            logger.warning(f"AI analysis failed for program {program_doc.id}: {ai_error}")
+        
+        return program_doc
+        
+    except Exception as e:
+        logger.error(f"Failed to create program: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create program")
+
+@api_router.get("/programs", response_model=List[ProgramContent])
+async def get_programs(
+    limit: int = 20,
+    skip: int = 0,
+    program_type: Optional[str] = None,
+    language: Optional[str] = None,
+    presenter: Optional[str] = None,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get all programs with optional filtering"""
+    try:
+        # Build filter
+        filter_dict = {}
+        if program_type:
+            filter_dict["program_type"] = program_type
+        if language:
+            filter_dict["language"] = language
+        if presenter:
+            filter_dict["presenter"] = {"$regex": presenter, "$options": "i"}
+        
+        # Get programs
+        programs = await db.programs.find(filter_dict).sort("date_aired", -1).skip(skip).limit(limit).to_list(limit)
+        
+        return [ProgramContent(**program) for program in programs]
+        
+    except Exception as e:
+        logger.error(f"Failed to get programs: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get programs")
+
+@api_router.get("/programs/{program_id}", response_model=ProgramContent)
+async def get_program(
+    program_id: str,
+    admin: str = Depends(authenticate_admin)
+):
+    """Get specific program by ID"""
+    try:
+        program = await db.programs.find_one({"id": program_id})
+        if not program:
+            raise HTTPException(status_code=404, detail="Program not found")
+        
+        return ProgramContent(**program)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to get program: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get program")
+
+@api_router.post("/programs/{program_id}/analyze", response_model=AIAnalysisResponse)
+async def analyze_program(
+    program_id: str,
+    request: AIAnalysisRequest,
+    admin: str = Depends(authenticate_admin)
+):
+    """Trigger AI analysis for a specific program"""
+    try:
+        start_time = datetime.now()
+        
+        # Get program
+        program = await db.programs.find_one({"id": program_id})
+        if not program:
+            raise HTTPException(status_code=404, detail="Program not found")
+        
+        result = {}
+        model_used = "gpt-4o"
+        
+        if request.analysis_type == "summary":
+            result["summary"] = await ai_summarize_content(program["content"], program.get("language", "en"))
+            await db.programs.update_one(
+                {"id": program_id},
+                {"$set": {"summary": result["summary"], "updated_at": datetime.now(timezone.utc).isoformat()}}
+            )
+            
+        elif request.analysis_type == "highlights":
+            result["highlights"] = await ai_extract_highlights(program["content"], program.get("language", "en"))
+            await db.programs.update_one(
+                {"id": program_id},
+                {"$set": {"highlights": result["highlights"], "updated_at": datetime.now(timezone.utc).isoformat()}}
+            )
+            
+        elif request.analysis_type == "keywords":
+            result["keywords"] = await ai_extract_keywords(program["content"], program.get("language", "en"))
+            await db.programs.update_one(
+                {"id": program_id},
+                {"$set": {"keywords": result["keywords"], "updated_at": datetime.now(timezone.utc).isoformat()}}
+            )
+            
+        elif request.analysis_type == "translate":
+            target_lang = request.target_language or "fr"
+            translation = await ai_translate_content(program["content"], target_lang)
+            
+            # Update translated content
+            translated_content = program.get("translated_content", {})
+            translated_content[target_lang] = translation
+            
+            result["translation"] = translation
+            result["target_language"] = target_lang
+            
+            await db.programs.update_one(
+                {"id": program_id},
+                {"$set": {"translated_content": translated_content, "updated_at": datetime.now(timezone.utc).isoformat()}}
+            )
+            model_used = "claude-3-7-sonnet"
+            
+        else:
+            raise HTTPException(status_code=400, detail="Invalid analysis type")
+        
+        processing_time = (datetime.now() - start_time).total_seconds()
+        
+        return AIAnalysisResponse(
+            program_id=program_id,
+            analysis_type=request.analysis_type,
+            result=result,
+            processing_time=processing_time,
+            model_used=model_used
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to analyze program: {e}")
+        raise HTTPException(status_code=500, detail="Failed to analyze program")
+
+@api_router.post("/programs/search")
+async def search_programs(
+    request: ProgramSearchRequest,
+    admin: str = Depends(authenticate_admin)
+):
+    """AI-powered semantic search of programs"""
+    try:
+        # Build MongoDB text search query
+        search_filter = {"$text": {"$search": request.query}}
+        
+        # Additional filters
+        if request.language:
+            search_filter["language"] = request.language
+        if request.program_type:
+            search_filter["program_type"] = request.program_type
+        if request.date_range:
+            date_filter = {}
+            if request.date_range.get("start"):
+                date_filter["$gte"] = request.date_range["start"]
+            if request.date_range.get("end"):
+                date_filter["$lte"] = request.date_range["end"]
+            if date_filter:
+                search_filter["date_aired"] = date_filter
+        
+        # Perform search
+        programs = await db.programs.find(
+            search_filter,
+            {"score": {"$meta": "textScore"}}
+        ).sort([("score", {"$meta": "textScore"})]).limit(request.limit).to_list(request.limit)
+        
+        # If no text search results, fall back to keyword search
+        if not programs:
+            keyword_filter = {
+                "$or": [
+                    {"title": {"$regex": request.query, "$options": "i"}},
+                    {"description": {"$regex": request.query, "$options": "i"}},
+                    {"content": {"$regex": request.query, "$options": "i"}},
+                    {"keywords": {"$in": [request.query]}}
+                ]
+            }
+            
+            # Add additional filters
+            if request.language:
+                keyword_filter["language"] = request.language
+            if request.program_type:
+                keyword_filter["program_type"] = request.program_type
+            if request.date_range:
+                date_filter = {}
+                if request.date_range.get("start"):
+                    date_filter["$gte"] = request.date_range["start"]
+                if request.date_range.get("end"):
+                    date_filter["$lte"] = request.date_range["end"]
+                if date_filter:
+                    keyword_filter["date_aired"] = date_filter
+            
+            programs = await db.programs.find(keyword_filter).sort("date_aired", -1).limit(request.limit).to_list(request.limit)
+        
+        return {
+            "query": request.query,
+            "total_results": len(programs),
+            "programs": [ProgramContent(**program) for program in programs]
+        }
+        
+    except Exception as e:
+        logger.error(f"Program search failed: {e}")
+        raise HTTPException(status_code=500, detail="Program search failed")
+
+@api_router.get("/programs/stats/overview")
+async def get_program_stats(admin: str = Depends(authenticate_admin)):
+    """Get program statistics overview"""
+    try:
+        # Get basic counts
+        total_programs = await db.programs.count_documents({})
+        
+        # Get counts by language
+        language_pipeline = [
+            {"$group": {"_id": "$language", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        language_stats = await db.programs.aggregate(language_pipeline).to_list(10)
+        
+        # Get counts by program type
+        type_pipeline = [
+            {"$group": {"_id": "$program_type", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        type_stats = await db.programs.aggregate(type_pipeline).to_list(10)
+        
+        # Get recent activity
+        recent_programs = await db.programs.find({}).sort("created_at", -1).limit(5).to_list(5)
+        
+        # Calculate AI analysis coverage
+        programs_with_summary = await db.programs.count_documents({"summary": {"$exists": True, "$ne": None}})
+        programs_with_highlights = await db.programs.count_documents({"highlights": {"$exists": True, "$ne": []}})
+        programs_with_keywords = await db.programs.count_documents({"keywords": {"$exists": True, "$ne": []}})
+        
+        return {
+            "total_programs": total_programs,
+            "ai_analysis_coverage": {
+                "with_summary": programs_with_summary,
+                "with_highlights": programs_with_highlights,
+                "with_keywords": programs_with_keywords,
+                "summary_percentage": round((programs_with_summary / max(total_programs, 1)) * 100, 1),
+                "highlights_percentage": round((programs_with_highlights / max(total_programs, 1)) * 100, 1),
+                "keywords_percentage": round((programs_with_keywords / max(total_programs, 1)) * 100, 1)
+            },
+            "by_language": {item["_id"] or "unknown": item["count"] for item in language_stats},
+            "by_type": {item["_id"] or "unknown": item["count"] for item in type_stats},
+            "recent_programs": [
+                {
+                    "id": prog["id"],
+                    "title": prog.get("title", "Untitled"),
+                    "date_aired": prog.get("date_aired"),
+                    "language": prog.get("language", "unknown"),
+                    "created_at": prog.get("created_at")
+                }
+                for prog in recent_programs
+            ]
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get program stats: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get program stats")
+
 # Include the router in the main app
 app.include_router(api_router)
 
