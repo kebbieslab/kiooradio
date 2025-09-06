@@ -418,10 +418,19 @@ const CRMMergeStatus = ({ onBack }) => {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {modules.map((module, index) => {
                       const priority = calculatePriority(module);
+                      const isCurrentlyAnalyzing = isRunningDiagnostics && currentlyAnalyzing === module.name;
+                      
                       return (
-                        <tr key={index} className="hover:bg-gray-50">
+                        <tr key={index} className={`hover:bg-gray-50 ${isCurrentlyAnalyzing ? 'bg-blue-50 border-l-4 border-blue-500' : ''}`}>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{module.name}</div>
+                            <div className="flex items-center">
+                              <div className="text-sm font-medium text-gray-900 flex items-center">
+                                {isCurrentlyAnalyzing && (
+                                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
+                                )}
+                                {module.name}
+                              </div>
+                            </div>
                             <div className="text-xs text-gray-500">{module.notes}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
