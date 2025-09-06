@@ -295,11 +295,10 @@ const CRM = () => {
   // CRM Dashboard
   return (
     <>
-      {/* SEO Meta Tags */}
-      <head>
+      <Helmet>
         <meta name="robots" content="noindex,nofollow" />
         <title>Kioo CRM - Internal System</title>
-      </head>
+      </Helmet>
 
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
