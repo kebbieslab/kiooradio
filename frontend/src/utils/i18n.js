@@ -319,7 +319,11 @@ export const labels = {
     launchCountdown: "Lancement de Kioo Radio dans",
     launchDate: "13 novembre 2025",
     broadcastingInto: "Diffusion dans 3 nations",
-    reachingRegion: "Atteindre la région de la rivière Makona"
+    reachingRegion: "Atteindre la région de la rivière Makona",
+    
+    // Language Switch
+    switchToEnglish: "Passer à l'anglais",
+    switchToFrench: "Basculer en français"
   }
 };
 
