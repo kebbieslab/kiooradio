@@ -5478,7 +5478,7 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
 
 def main():
     tester = KiooRadioAPITester()
-    return tester.run_enhanced_crm_tests()
+    return tester.run_user_management_tests()
 
 if __name__ == "__main__":
     sys.exit(main())
