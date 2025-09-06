@@ -30,3 +30,4 @@ aiohttp
 httpx
 python-crontab
 apscheduler
+openpyxl
