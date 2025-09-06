@@ -4465,8 +4465,7 @@ async def get_ai_programs(
     skip: int = 0,
     program_type: Optional[str] = None,
     language: Optional[str] = None,
-    presenter: Optional[str] = None,
-    admin: str = Depends(authenticate_admin)
+    presenter: Optional[str] = None
 ):
     """Get all AI programs with optional filtering"""
     try:
