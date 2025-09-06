@@ -5861,45 +5861,6 @@ async def login_user(credentials: HTTPBasicCredentials = Depends(security)):
         logger.error(f"Login failed: {e}")
         raise HTTPException(status_code=500, detail="Login failed")
 
-@api_router.get("/users/stats")
-async def get_user_stats(admin: str = Depends(authenticate_admin)):
-    """Get user management statistics (admin only)"""
-    if not user_manager:
-        raise HTTPException(status_code=503, detail="User management service unavailable")
-    
-    try:
-        all_users = await user_manager.list_users(include_inactive=True)
-        active_users = [u for u in all_users if u.is_active]
-        inactive_users = [u for u in all_users if not u.is_active]
-        
-        # Count by role
-        role_counts = {}
-        for user in active_users:
-            role_counts[user.role] = role_counts.get(user.role, 0) + 1
-        
-        # Recent logins (last 30 days)
-        thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
-        recent_logins = [
-            u for u in active_users 
-            if u.last_login and datetime.fromisoformat(u.last_login) > thirty_days_ago
-        ]
-        
-        return {
-            "total_users": len(all_users),
-            "active_users": len(active_users),
-            "inactive_users": len(inactive_users),
-            "role_distribution": role_counts,
-            "recent_logins_30_days": len(recent_logins),
-            "users_created_this_month": len([
-                u for u in all_users 
-                if datetime.fromisoformat(u.created_at).month == datetime.now().month
-            ])
-        }
-        
-    except Exception as e:
-        logger.error(f"Failed to get user stats: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get user stats")
-
 # Dashboard Models
 class DashboardStats(BaseModel):
     visitors_this_month: int = 0
