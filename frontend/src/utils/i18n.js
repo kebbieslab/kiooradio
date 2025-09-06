@@ -300,6 +300,95 @@ export const labels = {
     readMore: "Lire la suite",
     backToTop: "Retour en haut",
     
+    // Authentication & Access
+    username: "Nom d'utilisateur",
+    password: "Mot de passe",
+    login: "Connexion",
+    logout: "Déconnexion",
+    loading: "Chargement...",
+    saving: "Enregistrement...",
+    cancel: "Annuler",
+    save: "Enregistrer",
+    edit: "Modifier",
+    delete: "Supprimer",
+    add: "Ajouter",
+    update: "Mettre à jour",
+    
+    // Visitors Management
+    visitorsManagement: "Gestion des Visiteurs",
+    visitorsAccess: "Accès Visiteurs",
+    visitorsAccessDescription: "Veuillez saisir vos identifiants pour accéder au système de gestion des visiteurs",
+    accessVisitors: "Accéder aux Visiteurs",
+    visitorsTestimonies: "Visiteurs et Témoignages",
+    manageVisitorRecords: "Gérer les dossiers des visiteurs et témoignages",
+    addVisitorTestimony: "Ajouter Visiteur/Témoignage",
+    editVisitor: "Modifier le Visiteur",
+    updateVisitor: "Mettre à jour le Visiteur",
+    addVisitor: "Ajouter un Visiteur",
+    visitorsList: "Liste des Visiteurs",
+    noVisitorsFound: "Aucun visiteur trouvé",
+    
+    // Form Fields
+    date: "Date",
+    name: "Nom",
+    phone: "Téléphone",
+    email: "Email",
+    country: "Pays",
+    countyPrefecture: "Comté/Préfecture",
+    cityTown: "Ville/Village",
+    program: "Programme",
+    language: "Langue",
+    testimony: "Témoignage",
+    testimonyPlaceholder: "Partagez comment Kioo Radio a impacté votre vie...",
+    source: "Source",
+    consent: "Consentement",
+    actions: "Actions",
+    
+    // Filter Options
+    filters: "Filtres",
+    month: "Mois",
+    allCountries: "Tous les Pays",
+    allPrograms: "Tous les Programmes",
+    allSources: "Toutes les Sources",
+    clearFilters: "Effacer les Filtres",
+    
+    // Select Options
+    selectCountry: "Sélectionner le Pays",
+    selectProgram: "Sélectionner le Programme",
+    other: "Autre",
+    
+    // Programs
+    morningDevotion: "Dévotion Matinale",
+    frenchGospel: "Évangile Français",
+    eveningPrayer: "Prière du Soir",
+    youthHour: "Heure des Jeunes",
+    sundayService: "Service Dominical",
+    bibleStudy: "Étude Biblique",
+    
+    // Sources
+    website: "Site Web",
+    phoneCall: "Appel Téléphonique",
+    inPerson: "En Personne",
+    
+    // Consent
+    yes: "Oui",
+    no: "Non",
+    yesConsent: "Oui - Consentement donné",
+    noConsent: "Non - Consentement non donné",
+    
+    // Export
+    exportCsv: "Exporter CSV",
+    exportXlsx: "Exporter XLSX",
+    
+    // Messages
+    invalidCredentials: "Nom d'utilisateur ou mot de passe invalide",
+    failedToLoadVisitors: "Échec du chargement des visiteurs",
+    failedToSaveVisitor: "Échec de l'enregistrement du visiteur",
+    failedToDeleteVisitor: "Échec de la suppression du visiteur",
+    failedToExport: "Échec de l'exportation des données",
+    confirmDeleteVisitor: "Êtes-vous sûr de vouloir supprimer ce visiteur?",
+    backToTop: "Retour en haut",
+    
     // About Page
     aboutTitle: "À propos de Kioo Radio",
     aboutSubtitle: "Diffuser la Foi, l'Espérance et l'Amour en Christ",
