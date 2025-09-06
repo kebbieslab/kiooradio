@@ -103,7 +103,7 @@
 #====================================================================================================
 
 ## user_problem_statement: 
-Build comprehensive Projects list + detail system with list view displaying (project_code, name, status, budget_currency, budget_amount), detail page showing (description, start/end dates, manager, donations linked to project totaled, recent stories linked to project), and actions (add/edit project, export list). Admin-only access with authentication.
+Implement AI-Powered Program Assistant using combination of Emergent LLM and ChatGPT for intelligent program analysis, content summarization, highlight extraction, keyword identification, translation, and smart search functionality. Features should include program archive management, AI-powered analysis tools, multilingual support (EN/FR), and comprehensive analytics dashboard.
 
 ## backend:
   - task: "Projects Management CRUD Endpoints"
