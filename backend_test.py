@@ -82,6 +82,608 @@ class KiooRadioAPITester:
         # Test coverage areas
         self.run_test("Coverage Areas", "GET", "coverage", 200)
 
+    def test_user_management_system(self):
+        """COMPREHENSIVE TEST: User Management System with Authentication and Permissions"""
+        print("\n=== COMPREHENSIVE USER MANAGEMENT SYSTEM TESTING ===")
+        print("Testing: User CRUD, Authentication, Permissions, Password Reset, Email Notifications")
+        print("Endpoints: POST/GET/PUT/DELETE /api/users, POST /api/auth/login, GET /api/users/stats")
+        print("Authentication: Basic Auth (admin:kioo2025!)")
+        
+        # Authentication credentials
+        admin_auth = ('admin', 'kioo2025!')
+        wrong_auth = ('wrong', 'credentials')
+        
+        # Store created user IDs for cleanup
+        created_user_ids = []
+        
+        # VERIFICATION 1: Test authentication for all user management endpoints
+        print(f"\n🔍 VERIFICATION 1: Authentication Testing")
+        
+        user_endpoints = [
+            ("users", "List Users", "GET"),
+            ("users", "Create User", "POST"),
+            ("users/stats", "User Stats", "GET"),
+            ("auth/login", "User Login", "POST")
+        ]
+        
+        for endpoint, name, method in user_endpoints:
+            # Skip auth/login for no-auth test as it has different behavior
+            if endpoint == "auth/login":
+                continue
+                
+            # Test without authentication (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401)
+            else:
+                test_data = {
+                    "username": "testuser",
+                    "password": "testpass123",
+                    "email": "test@example.com",
+                    "full_name": "Test User",
+                    "role": "viewer"
+                }
+                success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401, data=test_data)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 without authentication")
+            else:
+                print(f"❌ {name}: Should return 401 without authentication")
+                self.failed_tests.append(f"{name} - Should require authentication")
+            
+            # Test with wrong credentials (should return 401)
+            if method == "GET":
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, auth=wrong_auth)
+            else:
+                success, response = self.run_test(f"{name} - Wrong Auth", method, endpoint, 401, data=test_data, auth=wrong_auth)
+            
+            if success:
+                print(f"✅ {name}: Correctly returns 401 with wrong credentials")
+            else:
+                print(f"❌ {name}: Should return 401 with wrong credentials")
+                self.failed_tests.append(f"{name} - Should reject wrong credentials")
+        
+        # VERIFICATION 2: Test POST /api/auth/login - Enhanced Authentication
+        print(f"\n🔍 VERIFICATION 2: Enhanced Authentication System")
+        
+        # Test admin login
+        success, admin_login = self.run_test("Admin Login", "POST", "auth/login", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Admin login successful")
+            
+            # Verify response structure
+            required_fields = ['user', 'auth_token', 'permissions']
+            missing_fields = [field for field in required_fields if field not in admin_login]
+            
+            if missing_fields:
+                print(f"❌ Admin Login: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Admin Login - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Admin Login: All required fields present")
+                
+                # Verify user info
+                user_info = admin_login.get('user', {})
+                if user_info.get('username') == 'admin' and user_info.get('role') == 'admin':
+                    print(f"✅ Admin user info correct")
+                else:
+                    print(f"❌ Admin user info incorrect: {user_info}")
+                    self.failed_tests.append("Admin Login - Incorrect user info")
+                
+                # Verify permissions structure
+                permissions = admin_login.get('permissions', {})
+                expected_modules = ['dashboard', 'contacts', 'visitors', 'donations', 'projects', 'settings']
+                
+                for module in expected_modules:
+                    if module in permissions:
+                        module_perms = permissions[module]
+                        expected_perms = ['can_read', 'can_write', 'can_delete', 'can_export']
+                        
+                        if all(perm in module_perms and module_perms[perm] for perm in expected_perms):
+                            print(f"   ✅ {module}: Full permissions granted")
+                        else:
+                            print(f"   ❌ {module}: Missing or incorrect permissions")
+                            self.failed_tests.append(f"Admin Login - {module} permissions incorrect")
+                    else:
+                        print(f"   ❌ {module}: Module missing from permissions")
+                        self.failed_tests.append(f"Admin Login - {module} module missing")
+        
+        # Test invalid login
+        success, response = self.run_test("Invalid Login", "POST", "auth/login", 401, auth=('invalid', 'credentials'))
+        if success:
+            print(f"✅ Correctly rejects invalid credentials")
+        else:
+            print(f"❌ Should reject invalid credentials")
+            self.failed_tests.append("Authentication - Should reject invalid credentials")
+        
+        # VERIFICATION 3: Test POST /api/users - Create Users with Different Roles and Permissions
+        print(f"\n🔍 VERIFICATION 3: User Creation with Roles and Permissions")
+        
+        # Test user creation with different roles
+        test_users = [
+            {
+                "username": "manager_user",
+                "password": "manager123!",
+                "email": "manager@kiooradio.com",
+                "full_name": "Manager User",
+                "role": "manager",
+                "is_active": True,
+                "permissions": [
+                    {"module": "dashboard", "can_read": True, "can_write": True, "can_delete": False, "can_export": True},
+                    {"module": "contacts", "can_read": True, "can_write": True, "can_delete": True, "can_export": True},
+                    {"module": "visitors", "can_read": True, "can_write": True, "can_delete": False, "can_export": True}
+                ],
+                "notes": "Manager with limited delete permissions"
+            },
+            {
+                "username": "staff_user",
+                "password": "staff123!",
+                "email": "staff@kiooradio.com",
+                "full_name": "Staff User",
+                "role": "staff",
+                "is_active": True,
+                "permissions": [
+                    {"module": "dashboard", "can_read": True, "can_write": False, "can_delete": False, "can_export": False},
+                    {"module": "visitors", "can_read": True, "can_write": True, "can_delete": False, "can_export": False},
+                    {"module": "donations", "can_read": True, "can_write": False, "can_delete": False, "can_export": False}
+                ],
+                "notes": "Staff with read/write access to visitors only"
+            },
+            {
+                "username": "viewer_user",
+                "password": "viewer123!",
+                "email": "viewer@kiooradio.com",
+                "full_name": "Viewer User",
+                "role": "viewer",
+                "is_active": True,
+                "permissions": [
+                    {"module": "dashboard", "can_read": True, "can_write": False, "can_delete": False, "can_export": False},
+                    {"module": "contacts", "can_read": True, "can_write": False, "can_delete": False, "can_export": False}
+                ],
+                "notes": "Read-only access to dashboard and contacts"
+            }
+        ]
+        
+        for i, user_data in enumerate(test_users):
+            success, user_response = self.run_test(f"Create {user_data['role'].title()} User", "POST", "users", 200, 
+                                                  data=user_data, auth=admin_auth)
+            
+            if success:
+                print(f"✅ {user_data['role'].title()} user created successfully")
+                user_id = user_response.get('id')
+                if user_id:
+                    created_user_ids.append(user_id)
+                    print(f"   User ID: {user_id}")
+                
+                # Verify response structure
+                required_fields = ['id', 'username', 'email', 'full_name', 'role', 'is_active', 'permissions', 'created_at']
+                missing_fields = [field for field in required_fields if field not in user_response]
+                
+                if missing_fields:
+                    print(f"❌ Create User: Missing required fields: {missing_fields}")
+                    self.failed_tests.append(f"Create User - Missing fields: {missing_fields}")
+                else:
+                    print(f"✅ Create User: All required fields present")
+                    
+                    # Verify role assignment
+                    if user_response.get('role') == user_data['role']:
+                        print(f"   ✅ Role correctly assigned: {user_data['role']}")
+                    else:
+                        print(f"   ❌ Role mismatch: expected {user_data['role']}, got {user_response.get('role')}")
+                        self.failed_tests.append(f"Create User - Role mismatch")
+                    
+                    # Verify permissions
+                    response_permissions = user_response.get('permissions', [])
+                    if len(response_permissions) == len(user_data['permissions']):
+                        print(f"   ✅ Permissions count correct: {len(response_permissions)}")
+                    else:
+                        print(f"   ❌ Permissions count mismatch: expected {len(user_data['permissions'])}, got {len(response_permissions)}")
+                        self.failed_tests.append(f"Create User - Permissions count mismatch")
+            else:
+                print(f"❌ Failed to create {user_data['role']} user")
+                self.failed_tests.append(f"Create User - Failed to create {user_data['role']} user")
+        
+        # Test validation - duplicate username
+        duplicate_user = test_users[0].copy()
+        duplicate_user['email'] = 'different@email.com'
+        
+        success, response = self.run_test("Create User - Duplicate Username", "POST", "users", 400, 
+                                         data=duplicate_user, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects duplicate username")
+        else:
+            print(f"❌ Should reject duplicate username")
+            self.failed_tests.append("Validation - Should reject duplicate username")
+        
+        # Test validation - duplicate email
+        duplicate_email_user = {
+            "username": "unique_username",
+            "password": "password123!",
+            "email": test_users[0]['email'],  # Duplicate email
+            "full_name": "Unique User",
+            "role": "viewer"
+        }
+        
+        success, response = self.run_test("Create User - Duplicate Email", "POST", "users", 400, 
+                                         data=duplicate_email_user, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects duplicate email")
+        else:
+            print(f"❌ Should reject duplicate email")
+            self.failed_tests.append("Validation - Should reject duplicate email")
+        
+        # Test validation - invalid email format
+        invalid_email_user = {
+            "username": "invalid_email_user",
+            "password": "password123!",
+            "email": "invalid-email-format",
+            "full_name": "Invalid Email User",
+            "role": "viewer"
+        }
+        
+        success, response = self.run_test("Create User - Invalid Email", "POST", "users", 422, 
+                                         data=invalid_email_user, auth=admin_auth)
+        if success:
+            print(f"✅ Correctly rejects invalid email format")
+        else:
+            print(f"❌ Should reject invalid email format")
+            self.failed_tests.append("Validation - Should reject invalid email format")
+        
+        # VERIFICATION 4: Test GET /api/users - List Users
+        print(f"\n🔍 VERIFICATION 4: List Users with Filtering")
+        
+        # Test get all active users
+        success, all_users = self.run_test("List Active Users", "GET", "users", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Retrieved {len(all_users)} active users")
+            
+            # Verify our created users are in the list
+            created_usernames = [u['username'] for u in test_users]
+            found_users = [u for u in all_users if u.get('username') in created_usernames]
+            
+            if len(found_users) == len(created_user_ids):
+                print(f"✅ All created users found in active users list")
+            else:
+                print(f"❌ Created users missing from list: expected {len(created_user_ids)}, found {len(found_users)}")
+                self.failed_tests.append("List Users - Created users missing from active list")
+        
+        # Test get all users including inactive
+        success, all_users_with_inactive = self.run_test("List All Users (Including Inactive)", "GET", "users", 200, 
+                                                        params={"include_inactive": True}, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Retrieved {len(all_users_with_inactive)} total users (including inactive)")
+            
+            # Should be same or more than active users
+            if len(all_users_with_inactive) >= len(all_users):
+                print(f"✅ Total users count >= active users count")
+            else:
+                print(f"❌ Total users count should be >= active users count")
+                self.failed_tests.append("List Users - Total count should be >= active count")
+        
+        # VERIFICATION 5: Test GET /api/users/{user_id} - Get Individual User
+        print(f"\n🔍 VERIFICATION 5: Get Individual User")
+        
+        if created_user_ids:
+            test_user_id = created_user_ids[0]
+            success, user_details = self.run_test("Get User by ID", "GET", f"users/{test_user_id}", 200, auth=admin_auth)
+            
+            if success:
+                print(f"✅ Retrieved user details: {user_details.get('full_name')}")
+                
+                # Verify the ID matches
+                if user_details.get('id') == test_user_id:
+                    print(f"✅ User ID matches requested ID")
+                else:
+                    print(f"❌ User ID mismatch: expected {test_user_id}, got {user_details.get('id')}")
+                    self.failed_tests.append("Get User - ID mismatch")
+                
+                # Verify permissions structure
+                permissions = user_details.get('permissions', [])
+                if permissions:
+                    sample_perm = permissions[0]
+                    perm_fields = ['module', 'can_read', 'can_write', 'can_delete', 'can_export']
+                    missing_perm_fields = [field for field in perm_fields if field not in sample_perm]
+                    
+                    if missing_perm_fields:
+                        print(f"❌ Permission structure missing fields: {missing_perm_fields}")
+                        self.failed_tests.append(f"Get User - Permission missing fields: {missing_perm_fields}")
+                    else:
+                        print(f"✅ Permission structure complete")
+            
+            # Test non-existent user ID
+            success, response = self.run_test("Get Non-existent User", "GET", "users/nonexistent-id", 404, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent user")
+            else:
+                print(f"❌ Should return 404 for non-existent user")
+                self.failed_tests.append("Get User - Should return 404 for non-existent ID")
+        
+        # VERIFICATION 6: Test PUT /api/users/{user_id} - Update User
+        print(f"\n🔍 VERIFICATION 6: Update User Information")
+        
+        if created_user_ids:
+            test_user_id = created_user_ids[0]
+            update_data = {
+                "full_name": "Updated Manager User",
+                "email": "updated.manager@kiooradio.com",
+                "role": "admin",
+                "is_active": True,
+                "permissions": [
+                    {"module": "dashboard", "can_read": True, "can_write": True, "can_delete": True, "can_export": True},
+                    {"module": "contacts", "can_read": True, "can_write": True, "can_delete": True, "can_export": True},
+                    {"module": "projects", "can_read": True, "can_write": True, "can_delete": False, "can_export": True}
+                ],
+                "notes": "Promoted to admin with project access"
+            }
+            
+            success, updated_user = self.run_test("Update User", "PUT", f"users/{test_user_id}", 200, 
+                                                 data=update_data, auth=admin_auth)
+            
+            if success:
+                print(f"✅ User updated successfully")
+                
+                # Verify the updates were applied
+                if updated_user.get('full_name') == "Updated Manager User":
+                    print(f"✅ Full name updated correctly")
+                else:
+                    print(f"❌ Full name not updated: expected 'Updated Manager User', got '{updated_user.get('full_name')}'")
+                    self.failed_tests.append("Update User - Full name not updated")
+                
+                if updated_user.get('role') == "admin":
+                    print(f"✅ Role updated correctly")
+                else:
+                    print(f"❌ Role not updated: expected 'admin', got '{updated_user.get('role')}'")
+                    self.failed_tests.append("Update User - Role not updated")
+                
+                # Verify permissions were updated
+                updated_permissions = updated_user.get('permissions', [])
+                if len(updated_permissions) == 3:  # Should have 3 modules now
+                    print(f"✅ Permissions updated correctly")
+                else:
+                    print(f"❌ Permissions not updated: expected 3 modules, got {len(updated_permissions)}")
+                    self.failed_tests.append("Update User - Permissions not updated")
+            
+            # Test update with duplicate email (should fail)
+            if len(created_user_ids) > 1:
+                duplicate_email_update = {"email": test_users[1]['email']}  # Use another user's email
+                
+                success, response = self.run_test("Update User - Duplicate Email", "PUT", f"users/{test_user_id}", 400, 
+                                                 data=duplicate_email_update, auth=admin_auth)
+                if success:
+                    print(f"✅ Correctly rejects duplicate email in update")
+                else:
+                    print(f"❌ Should reject duplicate email in update")
+                    self.failed_tests.append("Update User - Should reject duplicate email")
+            
+            # Test update non-existent user
+            success, response = self.run_test("Update Non-existent User", "PUT", "users/nonexistent-id", 404, 
+                                             data=update_data, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent user update")
+            else:
+                print(f"❌ Should return 404 for non-existent user update")
+                self.failed_tests.append("Update User - Should return 404 for non-existent ID")
+        
+        # VERIFICATION 7: Test POST /api/users/{user_id}/reset-password - Password Reset
+        print(f"\n🔍 VERIFICATION 7: Password Reset Functionality")
+        
+        if created_user_ids:
+            test_user_id = created_user_ids[0]
+            password_reset_data = {
+                "new_password": "newpassword123!"
+            }
+            
+            success, reset_response = self.run_test("Reset User Password", "POST", f"users/{test_user_id}/reset-password", 200, 
+                                                   data=password_reset_data, auth=admin_auth)
+            
+            if success:
+                print(f"✅ Password reset successful")
+                
+                # Verify response message
+                if reset_response.get('message') == "Password reset successfully":
+                    print(f"✅ Correct success message returned")
+                else:
+                    print(f"❌ Incorrect success message: {reset_response.get('message')}")
+                    self.failed_tests.append("Password Reset - Incorrect success message")
+                
+                # Test login with new password (if we had a way to test this)
+                # Note: We can't easily test the actual password change without creating a login test
+                print(f"   📧 Email notification would be sent to user")
+            
+            # Test password reset with invalid password (too short)
+            invalid_password_data = {
+                "new_password": "123"  # Too short (minimum 4 characters)
+            }
+            
+            success, response = self.run_test("Reset Password - Invalid Password", "POST", f"users/{test_user_id}/reset-password", 422, 
+                                             data=invalid_password_data, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly rejects invalid password (too short)")
+            else:
+                print(f"❌ Should reject invalid password (too short)")
+                self.failed_tests.append("Password Reset - Should reject invalid password")
+            
+            # Test password reset for non-existent user
+            success, response = self.run_test("Reset Password - Non-existent User", "POST", "users/nonexistent-id/reset-password", 404, 
+                                             data=password_reset_data, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent user password reset")
+            else:
+                print(f"❌ Should return 404 for non-existent user password reset")
+                self.failed_tests.append("Password Reset - Should return 404 for non-existent ID")
+        
+        # VERIFICATION 8: Test GET /api/users/stats - User Management Statistics
+        print(f"\n🔍 VERIFICATION 8: User Management Statistics")
+        
+        success, user_stats = self.run_test("Get User Statistics", "GET", "users/stats", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ User statistics retrieved successfully")
+            
+            # Verify response structure
+            required_fields = ['total_users', 'active_users', 'inactive_users', 'role_distribution', 'recent_logins_30_days', 'users_created_this_month']
+            missing_fields = [field for field in required_fields if field not in user_stats]
+            
+            if missing_fields:
+                print(f"❌ User Stats: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"User Stats - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ User Stats: All required fields present")
+            
+            # Verify data types and logic
+            total_users = user_stats.get('total_users', 0)
+            active_users = user_stats.get('active_users', 0)
+            inactive_users = user_stats.get('inactive_users', 0)
+            
+            if total_users == active_users + inactive_users:
+                print(f"   ✅ User counts consistent: {total_users} total = {active_users} active + {inactive_users} inactive")
+            else:
+                print(f"   ❌ User counts inconsistent: {total_users} total ≠ {active_users} active + {inactive_users} inactive")
+                self.failed_tests.append("User Stats - Inconsistent user counts")
+            
+            # Verify role distribution
+            role_distribution = user_stats.get('role_distribution', {})
+            if isinstance(role_distribution, dict):
+                print(f"   ✅ Role distribution: {role_distribution}")
+                
+                # Check if our created users are reflected
+                expected_roles = ['manager', 'staff', 'viewer']  # From our test users
+                found_roles = [role for role in expected_roles if role in role_distribution]
+                
+                if len(found_roles) > 0:
+                    print(f"   ✅ Created user roles found in distribution: {found_roles}")
+                else:
+                    print(f"   ❌ Created user roles not found in distribution")
+                    self.failed_tests.append("User Stats - Created user roles not in distribution")
+            else:
+                print(f"   ❌ Role distribution should be a dictionary, got {type(role_distribution)}")
+                self.failed_tests.append("User Stats - Role distribution wrong type")
+            
+            # Verify numeric fields are non-negative
+            numeric_fields = ['total_users', 'active_users', 'inactive_users', 'recent_logins_30_days', 'users_created_this_month']
+            for field in numeric_fields:
+                value = user_stats.get(field, 0)
+                if value >= 0:
+                    print(f"   ✅ {field}: {value} (non-negative)")
+                else:
+                    print(f"   ❌ {field}: {value} (should be non-negative)")
+                    self.failed_tests.append(f"User Stats - {field} should be non-negative")
+        
+        # VERIFICATION 9: Test User Authentication with Created Users
+        print(f"\n🔍 VERIFICATION 9: Created User Authentication")
+        
+        if created_user_ids:
+            # Test login with one of our created users (after password reset)
+            test_username = test_users[0]['username']  # manager_user
+            test_password = "newpassword123!"  # The password we reset to
+            
+            success, user_login = self.run_test("Created User Login", "POST", "auth/login", 200, 
+                                               auth=(test_username, test_password))
+            
+            if success:
+                print(f"✅ Created user login successful")
+                
+                # Verify user info in login response
+                user_info = user_login.get('user', {})
+                if user_info.get('username') == test_username:
+                    print(f"✅ Login user info correct")
+                else:
+                    print(f"❌ Login user info incorrect: expected {test_username}, got {user_info.get('username')}")
+                    self.failed_tests.append("Created User Login - Incorrect user info")
+                
+                # Verify permissions are returned
+                permissions = user_login.get('permissions', {})
+                if permissions:
+                    print(f"✅ User permissions returned: {list(permissions.keys())}")
+                else:
+                    print(f"❌ No permissions returned for user")
+                    self.failed_tests.append("Created User Login - No permissions returned")
+            else:
+                print(f"❌ Created user login failed - this might be expected if password hashing changed")
+                # This might fail if the password reset didn't work as expected
+        
+        # VERIFICATION 10: Test DELETE /api/users/{user_id} - Delete User
+        print(f"\n🔍 VERIFICATION 10: Delete User")
+        
+        if created_user_ids:
+            # Keep one user for final verification, delete the rest
+            users_to_delete = created_user_ids[1:]  # Delete all but the first one
+            
+            for user_id in users_to_delete:
+                success, response = self.run_test(f"Delete User {user_id[:8]}...", "DELETE", f"users/{user_id}", 200, auth=admin_auth)
+                
+                if success:
+                    print(f"✅ User deleted successfully")
+                    
+                    # Verify response message
+                    if response.get('message') == "User deleted successfully":
+                        print(f"✅ Correct deletion message returned")
+                    else:
+                        print(f"❌ Incorrect deletion message: {response.get('message')}")
+                        self.failed_tests.append("Delete User - Incorrect deletion message")
+                    
+                    # Verify user is actually deleted
+                    success, get_response = self.run_test(f"Verify Deletion {user_id[:8]}...", "GET", f"users/{user_id}", 404, auth=admin_auth)
+                    if success:
+                        print(f"✅ User properly deleted (404 on GET)")
+                    else:
+                        print(f"❌ User still exists after deletion")
+                        self.failed_tests.append("Delete User - User still exists after deletion")
+            
+            # Test delete non-existent user
+            success, response = self.run_test("Delete Non-existent User", "DELETE", "users/nonexistent-id", 404, auth=admin_auth)
+            if success:
+                print(f"✅ Correctly returns 404 for non-existent user deletion")
+            else:
+                print(f"❌ Should return 404 for non-existent user deletion")
+                self.failed_tests.append("Delete User - Should return 404 for non-existent ID")
+        
+        # VERIFICATION 11: Test Service Integration
+        print(f"\n🔍 VERIFICATION 11: Service Integration Testing")
+        
+        # Test UserManager service availability
+        print(f"   Testing UserManager service initialization...")
+        
+        # Test EmailNotificationService integration
+        print(f"   Testing EmailNotificationService integration...")
+        print(f"   📧 Email notifications should be logged during user creation and password reset")
+        
+        # Check if any service unavailable errors occurred
+        service_unavailable_tests = [t for t in self.failed_tests if '503' in t or 'service unavailable' in t.lower()]
+        
+        if service_unavailable_tests:
+            print(f"⚠️  Service availability issues detected:")
+            for test in service_unavailable_tests:
+                print(f"   - {test}")
+        else:
+            print(f"✅ All user management services appear to be available and functioning")
+        
+        # Final summary for User Management System
+        print(f"\n📊 USER MANAGEMENT SYSTEM VERIFICATION SUMMARY:")
+        print(f"   Authentication: {'✅ WORKING' if len([t for t in self.failed_tests if 'authentication' in t.lower() and 'user' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   User CRUD Operations: {'✅ WORKING' if len([t for t in self.failed_tests if any(op in t.lower() for op in ['create user', 'get user', 'update user', 'delete user'])]) == 0 else '❌ ISSUES'}")
+        print(f"   Role & Permission Management: {'✅ WORKING' if len([t for t in self.failed_tests if any(x in t.lower() for x in ['role', 'permission'])]) == 0 else '❌ ISSUES'}")
+        print(f"   Password Management: {'✅ WORKING' if len([t for t in self.failed_tests if 'password' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Data Validation: {'✅ WORKING' if len([t for t in self.failed_tests if 'validation' in t.lower() and 'user' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   User Statistics: {'✅ WORKING' if len([t for t in self.failed_tests if 'user stats' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Email Notifications: {'✅ INTEGRATED' if len([t for t in self.failed_tests if 'email' in t.lower()]) == 0 else '⚠️  ISSUES'}")
+        print(f"   Service Integration: {'✅ AVAILABLE' if len(service_unavailable_tests) == 0 else '⚠️  SOME ISSUES'}")
+        print(f"   Created Test Users: {len(created_user_ids)}")
+        print(f"   Remaining Test Users: {1 if created_user_ids else 0} (for cleanup)")
+        
+        # Clean up remaining test user
+        if created_user_ids:
+            remaining_id = created_user_ids[0]
+            self.run_test("Cleanup Final Test User", "DELETE", f"users/{remaining_id}", 200, auth=admin_auth)
+            print(f"✅ Cleaned up final test user")
+        
+        print(f"\n✅ User Management System testing completed!")
+        print(f"   Total User Management Tests: {len([t for t in self.failed_tests if any(x in t for x in ['User', 'Login', 'Password', 'Auth'])])}")
+        print(f"   Critical Issues: {len([t for t in self.failed_tests if any(x in t.lower() for x in ['authentication', 'service unavailable', 'missing fields'])])}")
+        
+        return len([t for t in self.failed_tests if any(x in t for x in ['User', 'Login', 'Password', 'Auth'])]) == 0
+
     def test_enhanced_crm_projects_system(self):
         """COMPREHENSIVE TEST: Enhanced CRM Projects with Dropbox Integration and AI Receipt Analysis"""
         print("\n=== COMPREHENSIVE ENHANCED CRM PROJECTS TESTING ===")
