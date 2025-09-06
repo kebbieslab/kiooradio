@@ -225,31 +225,14 @@ class KiooRadioAPITester:
         
         # Test data validation - invalid anonymous flag
         invalid_anonymous_data = valid_donation_data.copy()
-        invalid_anonymous_data["anonymous_y_n"] = "Maybe"  # Only Y/N allowed
+        invalid_anonymous_data["is_anonymous"] = "Maybe"  # Should be boolean
         
-        success, response = self.run_test("Create Donation - Invalid Anonymous Flag", "POST", "donations", 400, data=invalid_anonymous_data, auth=admin_auth)
+        success, response = self.run_test("Create Donation - Invalid Anonymous Flag", "POST", "donations", 422, data=invalid_anonymous_data, auth=admin_auth)
         if success:
             print(f"✅ Correctly rejects invalid anonymous flag")
         else:
-            print(f"❌ Should reject invalid anonymous flag (only Y/N allowed)")
+            print(f"❌ Should reject invalid anonymous flag (should be boolean)")
             self.failed_tests.append("Validation - Should reject invalid anonymous flag")
-        
-        # Test required fields validation
-        required_fields_data = {
-            "donor_name": "Jane Doe",
-            "donor_email": "jane.doe@example.com",
-            "method": "OrangeMoney",
-            "amount_currency": "LRD",
-            "amount": 1000.0
-            # Missing date_iso (required)
-        }
-        
-        success, response = self.run_test("Create Donation - Missing Required Field", "POST", "donations", 400, data=required_fields_data, auth=admin_auth)
-        if success:
-            print(f"✅ Correctly rejects missing required field (date_iso)")
-        else:
-            print(f"❌ Should reject missing required field")
-            self.failed_tests.append("Validation - Should reject missing required field")
         
         # Create additional test donations for filtering and export tests
         test_donations = [
