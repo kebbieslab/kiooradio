@@ -112,12 +112,11 @@ class KiooRadioAPITester:
                 success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401)
             else:
                 test_data = {
-                    "date_iso": "2025-01-15",
                     "donor_name": "Test Donor",
                     "donor_email": "test@example.com",
-                    "method": "PayPal",
-                    "amount_currency": "USD",
-                    "amount": 100.0
+                    "amount": 100.0,
+                    "currency": "USD",
+                    "donation_type": "one-time"
                 }
                 success, response = self.run_test(f"{name} - No Auth", method, endpoint, 401, data=test_data)
             
