@@ -1090,6 +1090,146 @@ const CRM = () => {
             </div>
           )}
 
+          {/* Settings View */}
+          {currentView === 'settings' && (
+            <div>
+              <div className="bg-white shadow rounded-lg">
+                <div className="px-4 py-5 sm:p-6">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-6">
+                    CRM Settings & Configuration
+                  </h3>
+                  
+                  {/* Settings Menu */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                      onClick={() => setCurrentView('merge-status')}
+                      className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-center mb-3">
+                        <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xl">🔄</span>
+                        </div>
+                        <h4 className="ml-3 text-lg font-semibold text-gray-900">
+                          Merge & SSO Status
+                        </h4>
+                      </div>
+                      <p className="text-gray-600 text-sm">
+                        Analyze and consolidate CRM modules. Check integration status, detect standalone components, and get automated merge recommendations.
+                      </p>
+                      <div className="mt-4 flex items-center text-green-600 text-sm font-medium">
+                        View Integration Status →
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow opacity-50">
+                      <div className="flex items-center mb-3">
+                        <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xl">🔐</span>
+                        </div>
+                        <h4 className="ml-3 text-lg font-semibold text-gray-900">
+                          Authentication Settings
+                        </h4>
+                      </div>
+                      <p className="text-gray-600 text-sm">
+                        Configure SSO, user roles, and access permissions across all CRM modules.
+                      </p>
+                      <div className="mt-4 flex items-center text-purple-600 text-sm font-medium">
+                        Coming Soon →
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow opacity-50">
+                      <div className="flex items-center mb-3">
+                        <div className="w-10 h-10 bg-yellow-600 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xl">🌐</span>
+                        </div>
+                        <h4 className="ml-3 text-lg font-semibold text-gray-900">
+                          Language & Localization
+                        </h4>
+                      </div>
+                      <p className="text-gray-600 text-sm">
+                        Manage translations, regional settings, and language preferences for EN/FR support.
+                      </p>
+                      <div className="mt-4 flex items-center text-yellow-600 text-sm font-medium">
+                        Coming Soon →
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow opacity-50">
+                      <div className="flex items-center mb-3">
+                        <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xl">📊</span>
+                        </div>
+                        <h4 className="ml-3 text-lg font-semibold text-gray-900">
+                          Data Export & Sync
+                        </h4>
+                      </div>
+                      <p className="text-gray-600 text-sm">
+                        Configure automated exports, data synchronization, and backup settings.
+                      </p>
+                      <div className="mt-4 flex items-center text-blue-600 text-sm font-medium">
+                        Coming Soon →
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow opacity-50">
+                      <div className="flex items-center mb-3">
+                        <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xl">🛡️</span>
+                        </div>
+                        <h4 className="ml-3 text-lg font-semibold text-gray-900">
+                          Security & Compliance
+                        </h4>
+                      </div>
+                      <p className="text-gray-600 text-sm">
+                        Manage data privacy, GDPR compliance, and security audit logs.
+                      </p>
+                      <div className="mt-4 flex items-center text-red-600 text-sm font-medium">
+                        Coming Soon →
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow opacity-50">
+                      <div className="flex items-center mb-3">
+                        <div className="w-10 h-10 bg-gray-600 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xl">⚙️</span>
+                        </div>
+                        <h4 className="ml-3 text-lg font-semibold text-gray-900">
+                          System Configuration
+                        </h4>
+                      </div>
+                      <p className="text-gray-600 text-sm">
+                        Configure system-wide settings, API endpoints, and performance optimizations.
+                      </p>
+                      <div className="mt-4 flex items-center text-gray-600 text-sm font-medium">
+                        Coming Soon →
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8 pt-6 border-t border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-900">System Information</h4>
+                        <p className="text-sm text-gray-600 mt-1">
+                          CRM Version: 2.1.0 | Last Updated: {new Date().toLocaleDateString()}
+                        </p>
+                      </div>
+                      <button className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        System Status
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Merge Status View */}
+          {currentView === 'merge-status' && (
+            <CRMMergeStatus onBack={() => setCurrentView('settings')} />
+          )}
+
           {/* Contact Detail Modal */}
           {selectedContact && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
