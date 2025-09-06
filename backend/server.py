@@ -2904,7 +2904,7 @@ async def export_visitors_xlsx(
         logger.error(f"Failed to export visitors XLSX: {e}")
         raise HTTPException(status_code=500, detail="Failed to export visitors XLSX")
 
-@api_router.get("/visitors/stats")
+@api_router.get("/visitors/filter-stats")
 async def get_visitors_stats(admin: str = Depends(authenticate_admin)):
     """Get visitors statistics for filters"""
     try:
