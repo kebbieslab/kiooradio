@@ -162,7 +162,7 @@ class KiooRadioAPITester:
                 print(f"   Donation ID: {donation_id}")
             
             # Verify response structure
-            required_fields = ['id', 'date_iso', 'donor_name', 'method', 'amount_currency', 'amount', 'created_at']
+            required_fields = ['id', 'donor_name', 'donor_email', 'amount', 'currency', 'donation_type', 'created_at']
             missing_fields = [field for field in required_fields if field not in donation_response]
             
             if missing_fields:
