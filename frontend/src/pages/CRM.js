@@ -316,12 +316,15 @@ const CRM = () => {
     );
   });
 
-  // Apply filters
+  // Apply filters and load import history
   useEffect(() => {
     if (isAuthenticated) {
+      if (currentView === 'import-data' && !importData.import_history) {
+        loadImportHistory();
+      }
       loadContacts();
     }
-  }, [filters.contact_type, filters.source, filters.country]);
+  }, [filters.contact_type, filters.source, filters.country, currentView]);
 
   // Login form
   if (!isAuthenticated) {
