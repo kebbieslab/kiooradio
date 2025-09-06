@@ -218,15 +218,9 @@ const CRMMergeStatus = ({ onBack }) => {
     return results;
   };
 
-  // Priority calculation
+  // Priority calculation using DiagnosticsService
   const calculatePriority = (module) => {
-    if (module.authMode === 'external' || module.cookieCheck === 'jwtMissing' || module.dataSource === 'PerModule') {
-      return 'high';
-    }
-    if (module.routeStatus === 'missing' || module.languageScope === 'local' || module.authMode === 'unknown') {
-      return 'medium';
-    }
-    return 'low';
+    return DiagnosticsService.calculatePriority(module);
   };
 
   // Status chip colors
