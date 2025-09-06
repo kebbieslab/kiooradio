@@ -214,6 +214,169 @@ const CRMProjects = ({ crmAuth }) => {
     });
   };
 
+  // Enhanced file management functions
+  const handleFileUpload = async (projectId, file, category, description) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('category', category);
+      if (description) formData.append('description', description);
+
+      const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${crmAuth}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        await loadProjectFiles(projectId);
+        if (category === 'receipt') {
+          await loadProjectReceipts(projectId);
+        }
+        return result;
+      } else {
+        const error = await response.json();
+        throw new Error(error.detail || 'Upload failed');
+      }
+    } catch (error) {
+      console.error('File upload failed:', error);
+      throw error;
+    }
+  };
+
+  const loadProjectFiles = async (projectId) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}/files`, {
+        headers: {
+          'Authorization': `Basic ${crmAuth}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProjectFiles(data.files || []);
+      }
+    } catch (error) {
+      console.error('Failed to load project files:', error);
+    }
+  };
+
+  const loadProjectReceipts = async (projectId) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}/receipts`, {
+        headers: {
+          'Authorization': `Basic ${crmAuth}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProjectReceipts(data.receipts || []);
+      }
+    } catch (error) {
+      console.error('Failed to load project receipts:', error);
+    }
+  };
+
+  const loadProjectReports = async (projectId) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}/reports`, {
+        headers: {
+          'Authorization': `Basic ${crmAuth}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProjectReports(data.reports || []);
+      }
+    } catch (error) {
+      console.error('Failed to load project reports:', error);
+    }
+  };
+
+  const generateProjectReport = async (projectId, reportConfig) => {
+    setIsGeneratingReport(true);
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}/reports/generate`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${crmAuth}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reportConfig)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        await loadProjectReports(projectId);
+        return result;
+      } else {
+        const error = await response.json();
+        throw new Error(error.detail || 'Report generation failed');
+      }
+    } catch (error) {
+      console.error('Report generation failed:', error);
+      throw error;
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
+
+  const downloadFile = async (projectId, fileId, filename) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}/files/${fileId}/download`, {
+        headers: {
+          'Authorization': `Basic ${crmAuth}`
+        }
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    } catch (error) {
+      console.error('Download failed:', error);
+    }
+  };
+
+  const downloadReport = async (projectId, reportId, filename) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/projects/${projectId}/reports/${reportId}/download`, {
+        headers: {
+          'Authorization': `Basic ${crmAuth}`
+        }
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    } catch (error) {
+      console.error('Report download failed:', error);
+    }
+  };
+
   // Filter projects
   const filteredProjects = projects.filter(project => {
     if (filters.search && !project.name?.toLowerCase().includes(filters.search.toLowerCase()) &&
