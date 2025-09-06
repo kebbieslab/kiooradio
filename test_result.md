@@ -374,7 +374,7 @@ Build comprehensive Visitors list + form system with table display (date_iso, na
 
 ## test_plan:
   current_focus:
-    - "Visitor Management Backend Endpoints"
+    - "Visitors List & Form Interface"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
