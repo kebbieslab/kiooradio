@@ -313,7 +313,7 @@ const CRMMergeStatus = ({ onBack }) => {
             <button
               onClick={runDiagnostics}
               disabled={isRunningDiagnostics}
-              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isRunningDiagnostics ? (
                 <>
@@ -326,6 +326,29 @@ const CRMMergeStatus = ({ onBack }) => {
                 </>
               )}
             </button>
+            
+            {/* Progress Indicator */}
+            {isRunningDiagnostics && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-blue-800">
+                    {t('Analyzing') || 'Analyzing'}: {currentlyAnalyzing}
+                  </span>
+                  <span className="text-sm text-blue-600">
+                    {Math.round(diagnosticsProgress)}%
+                  </span>
+                </div>
+                <div className="w-full bg-blue-200 rounded-full h-2">
+                  <div
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${diagnosticsProgress}%` }}
+                  ></div>
+                </div>
+                <div className="mt-2 text-xs text-blue-600">
+                  {t('Performing comprehensive integration analysis...') || 'Performing comprehensive integration analysis...'}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Top Summary */}
