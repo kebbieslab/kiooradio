@@ -435,7 +435,7 @@ const Dashboard = () => {
         {/* Weather Section */}
         {(Object.keys(weatherData).length > 0 || Object.keys(weatherForecast).length > 0) && (
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('weatherForecast', 'Weather Forecast')}</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('dashboard.weatherForecast', 'Weather Forecast')}</h2>
             
             {/* Current Weather */}
             {Object.keys(weatherData).length > 0 && (
