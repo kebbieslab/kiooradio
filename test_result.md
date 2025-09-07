@@ -458,7 +458,9 @@ Enhance CRM Projects section with receipt management, multimedia uploads, AI-pow
   run_ui: false
 
 ## test_plan:
-  current_focus: []
+  current_focus:
+    - "Dashboard Weather Forecast Backend Endpoints"
+    - "Program Schedule Updates"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
