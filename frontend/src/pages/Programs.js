@@ -251,7 +251,8 @@ const Programs = () => {
     { "Start Time": "18:00", "End Time": "19:00", "Program": "Community Programming", "Language": "Fula", "Type": "Community" },
     { "Start Time": "19:00", "End Time": "20:00", "Program": "Sunday Evening Worship", "Language": "Mixed", "Type": "Worship" },
     { "Start Time": "20:00", "End Time": "21:00", "Program": "Sunday Gospel with Sam Ngardu", "Language": "English", "Type": "Gospel" },
-    { "Start Time": "21:00", "End Time": "22:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
+    { "Start Time": "21:00", "End Time": "21:30", "Program": "Truth for Life", "Language": "French", "Type": "Bible Teaching", "highlight": true },
+    { "Start Time": "21:30", "End Time": "22:00", "Program": "Music & Reflection", "Language": "English", "Type": "Music" },
     { "Start Time": "22:00", "End Time": "23:00", "Program": "Community Programming", "Language": "Mixed", "Type": "Community" },
     { "Start Time": "23:00", "End Time": "00:00", "Program": "Evening Devotional", "Language": "Mixed", "Type": "Devotional" }
   ];
