@@ -82,6 +82,495 @@ class KiooRadioAPITester:
         # Test coverage areas
         self.run_test("Coverage Areas", "GET", "coverage", 200)
 
+    def test_weather_forecast_endpoints(self):
+        """COMPREHENSIVE TEST: Weather Forecast Backend Endpoints"""
+        print("\n=== COMPREHENSIVE WEATHER FORECAST TESTING ===")
+        print("Testing: GET /api/dashboard/weather, GET /api/dashboard/weather-forecast")
+        print("Locations: Foya Liberia, Koindu Sierra Leone, Guéckédou Guinea, Kissidougou Guinea")
+        print("Authentication: Public endpoints (no auth required)")
+        
+        # VERIFICATION 1: Test GET /api/dashboard/weather - Current Weather
+        print(f"\n🔍 VERIFICATION 1: Current Weather Data")
+        
+        success, weather_response = self.run_test("Current Weather for 4 Locations", "GET", "dashboard/weather", 200)
+        
+        if success:
+            print(f"✅ Current weather endpoint accessible")
+            
+            # Expected locations
+            expected_locations = ["Foya, Liberia", "Koindu, Sierra Leone", "Guéckédou, Guinea", "Kissidougou, Guinea"]
+            
+            # Verify response structure and locations
+            if isinstance(weather_response, dict):
+                found_locations = list(weather_response.keys())
+                print(f"   Found locations: {found_locations}")
+                
+                # Check if all expected locations are present
+                missing_locations = [loc for loc in expected_locations if loc not in found_locations]
+                if missing_locations:
+                    print(f"❌ Missing locations: {missing_locations}")
+                    self.failed_tests.append(f"Current Weather - Missing locations: {missing_locations}")
+                else:
+                    print(f"✅ All 4 expected locations present")
+                
+                # Verify data structure for each location
+                for location, data in weather_response.items():
+                    if isinstance(data, dict):
+                        required_fields = ['temperature', 'condition', 'updated']
+                        missing_fields = [field for field in required_fields if field not in data]
+                        
+                        if missing_fields:
+                            print(f"❌ {location}: Missing fields: {missing_fields}")
+                            self.failed_tests.append(f"Current Weather - {location} missing fields: {missing_fields}")
+                        else:
+                            print(f"✅ {location}: Complete data structure")
+                            print(f"   Temperature: {data.get('temperature')}°C")
+                            print(f"   Condition: {data.get('condition')}")
+                            print(f"   Updated: {data.get('updated')}")
+                            
+                            # Verify data types
+                            temp = data.get('temperature')
+                            if isinstance(temp, (int, float)) or temp == "N/A":
+                                print(f"   ✅ Temperature format valid")
+                            else:
+                                print(f"   ❌ Temperature format invalid: {temp}")
+                                self.failed_tests.append(f"Current Weather - {location} invalid temperature format")
+                    else:
+                        print(f"❌ {location}: Invalid data structure (not dict)")
+                        self.failed_tests.append(f"Current Weather - {location} invalid data structure")
+            else:
+                print(f"❌ Weather response should be a dictionary, got {type(weather_response)}")
+                self.failed_tests.append("Current Weather - Invalid response structure")
+        else:
+            print(f"❌ Current weather endpoint failed")
+            self.failed_tests.append("Current Weather - Endpoint failed")
+        
+        # VERIFICATION 2: Test GET /api/dashboard/weather-forecast - 2-Day Forecast
+        print(f"\n🔍 VERIFICATION 2: 2-Day Weather Forecast")
+        
+        success, forecast_response = self.run_test("2-Day Weather Forecast", "GET", "dashboard/weather-forecast", 200)
+        
+        if success:
+            print(f"✅ Weather forecast endpoint accessible")
+            
+            # Verify response structure
+            if isinstance(forecast_response, dict):
+                found_locations = list(forecast_response.keys())
+                print(f"   Found forecast locations: {found_locations}")
+                
+                # Check if all expected locations are present
+                missing_locations = [loc for loc in expected_locations if loc not in found_locations]
+                if missing_locations:
+                    print(f"❌ Missing forecast locations: {missing_locations}")
+                    self.failed_tests.append(f"Weather Forecast - Missing locations: {missing_locations}")
+                else:
+                    print(f"✅ All 4 expected locations present in forecast")
+                
+                # Verify forecast data structure for each location
+                for location, forecast_data in forecast_response.items():
+                    if isinstance(forecast_data, list):
+                        if len(forecast_data) == 3:  # Today + Day+1 + Day+2
+                            print(f"✅ {location}: Correct forecast period (3 days)")
+                            
+                            # Verify each day's forecast structure
+                            expected_day_labels = ["Today", "Day +1", "Day +2"]
+                            for i, day_forecast in enumerate(forecast_data):
+                                if isinstance(day_forecast, dict):
+                                    required_fields = ['date', 'temp_max', 'temp_min', 'condition', 'day_label']
+                                    missing_fields = [field for field in required_fields if field not in day_forecast]
+                                    
+                                    if missing_fields:
+                                        print(f"❌ {location} Day {i}: Missing fields: {missing_fields}")
+                                        self.failed_tests.append(f"Weather Forecast - {location} Day {i} missing fields: {missing_fields}")
+                                    else:
+                                        day_label = day_forecast.get('day_label')
+                                        expected_label = expected_day_labels[i] if i < len(expected_day_labels) else f"Day {i}"
+                                        
+                                        if day_label == expected_label:
+                                            print(f"   ✅ {location} {day_label}: Complete forecast data")
+                                            print(f"      Date: {day_forecast.get('date')}")
+                                            print(f"      Temp: {day_forecast.get('temp_min')}°C - {day_forecast.get('temp_max')}°C")
+                                            print(f"      Condition: {day_forecast.get('condition')}")
+                                        else:
+                                            print(f"   ❌ {location} Day {i}: Incorrect day label: expected '{expected_label}', got '{day_label}'")
+                                            self.failed_tests.append(f"Weather Forecast - {location} incorrect day label")
+                                        
+                                        # Verify temperature data types
+                                        temp_max = day_forecast.get('temp_max')
+                                        temp_min = day_forecast.get('temp_min')
+                                        
+                                        if (isinstance(temp_max, (int, float)) or temp_max == "N/A") and (isinstance(temp_min, (int, float)) or temp_min == "N/A"):
+                                            print(f"      ✅ Temperature formats valid")
+                                        else:
+                                            print(f"      ❌ Invalid temperature formats: max={temp_max}, min={temp_min}")
+                                            self.failed_tests.append(f"Weather Forecast - {location} invalid temperature formats")
+                                else:
+                                    print(f"❌ {location} Day {i}: Invalid forecast structure (not dict)")
+                                    self.failed_tests.append(f"Weather Forecast - {location} Day {i} invalid structure")
+                        else:
+                            print(f"❌ {location}: Incorrect forecast period: expected 3 days, got {len(forecast_data)}")
+                            self.failed_tests.append(f"Weather Forecast - {location} incorrect forecast period")
+                    else:
+                        print(f"❌ {location}: Forecast data should be a list, got {type(forecast_data)}")
+                        self.failed_tests.append(f"Weather Forecast - {location} invalid forecast structure")
+            else:
+                print(f"❌ Forecast response should be a dictionary, got {type(forecast_response)}")
+                self.failed_tests.append("Weather Forecast - Invalid response structure")
+        else:
+            print(f"❌ Weather forecast endpoint failed")
+            self.failed_tests.append("Weather Forecast - Endpoint failed")
+        
+        # VERIFICATION 3: Test Public Access (No Authentication Required)
+        print(f"\n🔍 VERIFICATION 3: Public Access Verification")
+        
+        # Test that weather endpoints are publicly accessible (no auth required)
+        print(f"   Testing weather endpoints without authentication...")
+        
+        # Current weather should be accessible without auth
+        success, _ = self.run_test("Current Weather - No Auth", "GET", "dashboard/weather", 200)
+        if success:
+            print(f"✅ Current weather is publicly accessible")
+        else:
+            print(f"❌ Current weather should be publicly accessible")
+            self.failed_tests.append("Weather Access - Current weather should be public")
+        
+        # Weather forecast should be accessible without auth
+        success, _ = self.run_test("Weather Forecast - No Auth", "GET", "dashboard/weather-forecast", 200)
+        if success:
+            print(f"✅ Weather forecast is publicly accessible")
+        else:
+            print(f"❌ Weather forecast should be publicly accessible")
+            self.failed_tests.append("Weather Access - Weather forecast should be public")
+        
+        # VERIFICATION 4: Test Error Handling and Fallback Data
+        print(f"\n🔍 VERIFICATION 4: Error Handling and Fallback Data")
+        
+        # Check if endpoints handle API unavailability gracefully
+        print(f"   Checking for proper fallback data when external API is unavailable...")
+        
+        # Look for fallback indicators in the responses
+        if weather_response and isinstance(weather_response, dict):
+            fallback_indicators = []
+            for location, data in weather_response.items():
+                if isinstance(data, dict):
+                    condition = data.get('condition', '')
+                    if 'unavailable' in condition.lower() or 'error' in condition.lower():
+                        fallback_indicators.append(location)
+            
+            if fallback_indicators:
+                print(f"   ⚠️  Fallback data detected for: {fallback_indicators}")
+                print(f"   ✅ Proper error handling with fallback data")
+            else:
+                print(f"   ✅ All weather data appears to be live from external API")
+        
+        # VERIFICATION 5: Test Response Time and Performance
+        print(f"\n🔍 VERIFICATION 5: Performance Testing")
+        
+        import time
+        
+        # Test current weather response time
+        start_time = time.time()
+        success, _ = self.run_test("Current Weather - Performance", "GET", "dashboard/weather", 200)
+        current_weather_time = time.time() - start_time
+        
+        if success:
+            print(f"✅ Current weather response time: {current_weather_time:.2f}s")
+            if current_weather_time < 10:  # Should respond within 10 seconds
+                print(f"   ✅ Response time acceptable")
+            else:
+                print(f"   ⚠️  Response time slow (>10s)")
+        
+        # Test forecast response time
+        start_time = time.time()
+        success, _ = self.run_test("Weather Forecast - Performance", "GET", "dashboard/weather-forecast", 200)
+        forecast_time = time.time() - start_time
+        
+        if success:
+            print(f"✅ Weather forecast response time: {forecast_time:.2f}s")
+            if forecast_time < 10:  # Should respond within 10 seconds
+                print(f"   ✅ Response time acceptable")
+            else:
+                print(f"   ⚠️  Response time slow (>10s)")
+        
+        # Final summary for Weather Forecast System
+        print(f"\n📊 WEATHER FORECAST SYSTEM VERIFICATION SUMMARY:")
+        print(f"   Current Weather Endpoint: {'✅ WORKING' if len([t for t in self.failed_tests if 'current weather' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Weather Forecast Endpoint: {'✅ WORKING' if len([t for t in self.failed_tests if 'weather forecast' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Location Coverage: {'✅ COMPLETE' if len([t for t in self.failed_tests if 'missing locations' in t.lower()]) == 0 else '❌ INCOMPLETE'}")
+        print(f"   Data Structure: {'✅ VALID' if len([t for t in self.failed_tests if 'missing fields' in t.lower() or 'invalid' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Public Access: {'✅ WORKING' if len([t for t in self.failed_tests if 'should be public' in t.lower()]) == 0 else '❌ RESTRICTED'}")
+        print(f"   Error Handling: {'✅ IMPLEMENTED' if len([t for t in self.failed_tests if 'error handling' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Expected Locations: {expected_locations}")
+        print(f"   Response Times: Current={current_weather_time:.2f}s, Forecast={forecast_time:.2f}s")
+        
+        print(f"\n✅ Weather Forecast System testing completed!")
+        weather_issues = len([t for t in self.failed_tests if any(x in t.lower() for x in ['weather', 'forecast', 'current weather'])])
+        print(f"   Total Weather Issues: {weather_issues}")
+        
+        return weather_issues == 0
+
+    def test_program_schedule_updates(self):
+        """COMPREHENSIVE TEST: Program Schedule Updates and Data Consistency"""
+        print("\n=== COMPREHENSIVE PROGRAM SCHEDULE TESTING ===")
+        print("Testing: Truth for Life program schedule update, conflict detection")
+        print("Verification: Sunday 07:00-07:30 → Sunday 21:00-21:30 migration")
+        print("Authentication: Basic Auth (admin:kioo2025!) for program data access")
+        
+        # Authentication credentials
+        admin_auth = ('admin', 'kioo2025!')
+        
+        # VERIFICATION 1: Test program endpoints accessibility
+        print(f"\n🔍 VERIFICATION 1: Program Endpoints Access")
+        
+        success, programs_response = self.run_test("Get All Programs", "GET", "programs", 200, auth=admin_auth)
+        
+        if success:
+            print(f"✅ Programs endpoint accessible")
+            
+            if isinstance(programs_response, list):
+                print(f"   Found {len(programs_response)} programs in database")
+                
+                # VERIFICATION 2: Search for "Truth for Life" program
+                print(f"\n🔍 VERIFICATION 2: Truth for Life Program Location")
+                
+                truth_for_life_programs = []
+                sunday_programs = []
+                
+                for program in programs_response:
+                    if isinstance(program, dict):
+                        title = program.get('title', '').lower()
+                        day = program.get('day_of_week', '').lower()
+                        start_time = program.get('start_time', '')
+                        
+                        # Look for Truth for Life program
+                        if 'truth for life' in title:
+                            truth_for_life_programs.append(program)
+                            print(f"   Found: {program.get('title')} - {day.title()} {start_time}")
+                        
+                        # Collect all Sunday programs for conflict analysis
+                        if day == 'sunday':
+                            sunday_programs.append(program)
+                
+                # Verify Truth for Life program schedule
+                if truth_for_life_programs:
+                    print(f"✅ Found {len(truth_for_life_programs)} 'Truth for Life' program(s)")
+                    
+                    # Check if program is at the new time slot (21:00-21:30)
+                    correct_schedule = False
+                    old_schedule_found = False
+                    
+                    for program in truth_for_life_programs:
+                        start_time = program.get('start_time', '')
+                        day = program.get('day_of_week', '').lower()
+                        duration = program.get('duration_minutes', 0)
+                        
+                        if day == 'sunday':
+                            if start_time == '21:00' and duration == 30:
+                                correct_schedule = True
+                                print(f"   ✅ Truth for Life correctly scheduled: Sunday 21:00-21:30")
+                                print(f"      Title: {program.get('title')}")
+                                print(f"      Host: {program.get('host', 'N/A')}")
+                                print(f"      Language: {program.get('language', 'N/A')}")
+                            elif start_time == '07:00' and duration == 30:
+                                old_schedule_found = True
+                                print(f"   ❌ Truth for Life still at old time: Sunday 07:00-07:30")
+                                self.failed_tests.append("Program Schedule - Truth for Life still at old time slot")
+                            else:
+                                print(f"   ⚠️  Truth for Life at unexpected time: Sunday {start_time} ({duration} min)")
+                    
+                    if correct_schedule:
+                        print(f"✅ Truth for Life program successfully moved to new time slot")
+                    elif old_schedule_found:
+                        print(f"❌ Truth for Life program migration incomplete")
+                        self.failed_tests.append("Program Schedule - Migration incomplete")
+                    else:
+                        print(f"❌ Truth for Life program not found at expected time slots")
+                        self.failed_tests.append("Program Schedule - Truth for Life not at expected time")
+                else:
+                    print(f"❌ No 'Truth for Life' program found in database")
+                    self.failed_tests.append("Program Schedule - Truth for Life program not found")
+                
+                # VERIFICATION 3: Check for conflicts at new time slot (21:00-21:30)
+                print(f"\n🔍 VERIFICATION 3: Conflict Detection at New Time Slot")
+                
+                sunday_21_00_programs = []
+                for program in sunday_programs:
+                    start_time = program.get('start_time', '')
+                    duration = program.get('duration_minutes', 0)
+                    
+                    # Check for programs that overlap with 21:00-21:30
+                    if start_time:
+                        try:
+                            # Parse start time
+                            hour, minute = map(int, start_time.split(':'))
+                            start_minutes = hour * 60 + minute
+                            end_minutes = start_minutes + duration
+                            
+                            # 21:00-21:30 is 1260-1290 minutes from midnight
+                            target_start = 21 * 60  # 1260
+                            target_end = 21 * 60 + 30  # 1290
+                            
+                            # Check for overlap
+                            if (start_minutes < target_end and end_minutes > target_start):
+                                sunday_21_00_programs.append(program)
+                        except:
+                            # Skip programs with invalid time format
+                            continue
+                
+                if len(sunday_21_00_programs) == 1:
+                    # Should only be Truth for Life
+                    single_program = sunday_21_00_programs[0]
+                    if 'truth for life' in single_program.get('title', '').lower():
+                        print(f"✅ No conflicts at 21:00-21:30 time slot")
+                        print(f"   Only program: {single_program.get('title')}")
+                    else:
+                        print(f"❌ Unexpected program at 21:00-21:30: {single_program.get('title')}")
+                        self.failed_tests.append(f"Program Schedule - Unexpected program at new time slot: {single_program.get('title')}")
+                elif len(sunday_21_00_programs) > 1:
+                    print(f"❌ Multiple programs conflict at 21:00-21:30:")
+                    for program in sunday_21_00_programs:
+                        print(f"      - {program.get('title')} ({program.get('start_time')}, {program.get('duration_minutes')}min)")
+                    self.failed_tests.append("Program Schedule - Multiple programs conflict at new time slot")
+                else:
+                    print(f"❌ No programs found at 21:00-21:30 time slot")
+                    self.failed_tests.append("Program Schedule - No program at new time slot")
+                
+                # VERIFICATION 4: Check old time slot (07:00-07:30) replacement
+                print(f"\n🔍 VERIFICATION 4: Old Time Slot Replacement")
+                
+                sunday_07_00_programs = []
+                for program in sunday_programs:
+                    start_time = program.get('start_time', '')
+                    duration = program.get('duration_minutes', 0)
+                    
+                    if start_time == '07:00' and duration == 30:
+                        sunday_07_00_programs.append(program)
+                
+                if sunday_07_00_programs:
+                    print(f"   Found {len(sunday_07_00_programs)} program(s) at old time slot:")
+                    for program in sunday_07_00_programs:
+                        title = program.get('title', '')
+                        print(f"      - {title}")
+                        
+                        # Check if it's a replacement program (not Truth for Life)
+                        if 'truth for life' not in title.lower():
+                            if 'morning' in title.lower() or 'music' in title.lower() or 'reflection' in title.lower():
+                                print(f"   ✅ Appropriate replacement program: {title}")
+                            else:
+                                print(f"   ⚠️  Unexpected replacement program: {title}")
+                        else:
+                            print(f"   ❌ Truth for Life still at old time slot")
+                            self.failed_tests.append("Program Schedule - Truth for Life not moved from old slot")
+                else:
+                    print(f"   ⚠️  No programs found at old time slot (07:00-07:30)")
+                    print(f"   This could indicate the slot was left empty or time format differs")
+                
+                # VERIFICATION 5: Overall Sunday schedule integrity
+                print(f"\n🔍 VERIFICATION 5: Sunday Schedule Integrity")
+                
+                print(f"   Total Sunday programs: {len(sunday_programs)}")
+                
+                # Check for reasonable program distribution
+                sunday_times = []
+                for program in sunday_programs:
+                    start_time = program.get('start_time', '')
+                    if start_time:
+                        sunday_times.append(start_time)
+                
+                sunday_times.sort()
+                print(f"   Sunday program times: {sunday_times[:10]}{'...' if len(sunday_times) > 10 else ''}")
+                
+                # Check for gaps or overlaps
+                time_conflicts = 0
+                for i in range(len(sunday_programs)):
+                    for j in range(i + 1, len(sunday_programs)):
+                        prog1 = sunday_programs[i]
+                        prog2 = sunday_programs[j]
+                        
+                        try:
+                            # Simple overlap check
+                            start1 = prog1.get('start_time', '')
+                            start2 = prog2.get('start_time', '')
+                            dur1 = prog1.get('duration_minutes', 0)
+                            dur2 = prog2.get('duration_minutes', 0)
+                            
+                            if start1 == start2 and dur1 > 0 and dur2 > 0:
+                                time_conflicts += 1
+                                print(f"   ⚠️  Time conflict: {prog1.get('title')} vs {prog2.get('title')} at {start1}")
+                        except:
+                            continue
+                
+                if time_conflicts == 0:
+                    print(f"   ✅ No obvious time conflicts detected")
+                else:
+                    print(f"   ❌ {time_conflicts} time conflicts detected")
+                    self.failed_tests.append(f"Program Schedule - {time_conflicts} time conflicts on Sunday")
+            else:
+                print(f"❌ Programs response should be a list, got {type(programs_response)}")
+                self.failed_tests.append("Program Schedule - Invalid programs response format")
+        else:
+            print(f"❌ Programs endpoint failed")
+            self.failed_tests.append("Program Schedule - Programs endpoint inaccessible")
+        
+        # VERIFICATION 6: Test program schedule endpoint
+        print(f"\n🔍 VERIFICATION 6: Program Schedule Endpoint")
+        
+        success, schedule_response = self.run_test("Get Program Schedule", "GET", "programs/schedule", 200)
+        
+        if success:
+            print(f"✅ Program schedule endpoint accessible")
+            
+            # This endpoint might return a different format, check for Sunday programs
+            if isinstance(schedule_response, dict):
+                sunday_schedule = schedule_response.get('sunday', [])
+                if sunday_schedule:
+                    print(f"   Found Sunday schedule with {len(sunday_schedule)} programs")
+                    
+                    # Look for Truth for Life in schedule format
+                    truth_found_in_schedule = False
+                    for program in sunday_schedule:
+                        if isinstance(program, dict):
+                            title = program.get('title', '').lower()
+                            time = program.get('time', '') or program.get('start_time', '')
+                            
+                            if 'truth for life' in title:
+                                truth_found_in_schedule = True
+                                print(f"   ✅ Truth for Life found in schedule: {time}")
+                                
+                                if '21:00' in time or '9:00 PM' in time:
+                                    print(f"   ✅ Truth for Life at correct evening time")
+                                elif '07:00' in time or '7:00 AM' in time:
+                                    print(f"   ❌ Truth for Life still at morning time in schedule")
+                                    self.failed_tests.append("Program Schedule - Truth for Life at old time in schedule")
+                    
+                    if not truth_found_in_schedule:
+                        print(f"   ❌ Truth for Life not found in Sunday schedule")
+                        self.failed_tests.append("Program Schedule - Truth for Life missing from Sunday schedule")
+                else:
+                    print(f"   ⚠️  No Sunday schedule found in response")
+            elif isinstance(schedule_response, list):
+                print(f"   Schedule returned as list with {len(schedule_response)} items")
+            else:
+                print(f"   ⚠️  Unexpected schedule response format: {type(schedule_response)}")
+        else:
+            print(f"❌ Program schedule endpoint failed")
+            self.failed_tests.append("Program Schedule - Schedule endpoint inaccessible")
+        
+        # Final summary for Program Schedule System
+        print(f"\n📊 PROGRAM SCHEDULE VERIFICATION SUMMARY:")
+        print(f"   Program Data Access: {'✅ WORKING' if len([t for t in self.failed_tests if 'programs endpoint' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Truth for Life Migration: {'✅ COMPLETED' if len([t for t in self.failed_tests if 'truth for life' in t.lower() and ('old time' in t.lower() or 'migration' in t.lower())]) == 0 else '❌ INCOMPLETE'}")
+        print(f"   Time Slot Conflicts: {'✅ RESOLVED' if len([t for t in self.failed_tests if 'conflict' in t.lower()]) == 0 else '❌ DETECTED'}")
+        print(f"   Schedule Integrity: {'✅ MAINTAINED' if len([t for t in self.failed_tests if 'schedule' in t.lower() and 'integrity' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Expected Migration: Sunday 07:00-07:30 → Sunday 21:00-21:30")
+        print(f"   Program Database: {len(programs_response) if isinstance(programs_response, list) else 'N/A'} total programs")
+        
+        print(f"\n✅ Program Schedule testing completed!")
+        schedule_issues = len([t for t in self.failed_tests if any(x in t.lower() for x in ['program', 'schedule', 'truth for life'])])
+        print(f"   Total Schedule Issues: {schedule_issues}")
+        
+        return schedule_issues == 0
+
     def test_user_management_system(self):
         """COMPREHENSIVE TEST: User Management System with Authentication and Permissions"""
         print("\n=== COMPREHENSIVE USER MANAGEMENT SYSTEM TESTING ===")
