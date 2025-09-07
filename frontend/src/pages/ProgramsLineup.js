@@ -237,7 +237,7 @@ const ProgramsLineup = () => {
     { "Start Time": "04:00", "End Time": "05:00", "Program": "Music & Reflection", "Language": "French", "Type": "Music" },
     { "Start Time": "05:00", "End Time": "06:00", "Program": "Morning Devotional & Prayer", "Language": "English", "Type": "Devotional" },
     { "Start Time": "06:00", "End Time": "07:00", "Program": "Evangelist Billy Bimba - Kissi Hour", "Language": "Kissi", "Type": "Sermon", "highlight": true },
-    { "Start Time": "07:00", "End Time": "07:30", "Program": "Truth for Life", "Language": "French", "Type": "Bible Teaching", "highlight": true },
+    { "Start Time": "07:00", "End Time": "07:30", "Program": "Morning Music & Reflection", "Language": "French", "Type": "Music" },
     { "Start Time": "07:30", "End Time": "08:00", "Program": "Daily Sermon", "Language": "English", "Type": "Sermon", "highlight": true },
     { "Start Time": "08:00", "End Time": "09:00", "Program": "Community Programming", "Language": "Kissi", "Type": "Community" },
     { "Start Time": "09:00", "End Time": "10:00", "Program": "Pre-Service Worship", "Language": "Mixed", "Type": "Worship" },
