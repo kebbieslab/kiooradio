@@ -448,7 +448,7 @@ const Dashboard = () => {
                       <div className="text-2xl font-bold text-blue-600 mb-1">{data.temperature}°C</div>
                       <div className="text-sm text-gray-700 mb-2">{data.condition}</div>
                       <div className="text-xs text-gray-500">
-                        {t('dashboard.updated', 'Updated')}: {data.updated}
+                        {t('updated', 'Updated')}: {data.updated}
                       </div>
                     </div>
                   ))}
