@@ -1036,7 +1036,13 @@ export const labels = {
     incomeVsExpenses: "Revenus vs Dépenses",
     income: "Revenus",
     expenses: "Dépenses",
-    donationsByProject: "Dons par Projet"
+    donationsByProject: "Dons par Projet",
+    
+    // Weather
+    weatherForecast: "Prévisions Météorologiques",
+    currentWeather: "Météo Actuelle",
+    twoDayForecast: "Prédictions Météo 2 Jours",
+    updated: "Mis à jour"
   }
 };
 
