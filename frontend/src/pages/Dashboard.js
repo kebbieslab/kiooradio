@@ -440,7 +440,7 @@ const Dashboard = () => {
             {/* Current Weather */}
             {Object.keys(weatherData).length > 0 && (
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">{t('dashboard.currentWeather', 'Current Weather')}</h3>
+                <h3 className="text-lg font-medium text-gray-800 mb-4">{t('currentWeather', 'Current Weather')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   {Object.entries(weatherData).map(([city, data]) => (
                     <div key={city} className="bg-white rounded-lg shadow p-4">
