@@ -450,8 +450,8 @@ class KiooRadioAPITester:
                     print(f"⚠️  No programs currently scheduled at 21:00-21:30 time slot")
                     print(f"   This time slot is available for Truth for Life migration")
                 
-                # VERIFICATION 4: Check old time slot (07:00-07:30) replacement
-                print(f"\n🔍 VERIFICATION 4: Old Time Slot Replacement")
+                # VERIFICATION 4: Check old time slot (07:00-07:30) status
+                print(f"\n🔍 VERIFICATION 4: Sunday Morning Time Slot Analysis (07:00-07:30)")
                 
                 sunday_07_00_programs = []
                 for program in sunday_programs:
@@ -462,23 +462,24 @@ class KiooRadioAPITester:
                         sunday_07_00_programs.append(program)
                 
                 if sunday_07_00_programs:
-                    print(f"   Found {len(sunday_07_00_programs)} program(s) at old time slot:")
+                    print(f"   Found {len(sunday_07_00_programs)} program(s) at original time slot:")
                     for program in sunday_07_00_programs:
                         title = program.get('title', '')
                         print(f"      - {title}")
                         
-                        # Check if it's a replacement program (not Truth for Life)
-                        if 'truth for life' not in title.lower():
-                            if 'morning' in title.lower() or 'music' in title.lower() or 'reflection' in title.lower():
-                                print(f"   ✅ Appropriate replacement program: {title}")
-                            else:
-                                print(f"   ⚠️  Unexpected replacement program: {title}")
+                        # Check if Truth for Life is still there
+                        if 'truth for life' in title.lower():
+                            print(f"   ❌ Truth for Life still at original time slot - migration not completed")
+                            self.failed_tests.append("Program Schedule - Truth for Life migration not completed")
                         else:
-                            print(f"   ❌ Truth for Life still at old time slot")
-                            self.failed_tests.append("Program Schedule - Truth for Life not moved from old slot")
+                            # Check if it's an appropriate replacement program
+                            if any(keyword in title.lower() for keyword in ['morning', 'music', 'reflection', 'devotion', 'prayer']):
+                                print(f"   ✅ Appropriate morning replacement program: {title}")
+                            else:
+                                print(f"   ⚠️  Replacement program: {title}")
                 else:
-                    print(f"   ⚠️  No programs found at old time slot (07:00-07:30)")
-                    print(f"   This could indicate the slot was left empty or time format differs")
+                    print(f"   ✅ No programs at original time slot (07:00-07:30)")
+                    print(f"   This indicates Truth for Life has been moved or the slot is available")
                 
                 # VERIFICATION 5: Overall Sunday schedule integrity
                 print(f"\n🔍 VERIFICATION 5: Sunday Schedule Integrity")
