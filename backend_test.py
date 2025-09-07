@@ -368,37 +368,36 @@ class KiooRadioAPITester:
                 if truth_for_life_programs:
                     print(f"✅ Found {len(truth_for_life_programs)} 'Truth for Life' program(s)")
                     
-                    # Check if program is at the new time slot (21:00-21:30)
-                    correct_schedule = False
-                    old_schedule_found = False
-                    
+                    # Check current program schedule
                     for program in truth_for_life_programs:
                         start_time = program.get('start_time', '')
                         day = program.get('day_of_week', '').lower()
                         duration = program.get('duration_minutes', 0)
                         
-                        if day == 'sunday':
-                            if start_time == '21:00' and duration == 30:
-                                correct_schedule = True
-                                print(f"   ✅ Truth for Life correctly scheduled: Sunday 21:00-21:30")
-                                print(f"      Title: {program.get('title')}")
-                                print(f"      Host: {program.get('host', 'N/A')}")
-                                print(f"      Language: {program.get('language', 'N/A')}")
-                            elif start_time == '07:00' and duration == 30:
-                                old_schedule_found = True
-                                print(f"   ❌ Truth for Life still at old time: Sunday 07:00-07:30")
-                                self.failed_tests.append("Program Schedule - Truth for Life still at old time slot")
+                        print(f"   Current schedule: {day.title()} {start_time} ({duration} min)")
+                        print(f"      Title: {program.get('title')}")
+                        print(f"      Host: {program.get('host', 'N/A')}")
+                        print(f"      Language: {program.get('language', 'N/A')}")
+                        
+                        # Check if program has been moved to the expected new time slot
+                        if day == 'sunday' and start_time == '21:00' and duration == 30:
+                            print(f"   ✅ Truth for Life correctly scheduled at new time: Sunday 21:00-21:30")
+                        elif day == 'sunday' and start_time == '07:00' and duration == 30:
+                            print(f"   ❌ Truth for Life still at old time: Sunday 07:00-07:30")
+                            self.failed_tests.append("Program Schedule - Truth for Life still at old time slot")
+                        else:
+                            # Program is currently on a different day/time
+                            print(f"   ⚠️  Truth for Life currently scheduled: {day.title()} {start_time}")
+                            print(f"   📝 Expected migration: Sunday 07:00-07:30 → Sunday 21:00-21:30")
+                            
+                            # This might indicate the migration hasn't been completed yet
+                            # or the program was moved to a different schedule entirely
+                            if day != 'sunday':
+                                print(f"   ❌ Truth for Life not on Sunday as expected")
+                                self.failed_tests.append("Program Schedule - Truth for Life not on Sunday")
                             else:
-                                print(f"   ⚠️  Truth for Life at unexpected time: Sunday {start_time} ({duration} min)")
-                    
-                    if correct_schedule:
-                        print(f"✅ Truth for Life program successfully moved to new time slot")
-                    elif old_schedule_found:
-                        print(f"❌ Truth for Life program migration incomplete")
-                        self.failed_tests.append("Program Schedule - Migration incomplete")
-                    else:
-                        print(f"❌ Truth for Life program not found at expected time slots")
-                        self.failed_tests.append("Program Schedule - Truth for Life not at expected time")
+                                print(f"   ❌ Truth for Life not at expected Sunday evening time slot")
+                                self.failed_tests.append("Program Schedule - Truth for Life not at expected time")
                 else:
                     print(f"❌ No 'Truth for Life' program found in database")
                     self.failed_tests.append("Program Schedule - Truth for Life program not found")
