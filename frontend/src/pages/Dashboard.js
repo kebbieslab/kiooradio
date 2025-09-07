@@ -31,8 +31,8 @@ const Dashboard = () => {
     try {
       const authHeader = btoa('admin:kioo2025!');
       
-      // Load dashboard stats
-      const [statsRes, donationsRes, incomeRes] = await Promise.all([
+      // Load dashboard stats and weather data
+      const [statsRes, donationsRes, incomeRes, weatherRes, forecastRes] = await Promise.all([
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/stats`, {
           headers: { 'Authorization': `Basic ${authHeader}` }
         }),
@@ -41,7 +41,9 @@ const Dashboard = () => {
         }),
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/income-expenses`, {
           headers: { 'Authorization': `Basic ${authHeader}` }
-        })
+        }),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/weather`),
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/weather-forecast`)
       ]);
 
       if (statsRes.ok) {
@@ -58,6 +60,16 @@ const Dashboard = () => {
       if (incomeRes.ok) {
         const incomeData = await incomeRes.json();
         setIncomeExpenses(incomeData);
+      }
+
+      if (weatherRes.ok) {
+        const weatherData = await weatherRes.json();
+        setWeatherData(weatherData);
+      }
+
+      if (forecastRes.ok) {
+        const forecastData = await forecastRes.json();
+        setWeatherForecast(forecastData);
       }
 
     } catch (error) {
