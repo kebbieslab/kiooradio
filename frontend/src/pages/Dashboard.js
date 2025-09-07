@@ -459,7 +459,7 @@ const Dashboard = () => {
             {/* 2-Day Weather Forecast */}
             {Object.keys(weatherForecast).length > 0 && (
               <div>
-                <h3 className="text-lg font-medium text-gray-800 mb-4">{t('twoDayForecast', '2-Day Weather Predictions')}</h3>
+                <h3 className="text-lg font-medium text-gray-800 mb-4">{t('dashboard.twoDayForecast', '2-Day Weather Predictions')}</h3>
                 <div className="space-y-4">
                   {Object.entries(weatherForecast).map(([city, data]) => (
                     <div key={city} className="bg-white rounded-lg shadow p-4">
