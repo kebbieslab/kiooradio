@@ -515,7 +515,13 @@ export const labels = {
     incomeVsExpenses: "Income vs Expenses",
     income: "Income",
     expenses: "Expenses",
-    donationsByProject: "Donations by Project"
+    donationsByProject: "Donations by Project",
+    
+    // Weather
+    weatherForecast: "Weather Forecast",
+    currentWeather: "Current Weather",
+    twoDayForecast: "2-Day Weather Predictions",
+    updated: "Updated"
   },
   
   fr: {
