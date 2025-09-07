@@ -432,6 +432,63 @@ const Dashboard = () => {
           </div>
         )}
 
+        {/* Weather Section */}
+        {(Object.keys(weatherData).length > 0 || Object.keys(weatherForecast).length > 0) && (
+          <div className="mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('weatherForecast', 'Weather Forecast')}</h2>
+            
+            {/* Current Weather */}
+            {Object.keys(weatherData).length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-medium text-gray-800 mb-4">{t('currentWeather', 'Current Weather')}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {Object.entries(weatherData).map(([city, data]) => (
+                    <div key={city} className="bg-white rounded-lg shadow p-4">
+                      <div className="text-sm font-medium text-gray-600 mb-1">{city}</div>
+                      <div className="text-2xl font-bold text-blue-600 mb-1">{data.temperature}°C</div>
+                      <div className="text-sm text-gray-700 mb-2">{data.condition}</div>
+                      <div className="text-xs text-gray-500">
+                        {t('updated', 'Updated')}: {data.updated}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 2-Day Weather Forecast */}
+            {Object.keys(weatherForecast).length > 0 && (
+              <div>
+                <h3 className="text-lg font-medium text-gray-800 mb-4">{t('twoDayForecast', '2-Day Weather Predictions')}</h3>
+                <div className="space-y-4">
+                  {Object.entries(weatherForecast).map(([city, data]) => (
+                    <div key={city} className="bg-white rounded-lg shadow p-4">
+                      <div className="font-medium text-gray-900 mb-3">{city}</div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {data.forecast && data.forecast.map((day, index) => (
+                          <div key={index} className="bg-gray-50 rounded p-3 text-center">
+                            <div className="text-sm font-medium text-gray-600 mb-1">{day.day_label}</div>
+                            <div className="text-xs text-gray-500 mb-2">{day.date}</div>
+                            <div className="flex justify-center items-center space-x-2 mb-1">
+                              <span className="text-lg font-bold text-red-500">{day.temp_max}°</span>
+                              <span className="text-sm text-gray-400">/</span>
+                              <span className="text-lg font-bold text-blue-500">{day.temp_min}°</span>
+                            </div>
+                            <div className="text-xs text-gray-700">{day.condition}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-2">
+                        {t('updated', 'Updated')}: {data.updated}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Income vs Expenses Bar Chart */}
