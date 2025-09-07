@@ -5967,7 +5967,36 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
 
 def main():
     tester = KiooRadioAPITester()
-    return tester.run_user_management_tests()
+    
+    # Run the specific tests requested: Weather Forecast and Program Schedule Updates
+    print("🎵 KIOO RADIO API - WEATHER & PROGRAM SCHEDULE TESTING")
+    print("=" * 60)
+    print("Focus: Weather Forecast Endpoints & Program Schedule Updates")
+    print("=" * 60)
+    
+    # Run the specific test suites
+    weather_success = tester.test_weather_forecast_endpoints()
+    program_success = tester.test_program_schedule_updates()
+    
+    # Print final summary
+    print(f"\n" + "=" * 60)
+    print(f"📊 WEATHER & PROGRAM SCHEDULE TEST SUMMARY")
+    print(f"=" * 60)
+    print(f"Total tests run: {tester.tests_run}")
+    print(f"Tests passed: {tester.tests_passed}")
+    print(f"Tests failed: {tester.tests_run - tester.tests_passed}")
+    print(f"Success rate: {(tester.tests_passed / tester.tests_run * 100):.1f}%")
+    
+    if tester.failed_tests:
+        print(f"\n❌ FAILED TESTS:")
+        for i, test in enumerate(tester.failed_tests, 1):
+            print(f"   {i}. {test}")
+    else:
+        print(f"\n✅ ALL TESTS PASSED!")
+    
+    print(f"\n🎵 Weather & Program Schedule testing completed!")
+    
+    return 0 if (weather_success and program_success) else 1
 
 if __name__ == "__main__":
     sys.exit(main())
