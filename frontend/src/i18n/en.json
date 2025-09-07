@@ -85,5 +85,32 @@
       "keep": "Keep English",
       "switch": "Switch to French"
     }
+  },
+  "dashboard": {
+    "weatherForecast": "Weather Forecast",
+    "currentWeather": "Current Weather",
+    "twoDayForecast": "2-Day Weather Predictions",
+    "updated": "Updated",
+    "dashboardAccess": "Dashboard Access",
+    "dashboardAccessDesc": "Please enter your credentials to access the admin dashboard",
+    "username": "Username",
+    "password": "Password",
+    "accessDashboard": "Access Dashboard",
+    "kiooRadioDashboard": "Kioo Radio Dashboard",
+    "adminOverview": "Administrative Overview",
+    "lastUpdated": "Last updated",
+    "refreshing": "Refreshing...",
+    "refresh": "Refresh",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "visitorsThisMonth": "Visitors This Month",
+    "donationsThisMonth": "Donations This Month",
+    "netIncome": "Net Income",
+    "openReminders": "Open Reminders",
+    "approvedStories": "Approved Stories",
+    "incomeVsExpenses": "Income vs Expenses",
+    "donationsByProject": "Donations by Project",
+    "income": "Income",
+    "expenses": "Expenses"
   }
 }
