@@ -158,6 +158,7 @@ class ProgramCategory(str, Enum):
     LIVE_SERVICE = "live_service"
     SATELLITE = "satellite"
     SERMON = "sermon"
+    GOSPEL = "gospel"
     TALK_SHOW = "talk_show"
     CHRISTIAN_TEACHING = "christian_teaching"
 
