@@ -7,6 +7,8 @@ const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [donationsByProject, setDonationsByProject] = useState([]);
   const [incomeExpenses, setIncomeExpenses] = useState(null);
+  const [weatherData, setWeatherData] = useState({});
+  const [weatherForecast, setWeatherForecast] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
