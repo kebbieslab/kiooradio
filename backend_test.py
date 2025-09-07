@@ -167,52 +167,65 @@ class KiooRadioAPITester:
                     print(f"✅ All 4 expected locations present in forecast")
                 
                 # Verify forecast data structure for each location
-                for location, forecast_data in forecast_response.items():
-                    if isinstance(forecast_data, list):
-                        if len(forecast_data) == 3:  # Today + Day+1 + Day+2
-                            print(f"✅ {location}: Correct forecast period (3 days)")
-                            
-                            # Verify each day's forecast structure
-                            expected_day_labels = ["Today", "Day +1", "Day +2"]
-                            for i, day_forecast in enumerate(forecast_data):
-                                if isinstance(day_forecast, dict):
-                                    required_fields = ['date', 'temp_max', 'temp_min', 'condition', 'day_label']
-                                    missing_fields = [field for field in required_fields if field not in day_forecast]
-                                    
-                                    if missing_fields:
-                                        print(f"❌ {location} Day {i}: Missing fields: {missing_fields}")
-                                        self.failed_tests.append(f"Weather Forecast - {location} Day {i} missing fields: {missing_fields}")
+                for location, location_data in forecast_response.items():
+                    if isinstance(location_data, dict):
+                        # Check if forecast is nested under 'forecast' key
+                        forecast_data = location_data.get('forecast', location_data)
+                        
+                        if isinstance(forecast_data, list):
+                            if len(forecast_data) == 3:  # Today + Day+1 + Day+2
+                                print(f"✅ {location}: Correct forecast period (3 days)")
+                                
+                                # Verify each day's forecast structure
+                                expected_day_labels = ["Today", "Day +1", "Day +2"]
+                                for i, day_forecast in enumerate(forecast_data):
+                                    if isinstance(day_forecast, dict):
+                                        required_fields = ['date', 'temp_max', 'temp_min', 'condition', 'day_label']
+                                        missing_fields = [field for field in required_fields if field not in day_forecast]
+                                        
+                                        if missing_fields:
+                                            print(f"❌ {location} Day {i}: Missing fields: {missing_fields}")
+                                            self.failed_tests.append(f"Weather Forecast - {location} Day {i} missing fields: {missing_fields}")
+                                        else:
+                                            day_label = day_forecast.get('day_label')
+                                            expected_label = expected_day_labels[i] if i < len(expected_day_labels) else f"Day {i}"
+                                            
+                                            if day_label == expected_label:
+                                                print(f"   ✅ {location} {day_label}: Complete forecast data")
+                                                print(f"      Date: {day_forecast.get('date')}")
+                                                print(f"      Temp: {day_forecast.get('temp_min')}°C - {day_forecast.get('temp_max')}°C")
+                                                print(f"      Condition: {day_forecast.get('condition')}")
+                                            else:
+                                                print(f"   ❌ {location} Day {i}: Incorrect day label: expected '{expected_label}', got '{day_label}'")
+                                                self.failed_tests.append(f"Weather Forecast - {location} incorrect day label")
+                                            
+                                            # Verify temperature data types
+                                            temp_max = day_forecast.get('temp_max')
+                                            temp_min = day_forecast.get('temp_min')
+                                            
+                                            if (isinstance(temp_max, (int, float)) or temp_max == "N/A") and (isinstance(temp_min, (int, float)) or temp_min == "N/A"):
+                                                print(f"      ✅ Temperature formats valid")
+                                            else:
+                                                print(f"      ❌ Invalid temperature formats: max={temp_max}, min={temp_min}")
+                                                self.failed_tests.append(f"Weather Forecast - {location} invalid temperature formats")
                                     else:
-                                        day_label = day_forecast.get('day_label')
-                                        expected_label = expected_day_labels[i] if i < len(expected_day_labels) else f"Day {i}"
-                                        
-                                        if day_label == expected_label:
-                                            print(f"   ✅ {location} {day_label}: Complete forecast data")
-                                            print(f"      Date: {day_forecast.get('date')}")
-                                            print(f"      Temp: {day_forecast.get('temp_min')}°C - {day_forecast.get('temp_max')}°C")
-                                            print(f"      Condition: {day_forecast.get('condition')}")
-                                        else:
-                                            print(f"   ❌ {location} Day {i}: Incorrect day label: expected '{expected_label}', got '{day_label}'")
-                                            self.failed_tests.append(f"Weather Forecast - {location} incorrect day label")
-                                        
-                                        # Verify temperature data types
-                                        temp_max = day_forecast.get('temp_max')
-                                        temp_min = day_forecast.get('temp_min')
-                                        
-                                        if (isinstance(temp_max, (int, float)) or temp_max == "N/A") and (isinstance(temp_min, (int, float)) or temp_min == "N/A"):
-                                            print(f"      ✅ Temperature formats valid")
-                                        else:
-                                            print(f"      ❌ Invalid temperature formats: max={temp_max}, min={temp_min}")
-                                            self.failed_tests.append(f"Weather Forecast - {location} invalid temperature formats")
-                                else:
-                                    print(f"❌ {location} Day {i}: Invalid forecast structure (not dict)")
-                                    self.failed_tests.append(f"Weather Forecast - {location} Day {i} invalid structure")
+                                        print(f"❌ {location} Day {i}: Invalid forecast structure (not dict)")
+                                        self.failed_tests.append(f"Weather Forecast - {location} Day {i} invalid structure")
+                            else:
+                                print(f"❌ {location}: Incorrect forecast period: expected 3 days, got {len(forecast_data)}")
+                                self.failed_tests.append(f"Weather Forecast - {location} incorrect forecast period")
                         else:
-                            print(f"❌ {location}: Incorrect forecast period: expected 3 days, got {len(forecast_data)}")
-                            self.failed_tests.append(f"Weather Forecast - {location} incorrect forecast period")
+                            print(f"❌ {location}: Forecast data should be a list, got {type(forecast_data)}")
+                            self.failed_tests.append(f"Weather Forecast - {location} invalid forecast structure")
+                        
+                        # Check for updated timestamp
+                        if 'updated' in location_data:
+                            print(f"   ✅ {location}: Updated timestamp present: {location_data['updated']}")
+                        else:
+                            print(f"   ⚠️  {location}: No updated timestamp")
                     else:
-                        print(f"❌ {location}: Forecast data should be a list, got {type(forecast_data)}")
-                        self.failed_tests.append(f"Weather Forecast - {location} invalid forecast structure")
+                        print(f"❌ {location}: Location data should be a dict, got {type(location_data)}")
+                        self.failed_tests.append(f"Weather Forecast - {location} invalid location data structure")
             else:
                 print(f"❌ Forecast response should be a dictionary, got {type(forecast_response)}")
                 self.failed_tests.append("Weather Forecast - Invalid response structure")
