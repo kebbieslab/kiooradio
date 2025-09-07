@@ -479,7 +479,7 @@ const Dashboard = () => {
                         ))}
                       </div>
                       <div className="text-xs text-gray-500 mt-2">
-                        {t('updated', 'Updated')}: {data.updated}
+                        {t('dashboard.updated', 'Updated')}: {data.updated}
                       </div>
                     </div>
                   ))}
