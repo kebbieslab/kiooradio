@@ -2576,6 +2576,104 @@ async def get_dashboard_weather():
             }
         return fallback_data
 
+@api_router.get("/dashboard/weather-forecast")
+async def get_dashboard_weather_forecast():
+    """Get 2-day weather forecast for broadcast areas using Open-Meteo API"""
+    try:
+        import aiohttp
+        
+        # City coordinates - same as current weather
+        cities = {
+            "Foya, Liberia": {"lat": 8.3580, "lon": -10.2049},
+            "Koindu, Sierra Leone": {"lat": 8.2804, "lon": -10.6514},
+            "Guéckédou, Guinea": {"lat": 8.5674, "lon": -10.1330},
+            "Kissidougou, Guinea": {"lat": 9.1885, "lon": -10.0996}
+        }
+        
+        forecast_data = {}
+        
+        async with aiohttp.ClientSession() as session:
+            for city_name, coords in cities.items():
+                try:
+                    # Open-Meteo API call for 2-day forecast
+                    url = f"https://api.open-meteo.com/v1/forecast?latitude={coords['lat']}&longitude={coords['lon']}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=GMT&forecast_days=3"
+                    
+                    async with session.get(url, timeout=10) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            daily = data.get("daily", {})
+                            dates = daily.get("time", [])
+                            temp_max = daily.get("temperature_2m_max", [])
+                            temp_min = daily.get("temperature_2m_min", [])
+                            weather_codes = daily.get("weathercode", [])
+                            
+                            # Map weather codes to conditions (WMO Weather interpretation codes)
+                            condition_map = {
+                                0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+                                45: "Fog", 48: "Depositing rime fog", 51: "Light drizzle", 53: "Moderate drizzle",
+                                55: "Dense drizzle", 56: "Light freezing drizzle", 57: "Dense freezing drizzle",
+                                61: "Slight rain", 63: "Moderate rain", 65: "Heavy rain", 66: "Light freezing rain",
+                                67: "Heavy freezing rain", 71: "Slight snow", 73: "Moderate snow", 75: "Heavy snow",
+                                77: "Snow grains", 80: "Slight rain showers", 81: "Moderate rain showers",
+                                82: "Violent rain showers", 85: "Slight snow showers", 86: "Heavy snow showers",
+                                95: "Thunderstorm", 96: "Thunderstorm with hail", 99: "Thunderstorm with heavy hail"
+                            }
+                            
+                            # Get today's current weather and next 2 days forecast
+                            forecast_days = []
+                            for i in range(min(3, len(dates))):  # Today + 2 days
+                                condition = condition_map.get(weather_codes[i] if i < len(weather_codes) else 0, "Unknown")
+                                forecast_days.append({
+                                    "date": dates[i],
+                                    "temp_max": round(temp_max[i]) if i < len(temp_max) else "N/A",
+                                    "temp_min": round(temp_min[i]) if i < len(temp_min) else "N/A",
+                                    "condition": condition,
+                                    "day_label": "Today" if i == 0 else f"Day +{i}"
+                                })
+                            
+                            forecast_data[city_name] = {
+                                "forecast": forecast_days,
+                                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+                            }
+                        else:
+                            # Fallback data if API fails
+                            forecast_data[city_name] = {
+                                "forecast": [
+                                    {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Today"},
+                                    {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Day +1"},
+                                    {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Day +2"}
+                                ],
+                                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+                            }
+                except Exception as city_error:
+                    print(f"Error fetching weather forecast for {city_name}: {city_error}")
+                    # Fallback data for this city
+                    forecast_data[city_name] = {
+                        "forecast": [
+                            {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Today"},
+                            {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Day +1"},
+                            {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Day +2"}
+                        ],
+                        "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+                    }
+        
+        return forecast_data
+    except Exception as e:
+        print(f"Error fetching weather forecast data: {e}")
+        # Return fallback data for all cities
+        fallback_data = {}
+        cities = ["Foya, Liberia", "Koindu, Sierra Leone", "Guéckédou, Guinea", "Kissidougou, Guinea"]
+        for city in cities:
+            fallback_data[city] = {
+                "forecast": [
+                    {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Today"},
+                    {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Day +1"},
+                    {"date": "N/A", "temp_max": "N/A", "temp_min": "N/A", "condition": "Weather unavailable", "day_label": "Day +2"}
+                ],
+                "updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+            }
+        return fallback_data
+
 @api_router.get("/dashboard/schedule")
 async def get_dashboard_schedule():
     """Get weekly program schedule"""
