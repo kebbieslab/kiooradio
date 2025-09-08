@@ -6903,33 +6903,53 @@ logging.basicConfig(
 async def startup_db_client():
     """Initialize database connection on startup"""
     try:
-        # Test the connection
-        await client.admin.command('ping')
+        print("Initializing database connection...")
+        # Test the connection with timeout
+        import asyncio
+        await asyncio.wait_for(client.admin.command('ping'), timeout=10.0)
         logger.info("Successfully connected to MongoDB")
+        print("✅ MongoDB connection established")
         
-        # Create text indexes for program search
+        # Create text indexes for program search (non-blocking)
         try:
-            await db.programs.create_index([
-                ("title", "text"),
-                ("description", "text"),
-                ("content", "text"),
-                ("keywords", "text")
-            ])
+            print("Creating database indexes...")
+            await asyncio.wait_for(
+                db.programs.create_index([
+                    ("title", "text"),
+                    ("description", "text"),
+                    ("content", "text"),
+                    ("keywords", "text")
+                ]), 
+                timeout=5.0
+            )
             logger.info("Created text search indexes for programs collection")
             
             # Create text indexes for AI programs collection
-            await db.ai_programs.create_index([
-                ("title", "text"),
-                ("description", "text"),
-                ("content", "text"),
-                ("keywords", "text")
-            ])
+            await asyncio.wait_for(
+                db.ai_programs.create_index([
+                    ("title", "text"),
+                    ("description", "text"),
+                    ("content", "text"),
+                    ("keywords", "text")
+                ]),
+                timeout=5.0
+            )
             logger.info("Created text search indexes for ai_programs collection")
+            print("✅ Database indexes created")
+        except asyncio.TimeoutError:
+            logger.warning("Index creation timed out - continuing startup")
+            print("⚠️ Index creation timed out - continuing startup")
         except Exception as index_error:
             logger.warning(f"Failed to create search indexes: {index_error}")
+            print(f"⚠️ Failed to create search indexes: {index_error}")
             
+    except asyncio.TimeoutError:
+        logger.error("MongoDB connection timed out")
+        print("❌ MongoDB connection timed out")
+        raise Exception("Database connection timeout")
     except Exception as e:
         logger.error(f"Failed to connect to MongoDB: {e}")
+        print(f"❌ Failed to connect to MongoDB: {e}")
         raise
 
 # Shutdown event
