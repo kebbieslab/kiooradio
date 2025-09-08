@@ -151,13 +151,6 @@ const PhotoBanner = ({ images }) => {
           onClose={closeShowcase}
         />
       )}
-
-      <style jsx>{`
-        @keyframes progress {
-          0% { width: 0%; }
-          100% { width: 100%; }
-        }
-      `}</style>
     </>
   );
 };
