@@ -7,6 +7,7 @@ import CRMDonations from '../components/CRMDonations';
 import CRMProjects from '../components/CRMProjects';
 import UserManagement from '../components/UserManagement';
 import ClickUpCRM from '../components/ClickUpCRM';
+import ClickUpEmbed from '../components/ClickUpEmbed';
 
 const CRM = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
