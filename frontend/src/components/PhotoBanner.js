@@ -154,28 +154,13 @@ const PhotoBanner = ({ images }) => {
                 
                 {/* Dark overlay for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
-                
-                {/* Persistent Tagline - Bottom Left */}
-                <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8">
-                  <div className="bg-black/45 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg">
-                    <h2 
-                      className="text-white font-black leading-tight text-shadow-lg"
-                      style={{ 
-                        fontSize: 'clamp(18px, 3.2vw, 36px)',
-                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
-                      }}
-                    >
-                      Reaching Hearts across the<br />Makona River Region
-                    </h2>
-                  </div>
-                </div>
 
-                {/* Per-Image Caption - Bottom Right */}
+                {/* Per-Image Caption - Bottom Center */}
                 <div 
-                  className="absolute bottom-4 right-4 md:bottom-8 md:right-8 max-w-md transition-opacity duration-250"
+                  className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8 transition-opacity duration-250"
                   aria-live="polite"
                 >
-                  <div className="bg-black/45 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg">
+                  <div className="bg-black/45 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg text-center">
                     <p 
                       className="text-white font-black leading-tight text-shadow-lg"
                       style={{ 
