@@ -13,9 +13,8 @@ const Home = () => {
   const [latestNews, setLatestNews] = useState([]);
   const { t } = useTranslation();
 
-  // Photo showcase images with captions - Ordered by upload sequence
+  // Photo showcase images - Selected 8 key images
   const showcaseImages = [
-    // First Upload - Original Vision & Journey (5 images)
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/jimaulr5_wide-view-of-Foya.jpg',
       caption: "Foya's beautiful valley, the community we aim to reach.",
@@ -27,21 +26,10 @@ const Home = () => {
       alt: 'Prayer over Guéckédou, asking God to bless the reach across borders.'
     },
     {
-      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bh1ilom6_Telling-the-vision-of-Kioo.jpg',
-      caption: 'Casting the Kioo Radio vision with community leaders on Betche Hill.',
-      alt: 'Casting the Kioo Radio vision with community leaders on Betche Hill.'
-    },
-    {
-      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ij8orxat_Broadcast-permit.jpg',
-      caption: 'Broadcast license secured, the official green light to begin.',
-      alt: 'Broadcast license secured, the official green light to begin.'
-    },
-    {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/eeuacmrs_Trip-to-Foya-from-SL.JPG',
       caption: 'The tough road to reach remote listeners in the Makona region.',
       alt: 'The tough road to reach remote listeners in the Makona region.'
     },
-    // Second Upload - Construction & Development (5 images)
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ayowkboa_President-Groundbreaking.JPG',
       caption: 'President Joseph N. Boakai breaking ground on December 24, 2025.',
@@ -52,22 +40,6 @@ const Home = () => {
       caption: 'Breaking ground together with prayer and the first shovel in Foya.',
       alt: 'Breaking ground together with prayer and the first shovel in Foya.'
     },
-    {
-      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/1blvr88k_building-foundation.jpg',
-      caption: 'Laying a strong foundation for a strong signal.',
-      alt: 'Laying a strong foundation for a strong signal.'
-    },
-    {
-      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/yq8vf62z_building-fully-roof-front.jpg',
-      caption: 'The station building takes shape on the hill with its roof complete.',
-      alt: 'The station building takes shape on the hill with its roof complete.'
-    },
-    {
-      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ckhqsmwo_plasting-inside.jpg',
-      caption: 'Studios taking form with smooth interior finishes.',
-      alt: 'Studios taking form with smooth interior finishes.'
-    },
-    // Third Upload - Makona River Region Views (4 images)
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/xvi1bi23_People-Crossing-Makona-to-Guinea.jpg',
       caption: 'Communities crossing the Makona River, connecting hearts across borders.',
@@ -82,11 +54,6 @@ const Home = () => {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/dd62t4s1_view-of-Gue%CC%81cke%CC%81dou.jpg',
       caption: 'Panoramic view of Guéckédou, one of our key broadcast destinations.',
       alt: 'Panoramic view of Guéckédou, one of our key broadcast destinations.'
-    },
-    {
-      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/x9vsuvxj_sunraise-of-Foya.jpg',
-      caption: 'Dawn breaks over Foya, bringing a new day of hope through radio.',
-      alt: 'Dawn breaks over Foya, bringing a new day of hope through radio.'
     }
   ];
 
