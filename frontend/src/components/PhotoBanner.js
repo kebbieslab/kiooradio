@@ -70,6 +70,7 @@ const PhotoBanner = ({ images }) => {
 
   const closeBanner = () => {
     setIsVisible(false);
+    localStorage.setItem('kiooHeroClosed', 'true');
   };
 
   if (!isVisible) {
