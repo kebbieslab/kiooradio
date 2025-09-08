@@ -326,7 +326,12 @@ def get_clickup_service() -> ClickUpCRMService:
     contacts_list_id = os.getenv("CLICKUP_CONTACTS_LIST_ID")
     
     if not all([api_token, workspace_id, contacts_list_id]):
-        raise ValueError("Missing required ClickUp configuration. Please set CLICKUP_API_TOKEN, CLICKUP_WORKSPACE_ID, and CLICKUP_CONTACTS_LIST_ID environment variables.")
+        # Return None or raise a more specific error that can be handled
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=501, 
+            detail="ClickUp integration not configured. Please set CLICKUP_API_TOKEN, CLICKUP_WORKSPACE_ID, and CLICKUP_CONTACTS_LIST_ID environment variables."
+        )
     
     client = ClickUpClient(api_token)
     return ClickUpCRMService(client, workspace_id, contacts_list_id)
