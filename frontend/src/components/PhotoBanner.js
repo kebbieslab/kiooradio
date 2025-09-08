@@ -206,15 +206,23 @@ const PhotoBanner = ({ images }) => {
         </div>
 
         {/* Progress Bar */}
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-black bg-opacity-30">
-          <div 
-            className="h-full bg-kioo-primary"
-            style={{ 
-              width: `${((currentIndex + 1) / images.length) * 100}%`,
-              transition: 'width 5s linear'
-            }}
-          />
-        </div>
+        {!isHovered && !isPaused && (
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-black/20">
+            <div 
+              className="h-full bg-kioo-primary transition-all duration-100"
+              style={{ 
+                width: `${((currentIndex + 1) / images.length) * 100}%`
+              }}
+            />
+          </div>
+        )}
+
+        {/* Auto-scroll pause indicator */}
+        {(isHovered || isPaused) && (
+          <div className="absolute top-4 right-20 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs md:text-sm font-medium">
+            Auto-scroll paused
+          </div>
+        )}
       </div>
 
       {/* Full Screen Photo Showcase */}
