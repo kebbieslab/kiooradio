@@ -34,6 +34,26 @@ const Home = () => {
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/eeuacmrs_Trip-to-Foya-from-SL.JPG',
       caption: 'Journeying through Sierra Leone to bring the Kioo Radio vision to life.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ayowkboa_President-Groundbreaking.JPG',
+      caption: 'President Joseph N. Boakai Sir broke grounds for Kioo Radio on December 24, 2025'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bke699qg_GroundBreaking-Pastor.JPG',
+      caption: 'Rev Joseph Lendor leading prayers and breaking ground for the Kioo Radio station building.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/1blvr88k_building-foundation.jpg',
+      caption: 'Laying the foundation for the studio that will carry the Gospel across nations.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/yq8vf62z_building-fully-roof-front.jpg',
+      caption: 'The station building taking shape—roofed and ready for the next phase.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ckhqsmwo_plasting-inside.jpg',
+      caption: 'Interior finishing work in progress—transforming vision into reality.'
     }
   ];
 
