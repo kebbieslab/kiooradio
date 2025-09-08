@@ -117,8 +117,9 @@ const PhotoBanner = ({ images }) => {
         style={{ height: 'clamp(240px, 50vh, 520px)' }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onTouchStart={() => setIsHovered(true)}
-        onTouchEnd={() => setIsHovered(false)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         
         {/* Close Button */}
