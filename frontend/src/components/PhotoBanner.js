@@ -104,7 +104,7 @@ const PhotoBanner = ({ images }) => {
         {/* Main Image with Sliding Animation */}
         <div className="relative w-full h-full">
           <div 
-            className="flex photo-banner-transition h-full"
+            className="flex h-full transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {images.map((image, index) => (
@@ -115,23 +115,49 @@ const PhotoBanner = ({ images }) => {
               >
                 <img
                   src={image.url}
-                  alt={image.caption}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
+                  alt={image.alt || image.caption}
+                  className="w-full h-full object-contain object-center bg-gradient-to-br from-gray-800 to-black"
+                  loading={index === 0 ? "eager" : "lazy"}
                 />
                 
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                {/* Dark overlay for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
                 
-                {/* Caption */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 photo-banner-caption">
-                  <p className="text-white text-sm md:text-lg font-medium leading-relaxed max-w-4xl">
-                    {image.caption}
-                  </p>
+                {/* Persistent Tagline - Bottom Left */}
+                <div className="absolute bottom-4 left-4 md:bottom-8 md:left-8">
+                  <div className="bg-black/45 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg">
+                    <h2 
+                      className="text-white font-black leading-tight text-shadow-lg"
+                      style={{ 
+                        fontSize: 'clamp(18px, 3.2vw, 36px)',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
+                      Reaching Hearts across the<br />Makona River Region
+                    </h2>
+                  </div>
+                </div>
+
+                {/* Per-Image Caption - Bottom Right */}
+                <div 
+                  className="absolute bottom-4 right-4 md:bottom-8 md:right-8 max-w-md transition-opacity duration-250"
+                  aria-live="polite"
+                >
+                  <div className="bg-black/45 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg">
+                    <p 
+                      className="text-white font-black leading-tight text-shadow-lg"
+                      style={{ 
+                        fontSize: 'clamp(16px, 2.6vw, 28px)',
+                        textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
+                      }}
+                    >
+                      {image.caption}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Click to expand hint */}
-                <div className="absolute top-4 left-4 bg-kioo-primary text-white px-3 py-1 rounded-full text-xs md:text-sm opacity-80">
+                <div className="absolute top-4 left-4 bg-kioo-primary/90 text-white px-3 py-1 rounded-full text-xs md:text-sm font-semibold opacity-90">
                   Click to expand
                 </div>
               </div>
