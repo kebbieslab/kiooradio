@@ -18,13 +18,13 @@ const Home = () => {
     // First Upload - Original Vision & Journey (5 images)
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/jimaulr5_wide-view-of-Foya.jpg',
-      caption: "Foya's valley—the community we aim to reach.",
-      alt: "Foya's valley—the community we aim to reach."
+      caption: "Foya's beautiful valley, the community we aim to reach.",
+      alt: "Foya's beautiful valley, the community we aim to reach."
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/6f4q1xma_Praying-over-Gue%CC%81cke%CC%81dou.JPG',
-      caption: 'Prayer over Guéckédou—asking God to bless the reach across borders.',
-      alt: 'Prayer over Guéckédou—asking God to bless the reach across borders.'
+      caption: 'Prayer over Guéckédou, asking God to bless the reach across borders.',
+      alt: 'Prayer over Guéckédou, asking God to bless the reach across borders.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bh1ilom6_Telling-the-vision-of-Kioo.jpg',
@@ -33,8 +33,8 @@ const Home = () => {
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ij8orxat_Broadcast-permit.jpg',
-      caption: 'Broadcast license secured—official green light to begin.',
-      alt: 'Broadcast license secured—official green light to begin.'
+      caption: 'Broadcast license secured, the official green light to begin.',
+      alt: 'Broadcast license secured, the official green light to begin.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/eeuacmrs_Trip-to-Foya-from-SL.JPG',
@@ -44,13 +44,13 @@ const Home = () => {
     // Second Upload - Construction & Development (5 images)
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ayowkboa_President-Groundbreaking.JPG',
-      caption: 'President Joseph N. Boakai breaking ground—December 24, 2025.',
-      alt: 'President Joseph N. Boakai breaking ground—December 24, 2025.'
+      caption: 'President Joseph N. Boakai breaking ground on December 24, 2025.',
+      alt: 'President Joseph N. Boakai breaking ground on December 24, 2025.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bke699qg_GroundBreaking-Pastor.JPG',
-      caption: 'Breaking ground together—prayer and first shovel in Foya.',
-      alt: 'Breaking ground together—prayer and first shovel in Foya.'
+      caption: 'Breaking ground together with prayer and the first shovel in Foya.',
+      alt: 'Breaking ground together with prayer and the first shovel in Foya.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/1blvr88k_building-foundation.jpg',
@@ -59,8 +59,8 @@ const Home = () => {
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/yq8vf62z_building-fully-roof-front.jpg',
-      caption: 'Roof on—the station building takes shape on the hill.',
-      alt: 'Roof on—the station building takes shape on the hill.'
+      caption: 'The station building takes shape on the hill with its roof complete.',
+      alt: 'The station building takes shape on the hill with its roof complete.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ckhqsmwo_plasting-inside.jpg',
@@ -70,8 +70,8 @@ const Home = () => {
     // Third Upload - Makona River Region Views (4 images)
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/xvi1bi23_People-Crossing-Makona-to-Guinea.jpg',
-      caption: 'Communities crossing the Makona River—connecting hearts across borders.',
-      alt: 'Communities crossing the Makona River—connecting hearts across borders.'
+      caption: 'Communities crossing the Makona River, connecting hearts across borders.',
+      alt: 'Communities crossing the Makona River, connecting hearts across borders.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/63hmlkor_view-of-Makona-Gue%CC%81cke%CC%81dou.jpg',
@@ -80,13 +80,13 @@ const Home = () => {
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/dd62t4s1_view-of-Gue%CC%81cke%CC%81dou.jpg',
-      caption: 'Panoramic view of Guéckédou—one of our key broadcast destinations.',
-      alt: 'Panoramic view of Guéckédou—one of our key broadcast destinations.'
+      caption: 'Panoramic view of Guéckédou, one of our key broadcast destinations.',
+      alt: 'Panoramic view of Guéckédou, one of our key broadcast destinations.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/x9vsuvxj_sunraise-of-Foya.jpg',
-      caption: 'Dawn breaks over Foya—a new day of hope through radio.',
-      alt: 'Dawn breaks over Foya—a new day of hope through radio.'
+      caption: 'Dawn breaks over Foya, bringing a new day of hope through radio.',
+      alt: 'Dawn breaks over Foya, bringing a new day of hope through radio.'
     }
   ];
 
