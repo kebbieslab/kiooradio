@@ -459,7 +459,7 @@ Enhance CRM Projects section with receipt management, multimedia uploads, AI-pow
 
 ## test_plan:
   current_focus:
-    - "Program Schedule Updates and Data Consistency"
+    - "Photo Banner Showcase Functionality"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
