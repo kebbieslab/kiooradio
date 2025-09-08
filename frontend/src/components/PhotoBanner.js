@@ -80,7 +80,15 @@ const PhotoBanner = ({ images }) => {
   return (
     <>
       {/* Photo Banner */}
-      <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden bg-black photo-banner">
+      <div 
+        id="kioo-hero-gallery"
+        className="relative w-full overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800 photo-banner"
+        style={{ height: 'clamp(240px, 50vh, 520px)' }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onTouchStart={() => setIsHovered(true)}
+        onTouchEnd={() => setIsHovered(false)}
+      >
         
         {/* Close Button */}
         <button
