@@ -51,10 +51,12 @@ const PhotoBanner = ({ images }) => {
   }, [currentIndex]);
 
   const goToPrevious = () => {
+    setIsPaused(true);
     setCurrentIndex(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
   };
 
   const goToNext = () => {
+    setIsPaused(true);
     setCurrentIndex(currentIndex === images.length - 1 ? 0 : currentIndex + 1);
   };
 
