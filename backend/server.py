@@ -116,21 +116,47 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Simple health check endpoint (no dependencies)
+@app.get("/")
+async def root():
+    """Root endpoint for basic health check"""
+    return {
+        "status": "healthy",
+        "service": "Kioo Radio API",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    """Health check endpoint for deployment"""
+    """Detailed health check endpoint for deployment"""
     try:
-        # Test database connection
-        await client.admin.command('ping')
+        # Test database connection with timeout
+        import asyncio
+        await asyncio.wait_for(client.admin.command('ping'), timeout=5.0)
         return {
             "status": "healthy",
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "database": "connected"
+            "database": "connected",
+            "service": "Kioo Radio API"
+        }
+    except asyncio.TimeoutError:
+        logger.error("Health check failed: Database timeout")
+        return {
+            "status": "degraded",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "database": "timeout",
+            "service": "Kioo Radio API"
         }
     except Exception as e:
         logger.error(f"Health check failed: {e}")
-        raise HTTPException(status_code=503, detail="Service unavailable")
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "database": "disconnected",
+            "service": "Kioo Radio API",
+            "error": str(e)
+        }
 
 # Serve static files for thumbnails
 from fastapi.staticfiles import StaticFiles
