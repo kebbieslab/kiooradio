@@ -60,7 +60,7 @@ const PhotoBanner = ({ images }) => {
         {/* Main Image with Sliding Animation */}
         <div className="relative w-full h-full">
           <div 
-            className="flex transition-transform duration-1000 ease-in-out h-full"
+            className="flex photo-banner-transition h-full"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
             {images.map((image, index) => (
