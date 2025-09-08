@@ -135,10 +135,10 @@ const PhotoBanner = ({ images }) => {
         {/* Progress Bar */}
         <div className="absolute bottom-0 left-0 w-full h-1 bg-black bg-opacity-30">
           <div 
-            className="h-full bg-kioo-primary transition-all duration-5000 ease-linear"
+            className="h-full bg-kioo-primary"
             style={{ 
               width: `${((currentIndex + 1) / images.length) * 100}%`,
-              animation: 'progress 5s linear infinite'
+              transition: 'width 5s linear'
             }}
           />
         </div>
