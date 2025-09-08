@@ -31,7 +31,7 @@ class Contact(BaseModel):
     id: Optional[str] = None
     name: str = Field(..., min_length=1, max_length=100)
     email: EmailStr
-    phone: Optional[str] = Field(None, regex=r'^\+?[1-9]\d{1,14}$')
+    phone: Optional[str] = Field(None, pattern=r'^\+?[1-9]\d{1,14}$')
     company: Optional[str] = Field(None, max_length=100)
     job_title: Optional[str] = Field(None, max_length=100)
     status: str = "new"
