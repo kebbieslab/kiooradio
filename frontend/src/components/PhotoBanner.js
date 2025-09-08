@@ -187,17 +187,20 @@ const PhotoBanner = ({ images }) => {
         </button>
 
         {/* Dots Navigation */}
-        <div className="absolute bottom-16 md:bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full">
           {images.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index)}
+              onClick={() => {
+                setIsPaused(true);
+                setCurrentIndex(index);
+              }}
               className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all duration-200 ${
                 index === currentIndex 
-                  ? 'bg-kioo-primary scale-125' 
-                  : 'bg-white bg-opacity-50 hover:bg-opacity-75'
+                  ? 'bg-kioo-primary scale-125 shadow-lg' 
+                  : 'bg-white/60 hover:bg-white/80'
               }`}
-              aria-label={`Go to image ${index + 1}`}
+              aria-label={`Go to image ${index + 1} of ${images.length}`}
             />
           ))}
         </div>
