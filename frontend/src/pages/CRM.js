@@ -498,7 +498,17 @@ const CRM = () => {
                       : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  🔗 ClickUp CRM
+                  🔗 ClickUp API
+                </button>
+                <button
+                  onClick={() => setCurrentView('clickup-embed')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md ${
+                    currentView === 'clickup-embed' 
+                      ? 'bg-purple-600 text-white' 
+                      : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  📱 ClickUp Embed
                 </button>
                 
                 <div className="border-l border-gray-300 h-8 mx-2"></div>
