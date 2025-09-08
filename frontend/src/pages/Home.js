@@ -13,47 +13,77 @@ const Home = () => {
   const [latestNews, setLatestNews] = useState([]);
   const { t } = useTranslation();
 
-  // Photo showcase images with captions
+  // Photo showcase images with captions - Updated with new images and specified captions
   const showcaseImages = [
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/jimaulr5_wide-view-of-Foya.jpg',
-      caption: 'The breathtaking hills of Foya, future home of Kioo Radio 98.1FM.'
+      caption: "Foya's valley—the community we aim to reach.",
+      alt: "Foya's valley—the community we aim to reach."
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/6f4q1xma_Praying-over-Gue%CC%81cke%CC%81dou.JPG',
-      caption: 'Prayer over Guéckédou, Guinea—asking God to bless the reach of Kioo Radio across borders.'
+      caption: 'Prayer over Guéckédou—asking God to bless the reach across borders.',
+      alt: 'Prayer over Guéckédou—asking God to bless the reach across borders.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bh1ilom6_Telling-the-vision-of-Kioo.jpg',
-      caption: 'Sharing the vision of Kioo Radio with community leaders on Betche Hill.'
+      caption: 'Casting the Kioo Radio vision with community leaders on Betche Hill.',
+      alt: 'Casting the Kioo Radio vision with community leaders on Betche Hill.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ij8orxat_Broadcast-permit.jpg',
-      caption: 'Holding the official broadcast permit—marking a major milestone for the station.'
+      caption: 'Broadcast license secured—official green light to begin.',
+      alt: 'Broadcast license secured—official green light to begin.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/eeuacmrs_Trip-to-Foya-from-SL.JPG',
-      caption: 'Journeying through Sierra Leone to bring the Kioo Radio vision to life.'
-    },
-    {
-      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ayowkboa_President-Groundbreaking.JPG',
-      caption: 'President Joseph N. Boakai Sir broke grounds for Kioo Radio on December 24, 2025'
+      caption: 'The tough road to reach remote listeners in the Makona region.',
+      alt: 'The tough road to reach remote listeners in the Makona region.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bke699qg_GroundBreaking-Pastor.JPG',
-      caption: 'Rev Joseph Lendor leading prayers and breaking ground for the Kioo Radio station building.'
+      caption: 'Breaking ground together—prayer and first shovel in Foya.',
+      alt: 'Breaking ground together—prayer and first shovel in Foya.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/1blvr88k_building-foundation.jpg',
-      caption: 'Laying the foundation for the studio that will carry the Gospel across nations.'
+      caption: 'Laying a strong foundation for a strong signal.',
+      alt: 'Laying a strong foundation for a strong signal.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/yq8vf62z_building-fully-roof-front.jpg',
-      caption: 'The station building taking shape—roofed and ready for the next phase.'
+      caption: 'Roof on—the station building takes shape on the hill.',
+      alt: 'Roof on—the station building takes shape on the hill.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ckhqsmwo_plasting-inside.jpg',
-      caption: 'Interior finishing work in progress—transforming vision into reality.'
+      caption: 'Studios taking form with smooth interior finishes.',
+      alt: 'Studios taking form with smooth interior finishes.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/xvi1bi23_People-Crossing-Makona-to-Guinea.jpg',
+      caption: 'Communities crossing the Makona River—connecting hearts across borders.',
+      alt: 'Communities crossing the Makona River—connecting hearts across borders.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/63hmlkor_view-of-Makona-Gue%CC%81cke%CC%81dou.jpg',
+      caption: 'The beautiful Makona River region stretching into Guéckédou, Guinea.',
+      alt: 'The beautiful Makona River region stretching into Guéckédou, Guinea.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/dd62t4s1_view-of-Gue%CC%81cke%CC%81dou.jpg',
+      caption: 'Panoramic view of Guéckédou—one of our key broadcast destinations.',
+      alt: 'Panoramic view of Guéckédou—one of our key broadcast destinations.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/x9vsuvxj_sunraise-of-Foya.jpg',
+      caption: 'Dawn breaks over Foya—a new day of hope through radio.',
+      alt: 'Dawn breaks over Foya—a new day of hope through radio.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ayowkboa_President-Groundbreaking.JPG',
+      caption: 'President Joseph N. Boakai breaking ground—December 24, 2025.',
+      alt: 'President Joseph N. Boakai breaking ground—December 24, 2025.'
     }
   ];
 
