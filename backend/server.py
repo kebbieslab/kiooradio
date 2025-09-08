@@ -48,6 +48,14 @@ from docx import Document
 from docx.shared import Inches
 from jinja2 import Template
 import matplotlib.pyplot as plt
+
+# ClickUp CRM Integration
+try:
+    from clickup_routes import clickup_router
+    CLICKUP_AVAILABLE = True
+except ImportError as e:
+    print(f"ClickUp integration not available: {e}")
+    CLICKUP_AVAILABLE = False
 import seaborn as sns
 import tempfile
 
