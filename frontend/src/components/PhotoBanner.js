@@ -11,16 +11,44 @@ const PhotoBanner = ({ images }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Auto-scroll functionality for the banner
+  // Auto-scroll functionality for the banner - pause on hover/touch
   useEffect(() => {
+    if (isHovered || isPaused) return;
+    
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => 
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
-    }, 5000); // Change image every 5 seconds
+    }, 4000); // Change image every 4 seconds
 
     return () => clearInterval(interval);
-  }, [images.length]);
+  }, [images.length, isHovered, isPaused]);
+
+  // Resume auto-scroll after manual navigation
+  useEffect(() => {
+    if (isPaused) {
+      const timeout = setTimeout(() => {
+        setIsPaused(false);
+      }, 6000); // Resume after 6 seconds
+      return () => clearTimeout(timeout);
+    }
+  }, [isPaused]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'ArrowLeft') {
+        goToPrevious();
+      } else if (e.key === 'ArrowRight') {
+        goToNext();
+      } else if (e.key === 'Escape') {
+        closeBanner();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [currentIndex]);
 
   const goToPrevious = () => {
     setCurrentIndex(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
