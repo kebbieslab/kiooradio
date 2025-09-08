@@ -6270,7 +6270,35 @@ async def get_income_expenses(admin: str = Depends(authenticate_admin)):
 # =============================================================================
 
 # Import AI integration libraries
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+# Emergent Integrations LLM import with compatibility handling
+try:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    EMERGENT_LLM_AVAILABLE = True
+    print("✅ Emergent LLM integration available")
+except ImportError as e:
+    print(f"⚠️ Emergent LLM integration not available: {e}")
+    # Create placeholder classes for compatibility
+    class LlmChat:
+        def __init__(self, *args, **kwargs):
+            raise Exception("Emergent LLM integration not available")
+    
+    class UserMessage:
+        def __init__(self, *args, **kwargs):
+            raise Exception("Emergent LLM integration not available")
+    
+    EMERGENT_LLM_AVAILABLE = False
+except Exception as e:
+    print(f"⚠️ Emergent LLM integration error: {e}")
+    # Create placeholder classes for compatibility
+    class LlmChat:
+        def __init__(self, *args, **kwargs):
+            raise Exception("Emergent LLM integration not available")
+    
+    class UserMessage:
+        def __init__(self, *args, **kwargs):
+            raise Exception("Emergent LLM integration not available")
+    
+    EMERGENT_LLM_AVAILABLE = False
 
 # Pydantic models for AI Program Assistant
 class ProgramContent(BaseModel):
