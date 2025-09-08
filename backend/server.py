@@ -6885,6 +6885,13 @@ async def get_ai_program_stats():
 # Include the router in the main app
 app.include_router(api_router)
 
+# Include ClickUp CRM router if available
+if CLICKUP_AVAILABLE:
+    app.include_router(clickup_router)
+    print("✅ ClickUp CRM integration enabled")
+else:
+    print("⚠️ ClickUp CRM integration disabled - missing dependencies")
+
 # Configure logging for production
 logging.basicConfig(
     level=logging.INFO,
