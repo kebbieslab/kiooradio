@@ -18,4 +18,4 @@ reportlab==4.0.8
 beautifulsoup4==4.12.2
 html2text==2020.1.16
 seaborn==0.12.2
-clickupython==0.1.0
+clickupython==1.0.4
