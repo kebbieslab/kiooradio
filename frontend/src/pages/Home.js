@@ -13,8 +13,9 @@ const Home = () => {
   const [latestNews, setLatestNews] = useState([]);
   const { t } = useTranslation();
 
-  // Photo showcase images with captions - Updated with new images and specified captions
+  // Photo showcase images with captions - Ordered by upload sequence
   const showcaseImages = [
+    // First Upload - Original Vision & Journey (5 images)
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/jimaulr5_wide-view-of-Foya.jpg',
       caption: "Foya's valley—the community we aim to reach.",
@@ -40,6 +41,12 @@ const Home = () => {
       caption: 'The tough road to reach remote listeners in the Makona region.',
       alt: 'The tough road to reach remote listeners in the Makona region.'
     },
+    // Second Upload - Construction & Development (5 images)
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ayowkboa_President-Groundbreaking.JPG',
+      caption: 'President Joseph N. Boakai breaking ground—December 24, 2025.',
+      alt: 'President Joseph N. Boakai breaking ground—December 24, 2025.'
+    },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bke699qg_GroundBreaking-Pastor.JPG',
       caption: 'Breaking ground together—prayer and first shovel in Foya.',
@@ -60,6 +67,7 @@ const Home = () => {
       caption: 'Studios taking form with smooth interior finishes.',
       alt: 'Studios taking form with smooth interior finishes.'
     },
+    // Third Upload - Makona River Region Views (4 images)
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/xvi1bi23_People-Crossing-Makona-to-Guinea.jpg',
       caption: 'Communities crossing the Makona River—connecting hearts across borders.',
@@ -79,11 +87,6 @@ const Home = () => {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/x9vsuvxj_sunraise-of-Foya.jpg',
       caption: 'Dawn breaks over Foya—a new day of hope through radio.',
       alt: 'Dawn breaks over Foya—a new day of hope through radio.'
-    },
-    {
-      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ayowkboa_President-Groundbreaking.JPG',
-      caption: 'President Joseph N. Boakai breaking ground—December 24, 2025.',
-      alt: 'President Joseph N. Boakai breaking ground—December 24, 2025.'
     }
   ];
 
