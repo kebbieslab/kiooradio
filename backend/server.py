@@ -6966,9 +6966,18 @@ if __name__ == "__main__":
     import uvicorn
     # Use environment PORT variable for Kubernetes deployment compatibility
     port = int(os.environ.get('PORT', 8001))
-    print(f"Starting Kioo Radio Backend on port {port}")
+    print(f"🚀 Starting Kioo Radio Backend on port {port}")
+    print(f"📊 MongoDB URL: {mongo_url}")
+    print(f"📂 Database: {db_name}")
+    print(f"🌐 CORS Origins: {cors_origins}")
     try:
-        uvicorn.run(app, host="0.0.0.0", port=port)
+        uvicorn.run(
+            app, 
+            host="0.0.0.0", 
+            port=port,
+            log_level="info",
+            access_log=True
+        )
     except Exception as e:
-        print(f"Failed to start server: {e}")
+        print(f"❌ Failed to start server: {e}")
         raise
