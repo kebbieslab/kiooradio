@@ -10,6 +10,8 @@ const PhotoBanner = ({ images }) => {
   });
   const [isHovered, setIsHovered] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
   // Auto-scroll functionality for the banner - pause on hover/touch
   useEffect(() => {
