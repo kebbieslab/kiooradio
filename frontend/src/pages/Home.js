@@ -13,6 +13,30 @@ const Home = () => {
   const [latestNews, setLatestNews] = useState([]);
   const { t } = useTranslation();
 
+  // Photo showcase images with captions
+  const showcaseImages = [
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/jimaulr5_wide-view-of-Foya.jpg',
+      caption: 'The breathtaking hills of Foya, future home of Kioo Radio 98.1FM.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/6f4q1xma_Praying-over-Gue%CC%81cke%CC%81dou.JPG',
+      caption: 'Prayer over Guéckédou, Guinea—asking God to bless the reach of Kioo Radio across borders.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bh1ilom6_Telling-the-vision-of-Kioo.jpg',
+      caption: 'Sharing the vision of Kioo Radio with community leaders on Betche Hill.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ij8orxat_Broadcast-permit.jpg',
+      caption: 'Holding the official broadcast permit—marking a major milestone for the station.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/eeuacmrs_Trip-to-Foya-from-SL.JPG',
+      caption: 'Journeying through Sierra Leone to bring the Kioo Radio vision to life.'
+    }
+  ];
+
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
