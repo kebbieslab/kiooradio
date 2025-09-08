@@ -39,7 +39,7 @@ const PhotoShowcase = ({ onClose, images }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center photo-showcase-fade">
       <div className="relative w-full max-w-6xl mx-4 h-[80vh] max-h-[600px]">
         
         {/* Close Button */}
