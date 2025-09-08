@@ -4,7 +4,12 @@ import PhotoShowcase from './PhotoShowcase';
 const PhotoBanner = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showShowcase, setShowShowcase] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(() => {
+    // Check localStorage for closed state
+    return localStorage.getItem('kiooHeroClosed') !== 'true';
+  });
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   // Auto-scroll functionality for the banner
   useEffect(() => {
