@@ -52,6 +52,35 @@ const PhotoBanner = ({ images }) => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [currentIndex]);
 
+  // Touch/swipe handlers
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+    setIsHovered(true);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      goToNext();
+    } else if (isRightSwipe) {
+      goToPrevious();
+    }
+    
+    setIsHovered(false);
+  };
+
   const goToPrevious = () => {
     setIsPaused(true);
     setCurrentIndex(currentIndex === 0 ? images.length - 1 : currentIndex - 1);
