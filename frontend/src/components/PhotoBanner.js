@@ -162,7 +162,7 @@ const PhotoBanner = ({ images }) => {
                 >
                   <div className="bg-black/45 backdrop-blur-sm px-4 py-3 rounded-lg shadow-lg text-center">
                     <p 
-                      className="text-white font-black leading-tight text-shadow-lg"
+                      className="text-white font-normal leading-relaxed text-shadow-lg"
                       style={{ 
                         fontSize: 'clamp(16px, 2.6vw, 28px)',
                         textShadow: '2px 2px 4px rgba(0,0,0,0.8)'
