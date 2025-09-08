@@ -1305,6 +1305,11 @@ const CRM = () => {
             <CRMProjects crmAuth={localStorage.getItem('crmAuth')} />
           )}
 
+          {/* ClickUp CRM Integration */}
+          {currentView === 'clickup-crm' && (
+            <ClickUpCRM />
+          )}
+
           {/* Contact Detail Modal */}
           {selectedContact && (
             <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
