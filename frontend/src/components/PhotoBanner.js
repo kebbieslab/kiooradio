@@ -44,7 +44,7 @@ const PhotoBanner = ({ images }) => {
   return (
     <>
       {/* Photo Banner */}
-      <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden bg-black">
+      <div className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden bg-black photo-banner">
         
         {/* Close Button */}
         <button
