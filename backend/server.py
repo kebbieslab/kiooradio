@@ -6352,33 +6352,39 @@ class ProgramSearchRequest(BaseModel):
 # AI Helper Functions
 async def get_ai_client(model_type: str = "openai"):
     """Initialize AI client with Emergent LLM key"""
+    if not EMERGENT_LLM_AVAILABLE:
+        raise HTTPException(status_code=503, detail="AI service not available - Emergent LLM integration not configured")
+    
     api_key = os.environ.get('EMERGENT_LLM_KEY')
     if not api_key:
         raise HTTPException(status_code=500, detail="AI service not configured")
     
     session_id = f"kioo_program_assistant_{datetime.now().timestamp()}"
     
-    if model_type == "openai":
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=session_id,
-            system_message="You are an AI assistant for Kioo Radio. Help analyze, summarize, and enhance radio program content. Focus on faith-based content, community impact, and spiritual growth themes."
-        ).with_model("openai", "gpt-4o")
-    elif model_type == "claude":
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=session_id,
-            system_message="You are Claude, an AI assistant for Kioo Radio. Help analyze, summarize, and enhance faith-based radio program content with accuracy and cultural sensitivity."
-        ).with_model("anthropic", "claude-3-7-sonnet-20250219")
-    else:
-        # Default to OpenAI
-        chat = LlmChat(
-            api_key=api_key,
-            session_id=session_id,
-            system_message="You are an AI assistant for Kioo Radio. Help analyze, summarize, and enhance radio program content."
-        ).with_model("openai", "gpt-4o-mini")
-    
-    return chat
+    try:
+        if model_type == "openai":
+            chat = LlmChat(
+                api_key=api_key,
+                session_id=session_id,
+                system_message="You are an AI assistant for Kioo Radio. Help analyze, summarize, and enhance radio program content. Focus on faith-based content, community impact, and spiritual growth themes."
+            ).with_model("openai", "gpt-4o")
+        elif model_type == "claude":
+            chat = LlmChat(
+                api_key=api_key,
+                session_id=session_id,
+                system_message="You are Claude, an AI assistant for Kioo Radio. Help analyze, summarize, and enhance faith-based radio program content with accuracy and cultural sensitivity."
+            ).with_model("anthropic", "claude-3-7-sonnet-20250219")
+        else:
+            # Default to OpenAI
+            chat = LlmChat(
+                api_key=api_key,
+                session_id=session_id,
+                system_message="You are an AI assistant for Kioo Radio. Help analyze, summarize, and enhance radio program content."
+            ).with_model("openai", "gpt-4o-mini")
+        
+        return chat
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"AI service initialization failed: {str(e)}")
 
 async def ai_summarize_content(content: str, language: str = "en") -> str:
     """Generate AI summary of program content"""
