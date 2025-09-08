@@ -12,7 +12,7 @@ from datetime import datetime
 import secrets
 import os
 
-from .clickup_integration import ClickUpCRMService, Contact, get_clickup_service, ClickUpAPIError
+from clickup_integration import ClickUpCRMService, Contact, get_clickup_service, ClickUpAPIError
 
 # Router for ClickUp CRM endpoints
 clickup_router = APIRouter(prefix="/api/clickup", tags=["ClickUp CRM"])
