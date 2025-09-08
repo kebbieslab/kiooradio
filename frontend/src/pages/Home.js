@@ -60,8 +60,9 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       
+      {/* Photo Banner Showcase */}
+      <PhotoBanner images={showcaseImages} />
 
-      
       {/* Hero Section - Updated for Makona River Region */}
       <section className="relative bg-gradient-to-br from-kioo-primary via-kioo-secondary to-kioo-dark text-white py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
