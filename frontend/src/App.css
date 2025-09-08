@@ -436,3 +436,57 @@
     padding: 6px;
   }
 }
+
+/* Photo Banner Progress Animation */
+@keyframes progress {
+  0% { 
+    width: 0%; 
+  }
+  100% { 
+    width: 100%; 
+  }
+}
+
+/* Photo Banner Smooth Transitions */
+.photo-banner-transition {
+  transition: transform 1000ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Photo Showcase Fade In */
+.photo-showcase-fade {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile Photo Banner Optimizations */
+@media (max-width: 768px) {
+  .photo-banner {
+    height: 256px; /* Smaller on mobile */
+  }
+  
+  .photo-banner-caption {
+    font-size: 14px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-banner {
+    height: 200px; /* Even smaller on very small screens */
+  }
+  
+  .photo-banner-caption {
+    font-size: 12px;
+    padding: 12px;
+  }
+}
