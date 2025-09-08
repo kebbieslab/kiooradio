@@ -80,7 +80,7 @@ const PhotoBanner = ({ images }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 
                 {/* Caption */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 photo-banner-caption">
                   <p className="text-white text-sm md:text-lg font-medium leading-relaxed max-w-4xl">
                     {image.caption}
                   </p>
