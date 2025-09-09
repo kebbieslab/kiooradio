@@ -13,47 +13,52 @@ const Home = () => {
   const [latestNews, setLatestNews] = useState([]);
   const { t } = useTranslation();
 
-  // Photo showcase images - Selected 8 key images
+  // Photo showcase images - Updated captions and new 9th image
   const showcaseImages = [
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/jimaulr5_wide-view-of-Foya.jpg',
-      caption: "Foya's beautiful valley, the community we aim to reach.",
-      alt: "Foya's beautiful valley, the community we aim to reach."
+      caption: "Foya's beautiful view of Foya from our Betche Hill location. The community we aim to reach.",
+      alt: "Foya's beautiful view of Foya from our Betche Hill location. The community we aim to reach."
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/6f4q1xma_Praying-over-Gue%CC%81cke%CC%81dou.JPG',
-      caption: 'Prayer over Guéckédou, asking God to bless the reach across borders.',
-      alt: 'Prayer over Guéckédou, asking God to bless the reach across borders.'
+      caption: 'Prayer over Guéckédou. Asking God to bless the reach across borders.',
+      alt: 'Prayer over Guéckédou. Asking God to bless the reach across borders.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/eeuacmrs_Trip-to-Foya-from-SL.JPG',
-      caption: 'The tough road to reach remote listeners in the Makona region.',
-      alt: 'The tough road to reach remote listeners in the Makona region.'
+      caption: 'The tough road in Foya. This was during our visit to Foya in 2023 as we visit to survey sites for Kioo Radio.',
+      alt: 'The tough road in Foya. This was during our visit to Foya in 2023 as we visit to survey sites for Kioo Radio.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/ayowkboa_President-Groundbreaking.JPG',
-      caption: 'President Joseph N. Boakai breaking ground on December 24, 2025.',
-      alt: 'President Joseph N. Boakai breaking ground on December 24, 2025.'
+      caption: 'President Boakai groundbreaking for Kioo Radio. December 24, 2025.',
+      alt: 'President Boakai groundbreaking for Kioo Radio. December 24, 2025.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bke699qg_GroundBreaking-Pastor.JPG',
-      caption: 'Breaking ground together with prayer and the first shovel in Foya.',
-      alt: 'Breaking ground together with prayer and the first shovel in Foya.'
+      caption: 'Rev. John Lendor representing the Local Church during the groundbreaking ceremony.',
+      alt: 'Rev. John Lendor representing the Local Church during the groundbreaking ceremony.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/xvi1bi23_People-Crossing-Makona-to-Guinea.jpg',
-      caption: 'Communities crossing the Makona River, connecting hearts across borders.',
-      alt: 'Communities crossing the Makona River, connecting hearts across borders.'
+      caption: 'Communities crossing Makona River. Connecting hearts across borders.',
+      alt: 'Communities crossing Makona River. Connecting hearts across borders.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/63hmlkor_view-of-Makona-Gue%CC%81cke%CC%81dou.jpg',
-      caption: 'The beautiful Makona River region stretching into Guéckédou, Guinea.',
-      alt: 'The beautiful Makona River region stretching into Guéckédou, Guinea.'
+      caption: 'Makona River region view. Stretching into Guéckédou, Guinea.',
+      alt: 'Makona River region view. Stretching into Guéckédou, Guinea.'
     },
     {
       url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/dd62t4s1_view-of-Gue%CC%81cke%CC%81dou.jpg',
-      caption: 'Panoramic view of Guéckédou, one of our key broadcast destinations.',
-      alt: 'Panoramic view of Guéckédou, one of our key broadcast destinations.'
+      caption: 'Guéckédou Panorama. Key broadcast destination.',
+      alt: 'Guéckédou Panorama. Key broadcast destination.'
+    },
+    {
+      url: 'https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/r0aw3y37_Visit-to-Sierra-Leone.jpg',
+      caption: 'Visit to Sierra Leone to present Kioo Radio to Kissi Paramount Chief in Sierra Leone.',
+      alt: 'Visit to Sierra Leone to present Kioo Radio to Kissi Paramount Chief in Sierra Leone.'
     }
   ];
 
