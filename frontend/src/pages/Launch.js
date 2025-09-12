@@ -190,34 +190,43 @@ const Launch = () => {
         <h3 className="text-xl font-semibold text-gray-800 mb-4">📋 Visa Requirements</h3>
         <div className="space-y-4">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <h4 className="font-semibold text-green-800 mb-2">✅ Recommended: e-Visa</h4>
-            <p className="text-green-700 mb-3">Apply online and print your approval letter</p>
+            <h4 className="font-semibold text-green-800 mb-2">✅ Official Visa on Arrival (Recommended)</h4>
+            <p className="text-green-700 mb-3">Use the official government Visa on Arrival service</p>
             <div className="space-y-2">
               <a 
-                href="https://www.evisaliberia.org" 
+                href="https://www.visaonarrival.lis.gov.lr" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="block bg-green-600 text-white px-4 py-2 rounded text-center hover:bg-green-700 transition-colors"
               >
-                Official Liberia eVisa Portal
+                🏛️ Official Visa on Arrival Service
               </a>
               <a 
-                href="https://www.mfa.gov.lr/visa-information" 
+                href="https://www.evisaliberia.org" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="block bg-green-100 text-green-800 px-4 py-2 rounded text-center border border-green-300 hover:bg-green-200 transition-colors"
               >
-                Government eVisa Info Page
+                Alternative: eVisa Portal
               </a>
             </div>
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-semibold text-blue-800 mb-2">🏛️ Alternative Options</h4>
+            <h4 className="font-semibold text-blue-800 mb-2">🏛️ Additional Options</h4>
             <ul className="text-blue-700 space-y-1">
-              <li>• Visa on Arrival (print e-visa approval)</li>
-              <li>• Embassy applications (still accepted)</li>
+              <li>• Liberian Embassy applications (still accepted)</li>
               <li>• 3-year multiple-entry visa for U.S. citizens (USD $180)</li>
+            </ul>
+          </div>
+
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <h4 className="font-semibold text-orange-800 mb-2">🇸🇱 Sierra Leone Visa (Optional)</h4>
+            <p className="text-orange-700 mb-2">We may enter Sierra Leone as part of our outreach program.</p>
+            <ul className="text-orange-700 space-y-1 text-sm">
+              <li>• <strong>Cost:</strong> Additional $200 USD</li>
+              <li>• <strong>Processing:</strong> Can be arranged in Monrovia</li>
+              <li>• <strong>Recommendation:</strong> Reserve funds just in case</li>
             </ul>
           </div>
         </div>
