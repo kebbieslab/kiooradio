@@ -885,7 +885,7 @@ const Launch = () => {
                 🎉 Kioo Radio Launch Guest Guide
               </h1>
               <p className="text-xl opacity-90">
-                November 10-16, 2025 | Foya, Liberia
+                November 10-18, 2025 | Foya, Liberia
               </p>
             </div>
             <div className="mt-4 md:mt-0">
