@@ -213,11 +213,19 @@ const Launch = () => {
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-semibold text-blue-800 mb-2">🏛️ Additional Options</h4>
-            <ul className="text-blue-700 space-y-1">
-              <li>• Liberian Embassy applications (still accepted)</li>
-              <li>• 3-year multiple-entry visa for U.S. citizens (USD $180)</li>
-            </ul>
+            <h4 className="font-semibold text-blue-800 mb-2">🏛️ Embassy Applications</h4>
+            <p className="text-blue-700 mb-3">Apply through your nearest Liberian Embassy</p>
+            <div className="space-y-2">
+              <a 
+                href="https://www.liberianembassyus.org" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block bg-blue-600 text-white px-4 py-2 rounded text-center hover:bg-blue-700 transition-colors"
+              >
+                🇺🇸 Liberian Embassy USA
+              </a>
+              <p className="text-blue-600 text-sm">• 3-year multiple-entry visa for U.S. citizens (USD $180)</p>
+            </div>
           </div>
 
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
