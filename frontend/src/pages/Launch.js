@@ -104,10 +104,10 @@ const Launch = () => {
           </div>
           
           <div className="flex items-start space-x-4 p-4 bg-green-50 rounded-lg">
-            <div className="text-2xl">📻</div>
+            <div className="text-2xl">😌</div>
             <div>
-              <h4 className="font-semibold text-green-800">November 11 - Orientation</h4>
-              <p className="text-green-700">Welcome orientation + optional visit to Vox Radio station</p>
+              <h4 className="font-semibold text-green-800">November 11 - Rest Day</h4>
+              <p className="text-green-700">Rest and recovery + optional visit to VOX Radio station</p>
             </div>
           </div>
 
@@ -120,34 +120,50 @@ const Launch = () => {
           </div>
 
           <div className="flex items-start space-x-4 p-4 bg-purple-50 rounded-lg">
-            <div className="text-2xl">🙏</div>
+            <div className="text-2xl">🎉</div>
             <div>
               <h4 className="font-semibold text-purple-800">November 13 - Dedication Ceremony</h4>
-              <p className="text-purple-700">Official dedication ceremony at Betche Hill - the heart of our celebration!</p>
+              <p className="text-purple-700">Ribbon cutting, unveiling, and first live broadcast - the heart of our celebration!</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-4 p-4 bg-teal-50 rounded-lg">
-            <div className="text-2xl">❤️</div>
+            <div className="text-2xl">🕊️</div>
             <div>
-              <h4 className="font-semibold text-teal-800">November 14 - Community Outreach</h4>
-              <p className="text-teal-700">Evangelism outreach, Unity Prayer at Makona River, Soccer Tournament</p>
+              <h4 className="font-semibold text-teal-800">November 14 - Memorial & Outreach</h4>
+              <p className="text-teal-700">Evangelism, prayer at war memorial site, Unity Prayer at Makona River, Soccer Tournament</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-4 p-4 bg-pink-50 rounded-lg">
             <div className="text-2xl">🎵</div>
             <div>
-              <h4 className="font-semibold text-pink-800">November 15 - Gospel Concert</h4>
-              <p className="text-pink-700">Celebration through music and worship with local and visiting artists</p>
+              <h4 className="font-semibold text-pink-800">November 15 - International Gospel Concert</h4>
+              <p className="text-pink-700">Artists from Liberia, Guinea, and Sierra Leone in celebration through music</p>
             </div>
           </div>
 
           <div className="flex items-start space-x-4 p-4 bg-indigo-50 rounded-lg">
             <div className="text-2xl">⛪</div>
             <div>
-              <h4 className="font-semibold text-indigo-800">November 16 - Farewell Service</h4>
-              <p className="text-indigo-700">Morning church service in Foya, followed by departures</p>
+              <h4 className="font-semibold text-indigo-800">November 16 - Cross-Border Worship</h4>
+              <p className="text-indigo-700">Worship services in Foya and Koindu, Sierra Leone</p>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+            <div className="text-2xl">🔄</div>
+            <div>
+              <h4 className="font-semibold text-gray-800">November 17 - Return Journey</h4>
+              <p className="text-gray-700">Convoy returns to Monrovia for final preparations</p>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-4 p-4 bg-red-50 rounded-lg">
+            <div className="text-2xl">✈️</div>
+            <div>
+              <h4 className="font-semibold text-red-800">November 18 - International Departures</h4>
+              <p className="text-red-700">Farewell as international guests depart from Roberts International Airport</p>
             </div>
           </div>
         </div>
