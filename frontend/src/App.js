@@ -111,6 +111,7 @@ function App() {
             <Route path="/admin-dashboard" element={<Dashboard />} />
             <Route path="/dashboard" element={<PresentersDashboard />} />
             <Route path="/kioo-presenters-dashboard-1981" element={<PresentersDashboard />} />
+            <Route path="/launch" element={<Launch />} />
           </Routes>
         </main>
 
