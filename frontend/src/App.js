@@ -28,6 +28,7 @@ import ProjectDetail from "./pages/ProjectDetail";
 import ProgramAssistant from "./pages/ProgramAssistant";
 import CRM from "./pages/CRM";
 import Dashboard from "./pages/Dashboard";
+import Launch from "./pages/Launch";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const STREAM_URL = process.env.REACT_APP_STREAM_URL || "https://radio.galcom.org/?station=VOXRadio";
