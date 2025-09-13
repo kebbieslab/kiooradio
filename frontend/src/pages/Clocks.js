@@ -182,13 +182,13 @@ const Clocks = () => {
   // Helper function to get translated day names
   const getDayTranslation = (dayCode) => {
     const dayTranslations = {
-      'Mon': t('clocks.mon'),
-      'Tue': t('clocks.tue'),
-      'Wed': t('clocks.wed'),
-      'Thu': t('clocks.thu'),
-      'Fri': t('clocks.fri'),
-      'Sat': t('clocks.sat'),
-      'Sun': t('clocks.sun')
+      'Mon': t('clocksMon'),
+      'Tue': t('clocksTue'),
+      'Wed': t('clocksWed'),
+      'Thu': t('clocksThu'),
+      'Fri': t('clocksFri'),
+      'Sat': t('clocksSat'),
+      'Sun': t('clocksSun')
     };
     return dayTranslations[dayCode] || dayCode;
   };
@@ -196,10 +196,10 @@ const Clocks = () => {
   // Helper function to get translated language names
   const getLanguageTranslation = (langCode) => {
     const langTranslations = {
-      'kissi': t('clocks.kissi'),
-      'en': t('clocks.english'),
-      'fr': t('clocks.french'),
-      'ev': t('clocks.evangelistic')
+      'kissi': t('clocksKissi'),
+      'en': t('clocksEnglish'),
+      'fr': t('clocksFrench'),
+      'ev': t('clocksEvangelistic')
     };
     return langTranslations[langCode] || langCode;
   };
