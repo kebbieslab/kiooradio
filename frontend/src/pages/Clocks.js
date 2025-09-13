@@ -358,9 +358,9 @@ const Clocks = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-              🎵 Kioo Radio 98.1FM — {t('clocks.title')}
+              🎵 Kioo Radio 98.1FM — {t('clocksTitle')}
             </h1>
-            <p className="text-lg text-gray-600 mb-4">{t('clocks.subtitle')}</p>
+            <p className="text-lg text-gray-600 mb-4">{t('clocksSubtitle')}</p>
             
             {/* Current Time Display */}
             <div className="inline-flex items-center bg-kioo-primary text-white px-4 py-2 rounded-full text-sm font-medium">
