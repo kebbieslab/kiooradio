@@ -381,7 +381,7 @@ const Clocks = () => {
             <div className="flex items-center">
               {nextProgram && (
                 <>
-                  <span className="font-medium">NEXT UP:</span>
+                  <span className="font-medium">{t('clocks.nextUp')}:</span>
                   <span className="ml-2">
                     {nextProgram.title} at {nextProgram.start}
                   </span>
