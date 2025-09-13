@@ -9,12 +9,26 @@ const ClocksNew = () => {
   const [selectedSegment, setSelectedSegment] = useState(null);
   const [showPanel, setShowPanel] = useState(false);
 
-  // Language data with broadcast percentages
+  // Language data with exact broadcast percentages (totaling 100%)
   const languageData = [
     { code: 'kissi', name: 'Kissi', percentage: 41.7, color: '#148026', hours: 70 },
     { code: 'en', name: 'English', percentage: 25.0, color: '#1b5f9e', hours: 42 },
-    { code: 'fr', name: 'French', percentage: 16.7, color: '#c47a00', hours: 28 },
+    { code: 'fr', name: 'French', percentage: 16.6, color: '#c47a00', hours: 28 },
     { code: 'ev', name: 'Evangelistic Focus (Fula/Mandingo/Gbandi)', percentage: 16.7, color: '#7b3fb2', hours: 28 }
+  ];
+
+  // 24-hour programming schedule with time slots
+  const dailySchedule = [
+    { start: 0, end: 2, lang: 'fr', program: 'Overnight French Programming', hours: 2 },
+    { start: 2, end: 4, lang: 'en', program: 'Overnight English Programming', hours: 2 },
+    { start: 4, end: 6, lang: 'kissi', program: 'Pre-Dawn Worship (Kissi)', hours: 2 },
+    { start: 6, end: 10, lang: 'kissi', program: 'Morning Devotion & Community', hours: 4 },
+    { start: 10, end: 12, lang: 'en', program: 'Magazine & News (EN)', hours: 2 },
+    { start: 12, end: 14, lang: 'fr', program: 'Magazine & News (FR)', hours: 2 },
+    { start: 14, end: 16, lang: 'ev', program: 'Evangelistic Programs', hours: 2 },
+    { start: 16, end: 18, lang: 'en', program: 'Drive Time (EN)', hours: 2 },
+    { start: 18, end: 22, lang: 'kissi', program: 'Evening Block (Kissi)', hours: 4 },
+    { start: 22, end: 24, lang: 'ev', program: 'Evening Outreach (EV)', hours: 2 }
   ];
 
   // Create donut chart segments
