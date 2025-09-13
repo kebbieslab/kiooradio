@@ -364,7 +364,7 @@ const Clocks = () => {
               {currentLiveProgram ? (
                 <>
                   <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse mr-3"></div>
-                  <span className="font-bold text-lg">LIVE NOW:</span>
+                  <span className="font-bold text-lg">{t('clocks.liveNow')}:</span>
                   <span className="ml-2 text-lg">
                     {currentLiveProgram.title} ({currentLiveProgram.start} - {currentLiveProgram.end})
                   </span>
@@ -372,7 +372,7 @@ const Clocks = () => {
               ) : (
                 <>
                   <div className="w-3 h-3 bg-gray-400 rounded-full mr-3"></div>
-                  <span className="text-lg">No live program currently</span>
+                  <span className="text-lg">{t('clocks.noLiveProgram')}</span>
                 </>
               )}
             </div>
