@@ -609,20 +609,20 @@ const Clocks = () => {
                     className="flex-1 bg-kioo-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-kioo-primary/90 transition-colors"
                     onClick={() => {
                       // Add to calendar functionality would go here
-                      alert('Add to Calendar feature coming soon!');
+                      alert(t('clocks.addToCalendarSoon'));
                     }}
                   >
-                    📅 Add to Calendar
+                    📅 {t('clocks.addToCalendar')}
                   </button>
                   <button 
                     className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-300 transition-colors"
                     onClick={() => {
                       const url = `${window.location.href}?day=${selectedBlock.actualDay}&start=${selectedBlock.start}`;
                       navigator.clipboard.writeText(url);
-                      alert('Link copied to clipboard!');
+                      alert(t('clocks.linkCopied'));
                     }}
                   >
-                    🔗 Copy Link
+                    🔗 {t('clocks.copyLink')}
                   </button>
                 </div>
               </div>
