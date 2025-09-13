@@ -6288,20 +6288,19 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
 def main():
     tester = KiooRadioAPITester()
     
-    # Run the specific tests requested: Weather Forecast and Program Schedule Updates
-    print("🎵 KIOO RADIO API - WEATHER & PROGRAM SCHEDULE TESTING")
-    print("=" * 60)
-    print("Focus: Weather Forecast Endpoints & Program Schedule Updates")
-    print("=" * 60)
+    # Run the specific test requested: Interactive Programming Clocks Server Time Endpoint
+    print("🎵 KIOO RADIO API - INTERACTIVE PROGRAMMING CLOCKS TESTING")
+    print("=" * 70)
+    print("Focus: /api/server-time endpoint for Interactive Programming Clocks")
+    print("=" * 70)
     
-    # Run the specific test suites
-    weather_success = tester.test_weather_forecast_endpoints()
-    program_success = tester.test_program_schedule_updates()
+    # Run the server time endpoint test
+    server_time_success = tester.test_server_time_endpoint()
     
     # Print final summary
-    print(f"\n" + "=" * 60)
-    print(f"📊 WEATHER & PROGRAM SCHEDULE TEST SUMMARY")
-    print(f"=" * 60)
+    print(f"\n" + "=" * 70)
+    print(f"📊 INTERACTIVE PROGRAMMING CLOCKS SERVER TIME TEST SUMMARY")
+    print(f"=" * 70)
     print(f"Total tests run: {tester.tests_run}")
     print(f"Tests passed: {tester.tests_passed}")
     print(f"Tests failed: {tester.tests_run - tester.tests_passed}")
@@ -6314,9 +6313,9 @@ def main():
     else:
         print(f"\n✅ ALL TESTS PASSED!")
     
-    print(f"\n🎵 Weather & Program Schedule testing completed!")
+    print(f"\n🎵 Interactive Programming Clocks Server Time testing completed!")
     
-    return 0 if (weather_success and program_success) else 1
+    return 0 if server_time_success else 1
 
 if __name__ == "__main__":
     sys.exit(main())
