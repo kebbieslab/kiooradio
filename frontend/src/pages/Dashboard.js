@@ -10,15 +10,42 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
 
+  // Language detection and setup
+  useEffect(() => {
+    // Auto-select language based on browser language
+    const browserLang = navigator.language.toLowerCase();
+    const savedLang = localStorage.getItem('kioo_lang');
+    
+    if (savedLang) {
+      setLanguage(savedLang);
+    } else if (browserLang.startsWith('fr')) {
+      setLanguage('fr');
+      localStorage.setItem('kioo_lang', 'fr');
+    } else {
+      setLanguage('en');
+      localStorage.setItem('kioo_lang', 'en');
+    }
+  }, []);
+
+  // Update current time every minute
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(new Date());
+    };
+    
+    const interval = setInterval(updateTime, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     
     if (credentials.username === 'admin' && credentials.password === 'kioo2025!') {
       setIsAuthenticated(true);
-      loadDashboardData();
+      loadFarmerWeatherData();
     } else {
-      setError('Invalid username or password');
+      setError(language === 'fr' ? 'Nom d\'utilisateur ou mot de passe incorrect' : 'Invalid username or password');
     }
   };
 
