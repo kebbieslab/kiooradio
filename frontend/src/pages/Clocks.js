@@ -530,7 +530,7 @@ const Clocks = () => {
                     <div className={`text-xs font-medium mt-1 ${
                       total.drift > 0 ? 'text-orange-600' : 'text-blue-600'
                     }`}>
-                      {total.drift > 0 ? '+' : ''}{total.drift}% from target
+                      {total.drift > 0 ? '+' : ''}{total.drift}% {t('clocks.fromTarget')}
                     </div>
                   )}
                 </div>
