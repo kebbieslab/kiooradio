@@ -750,18 +750,45 @@ const ClocksNew = () => {
                   {/* Show related time slots for language selections */}
                   {selectedSegment.code && (
                     <div className="bg-gray-50 rounded-lg p-4">
-                      <h5 className="font-medium text-gray-900 mb-2">Daily Time Slots</h5>
-                      <div className="space-y-2">
+                      <h5 className="font-medium text-gray-900 mb-2">Daily Time Slots ({selectedSegment.name})</h5>
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
                         {dailySchedule
                           .filter(slot => slot.lang === selectedSegment.code)
                           .map((slot, index) => (
-                            <div key={index} className="flex justify-between items-center text-sm">
-                              <span className="font-medium">
-                                {String(slot.start).padStart(2, '0')}:00 - {String(slot.end).padStart(2, '0')}:00
-                              </span>
-                              <span className="text-gray-600">{slot.program}</span>
+                            <div key={index} className="flex justify-between items-start text-sm p-2 hover:bg-white rounded">
+                              <div className="flex-1">
+                                <div className="font-medium">
+                                  {slot.startTime} - {slot.endTime}
+                                </div>
+                                <div className="text-gray-600 text-xs">{slot.program}</div>
+                                {slot.type && (
+                                  <div className="text-gray-500 text-xs italic">{slot.type}</div>
+                                )}
+                              </div>
+                              {slot.special && (
+                                <span className="bg-yellow-100 text-yellow-800 px-1 py-0.5 rounded text-xs flex-shrink-0 ml-2">
+                                  ⭐
+                                </span>
+                              )}
                             </div>
                           ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Show program type information */}
+                  {selectedSegment.type && (
+                    <div className="bg-green-50 rounded-lg p-4">
+                      <h5 className="font-medium text-gray-900 mb-2">Program Type</h5>
+                      <div className="flex items-center space-x-2">
+                        <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
+                          {selectedSegment.type}
+                        </span>
+                        {selectedSegment.special && (
+                          <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">
+                            ⭐ Special Program
+                          </span>
+                        )}
                       </div>
                     </div>
                   )}
