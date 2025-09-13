@@ -587,7 +587,7 @@ const Clocks = () => {
               <div className="flex-1 px-6 py-4 overflow-y-auto">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">{t('clocks.title')}</label>
+                    <label className="text-sm font-medium text-gray-600">{t('clocks.detailTitle')}</label>
                     <p className="text-lg font-medium text-gray-900">{selectedBlock.title}</p>
                   </div>
                   
