@@ -598,7 +598,7 @@ const Clocks = () => {
                         className="w-4 h-4 rounded-full mr-2" 
                         style={{ backgroundColor: selectedBlock.langInfo?.color }}
                       ></div>
-                      <p className="text-gray-900">{selectedBlock.langInfo?.name}</p>
+                      <p className="text-gray-900">{getLanguageTranslation(selectedBlock.lang)}</p>
                     </div>
                   </div>
                   
