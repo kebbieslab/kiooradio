@@ -444,7 +444,7 @@ const Clocks = () => {
                     className="w-3 h-3 rounded-full mr-1" 
                     style={{ backgroundColor: lang.color }}
                   ></div>
-                  <span className="text-sm">{lang.name}</span>
+                  <span className="text-sm">{getLanguageTranslation(lang.code)}</span>
                 </label>
               ))}
             </div>
