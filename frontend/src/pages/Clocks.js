@@ -365,7 +365,7 @@ const Clocks = () => {
             {/* Current Time Display */}
             <div className="inline-flex items-center bg-kioo-primary text-white px-4 py-2 rounded-full text-sm font-medium">
               <span className="mr-2">🕐</span>
-              {t('clocks.currentTime')}: {currentTime.toLocaleTimeString('en-US', { 
+              {t('clocksCurrentTime')}: {currentTime.toLocaleTimeString('en-US', { 
                 timeZone: 'Africa/Monrovia',
                 hour12: false,
                 hour: '2-digit',
