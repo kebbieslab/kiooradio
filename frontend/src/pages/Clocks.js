@@ -672,6 +672,7 @@ const Clocks = () => {
                     className="flex-1 bg-kioo-primary text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-kioo-primary/90 transition-colors"
                     onClick={() => {
                       // Add to calendar functionality would go here
+                      // eslint-disable-next-line no-undef
                       alert(t('clocksAddToCalendarSoon'));
                     }}
                   >
