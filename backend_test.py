@@ -82,6 +82,310 @@ class KiooRadioAPITester:
         # Test coverage areas
         self.run_test("Coverage Areas", "GET", "coverage", 200)
 
+    def test_server_time_endpoint(self):
+        """COMPREHENSIVE TEST: Interactive Programming Clocks Server Time Endpoint"""
+        print("\n=== COMPREHENSIVE SERVER TIME ENDPOINT TESTING ===")
+        print("Testing: GET /api/server-time for Interactive Programming Clocks feature")
+        print("Timezone: Africa/Monrovia (GMT+0, no DST)")
+        print("Authentication: Public endpoint (no auth required)")
+        print("Usage: Real-time clock synchronization every 30 seconds")
+        
+        import time
+        from datetime import datetime, timezone
+        
+        # VERIFICATION 1: Test Basic Functionality
+        print(f"\n🔍 VERIFICATION 1: Basic Server Time Functionality")
+        
+        success, time_response = self.run_test("Server Time Endpoint", "GET", "server-time", 200)
+        
+        if success:
+            print(f"✅ Server time endpoint accessible")
+            
+            # Verify response structure
+            required_fields = ['utc_iso', 'monrovia_iso', 'monrovia_formatted', 'timezone', 'timezone_offset', 'timestamp']
+            missing_fields = [field for field in required_fields if field not in time_response]
+            
+            if missing_fields:
+                print(f"❌ Server Time: Missing required fields: {missing_fields}")
+                self.failed_tests.append(f"Server Time - Missing fields: {missing_fields}")
+            else:
+                print(f"✅ Server Time: All required fields present")
+                print(f"   UTC ISO: {time_response.get('utc_iso')}")
+                print(f"   Monrovia ISO: {time_response.get('monrovia_iso')}")
+                print(f"   Monrovia Formatted: {time_response.get('monrovia_formatted')}")
+                print(f"   Timezone: {time_response.get('timezone')}")
+                print(f"   Timezone Offset: {time_response.get('timezone_offset')}")
+                print(f"   Timestamp: {time_response.get('timestamp')}")
+        else:
+            print(f"❌ Server time endpoint failed")
+            self.failed_tests.append("Server Time - Endpoint failed")
+            return False
+        
+        # VERIFICATION 2: Test Timezone Accuracy (Liberia = GMT+0)
+        print(f"\n🔍 VERIFICATION 2: Timezone Conversion Accuracy")
+        
+        if time_response:
+            utc_iso = time_response.get('utc_iso')
+            monrovia_iso = time_response.get('monrovia_iso')
+            timezone_name = time_response.get('timezone')
+            timezone_offset = time_response.get('timezone_offset')
+            
+            # Verify timezone information
+            if timezone_name == "Africa/Monrovia":
+                print(f"✅ Correct timezone: {timezone_name}")
+            else:
+                print(f"❌ Incorrect timezone: expected 'Africa/Monrovia', got '{timezone_name}'")
+                self.failed_tests.append("Server Time - Incorrect timezone name")
+            
+            if timezone_offset == "+00:00":
+                print(f"✅ Correct timezone offset: {timezone_offset} (GMT+0)")
+            else:
+                print(f"❌ Incorrect timezone offset: expected '+00:00', got '{timezone_offset}'")
+                self.failed_tests.append("Server Time - Incorrect timezone offset")
+            
+            # Verify UTC and Monrovia times are consistent (should be same for GMT+0)
+            try:
+                if utc_iso and monrovia_iso:
+                    # Parse ISO timestamps
+                    utc_time = datetime.fromisoformat(utc_iso.replace('Z', '+00:00'))
+                    monrovia_time = datetime.fromisoformat(monrovia_iso)
+                    
+                    # Convert both to UTC for comparison
+                    utc_time_utc = utc_time.astimezone(timezone.utc)
+                    monrovia_time_utc = monrovia_time.astimezone(timezone.utc)
+                    
+                    # They should be the same time (Liberia is GMT+0)
+                    time_diff = abs((utc_time_utc - monrovia_time_utc).total_seconds())
+                    
+                    if time_diff < 2:  # Allow 2 second difference for processing time
+                        print(f"✅ UTC and Monrovia times consistent (diff: {time_diff:.1f}s)")
+                    else:
+                        print(f"❌ UTC and Monrovia times inconsistent (diff: {time_diff:.1f}s)")
+                        self.failed_tests.append("Server Time - UTC/Monrovia time inconsistency")
+                else:
+                    print(f"❌ Missing UTC or Monrovia ISO timestamps")
+                    self.failed_tests.append("Server Time - Missing ISO timestamps")
+            except Exception as e:
+                print(f"❌ Error parsing timestamps: {e}")
+                self.failed_tests.append(f"Server Time - Timestamp parsing error: {e}")
+        
+        # VERIFICATION 3: Test Format Consistency
+        print(f"\n🔍 VERIFICATION 3: Format Consistency")
+        
+        if time_response:
+            monrovia_formatted = time_response.get('monrovia_formatted')
+            
+            # Verify format is "HH:mm GMT"
+            if monrovia_formatted:
+                import re
+                format_pattern = r'^\d{2}:\d{2} GMT$'
+                
+                if re.match(format_pattern, monrovia_formatted):
+                    print(f"✅ Correct format: '{monrovia_formatted}' matches 'HH:mm GMT'")
+                else:
+                    print(f"❌ Incorrect format: '{monrovia_formatted}' should match 'HH:mm GMT'")
+                    self.failed_tests.append("Server Time - Incorrect formatted time format")
+                
+                # Verify the formatted time matches the ISO time
+                try:
+                    monrovia_iso = time_response.get('monrovia_iso')
+                    if monrovia_iso:
+                        monrovia_dt = datetime.fromisoformat(monrovia_iso)
+                        expected_format = monrovia_dt.strftime('%H:%M GMT')
+                        
+                        if monrovia_formatted == expected_format:
+                            print(f"✅ Formatted time matches ISO time")
+                        else:
+                            print(f"❌ Formatted time mismatch: expected '{expected_format}', got '{monrovia_formatted}'")
+                            self.failed_tests.append("Server Time - Formatted time doesn't match ISO")
+                except Exception as e:
+                    print(f"❌ Error verifying formatted time: {e}")
+                    self.failed_tests.append(f"Server Time - Format verification error: {e}")
+            else:
+                print(f"❌ Missing formatted time")
+                self.failed_tests.append("Server Time - Missing formatted time")
+            
+            # Verify timestamp is numeric
+            timestamp = time_response.get('timestamp')
+            if isinstance(timestamp, (int, float)):
+                print(f"✅ Timestamp is numeric: {timestamp}")
+                
+                # Verify timestamp is reasonable (within last minute)
+                current_time = time.time()
+                time_diff = abs(current_time - timestamp)
+                
+                if time_diff < 60:  # Within 1 minute
+                    print(f"✅ Timestamp is current (diff: {time_diff:.1f}s)")
+                else:
+                    print(f"❌ Timestamp seems outdated (diff: {time_diff:.1f}s)")
+                    self.failed_tests.append("Server Time - Timestamp not current")
+            else:
+                print(f"❌ Timestamp should be numeric, got {type(timestamp)}")
+                self.failed_tests.append("Server Time - Timestamp not numeric")
+        
+        # VERIFICATION 4: Test Public Access (No Authentication Required)
+        print(f"\n🔍 VERIFICATION 4: Public Access Verification")
+        
+        # Test that server-time endpoint is publicly accessible (no auth required)
+        print(f"   Testing server-time endpoint without authentication...")
+        
+        success, _ = self.run_test("Server Time - No Auth", "GET", "server-time", 200)
+        if success:
+            print(f"✅ Server time is publicly accessible")
+        else:
+            print(f"❌ Server time should be publicly accessible")
+            self.failed_tests.append("Server Time Access - Should be public")
+        
+        # Verify it doesn't require admin credentials
+        admin_auth = ('admin', 'kioo2025!')
+        success, auth_response = self.run_test("Server Time - With Auth", "GET", "server-time", 200, auth=admin_auth)
+        if success:
+            print(f"✅ Server time works with authentication (optional)")
+            
+            # Response should be identical whether authenticated or not
+            if auth_response == time_response:
+                print(f"✅ Response identical with/without auth")
+            else:
+                print(f"⚠️  Response differs with authentication (may be expected)")
+        else:
+            print(f"❌ Server time should work with authentication")
+            self.failed_tests.append("Server Time Access - Should work with auth")
+        
+        # VERIFICATION 5: Test Error Handling and Fallback
+        print(f"\n🔍 VERIFICATION 5: Error Handling and Fallback")
+        
+        # Check if there's an error field in the response (indicates fallback to UTC)
+        if time_response and 'error' in time_response:
+            error_msg = time_response.get('error')
+            timezone_name = time_response.get('timezone')
+            
+            print(f"⚠️  Fallback mode detected: {error_msg}")
+            
+            if timezone_name == "UTC":
+                print(f"✅ Proper fallback to UTC when timezone conversion fails")
+            else:
+                print(f"❌ Should fallback to UTC, got {timezone_name}")
+                self.failed_tests.append("Server Time - Incorrect fallback timezone")
+        else:
+            print(f"✅ No error detected - timezone conversion working normally")
+        
+        # VERIFICATION 6: Test Performance and Response Consistency
+        print(f"\n🔍 VERIFICATION 6: Performance and Response Consistency")
+        
+        # Test response time (should be fast for real-time synchronization)
+        response_times = []
+        
+        for i in range(3):
+            start_time = time.time()
+            success, _ = self.run_test(f"Server Time - Performance Test {i+1}", "GET", "server-time", 200)
+            response_time = time.time() - start_time
+            response_times.append(response_time)
+            
+            if success:
+                print(f"   Test {i+1}: {response_time:.3f}s")
+            else:
+                print(f"   Test {i+1}: Failed")
+                self.failed_tests.append(f"Server Time Performance - Test {i+1} failed")
+        
+        if response_times:
+            avg_response_time = sum(response_times) / len(response_times)
+            max_response_time = max(response_times)
+            
+            print(f"✅ Average response time: {avg_response_time:.3f}s")
+            print(f"✅ Maximum response time: {max_response_time:.3f}s")
+            
+            # Should respond quickly for real-time use (within 2 seconds)
+            if max_response_time < 2.0:
+                print(f"✅ Response times acceptable for real-time synchronization")
+            else:
+                print(f"⚠️  Response times may be slow for real-time use (max: {max_response_time:.3f}s)")
+        
+        # Test consistency across multiple calls
+        print(f"\n   Testing response consistency...")
+        
+        success1, response1 = self.run_test("Server Time - Consistency Test 1", "GET", "server-time", 200)
+        time.sleep(1)  # Wait 1 second
+        success2, response2 = self.run_test("Server Time - Consistency Test 2", "GET", "server-time", 200)
+        
+        if success1 and success2:
+            # Timestamps should be different (time progressed)
+            timestamp1 = response1.get('timestamp', 0)
+            timestamp2 = response2.get('timestamp', 0)
+            
+            time_progression = timestamp2 - timestamp1
+            
+            if 0.5 <= time_progression <= 2.0:  # Should be around 1 second
+                print(f"✅ Time progression consistent: {time_progression:.3f}s")
+            else:
+                print(f"❌ Time progression inconsistent: {time_progression:.3f}s")
+                self.failed_tests.append("Server Time - Inconsistent time progression")
+            
+            # Other fields should have consistent format
+            timezone1 = response1.get('timezone')
+            timezone2 = response2.get('timezone')
+            
+            if timezone1 == timezone2:
+                print(f"✅ Timezone consistent across calls: {timezone1}")
+            else:
+                print(f"❌ Timezone inconsistent: {timezone1} vs {timezone2}")
+                self.failed_tests.append("Server Time - Inconsistent timezone")
+        
+        # VERIFICATION 7: Test Data Types and Validation
+        print(f"\n🔍 VERIFICATION 7: Data Types and Validation")
+        
+        if time_response:
+            # Verify all string fields are strings
+            string_fields = ['utc_iso', 'monrovia_iso', 'monrovia_formatted', 'timezone', 'timezone_offset']
+            for field in string_fields:
+                value = time_response.get(field)
+                if isinstance(value, str):
+                    print(f"   ✅ {field}: String type ✓")
+                else:
+                    print(f"   ❌ {field}: Expected string, got {type(value)}")
+                    self.failed_tests.append(f"Server Time - {field} wrong type")
+            
+            # Verify timestamp is numeric
+            timestamp = time_response.get('timestamp')
+            if isinstance(timestamp, (int, float)):
+                print(f"   ✅ timestamp: Numeric type ✓")
+            else:
+                print(f"   ❌ timestamp: Expected numeric, got {type(timestamp)}")
+                self.failed_tests.append("Server Time - timestamp wrong type")
+            
+            # Verify ISO format validity
+            iso_fields = ['utc_iso', 'monrovia_iso']
+            for field in iso_fields:
+                iso_value = time_response.get(field)
+                if iso_value:
+                    try:
+                        datetime.fromisoformat(iso_value.replace('Z', '+00:00'))
+                        print(f"   ✅ {field}: Valid ISO format ✓")
+                    except ValueError:
+                        print(f"   ❌ {field}: Invalid ISO format: {iso_value}")
+                        self.failed_tests.append(f"Server Time - {field} invalid ISO format")
+        
+        # Final summary for Server Time System
+        print(f"\n📊 SERVER TIME ENDPOINT VERIFICATION SUMMARY:")
+        print(f"   Endpoint Access: {'✅ WORKING' if len([t for t in self.failed_tests if 'endpoint failed' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Response Structure: {'✅ COMPLETE' if len([t for t in self.failed_tests if 'missing fields' in t.lower()]) == 0 else '❌ INCOMPLETE'}")
+        print(f"   Timezone Accuracy: {'✅ CORRECT' if len([t for t in self.failed_tests if 'timezone' in t.lower() and ('incorrect' in t.lower() or 'inconsistent' in t.lower())]) == 0 else '❌ ISSUES'}")
+        print(f"   Format Consistency: {'✅ VALID' if len([t for t in self.failed_tests if 'format' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Public Access: {'✅ WORKING' if len([t for t in self.failed_tests if 'should be public' in t.lower()]) == 0 else '❌ RESTRICTED'}")
+        print(f"   Error Handling: {'✅ IMPLEMENTED' if len([t for t in self.failed_tests if 'fallback' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Performance: {'✅ ACCEPTABLE' if len([t for t in self.failed_tests if 'performance' in t.lower()]) == 0 else '❌ SLOW'}")
+        print(f"   Data Types: {'✅ VALID' if len([t for t in self.failed_tests if 'wrong type' in t.lower()]) == 0 else '❌ ISSUES'}")
+        
+        if time_response:
+            print(f"   Current Liberia Time: {time_response.get('monrovia_formatted', 'N/A')}")
+            print(f"   Timezone: {time_response.get('timezone', 'N/A')} ({time_response.get('timezone_offset', 'N/A')})")
+            print(f"   Average Response Time: {sum(response_times)/len(response_times):.3f}s" if response_times else "N/A")
+        
+        print(f"\n✅ Server Time Endpoint testing completed!")
+        server_time_issues = len([t for t in self.failed_tests if any(x in t.lower() for x in ['server time', 'timezone', 'timestamp'])])
+        print(f"   Total Server Time Issues: {server_time_issues}")
+        
+        return server_time_issues == 0
+
     def test_weather_forecast_endpoints(self):
         """COMPREHENSIVE TEST: Weather Forecast Backend Endpoints"""
         print("\n=== COMPREHENSIVE WEATHER FORECAST TESTING ===")
