@@ -1086,7 +1086,51 @@ export const labels = {
     weatherForecast: "Prévisions Météorologiques",
     currentWeather: "Météo Actuelle",
     twoDayForecast: "Prédictions Météo 2 Jours",
-    updated: "Mis à jour"
+    updated: "Mis à jour",
+    
+    // Interactive Programming Clocks
+    "clocks.title": "Horloges de Programmation Hebdomadaire",
+    "clocks.subtitle": "Consultez la grille de programmation hebdomadaire de Kioo Radio avec des horloges interactives montrant les émissions en direct et à venir",
+    "clocks.currentTime": "Heure Actuelle (Libéria)",
+    "clocks.liveNow": "EN DIRECT",
+    "clocks.nextUp": "SUIVANT",
+    "clocks.noLiveProgram": "Aucun programme en direct actuellement",
+    "clocks.filterByLanguage": "Filtrer par Langue",
+    "clocks.searchPrograms": "Rechercher des programmes...",
+    "clocks.clearFilters": "Effacer les Filtres",
+    "clocks.weeklySchedule": "Grille de Programmation Hebdomadaire",
+    "clocks.weeklyTotals": "Totaux Hebdomadaires",
+    "clocks.programDetails": "Détails du Programme",
+    "clocks.title": "Titre",
+    "clocks.language": "Langue",
+    "clocks.day": "Jour",
+    "clocks.time": "Heure",
+    "clocks.hourlyBreakdown": "Répartition Horaire",
+    "clocks.addToCalendar": "Ajouter au Calendrier",
+    "clocks.copyLink": "Copier le Lien",
+    "clocks.addToCalendarSoon": "Fonction Ajouter au Calendrier bientôt disponible!",
+    "clocks.linkCopied": "Lien copié dans le presse-papiers!",
+    "clocks.loadingSchedule": "Chargement de la grille de programmation...",
+    "clocks.totalHours": "Total des Heures",
+    "clocks.hoursAbbrev": "h",
+    "clocks.ofWeek": "de la semaine",
+    "clocks.target": "Objectif",
+    "clocks.fromTarget": "de l'objectif",
+    
+    // Days of week for clocks
+    "clocks.mon": "Lun",
+    "clocks.tue": "Mar",
+    "clocks.wed": "Mer",
+    "clocks.thu": "Jeu",
+    "clocks.fri": "Ven",
+    "clocks.sat": "Sam",
+    "clocks.sun": "Dim",
+    
+    // Languages for clocks
+    "clocks.kissi": "Kissi",
+    "clocks.english": "Anglais",
+    "clocks.french": "Français",
+    "clocks.evangelistic": "Évangélique"
   }
 };
 
