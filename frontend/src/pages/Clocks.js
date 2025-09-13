@@ -322,7 +322,7 @@ const Clocks = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <SEOHead 
-        title="Interactive Programming Clocks - Kioo Radio 98.1FM"
+        title={`${t('clocks.title')} - Kioo Radio 98.1FM`}
         description="View Kioo Radio's weekly programming schedule with interactive clocks showing live broadcasts and upcoming shows."
         noIndex={false}
       />
