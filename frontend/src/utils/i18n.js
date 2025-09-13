@@ -521,7 +521,51 @@ export const labels = {
     weatherForecast: "Weather Forecast",
     currentWeather: "Current Weather",
     twoDayForecast: "2-Day Weather Predictions",
-    updated: "Updated"
+    updated: "Updated",
+    
+    // Interactive Programming Clocks
+    "clocks.title": "Interactive Weekly Programming Clocks",
+    "clocks.subtitle": "View Kioo Radio's weekly programming schedule with interactive clocks showing live broadcasts and upcoming shows",
+    "clocks.currentTime": "Current Time (Liberia)",
+    "clocks.liveNow": "LIVE NOW",
+    "clocks.nextUp": "NEXT UP",
+    "clocks.noLiveProgram": "No live program currently",
+    "clocks.filterByLanguage": "Filter by Language",
+    "clocks.searchPrograms": "Search programs...",
+    "clocks.clearFilters": "Clear Filters",
+    "clocks.weeklySchedule": "Weekly Programming Schedule",
+    "clocks.weeklyTotals": "Weekly Totals",
+    "clocks.programDetails": "Program Details",
+    "clocks.title": "Title",
+    "clocks.language": "Language",
+    "clocks.day": "Day",
+    "clocks.time": "Time",
+    "clocks.hourlyBreakdown": "Hourly Breakdown",
+    "clocks.addToCalendar": "Add to Calendar",
+    "clocks.copyLink": "Copy Link",
+    "clocks.addToCalendarSoon": "Add to Calendar feature coming soon!",
+    "clocks.linkCopied": "Link copied to clipboard!",
+    "clocks.loadingSchedule": "Loading programming schedule...",
+    "clocks.totalHours": "Total Hours",
+    "clocks.hoursAbbrev": "h",
+    "clocks.ofWeek": "of week",
+    "clocks.target": "Target",
+    "clocks.fromTarget": "from target",
+    
+    // Days of week for clocks
+    "clocks.mon": "Monday",
+    "clocks.tue": "Tuesday", 
+    "clocks.wed": "Wednesday",
+    "clocks.thu": "Thursday",
+    "clocks.fri": "Friday",
+    "clocks.sat": "Saturday",
+    "clocks.sun": "Sunday",
+    
+    // Languages for clocks
+    "clocks.kissi": "Kissi",
+    "clocks.english": "English",
+    "clocks.french": "French",
+    "clocks.evangelistic": "Evangelistic"
   },
   
   fr: {
