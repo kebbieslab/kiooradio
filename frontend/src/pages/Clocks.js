@@ -589,7 +589,7 @@ const Clocks = () => {
                   {/* Hour Template if available */}
                   {programData.hourTemplates[selectedBlock.lang] && (
                     <div>
-                      <label className="text-sm font-medium text-gray-600">Hourly Breakdown</label>
+                      <label className="text-sm font-medium text-gray-600">{t('clocks.hourlyBreakdown')}</label>
                       <div className="mt-2 space-y-2">
                         {programData.hourTemplates[selectedBlock.lang].map((segment, index) => (
                           <div key={index} className="flex justify-between text-sm">
