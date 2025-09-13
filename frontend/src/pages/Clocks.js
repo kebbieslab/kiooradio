@@ -544,7 +544,7 @@ const Clocks = () => {
                     className="w-6 h-6 rounded-full mx-auto mb-2" 
                     style={{ backgroundColor: lang.color }}
                   ></div>
-                  <div className="font-medium text-gray-900">{lang.name}</div>
+                  <div className="font-medium text-gray-900">{getLanguageTranslation(lang.code)}</div>
                   <div className="text-2xl font-bold text-gray-800">{total?.hours || 0}{t('clocks.hoursAbbrev')}</div>
                   <div className="text-sm text-gray-600">
                     {total?.percentage || 0}% {t('clocks.ofWeek')}
