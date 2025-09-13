@@ -40,62 +40,129 @@ const Clocks = () => {
     });
   };
 
-  // Handle segment click
-  const handleSegmentClick = (segment) => {
-    setSelectedSegment(segment);
-    setShowPanel(true);
-  };
+  // Get current live program
+  const getCurrentLiveProgram = () => {
+    if (!programData) return null;
+    
+    const now = currentTime;
+    const currentDayIndex = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const currentDay = dayNames[currentDayIndex];
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-  // Handle language visibility toggle
-  const toggleLanguageVisibility = (langCode) => {
-    if (visibleLanguages.includes(langCode)) {
-      if (visibleLanguages.length > 1) { // Keep at least one visible
-        setVisibleLanguages(visibleLanguages.filter(code => code !== langCode));
+    // Find matching program block
+    for (const block of programData.weeklyBlocks) {
+      if (block.day === '*' || block.day === currentDay) {
+        const startMinutes = parseTimeToMinutes(block.start);
+        const endMinutes = parseTimeToMinutes(block.end);
+        
+        let isCurrentlyLive = false;
+        if (endMinutes > startMinutes) {
+          // Same day program
+          isCurrentlyLive = currentMinutes >= startMinutes && currentMinutes < endMinutes;
+        } else {
+          // Overnight program (crosses midnight)
+          isCurrentlyLive = currentMinutes >= startMinutes || currentMinutes < endMinutes;
+        }
+        
+        if (isCurrentlyLive) {
+          return { ...block, day: currentDay };
+        }
       }
-    } else {
-      setVisibleLanguages([...visibleLanguages, langCode]);
     }
+    return null;
   };
 
-  // Export functions
-  const downloadPNG = () => {
-    const svg = document.querySelector('#donut-chart');
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
+  // Get next program
+  const getNextProgram = () => {
+    if (!programData) return null;
     
-    canvas.width = 400;
-    canvas.height = 400;
+    const now = currentTime;
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const currentDayIndex = now.getDay();
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     
-    img.onload = () => {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
-      
-      const link = document.createElement('a');
-      link.download = 'kioo-radio-broadcast-time.png';
-      link.href = canvas.toDataURL();
-      link.click();
+    // Look for next program today first
+    const currentDay = dayNames[currentDayIndex];
+    const todayBlocks = programData.weeklyBlocks
+      .filter(block => block.day === '*' || block.day === currentDay)
+      .map(block => ({ ...block, day: currentDay }))
+      .sort((a, b) => parseTimeToMinutes(a.start) - parseTimeToMinutes(b.start));
+    
+    for (const block of todayBlocks) {
+      const startMinutes = parseTimeToMinutes(block.start);
+      if (startMinutes > currentMinutes) {
+        return block;
+      }
+    }
+    
+    // If no program today, get first program tomorrow
+    const nextDayIndex = (currentDayIndex + 1) % 7;
+    const nextDay = dayNames[nextDayIndex];
+    const nextDayBlocks = programData.weeklyBlocks
+      .filter(block => block.day === '*' || block.day === nextDay)
+      .map(block => ({ ...block, day: nextDay }))
+      .sort((a, b) => parseTimeToMinutes(a.start) - parseTimeToMinutes(b.start));
+    
+    return nextDayBlocks[0] || null;
+  };
+
+  const currentLiveProgram = getCurrentLiveProgram();
+  const nextProgram = getNextProgram();
+
+  // Helper function to get translated day names
+  const getDayTranslation = (dayCode) => {
+    const dayTranslations = {
+      'Mon': t('clocksMon'),
+      'Tue': t('clocksTue'),
+      'Wed': t('clocksWed'),
+      'Thu': t('clocksThu'),
+      'Fri': t('clocksFri'),
+      'Sat': t('clocksSat'),
+      'Sun': t('clocksSun')
     };
-    
-    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+    return dayTranslations[dayCode] || dayCode;
   };
 
-  const exportCSV = () => {
-    const csvContent = [
-      'Language,Percentage,Hours per Week',
-      ...languageData.map(lang => `${lang.name},${lang.percentage}%,${lang.hours}`)
-    ].join('\\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'kioo-radio-broadcast-languages.csv';
-    link.click();
-    URL.revokeObjectURL(url);
+  // Helper function to get translated language names
+  const getLanguageTranslation = (langCode) => {
+    const langTranslations = {
+      'kissi': t('clocksKissi'),
+      'en': t('clocksEnglish'),
+      'fr': t('clocksFrench'),
+      'ev': t('clocksEvangelistic')
+    };
+    return langTranslations[langCode] || langCode;
   };
+
+  // Generate expanded schedule for the week
+  const getWeeklySchedule = () => {
+    if (!programData) return [];
+    
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const schedule = [];
+    
+    days.forEach(day => {
+      const daySchedule = programData.weeklyBlocks
+        .filter(block => block.day === '*' || block.day === day)
+        .map(block => ({
+          ...block,
+          day: day,
+          actualDay: day
+        }))
+        .sort((a, b) => parseTimeToMinutes(a.start) - parseTimeToMinutes(b.start));
+      
+      schedule.push({
+        day: day,
+        displayDay: getDayTranslation(day),
+        blocks: daySchedule
+      });
+    });
+    
+    return schedule;
+  };
+
+  const weeklySchedule = getWeeklySchedule();
 
   // Language ring component
   const LanguageRing = () => {
