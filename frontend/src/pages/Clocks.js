@@ -17,6 +17,50 @@ const Clocks = () => {
     { code: 'ev', name: 'Evangelistic Focus (Fula/Mandingo/Gbandi)', percentage: 16.7, color: '#7b3fb2', hours: 28 }
   ];
 
+  // Mock program data for demonstration
+  const programData = {
+    languages: [
+      { code: 'kissi', name: 'Kissi', color: '#148026' },
+      { code: 'en', name: 'English', color: '#1b5f9e' },
+      { code: 'fr', name: 'French', color: '#c47a00' },
+      { code: 'ev', name: 'Evangelistic Focus', color: '#7b3fb2' }
+    ],
+    weeklyBlocks: [],
+    hourTemplates: {}
+  };
+
+  // Current time state
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update current time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Helper function to parse time to minutes
+  const parseTimeToMinutes = (timeStr) => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  // Additional state variables needed
+  const [filterLanguages, setFilterLanguages] = useState(['kissi', 'en', 'fr', 'ev']);
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedBlock, setSelectedBlock] = useState(null);
+  const [showDetailsDrawer, setShowDetailsDrawer] = useState(false);
+
+  // Mock calculate weekly totals
+  const calculateWeeklyTotals = {
+    kissi: { hours: 70, percentage: 41.7, target: 42, drift: -0.3 },
+    en: { hours: 42, percentage: 25.0, target: 25, drift: 0 },
+    fr: { hours: 28, percentage: 16.7, target: 17, drift: -0.3 },
+    ev: { hours: 28, percentage: 16.7, target: 16, drift: 0.7 }
+  };
+
   // Create donut chart segments
   const createDonutSegments = () => {
     const filteredData = languageData.filter(lang => visibleLanguages.includes(lang.code));
