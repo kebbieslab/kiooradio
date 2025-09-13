@@ -5,7 +5,7 @@ import SEOHead from '../components/SEOHead';
 const ClocksNew = () => {
   const { t } = useTranslation();
   const [viewMode, setViewMode] = useState('week'); // 'week' or 'day'
-  const [visibleLanguages, setVisibleLanguages] = useState(['kissi', 'en', 'fr', 'ev']);
+  const [visibleLanguages, setVisibleLanguages] = useState(['kissi', 'en', 'fr', 'mixed', 'mandingo', 'fula']);
   const [selectedSegment, setSelectedSegment] = useState(null);
   const [showPanel, setShowPanel] = useState(false);
 
