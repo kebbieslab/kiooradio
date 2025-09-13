@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from '../utils/i18n';
 
 const Dashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [stats, setStats] = useState(null);
-  const [donationsByProject, setDonationsByProject] = useState([]);
-  const [incomeExpenses, setIncomeExpenses] = useState(null);
-  const [weatherData, setWeatherData] = useState({});
-  const [weatherForecast, setWeatherForecast] = useState({});
+  const [farmerWeatherData, setFarmerWeatherData] = useState([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [language, setLanguage] = useState('en');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
-  const { t } = useTranslation();
 
   const handleLogin = async (e) => {
     e.preventDefault();
