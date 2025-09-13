@@ -158,6 +158,42 @@ async def health_check():
             "error": str(e)
         }
 
+# Server Time endpoint for Interactive Programming Clocks (Liberia timezone)
+@app.get("/api/server-time")
+async def get_server_time():
+    """Get current server time in both UTC and Liberia time (Africa/Monrovia)"""
+    try:
+        import zoneinfo
+        
+        # Get current UTC time
+        utc_now = datetime.now(timezone.utc)
+        
+        # Convert to Liberia time (Africa/Monrovia, GMT+0, no DST)
+        liberia_tz = zoneinfo.ZoneInfo('Africa/Monrovia')
+        liberia_time = utc_now.astimezone(liberia_tz)
+        
+        return {
+            "utc_iso": utc_now.isoformat(),
+            "monrovia_iso": liberia_time.isoformat(),
+            "monrovia_formatted": liberia_time.strftime('%H:%M GMT'),
+            "timezone": "Africa/Monrovia",
+            "timezone_offset": "+00:00",
+            "timestamp": utc_now.timestamp()
+        }
+    except Exception as e:
+        logger.error(f"Server time error: {e}")
+        # Fallback to UTC if timezone conversion fails
+        utc_now = datetime.now(timezone.utc)
+        return {
+            "utc_iso": utc_now.isoformat(),
+            "monrovia_iso": utc_now.isoformat(),
+            "monrovia_formatted": utc_now.strftime('%H:%M GMT'),
+            "timezone": "UTC",
+            "timezone_offset": "+00:00",
+            "timestamp": utc_now.timestamp(),
+            "error": "Timezone conversion failed, using UTC"
+        }
+
 # Serve static files for thumbnails
 from fastapi.staticfiles import StaticFiles
 app.mount("/api/static", StaticFiles(directory=ROOT_DIR / "static"), name="static")
