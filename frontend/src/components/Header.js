@@ -12,7 +12,16 @@ const Header = ({ setIsPlayerVisible }) => {
   const navigation = [
     { name: t('navHome'), nameKey: 'navHome', path: '/', icon: '🏠' },
     { name: t('navAbout'), nameKey: 'navAbout', path: '/about', icon: 'ℹ️' },
-    { name: t('navPrograms'), nameKey: 'navPrograms', path: '/programs', icon: '📅' },
+    { 
+      name: t('navPrograms'), 
+      nameKey: 'navPrograms', 
+      path: '/programs', 
+      icon: '📅',
+      dropdown: [
+        { name: t('navPrograms'), path: '/programs', icon: '📅' },
+        { name: 'Clocks (Interactive)', path: '/clocks', icon: '🕐' }
+      ]
+    },
     { name: t('navChurches'), nameKey: 'navChurches', path: '/church-partners', icon: '⛪' },
     { name: t('navImpact'), nameKey: 'navImpact', path: '/impact', icon: '💝' },
     { 
