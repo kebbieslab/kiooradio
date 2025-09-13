@@ -49,55 +49,23 @@ const Dashboard = () => {
     }
   };
 
-  const loadDashboardData = async () => {
+  const loadFarmerWeatherData = async () => {
     setLoading(true);
     try {
-      const authHeader = btoa('admin:kioo2025!');
+      // Load farmer-focused weather data for 4 locations
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/farmer-weather`);
       
-      // Load dashboard stats and weather data
-      const [statsRes, donationsRes, incomeRes, weatherRes, forecastRes] = await Promise.all([
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/stats`, {
-          headers: { 'Authorization': `Basic ${authHeader}` }
-        }),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/donations-by-project`, {
-          headers: { 'Authorization': `Basic ${authHeader}` }
-        }),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/income-expenses`, {
-          headers: { 'Authorization': `Basic ${authHeader}` }
-        }),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/weather`),
-        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/weather-forecast`)
-      ]);
-
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        setStats(statsData);
-        setLastUpdated(new Date(statsData.last_updated));
-      }
-
-      if (donationsRes.ok) {
-        const donationsData = await donationsRes.json();
-        setDonationsByProject(donationsData);
-      }
-
-      if (incomeRes.ok) {
-        const incomeData = await incomeRes.json();
-        setIncomeExpenses(incomeData);
-      }
-
-      if (weatherRes.ok) {
-        const weatherData = await weatherRes.json();
-        setWeatherData(weatherData);
-      }
-
-      if (forecastRes.ok) {
-        const forecastData = await forecastRes.json();
-        setWeatherForecast(forecastData);
+      if (response.ok) {
+        const weatherData = await response.json();
+        setFarmerWeatherData(weatherData.locations || []);
+        setLastUpdated(new Date(weatherData.updated));
+      } else {
+        throw new Error('Failed to load weather data');
       }
 
     } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-      setError('Failed to load dashboard data');
+      console.error('Failed to load farmer weather data:', error);
+      setError(language === 'fr' ? 'Échec du chargement des données météo' : 'Failed to load weather data');
     } finally {
       setLoading(false);
     }
