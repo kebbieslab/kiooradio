@@ -2646,6 +2646,183 @@ async def get_dashboard_weather():
             }
         return fallback_data
 
+@api_router.get("/dashboard/farmer-weather")
+async def get_farmer_weather():
+    """Get comprehensive farmer-focused weather data for 4 broadcast locations"""
+    try:
+        import aiohttp
+        import asyncio
+        from datetime import datetime, timezone, timedelta
+        
+        # Fixed coverage locations
+        locations = [
+            {"name": "Foya, Liberia", "lat": 8.3580, "lon": -10.2049},
+            {"name": "Koindu, Sierra Leone", "lat": 8.2804, "lon": -10.6514}, 
+            {"name": "Guéckédou, Guinea", "lat": 8.5674, "lon": -10.1330},
+            {"name": "Kissidougou, Guinea", "lat": 9.1855, "lon": -10.0991}
+        ]
+        
+        weather_data = []
+        
+        async with aiohttp.ClientSession() as session:
+            for location in locations:
+                try:
+                    # Open-Meteo API call for comprehensive weather data
+                    url = f"https://api.open-meteo.com/v1/forecast"
+                    params = {
+                        "latitude": location["lat"],
+                        "longitude": location["lon"],
+                        "current": "temperature_2m,relative_humidity_2m,precipitation,weather_code,cloud_cover,wind_speed_10m",
+                        "hourly": "temperature_2m,precipitation_probability,precipitation,weather_code",
+                        "daily": "precipitation_probability_max,precipitation_sum,weather_code_max",
+                        "timezone": "UTC",
+                        "forecast_days": 3,
+                        "forecast_hours": 72
+                    }
+                    
+                    async with session.get(url, params=params, timeout=10) as response:
+                        if response.status == 200:
+                            data = await response.json()
+                            
+                            # Extract current conditions
+                            current = data.get("current", {})
+                            current_time = current.get("time", datetime.now(timezone.utc).isoformat())
+                            
+                            # Format current conditions
+                            now = {
+                                "tempC": round(current.get("temperature_2m", 0), 1),
+                                "humidityPct": round(current.get("relative_humidity_2m", 0)),
+                                "windKph": round(current.get("wind_speed_10m", 0) * 3.6, 1),  # Convert m/s to km/h
+                                "cloudPct": round(current.get("cloud_cover", 0)),
+                                "rainProbPct": 0,  # Not available in current, will estimate from hourly
+                                "rainMmHr": round(current.get("precipitation", 0), 2)
+                            }
+                            
+                            # Extract hourly data (next 72 hours)
+                            hourly_data = data.get("hourly", {})
+                            hourly_times = hourly_data.get("time", [])
+                            hourly_temps = hourly_data.get("temperature_2m", [])
+                            hourly_rain_prob = hourly_data.get("precipitation_probability", [])
+                            hourly_rain_mm = hourly_data.get("precipitation", [])
+                            
+                            hourly = []
+                            for i in range(min(72, len(hourly_times))):  # Limit to 72 hours
+                                hourly.append({
+                                    "timeIsoUTC": hourly_times[i],
+                                    "tempC": round(hourly_temps[i] if i < len(hourly_temps) else 0, 1),
+                                    "rainProbPct": round(hourly_rain_prob[i] if i < len(hourly_rain_prob) else 0),
+                                    "rainMmHr": round(hourly_rain_mm[i] if i < len(hourly_rain_mm) else 0, 2)
+                                })
+                            
+                            # Update current rain probability from first hourly value
+                            if hourly and len(hourly) > 0:
+                                now["rainProbPct"] = hourly[0]["rainProbPct"]
+                            
+                            # Extract daily data (next 3 days)
+                            daily_data = data.get("daily", {})
+                            daily_times = daily_data.get("time", [])
+                            daily_rain_prob_max = daily_data.get("precipitation_probability_max", [])
+                            daily_rain_sum = daily_data.get("precipitation_sum", [])
+                            
+                            daily = []
+                            for i in range(min(3, len(daily_times))):  # Limit to 3 days
+                                # Convert date string to ISO format
+                                date_str = daily_times[i]
+                                if isinstance(date_str, str) and len(date_str) == 10:  # YYYY-MM-DD format
+                                    date_iso = f"{date_str}T00:00:00Z"
+                                else:
+                                    date_iso = date_str
+                                
+                                daily.append({
+                                    "dateIsoUTC": date_iso,
+                                    "rainProbMaxPct": round(daily_rain_prob_max[i] if i < len(daily_rain_prob_max) else 0),
+                                    "rainSumMm": round(daily_rain_sum[i] if i < len(daily_rain_sum) else 0, 1)
+                                })
+                            
+                            # Add location data in required format
+                            location_weather = {
+                                "location": location["name"],
+                                "now": now,
+                                "hourly": hourly,
+                                "daily": daily
+                            }
+                            
+                            weather_data.append(location_weather)
+                            logger.info(f"Successfully fetched farmer weather for {location['name']}")
+                            
+                        else:
+                            logger.warning(f"Failed to fetch weather for {location['name']}: HTTP {response.status}")
+                            # Add fallback data
+                            weather_data.append({
+                                "location": location["name"],
+                                "now": {
+                                    "tempC": 0,
+                                    "humidityPct": 0,
+                                    "windKph": 0,
+                                    "cloudPct": 0,
+                                    "rainProbPct": 0,
+                                    "rainMmHr": 0
+                                },
+                                "hourly": [],
+                                "daily": []
+                            })
+                            
+                except Exception as e:
+                    logger.error(f"Error fetching weather for {location['name']}: {e}")
+                    # Add fallback data for this location
+                    weather_data.append({
+                        "location": location["name"],
+                        "now": {
+                            "tempC": 0,
+                            "humidityPct": 0,
+                            "windKph": 0,
+                            "cloudPct": 0,
+                            "rainProbPct": 0,
+                            "rainMmHr": 0
+                        },
+                        "hourly": [],
+                        "daily": []
+                    })
+        
+        return {
+            "locations": weather_data,
+            "updated": datetime.now(timezone.utc).isoformat(),
+            "cache_duration_minutes": 15,
+            "timezone": "UTC"
+        }
+        
+    except Exception as e:
+        logger.error(f"Farmer weather endpoint error: {e}")
+        # Return fallback structure
+        fallback_locations = [
+            "Foya, Liberia", "Koindu, Sierra Leone", 
+            "Guéckédou, Guinea", "Kissidougou, Guinea"
+        ]
+        
+        fallback_data = []
+        for loc_name in fallback_locations:
+            fallback_data.append({
+                "location": loc_name,
+                "now": {
+                    "tempC": 25,
+                    "humidityPct": 75,
+                    "windKph": 10,
+                    "cloudPct": 50,
+                    "rainProbPct": 30,
+                    "rainMmHr": 0
+                },
+                "hourly": [],
+                "daily": []
+            })
+        
+        return {
+            "locations": fallback_data,
+            "updated": datetime.now(timezone.utc).isoformat(),
+            "cache_duration_minutes": 15,
+            "timezone": "UTC",
+            "error": "Using fallback data"
+        }
+
 @api_router.get("/dashboard/weather-forecast")
 async def get_dashboard_weather_forecast():
     """Get 2-day weather forecast for broadcast areas using Open-Meteo API"""
