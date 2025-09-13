@@ -179,6 +179,31 @@ const Clocks = () => {
   const currentLiveProgram = getCurrentLiveProgram();
   const nextProgram = getNextProgram();
 
+  // Helper function to get translated day names
+  const getDayTranslation = (dayCode) => {
+    const dayTranslations = {
+      'Mon': t('clocks.mon'),
+      'Tue': t('clocks.tue'),
+      'Wed': t('clocks.wed'),
+      'Thu': t('clocks.thu'),
+      'Fri': t('clocks.fri'),
+      'Sat': t('clocks.sat'),
+      'Sun': t('clocks.sun')
+    };
+    return dayTranslations[dayCode] || dayCode;
+  };
+
+  // Helper function to get translated language names
+  const getLanguageTranslation = (langCode) => {
+    const langTranslations = {
+      'kissi': t('clocks.kissi'),
+      'en': t('clocks.english'),
+      'fr': t('clocks.french'),
+      'ev': t('clocks.evangelistic')
+    };
+    return langTranslations[langCode] || langCode;
+  };
+
   // Generate expanded schedule for the week
   const getWeeklySchedule = () => {
     if (!programData) return [];
@@ -198,6 +223,7 @@ const Clocks = () => {
       
       schedule.push({
         day: day,
+        displayDay: getDayTranslation(day),
         blocks: daySchedule
       });
     });
