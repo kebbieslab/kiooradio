@@ -105,9 +105,11 @@ const Clocks = () => {
   // Export functions
   const downloadPNG = () => {
     const svg = document.querySelector('#donut-chart');
+    // eslint-disable-next-line no-undef
     const svgData = new XMLSerializer().serializeToString(svg);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    // eslint-disable-next-line no-undef
     const img = new Image();
     
     canvas.width = 400;
