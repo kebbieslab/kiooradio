@@ -490,15 +490,18 @@ const ClocksNew = () => {
             </div>
           </div>
         ) : (
-          // Seven Day Donuts
-          <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">Daily Distribution</h3>
+          // Seven Day View - Mini 24-hour clocks
+          <div className="bg-white rounded-lg shadow-sm p-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">
+              Daily 24-Hour Programming (7 Days)
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-6">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, dayIndex) => (
                 <div key={day} className="text-center">
                   <h4 className="font-medium text-gray-900 mb-3">{day}</h4>
                   <div className="relative mx-auto" style={{ width: '120px', height: '120px' }}>
                     <svg width="120" height="120" className="transform -rotate-90">
+                      {/* Background circle */}
                       <circle
                         cx="60"
                         cy="60"
@@ -507,14 +510,38 @@ const ClocksNew = () => {
                         stroke="#e5e7eb"
                         strokeWidth="20"
                       />
-                      {donutSegments.map((segment, index) => (
+                      
+                      {/* Hour markers for mini clocks */}
+                      {Array.from({ length: 12 }, (_, i) => {
+                        const angle = i * 30 - 90; // 30 degrees per hour for 12-hour markers
+                        const radians = (angle * Math.PI) / 180;
+                        const x1 = 60 + Math.cos(radians) * 35;
+                        const y1 = 60 + Math.sin(radians) * 35;
+                        const x2 = 60 + Math.cos(radians) * 40;
+                        const y2 = 60 + Math.sin(radians) * 40;
+                        
+                        return (
+                          <line
+                            key={i}
+                            x1={x1}
+                            y1={y1}
+                            x2={x2}
+                            y2={y2}
+                            stroke="#ccc"
+                            strokeWidth="1"
+                          />
+                        );
+                      })}
+                      
+                      {/* Programming segments */}
+                      {clockSegments.map((segment, index) => (
                         <circle
-                          key={`${day}-${segment.code}`}
+                          key={`${day}-${segment.start}-${index}`}
                           cx="60"
                           cy="60"
                           r="40"
                           fill="none"
-                          stroke={segment.color}
+                          stroke={segment.langInfo?.color}
                           strokeWidth="20"
                           strokeDasharray={segment.strokeDasharray}
                           strokeDashoffset={segment.strokeDashoffset}
@@ -525,11 +552,11 @@ const ClocksNew = () => {
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
-                        <div className="text-sm font-bold text-gray-900">24h</div>
+                        <div className="text-xs font-bold text-gray-900">24h</div>
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">Same language distribution</p>
+                  <p className="text-xs text-gray-500 mt-2">Same daily schedule</p>
                 </div>
               ))}
             </div>
