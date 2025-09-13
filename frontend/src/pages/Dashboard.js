@@ -281,136 +281,29 @@ const Dashboard = () => {
     return messages.slice(0, 3); // Maximum 3 messages
   };
 
-  // Simple SVG Bar Chart Component
-  const BarChart = ({ data, width = 300, height = 200 }) => {
-    if (!data) return null;
-
-    const maxValue = Math.max(data.income, data.expenses);
-    const barWidth = 60;
-    const spacing = 40;
-    const chartHeight = height - 60;
+  // Simple sparkline component for rain probability
+  const Sparkline = ({ data, width = 60, height = 20 }) => {
+    if (!data || data.length === 0) return <div className="w-15 h-5 bg-gray-200 rounded"></div>;
     
-    const incomeHeight = (data.income / maxValue) * chartHeight;
-    const expensesHeight = (data.expenses / maxValue) * chartHeight;
-
+    const max = Math.max(...data);
+    const min = Math.min(...data);
+    const range = max - min || 1;
+    
+    const points = data.map((value, index) => {
+      const x = (index / (data.length - 1)) * width;
+      const y = height - ((value - min) / range) * height;
+      return `${x},${y}`;
+    }).join(' ');
+    
     return (
-      <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">{t('incomeVsExpenses', 'Income vs Expenses')}</h3>
-        <svg width={width} height={height} className="mx-auto">
-          {/* Background grid lines */}
-          <line x1="40" y1="20" x2="40" y2={height - 40} stroke="#e5e7eb" strokeWidth="1" />
-          <line x1="40" y1={height - 40} x2={width - 20} y2={height - 40} stroke="#e5e7eb" strokeWidth="1" />
-          
-          {/* Income bar */}
-          <rect
-            x="70"
-            y={height - 40 - incomeHeight}
-            width={barWidth}
-            height={incomeHeight}
-            fill="#10b981"
-          />
-          
-          {/* Expenses bar */}
-          <rect
-            x={70 + barWidth + spacing}
-            y={height - 40 - expensesHeight}
-            width={barWidth}
-            height={expensesHeight}
-            fill="#ef4444"
-          />
-          
-          {/* Labels */}
-          <text x="100" y={height - 20} textAnchor="middle" fontSize="12" fill="#6b7280">
-            {t('income', 'Income')}
-          </text>
-          <text x={100 + barWidth + spacing} y={height - 20} textAnchor="middle" fontSize="12" fill="#6b7280">
-            {t('expenses', 'Expenses')}
-          </text>
-          
-          {/* Values */}
-          <text x="100" y={height - 50 - incomeHeight} textAnchor="middle" fontSize="11" fill="#10b981" fontWeight="bold">
-            ${data.income.toLocaleString()}
-          </text>
-          <text x={100 + barWidth + spacing} y={height - 50 - expensesHeight} textAnchor="middle" fontSize="11" fill="#ef4444" fontWeight="bold">
-            ${data.expenses.toLocaleString()}
-          </text>
-        </svg>
-      </div>
-    );
-  };
-
-  // Simple SVG Pie Chart Component
-  const PieChart = ({ data, width = 300, height = 300 }) => {
-    if (!data || data.length === 0) return null;
-
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = Math.min(width, height) / 2 - 40;
-    
-    const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
-    
-    let currentAngle = 0;
-    const segments = data.map((item, index) => {
-      const angle = (item.percentage / 100) * 2 * Math.PI;
-      const startAngle = currentAngle;
-      const endAngle = currentAngle + angle;
-      
-      const x1 = centerX + radius * Math.cos(startAngle);
-      const y1 = centerY + radius * Math.sin(startAngle);
-      const x2 = centerX + radius * Math.cos(endAngle);
-      const y2 = centerY + radius * Math.sin(endAngle);
-      
-      const largeArcFlag = angle > Math.PI ? 1 : 0;
-      
-      const pathData = [
-        `M ${centerX} ${centerY}`,
-        `L ${x1} ${y1}`,
-        `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
-        'Z'
-      ].join(' ');
-      
-      currentAngle += angle;
-      
-      return {
-        path: pathData,
-        color: colors[index % colors.length],
-        ...item
-      };
-    });
-
-    return (
-      <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">{t('donationsByProject', 'Donations by Project')}</h3>
-        <div className="flex items-center space-x-4">
-          <svg width={width * 0.6} height={height * 0.6}>
-            {segments.map((segment, index) => (
-              <path
-                key={index}
-                d={segment.path}
-                fill={segment.color}
-                stroke="white"
-                strokeWidth="2"
-              />
-            ))}
-          </svg>
-          <div className="flex-1">
-            <div className="space-y-2">
-              {segments.map((segment, index) => (
-                <div key={index} className="flex items-center space-x-2 text-sm">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: segment.color }}
-                  ></div>
-                  <span className="text-gray-700">{segment.project_name}</span>
-                  <span className="text-gray-500 ml-auto">
-                    ${segment.amount.toLocaleString()} ({segment.percentage}%)
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      <svg width={width} height={height} className="inline-block">
+        <polyline
+          fill="none"
+          stroke="#3b82f6"
+          strokeWidth="1.5"
+          points={points}
+        />
+      </svg>
     );
   };
 
