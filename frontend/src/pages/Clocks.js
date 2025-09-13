@@ -107,13 +107,7 @@ const Clocks = () => {
     });
 
     return totals;
-  }, [programData]);
-
-  // Helper function to parse time string to minutes
-  const parseTimeToMinutes = (timeStr) => {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
-  };
+  }, [programData, parseTimeToMinutes]);
 
   // Get current live program
   const getCurrentLiveProgram = () => {
