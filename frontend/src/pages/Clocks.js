@@ -9,26 +9,73 @@ const ClocksNew = () => {
   const [selectedSegment, setSelectedSegment] = useState(null);
   const [showPanel, setShowPanel] = useState(false);
 
-  // Language data with exact broadcast percentages (totaling 100%)
+  // Language data with exact broadcast percentages from actual schedule
   const languageData = [
     { code: 'kissi', name: 'Kissi', percentage: 41.7, color: '#148026', hours: 70 },
     { code: 'en', name: 'English', percentage: 25.0, color: '#1b5f9e', hours: 42 },
-    { code: 'fr', name: 'French', percentage: 16.6, color: '#c47a00', hours: 28 },
-    { code: 'ev', name: 'Evangelistic Focus (Fula/Mandingo/Gbandi)', percentage: 16.7, color: '#7b3fb2', hours: 28 }
+    { code: 'fr', name: 'French', percentage: 16.7, color: '#c47a00', hours: 28 },
+    { code: 'mixed', name: 'Mixed', percentage: 8.3, color: '#9333ea', hours: 14 },
+    { code: 'mandingo', name: 'Mandingo', percentage: 4.2, color: '#f59e0b', hours: 7 },
+    { code: 'fula', name: 'Fula', percentage: 4.2, color: '#10b981', hours: 7 }
   ];
 
-  // 24-hour programming schedule with time slots
+  // Actual 24-hour programming schedule from kiooradio.org/programs (Mon-Fri)
   const dailySchedule = [
-    { start: 0, end: 2, lang: 'fr', program: 'Overnight French Programming', hours: 2 },
-    { start: 2, end: 4, lang: 'en', program: 'Overnight English Programming', hours: 2 },
-    { start: 4, end: 6, lang: 'kissi', program: 'Pre-Dawn Worship (Kissi)', hours: 2 },
-    { start: 6, end: 10, lang: 'kissi', program: 'Morning Devotion & Community', hours: 4 },
-    { start: 10, end: 12, lang: 'en', program: 'Magazine & News (EN)', hours: 2 },
-    { start: 12, end: 14, lang: 'fr', program: 'Magazine & News (FR)', hours: 2 },
-    { start: 14, end: 16, lang: 'ev', program: 'Evangelistic Programs', hours: 2 },
-    { start: 16, end: 18, lang: 'en', program: 'Drive Time (EN)', hours: 2 },
-    { start: 18, end: 22, lang: 'kissi', program: 'Evening Block (Kissi)', hours: 4 },
-    { start: 22, end: 24, lang: 'ev', program: 'Evening Outreach (EV)', hours: 2 }
+    // Midnight to 6 AM
+    { startTime: "00:00", endTime: "00:30", lang: 'en', program: 'Music & Reflection', type: 'Music' },
+    { startTime: "00:30", endTime: "01:00", lang: 'en', program: 'Community Announcements', type: 'Community' },
+    { startTime: "01:00", endTime: "01:30", lang: 'en', program: 'Phone-in Program', type: 'Interactive' },
+    { startTime: "01:30", endTime: "02:00", lang: 'en', program: 'Music & Reflection', type: 'Music' },
+    { startTime: "02:00", endTime: "02:30", lang: 'kissi', program: 'Community Programming', type: 'Community' },
+    { startTime: "02:30", endTime: "03:00", lang: 'kissi', program: 'Music & Reflection', type: 'Music' },
+    { startTime: "03:00", endTime: "03:30", lang: 'kissi', program: 'Community Announcements', type: 'Community' },
+    { startTime: "03:30", endTime: "04:00", lang: 'kissi', program: 'Phone-in Program', type: 'Interactive' },
+    { startTime: "04:00", endTime: "04:30", lang: 'fr', program: 'Community Programming', type: 'Community' },
+    { startTime: "04:30", endTime: "05:00", lang: 'fr', program: 'Music & Reflection', type: 'Music' },
+    { startTime: "05:00", endTime: "05:10", lang: 'en', program: 'Guidelines', type: 'Bible Teaching', special: true },
+    { startTime: "05:10", endTime: "05:15", lang: 'en', program: 'Morning Devotional', type: 'Devotional' },
+    { startTime: "05:15", endTime: "05:45", lang: 'en', program: 'Morning Prayer & Worship', type: 'Worship' },
+    { startTime: "05:45", endTime: "06:00", lang: 'en', program: 'Community Announcements', type: 'Community' },
+    
+    // 6 AM to 12 PM
+    { startTime: "06:00", endTime: "06:30", lang: 'en', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
+    { startTime: "06:30", endTime: "07:00", lang: 'en', program: 'Daily Sermon', type: 'Sermon', special: true },
+    { startTime: "07:00", endTime: "07:30", lang: 'en', program: 'Love & Faith', type: 'Bible Teaching', special: true },
+    { startTime: "07:30", endTime: "08:00", lang: 'en', program: 'Music & Reflection', type: 'Music' },
+    { startTime: "08:00", endTime: "08:30", lang: 'kissi', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
+    { startTime: "08:30", endTime: "09:00", lang: 'kissi', program: 'Community Programming', type: 'Community' },
+    { startTime: "09:00", endTime: "10:00", lang: 'fr', program: 'VNA French Satellite Feed', type: 'Satellite' },
+    { startTime: "10:00", endTime: "10:30", lang: 'en', program: 'Pastor\'s Corner - Liberia', type: 'Sermon', special: true },
+    { startTime: "10:30", endTime: "11:00", lang: 'en', program: 'Spot Light English', type: 'Educational', special: true },
+    { startTime: "11:00", endTime: "11:30", lang: 'en', program: 'Community Announcements', type: 'Community' },
+    { startTime: "11:30", endTime: "12:00", lang: 'en', program: 'Music & Reflection', type: 'Music' },
+    
+    // 12 PM to 6 PM  
+    { startTime: "12:00", endTime: "12:30", lang: 'kissi', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
+    { startTime: "12:30", endTime: "13:00", lang: 'kissi', program: 'Youth Connect', type: 'Youth/Community' },
+    { startTime: "13:00", endTime: "13:30", lang: 'kissi', program: 'Community Announcements', type: 'Community' },
+    { startTime: "13:30", endTime: "14:00", lang: 'kissi', program: 'Phone-in Program', type: 'Interactive' },
+    { startTime: "14:00", endTime: "14:30", lang: 'fr', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
+    { startTime: "14:30", endTime: "15:00", lang: 'en', program: 'Pastor\'s Corner - Sierra Leone', type: 'Sermon', special: true },
+    { startTime: "15:00", endTime: "15:30", lang: 'mixed', program: 'Hope & Care Outreach', type: 'Outreach', special: true },
+    { startTime: "15:30", endTime: "16:00", lang: 'fr', program: 'Music & Reflection', type: 'Music' },
+    { startTime: "16:00", endTime: "16:30", lang: 'mandingo', program: 'Christian Teaching', type: 'Bible Teaching', special: true },
+    { startTime: "16:30", endTime: "17:30", lang: 'fr', program: 'Renaissance', type: 'Interactive', special: true },
+    { startTime: "17:00", endTime: "17:30", lang: 'fula', program: 'Christian Teaching', type: 'Bible Teaching', special: true },
+    { startTime: "17:30", endTime: "18:00", lang: 'fula', program: 'Community Programming', type: 'Community' },
+    
+    // 6 PM to Midnight
+    { startTime: "18:00", endTime: "19:00", lang: 'mixed', program: 'Evening News & Roundup', type: 'Community' },
+    { startTime: "19:00", endTime: "19:30", lang: 'fr', program: 'Pastor\'s Corner - Guinea', type: 'Sermon', special: true },
+    { startTime: "19:30", endTime: "20:00", lang: 'en', program: 'Community Announcements', type: 'Community' },
+    { startTime: "20:00", endTime: "20:30", lang: 'kissi', program: 'Community Programming', type: 'Community' },
+    { startTime: "20:30", endTime: "21:00", lang: 'kissi', program: 'Phone-in Program', type: 'Interactive' },
+    { startTime: "21:00", endTime: "21:30", lang: 'en', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
+    { startTime: "21:30", endTime: "22:00", lang: 'mixed', program: 'Pastor\'s Corner - Multi-Country', type: 'Sermon', special: true },
+    { startTime: "22:00", endTime: "22:30", lang: 'fr', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
+    { startTime: "22:30", endTime: "23:00", lang: 'mixed', program: 'Community Announcements', type: 'Community' },
+    { startTime: "23:00", endTime: "23:30", lang: 'mixed', program: 'Music & Reflection', type: 'Music' },
+    { startTime: "23:30", endTime: "00:00", lang: 'mixed', program: 'Evening Devotional', type: 'Devotional' }
   ];
 
   // Create 24-hour clock segments based on actual programming
