@@ -78,6 +78,12 @@ const ClocksNew = () => {
     { startTime: "23:30", endTime: "00:00", lang: 'mixed', program: 'Evening Devotional', type: 'Devotional' }
   ];
 
+  // Helper function to convert time string to minutes since midnight
+  const timeToMinutes = (timeStr) => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
   // Create 24-hour clock segments based on actual programming
   const create24HourSegments = () => {
     const radius = 80;
@@ -88,27 +94,40 @@ const ClocksNew = () => {
     let segments = [];
     let cumulativeMinutes = 0;
 
-    dailySchedule.forEach((timeSlot, index) => {
-      if (visibleLanguages.includes(timeSlot.lang)) {
-        const langInfo = languageData.find(l => l.code === timeSlot.lang);
-        const slotMinutes = timeSlot.hours * 60;
-        const percentageOfDay = slotMinutes / totalMinutes;
-        
-        const strokeDasharray = `${percentageOfDay * circumference} ${circumference}`;
-        const strokeDashoffset = -((cumulativeMinutes / totalMinutes) * circumference);
-        
-        segments.push({
-          ...timeSlot,
-          langInfo,
-          strokeDasharray,
-          strokeDashoffset,
-          percentageOfDay: Math.round(percentageOfDay * 100 * 10) / 10,
-          startTime: `${String(timeSlot.start).padStart(2, '0')}:00`,
-          endTime: `${String(timeSlot.end).padStart(2, '0')}:00`,
-          index
-        });
-      }
-      cumulativeMinutes += timeSlot.hours * 60;
+    // Sort schedule by start time to ensure proper order
+    const sortedSchedule = dailySchedule
+      .filter(timeSlot => visibleLanguages.includes(timeSlot.lang))
+      .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime));
+
+    sortedSchedule.forEach((timeSlot, index) => {
+      const langInfo = languageData.find(l => l.code === timeSlot.lang);
+      const startMinutes = timeToMinutes(timeSlot.startTime);
+      const endMinutes = timeToMinutes(timeSlot.endTime);
+      
+      // Handle programs that cross midnight (00:00)
+      const slotMinutes = endMinutes === 0 && startMinutes > 0 
+        ? (24 * 60) - startMinutes  // Program goes to midnight
+        : endMinutes > startMinutes 
+          ? endMinutes - startMinutes 
+          : (24 * 60) - startMinutes + endMinutes; // Program crosses midnight
+
+      const percentageOfDay = slotMinutes / totalMinutes;
+      
+      // Use actual start time for positioning on the clock
+      const actualStart = startMinutes;
+      const strokeDasharray = `${percentageOfDay * circumference} ${circumference}`;
+      const strokeDashoffset = -((actualStart / totalMinutes) * circumference);
+      
+      segments.push({
+        ...timeSlot,
+        langInfo,
+        strokeDasharray,
+        strokeDashoffset,
+        percentageOfDay: Math.round(percentageOfDay * 100 * 10) / 10,
+        durationMinutes: slotMinutes,
+        hours: Math.round(slotMinutes / 60 * 10) / 10,
+        index
+      });
     });
 
     return segments;
