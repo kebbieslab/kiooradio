@@ -236,12 +236,13 @@ const ClocksNew = () => {
 
   const exportCSV = () => {
     try {
-      // Create comprehensive CSV data
+      // Create comprehensive CSV data matching actual schedule
       const csvData = [
         ['Kioo Radio 98.1FM - Broadcast Time Distribution'],
         ['Generated on:', new Date().toLocaleString()],
+        ['Data source: https://kiooradio.org/programs'],
         [''],
-        ['Language Summary'],
+        ['Language Summary (Weekly Distribution)'],
         ['Language', 'Percentage', 'Hours per Week', 'Color Code'],
         ...languageData.map(lang => [
           lang.name,
@@ -250,18 +251,34 @@ const ClocksNew = () => {
           lang.color
         ]),
         [''],
-        ['Daily Time Slots (24-hour format)'],
-        ['Start Time', 'End Time', 'Language', 'Program', 'Duration (hours)'],
+        ['Daily Program Schedule (Monday - Friday)'],
+        ['Start Time', 'End Time', 'Language', 'Program', 'Type', 'Special'],
         ...dailySchedule.map(slot => {
           const langInfo = languageData.find(l => l.code === slot.lang);
+          const startMinutes = timeToMinutes(slot.startTime);
+          const endMinutes = timeToMinutes(slot.endTime);
+          const duration = endMinutes === 0 && startMinutes > 0 
+            ? (24 * 60) - startMinutes  
+            : endMinutes > startMinutes 
+              ? endMinutes - startMinutes 
+              : (24 * 60) - startMinutes + endMinutes;
+          
           return [
-            `${String(slot.start).padStart(2, '0')}:00`,
-            `${String(slot.end).padStart(2, '0')}:00`,
+            slot.startTime,
+            slot.endTime,
             langInfo?.name || slot.lang,
             slot.program,
-            `${slot.hours}h`
+            slot.type,
+            slot.special ? 'Yes' : 'No'
           ];
-        })
+        }),
+        [''],
+        ['Weekly Special Programs'],
+        ['Program', 'Day', 'Time', 'Language', 'Type'],
+        ['Gbandi Language Hour', 'Monday', '19:00-20:00', 'Gbandi', 'Community'],
+        ['Youth Connect Special', 'Wednesday', '20:00-21:00', 'English', 'Youth/Community'],
+        ['Women\'s Empowerment Hour', 'Friday', '18:00-19:00', 'Mixed', 'Community'],
+        ['Makona Talk Show', 'Saturday', '06:00-09:00', 'English, French & Kissi', 'Interactive']
       ];
 
       const csvContent = csvData.map(row => 
@@ -273,7 +290,7 @@ const ClocksNew = () => {
       const url = URL.createObjectURL(blob);
       
       link.setAttribute('href', url);
-      link.setAttribute('download', 'kioo-radio-broadcast-schedule.csv');
+      link.setAttribute('download', 'kioo-radio-complete-schedule.csv');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
