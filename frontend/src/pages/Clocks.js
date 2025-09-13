@@ -473,7 +473,7 @@ const Clocks = () => {
         {/* Week Grid */}
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b bg-gray-50">
-            <h2 className="text-xl font-bold text-gray-900">{t('clocks.weeklySchedule')}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('clocksWeeklySchedule')}</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-7 divide-y md:divide-y-0 md:divide-x">
