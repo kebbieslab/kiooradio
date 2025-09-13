@@ -31,12 +31,48 @@ const ClocksNew = () => {
     { start: 22, end: 24, lang: 'ev', program: 'Evening Outreach (EV)', hours: 2 }
   ];
 
-  // Create donut chart segments
-  const createDonutSegments = () => {
-    const filteredData = languageData.filter(lang => visibleLanguages.includes(lang.code));
-    let cumulativePercentage = 0;
+  // Create 24-hour clock segments based on actual programming
+  const create24HourSegments = () => {
     const radius = 80;
     const strokeWidth = 40;
+    const totalMinutes = 24 * 60; // 1440 minutes in a day
+    const circumference = 2 * Math.PI * radius;
+    
+    let segments = [];
+    let cumulativeMinutes = 0;
+
+    dailySchedule.forEach((timeSlot, index) => {
+      if (visibleLanguages.includes(timeSlot.lang)) {
+        const langInfo = languageData.find(l => l.code === timeSlot.lang);
+        const slotMinutes = timeSlot.hours * 60;
+        const percentageOfDay = slotMinutes / totalMinutes;
+        
+        const strokeDasharray = `${percentageOfDay * circumference} ${circumference}`;
+        const strokeDashoffset = -((cumulativeMinutes / totalMinutes) * circumference);
+        
+        segments.push({
+          ...timeSlot,
+          langInfo,
+          strokeDasharray,
+          strokeDashoffset,
+          percentageOfDay: Math.round(percentageOfDay * 100 * 10) / 10,
+          startTime: `${String(timeSlot.start).padStart(2, '0')}:00`,
+          endTime: `${String(timeSlot.end).padStart(2, '0')}:00`,
+          index
+        });
+      }
+      cumulativeMinutes += timeSlot.hours * 60;
+    });
+
+    return segments;
+  };
+
+  // Create summary donut for language percentages
+  const createLanguageSummary = () => {
+    const filteredData = languageData.filter(lang => visibleLanguages.includes(lang.code));
+    let cumulativePercentage = 0;
+    const radius = 60;
+    const strokeWidth = 30;
     const circumference = 2 * Math.PI * radius;
 
     return filteredData.map((lang, index) => {
