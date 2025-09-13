@@ -13,6 +13,12 @@ const Clocks = () => {
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [weeklyTotals, setWeeklyTotals] = useState({});
 
+  // Helper function to parse time string to minutes (defined early to avoid hoisting issues)
+  const parseTimeToMinutes = (timeStr) => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
   // Load programming data
   useEffect(() => {
     const loadProgramData = async () => {
