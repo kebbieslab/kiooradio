@@ -126,6 +126,7 @@ const Clocks = () => {
       link.click();
     };
     
+    // eslint-disable-next-line no-undef
     img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
   };
 
