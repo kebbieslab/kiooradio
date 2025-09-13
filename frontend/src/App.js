@@ -112,6 +112,7 @@ function App() {
             <Route path="/dashboard" element={<PresentersDashboard />} />
             <Route path="/kioo-presenters-dashboard-1981" element={<PresentersDashboard />} />
             <Route path="/launch" element={<Launch />} />
+            <Route path="/clocks" element={<Clocks />} />
           </Routes>
         </main>
 
