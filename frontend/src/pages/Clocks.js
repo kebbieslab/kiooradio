@@ -574,7 +574,7 @@ const Clocks = () => {
             <div className="flex flex-col h-full">
               <div className="px-6 py-4 border-b bg-gray-50">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-bold text-gray-900">{t('clocks.programDetails')}</h3>
+                  <h3 className="text-lg font-bold text-gray-900">{t('clocksProgramDetails')}</h3>
                   <button
                     onClick={() => setShowDetailsDrawer(false)}
                     className="text-gray-500 hover:text-gray-700 text-xl"
