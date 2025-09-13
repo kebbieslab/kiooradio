@@ -84,6 +84,63 @@ const Clocks = () => {
     });
   };
 
+  // Handle segment click
+  const handleSegmentClick = (segment) => {
+    setSelectedSegment(segment);
+    setShowPanel(true);
+  };
+
+  // Handle language visibility toggle
+  const toggleLanguageVisibility = (langCode) => {
+    if (visibleLanguages.includes(langCode)) {
+      if (visibleLanguages.length > 1) { // Keep at least one visible
+        setVisibleLanguages(visibleLanguages.filter(code => code !== langCode));
+      }
+    } else {
+      setVisibleLanguages([...visibleLanguages, langCode]);
+    }
+  };
+
+  // Export functions
+  const downloadPNG = () => {
+    const svg = document.querySelector('#donut-chart');
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    canvas.width = 400;
+    canvas.height = 400;
+    
+    img.onload = () => {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      
+      const link = document.createElement('a');
+      link.download = 'kioo-radio-broadcast-time.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    };
+    
+    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+  };
+
+  const exportCSV = () => {
+    const csvContent = [
+      'Language,Percentage,Hours per Week',
+      ...languageData.map(lang => `${lang.name},${lang.percentage}%,${lang.hours}`)
+    ].join('\\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'kioo-radio-broadcast-languages.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   // Get current live program
   const getCurrentLiveProgram = () => {
     if (!programData) return null;
