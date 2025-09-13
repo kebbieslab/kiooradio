@@ -108,43 +108,114 @@ const ClocksNew = () => {
   };
 
   // Export functions
-  const downloadPNG = () => {
-    const svg = document.querySelector('#donut-chart');
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    
-    canvas.width = 400;
-    canvas.height = 400;
-    
-    img.onload = () => {
+  const downloadPNG = async () => {
+    try {
+      const svg = document.querySelector('#main-clock-chart');
+      if (!svg) {
+        alert('Chart not found. Please try again.');
+        return;
+      }
+
+      // Create a temporary canvas
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const svgRect = svg.getBoundingClientRect();
+      
+      canvas.width = 600;
+      canvas.height = 600;
+      
+      // White background
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
       
-      const link = document.createElement('a');
-      link.download = 'kioo-radio-broadcast-time.png';
-      link.href = canvas.toDataURL();
-      link.click();
-    };
-    
-    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+      // Add title
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 24px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Kioo Radio 98.1FM - Broadcast Time Distribution', canvas.width / 2, 40);
+      
+      // Serialize SVG
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+      
+      const img = new Image();
+      img.onload = () => {
+        // Draw SVG to canvas
+        ctx.drawImage(img, 50, 80, 500, 500);
+        
+        // Create download link
+        canvas.toBlob((blob) => {
+          const link = document.createElement('a');
+          link.download = 'kioo-radio-broadcast-distribution.png';
+          link.href = URL.createObjectURL(blob);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        });
+      };
+      
+      img.onerror = () => {
+        alert('Failed to generate PNG. Please try again.');
+        URL.revokeObjectURL(url);
+      };
+      
+      img.src = url;
+    } catch (error) {
+      console.error('PNG export error:', error);
+      alert('Failed to export PNG. Please try again.');
+    }
   };
 
   const exportCSV = () => {
-    const csvContent = [
-      'Language,Percentage,Hours per Week',
-      ...languageData.map(lang => `${lang.name},${lang.percentage}%,${lang.hours}`)
-    ].join('\\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'kioo-radio-broadcast-languages.csv';
-    link.click();
-    URL.revokeObjectURL(url);
+    try {
+      // Create comprehensive CSV data
+      const csvData = [
+        ['Kioo Radio 98.1FM - Broadcast Time Distribution'],
+        ['Generated on:', new Date().toLocaleString()],
+        [''],
+        ['Language Summary'],
+        ['Language', 'Percentage', 'Hours per Week', 'Color Code'],
+        ...languageData.map(lang => [
+          lang.name,
+          `${lang.percentage}%`,
+          `${lang.hours}h`,
+          lang.color
+        ]),
+        [''],
+        ['Daily Time Slots (24-hour format)'],
+        ['Start Time', 'End Time', 'Language', 'Program', 'Duration (hours)'],
+        ...dailySchedule.map(slot => {
+          const langInfo = languageData.find(l => l.code === slot.lang);
+          return [
+            `${String(slot.start).padStart(2, '0')}:00`,
+            `${String(slot.end).padStart(2, '0')}:00`,
+            langInfo?.name || slot.lang,
+            slot.program,
+            `${slot.hours}h`
+          ];
+        })
+      ];
+
+      const csvContent = csvData.map(row => 
+        Array.isArray(row) ? row.map(cell => `"${cell}"`).join(',') : `"${row}"`
+      ).join('\\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'kioo-radio-broadcast-schedule.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('CSV export error:', error);
+      alert('Failed to export CSV. Please try again.');
+    }
   };
 
   const donutSegments = createDonutSegments();
