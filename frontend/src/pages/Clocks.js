@@ -560,11 +560,15 @@ const ClocksNew = () => {
                     <div className="text-sm text-gray-600">
                       <div className="flex justify-between">
                         <span>Total Visible:</span>
-                        <span className="font-medium">100.0% • {totalVisibleHours}h</span>
+                        <span className="font-medium">{totalVisiblePercentage.toFixed(1)}% • {totalVisibleHours}h</span>
                       </div>
                       <div className="flex justify-between mt-1">
                         <span>Full Week:</span>
                         <span className="font-medium">100.0% • 168h</span>
+                      </div>
+                      <div className="flex justify-between mt-1 text-xs">
+                        <span>Daily Programs:</span>
+                        <span className="font-medium">{dailySchedule.length} slots</span>
                       </div>
                     </div>
                   </div>
