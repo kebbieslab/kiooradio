@@ -218,9 +218,10 @@ const ClocksNew = () => {
     }
   };
 
-  const donutSegments = createDonutSegments();
-  const totalVisiblePercentage = donutSegments.reduce((sum, segment) => sum + segment.percentage, 0);
-  const totalVisibleHours = donutSegments.reduce((sum, segment) => sum + segment.hours, 0);
+  const clockSegments = create24HourSegments();
+  const languageSummary = createLanguageSummary();
+  const totalVisiblePercentage = languageSummary.reduce((sum, segment) => sum + segment.percentage, 0);
+  const totalVisibleHours = languageSummary.reduce((sum, segment) => sum + segment.hours, 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
