@@ -9,47 +9,13 @@ const Clocks = () => {
   const [selectedSegment, setSelectedSegment] = useState(null);
   const [showPanel, setShowPanel] = useState(false);
 
-  // Helper function to parse time string to minutes (defined early to avoid hoisting issues)
-  const parseTimeToMinutes = (timeStr) => {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    return hours * 60 + minutes;
-  };
-
-  // Load programming data
-  useEffect(() => {
-    const loadProgramData = async () => {
-      try {
-        const response = await fetch('/data/clocks.json');
-        const data = await response.json();
-        setProgramData(data);
-        setFilterLanguages(data.languages.map(lang => lang.code));
-      } catch (error) {
-        console.error('Failed to load program data:', error);
-      }
-    };
-    loadProgramData();
-  }, []);
-
-  // Update current time from server (every 30 seconds for live data, every minute for header clock)
-  useEffect(() => {
-    const fetchServerTime = async () => {
-      try {
-        const backendUrl = process.env.REACT_APP_BACKEND_URL;
-        const response = await fetch(`${backendUrl}/api/server-time`);
-        const timeData = await response.json();
-        setCurrentTime(new Date(timeData.monrovia_iso));
-      } catch (error) {
-        console.error('Failed to fetch server time, using client time:', error);
-        // Fallback to client time with Liberia timezone
-        const now = new Date();
-        setCurrentTime(now);
-      }
-    };
-
-    fetchServerTime();
-    const interval = setInterval(fetchServerTime, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
-  }, []);
+  // Language data with broadcast percentages
+  const languageData = [
+    { code: 'kissi', name: 'Kissi', percentage: 41.7, color: '#148026', hours: 70 },
+    { code: 'en', name: 'English', percentage: 25.0, color: '#1b5f9e', hours: 42 },
+    { code: 'fr', name: 'French', percentage: 16.7, color: '#c47a00', hours: 28 },
+    { code: 'ev', name: 'Evangelistic Focus (Fula/Mandingo/Gbandi)', percentage: 16.7, color: '#7b3fb2', hours: 28 }
+  ];
 
   // Calculate weekly totals and target percentages
   const calculateWeeklyTotals = useMemo(() => {
