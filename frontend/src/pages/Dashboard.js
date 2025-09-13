@@ -313,11 +313,19 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
+            <div className="flex justify-center mb-4">
+              <button
+                onClick={toggleLanguage}
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                {language === 'en' ? 'EN' : 'FR'} | {language === 'en' ? 'FR' : 'EN'}
+              </button>
+            </div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              {t('dashboardAccess', 'Dashboard Access')}
+              {t('dashboardAccess')}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              {t('dashboardAccessDesc', 'Please enter your credentials to access the admin dashboard')}
+              {t('dashboardAccessDesc')}
             </p>
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleLogin}>
@@ -327,7 +335,7 @@ const Dashboard = () => {
                   type="text"
                   required
                   className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-kioo-primary focus:border-kioo-primary focus:z-10 sm:text-sm"
-                  placeholder={t('username', 'Username')}
+                  placeholder={t('username')}
                   value={credentials.username}
                   onChange={(e) => setCredentials({...credentials, username: e.target.value})}
                 />
@@ -337,7 +345,7 @@ const Dashboard = () => {
                   type="password"
                   required
                   className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-kioo-primary focus:border-kioo-primary focus:z-10 sm:text-sm"
-                  placeholder={t('password', 'Password')}
+                  placeholder={t('password')}
                   value={credentials.password}
                   onChange={(e) => setCredentials({...credentials, password: e.target.value})}
                 />
@@ -353,7 +361,7 @@ const Dashboard = () => {
                 type="submit"
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-kioo-primary hover:bg-kioo-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kioo-primary"
               >
-                {t('accessDashboard', 'Access Dashboard')}
+                {t('accessDashboard')}
               </button>
             </div>
           </form>
