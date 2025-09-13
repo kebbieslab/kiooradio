@@ -313,7 +313,7 @@ const Clocks = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-kioo-primary mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading programming schedule...</p>
+          <p className="text-gray-600">{t('clocks.loadingSchedule')}</p>
         </div>
       </div>
     );
