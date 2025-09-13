@@ -136,6 +136,7 @@ const Clocks = () => {
       ...languageData.map(lang => `${lang.name},${lang.percentage}%,${lang.hours}`)
     ].join('\\n');
     
+    // eslint-disable-next-line no-undef
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
