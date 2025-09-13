@@ -277,90 +277,212 @@ const ClocksNew = () => {
 
         {/* Charts Section */}
         {viewMode === 'week' ? (
-          // Single Week Donut
-          <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
-            <div className="flex flex-col lg:flex-row items-center justify-center space-y-8 lg:space-y-0 lg:space-x-12">
-              
-              {/* Large Donut Chart */}
-              <div className="relative">
-                <svg width="240" height="240" id="donut-chart" className="transform -rotate-90">
-                  <circle
-                    cx="120"
-                    cy="120"
-                    r="80"
-                    fill="none"
-                    stroke="#e5e7eb"
-                    strokeWidth="40"
-                  />
-                  {donutSegments.map((segment, index) => (
-                    <circle
-                      key={segment.code}
-                      cx="120"
-                      cy="120"
-                      r="80"
-                      fill="none"
-                      stroke={segment.color}
-                      strokeWidth="40"
-                      strokeDasharray={segment.strokeDasharray}
-                      strokeDashoffset={segment.strokeDashoffset}
-                      className="cursor-pointer hover:stroke-opacity-80 transition-all"
-                      onClick={() => handleSegmentClick(segment)}
-                      style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
-                    />
-                  ))}
-                </svg>
+          <div className="space-y-8">
+            {/* 24-Hour Programming Clock */}
+            <div className="bg-white rounded-lg shadow-sm p-8">
+              <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">
+                24-Hour Programming Distribution
+              </h3>
+              <div className="flex flex-col lg:flex-row items-center justify-center space-y-8 lg:space-y-0 lg:space-x-12">
                 
-                {/* Center Text */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-900">{totalVisiblePercentage.toFixed(1)}%</div>
-                    <div className="text-sm text-gray-600">{totalVisibleHours}h/week</div>
+                {/* Large 24-Hour Clock */}
+                <div className="relative">
+                  <svg width="320" height="320" id="main-clock-chart" className="transform -rotate-90">
+                    {/* Background circle */}
+                    <circle
+                      cx="160"
+                      cy="160"
+                      r="120"
+                      fill="none"
+                      stroke="#e5e7eb"
+                      strokeWidth="60"
+                    />
+                    
+                    {/* Hour markers */}
+                    {Array.from({ length: 24 }, (_, i) => {
+                      const angle = (i * 15) - 90; // 360/24 = 15 degrees per hour
+                      const radians = (angle * Math.PI) / 180;
+                      const x1 = 160 + Math.cos(radians) * 85;
+                      const y1 = 160 + Math.sin(radians) * 85;
+                      const x2 = 160 + Math.cos(radians) * 95;
+                      const y2 = 160 + Math.sin(radians) * 95;
+                      
+                      return (
+                        <g key={i} className="transform rotate-90" style={{ transformOrigin: '160px 160px' }}>
+                          <line
+                            x1={x1}
+                            y1={y1}
+                            x2={x2}
+                            y2={y2}
+                            stroke="#666"
+                            strokeWidth="2"
+                          />
+                          <text
+                            x={160 + Math.cos(radians) * 75}
+                            y={160 + Math.sin(radians) * 75}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            fontSize="12"
+                            fill="#666"
+                            className="font-medium"
+                          >
+                            {i === 0 ? '12' : i}
+                          </text>
+                        </g>
+                      );
+                    })}
+                    
+                    {/* Programming segments */}
+                    {clockSegments.map((segment, index) => (
+                      <circle
+                        key={`segment-${index}`}
+                        cx="160"
+                        cy="160"
+                        r="120"
+                        fill="none"
+                        stroke={segment.langInfo?.color || '#666'}
+                        strokeWidth="60"
+                        strokeDasharray={segment.strokeDasharray}
+                        strokeDashoffset={segment.strokeDashoffset}
+                        className="cursor-pointer hover:stroke-opacity-80 transition-all"
+                        onClick={() => handleSegmentClick(segment)}
+                        style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
+                        title={`${segment.startTime}-${segment.endTime}: ${segment.program}`}
+                      />
+                    ))}
+                  </svg>
+                  
+                  {/* Center Text */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-xl font-bold text-gray-900">24 Hours</div>
+                      <div className="text-sm text-gray-600">Daily Schedule</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Time Slots Legend */}
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Programming Time Slots</h4>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {clockSegments.map((segment, index) => (
+                        <div 
+                          key={`slot-${index}`}
+                          className="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer"
+                          onClick={() => handleSegmentClick(segment)}
+                        >
+                          <div 
+                            className="w-4 h-4 rounded-full flex-shrink-0" 
+                            style={{ backgroundColor: segment.langInfo?.color }}
+                          ></div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-medium text-gray-900 truncate">
+                              {segment.startTime} - {segment.endTime}
+                            </div>
+                            <div className="text-xs text-gray-600 truncate">
+                              {segment.program}
+                            </div>
+                          </div>
+                          <span className="text-xs text-gray-500 flex-shrink-0">
+                            {segment.hours}h
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Legend & Controls */}
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Languages</h3>
-                  <div className="space-y-3">
-                    {languageData.map(lang => (
-                      <div key={lang.code} className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          id={`lang-${lang.code}`}
-                          checked={visibleLanguages.includes(lang.code)}
-                          onChange={() => toggleLanguageVisibility(lang.code)}
-                          className="h-4 w-4 text-kioo-primary focus:ring-kioo-primary border-gray-300 rounded"
-                        />
-                        <div 
-                          className="w-4 h-4 rounded-full" 
-                          style={{ backgroundColor: lang.color }}
-                        ></div>
-                        <label 
-                          htmlFor={`lang-${lang.code}`}
-                          className="text-sm text-gray-700 cursor-pointer flex-1"
-                        >
-                          {lang.name}
-                        </label>
-                        <span className="text-sm font-medium text-gray-900">
-                          {lang.percentage}%
-                        </span>
-                      </div>
+            {/* Language Summary Donut */}
+            <div className="bg-white rounded-lg shadow-sm p-8">
+              <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">
+                Weekly Language Distribution
+              </h3>
+              <div className="flex flex-col lg:flex-row items-center justify-center space-y-8 lg:space-y-0 lg:space-x-12">
+                
+                {/* Language Summary Donut */}
+                <div className="relative">
+                  <svg width="240" height="240" id="language-summary-chart" className="transform -rotate-90">
+                    <circle
+                      cx="120"
+                      cy="120"
+                      r="60"
+                      fill="none"
+                      stroke="#e5e7eb"
+                      strokeWidth="30"
+                    />
+                    {languageSummary.map((segment, index) => (
+                      <circle
+                        key={segment.code}
+                        cx="120"
+                        cy="120"
+                        r="60"
+                        fill="none"
+                        stroke={segment.color}
+                        strokeWidth="30"
+                        strokeDasharray={segment.strokeDasharray}
+                        strokeDashoffset={segment.strokeDashoffset}
+                        className="cursor-pointer hover:stroke-opacity-80 transition-all"
+                        onClick={() => handleSegmentClick(segment)}
+                        style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
+                      />
                     ))}
+                  </svg>
+                  
+                  {/* Center Text */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-gray-900">{totalVisiblePercentage.toFixed(1)}%</div>
+                      <div className="text-sm text-gray-600">{totalVisibleHours}h/week</div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Totals */}
-                <div className="pt-4 border-t border-gray-200">
-                  <div className="text-sm text-gray-600">
-                    <div className="flex justify-between">
-                      <span>Total Visible:</span>
-                      <span className="font-medium">{totalVisiblePercentage.toFixed(1)}% • {totalVisibleHours}h</span>
+                {/* Legend & Controls */}
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="text-lg font-semibold text-gray-900 mb-4">Languages</h4>
+                    <div className="space-y-3">
+                      {languageData.map(lang => (
+                        <div key={lang.code} className="flex items-center space-x-3">
+                          <input
+                            type="checkbox"
+                            id={`lang-${lang.code}`}
+                            checked={visibleLanguages.includes(lang.code)}
+                            onChange={() => toggleLanguageVisibility(lang.code)}
+                            className="h-4 w-4 text-kioo-primary focus:ring-kioo-primary border-gray-300 rounded"
+                          />
+                          <div 
+                            className="w-4 h-4 rounded-full" 
+                            style={{ backgroundColor: lang.color }}
+                          ></div>
+                          <label 
+                            htmlFor={`lang-${lang.code}`}
+                            className="text-sm text-gray-700 cursor-pointer flex-1"
+                          >
+                            {lang.name}
+                          </label>
+                          <span className="text-sm font-medium text-gray-900">
+                            {lang.percentage}%
+                          </span>
+                        </div>
+                      ))}
                     </div>
-                    <div className="flex justify-between mt-1">
-                      <span>Full Week:</span>
-                      <span className="font-medium">100% • 168h</span>
+                  </div>
+
+                  {/* Totals */}
+                  <div className="pt-4 border-t border-gray-200">
+                    <div className="text-sm text-gray-600">
+                      <div className="flex justify-between">
+                        <span>Total Visible:</span>
+                        <span className="font-medium">100.0% • {totalVisibleHours}h</span>
+                      </div>
+                      <div className="flex justify-between mt-1">
+                        <span>Full Week:</span>
+                        <span className="font-medium">100.0% • 168h</span>
+                      </div>
                     </div>
                   </div>
                 </div>
