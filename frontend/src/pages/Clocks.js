@@ -604,7 +604,7 @@ const Clocks = () => {
                   
                   <div>
                     <label className="text-sm font-medium text-gray-600">{t('clocks.day')}</label>
-                    <p className="text-gray-900">{selectedBlock.actualDay}</p>
+                    <p className="text-gray-900">{getDayTranslation(selectedBlock.actualDay)}</p>
                   </div>
                   
                   <div>
