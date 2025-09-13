@@ -370,230 +370,222 @@ const Dashboard = () => {
     );
   }
 
-  // Dashboard
+  // Farmer Dashboard
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+      {/* Header with GMT Time and Language Toggle */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-3 sm:space-y-0">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{t('kiooRadioDashboard', 'Kioo Radio Dashboard')}</h1>
-              <p className="text-sm text-gray-500">{t('adminOverview', 'Administrative Overview')}</p>
-              {lastUpdated && (
-                <p className="text-xs text-gray-400 mt-1">
-                  {t('lastUpdated', 'Last updated')}: {lastUpdated.toLocaleString()}
-                </p>
-              )}
+              <h1 className="text-2xl font-bold text-gray-900">{t('dashboardTitle')}</h1>
+              <p className="text-sm text-gray-600">{t('farmerFocused')}</p>
             </div>
-            <div className="flex space-x-4">
+            
+            <div className="flex items-center space-x-4">
+              {/* GMT Time Pills */}
+              <div className="flex items-center space-x-2">
+                <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                  {t('allTimesGMT')}
+                </div>
+                <div className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+                  🕐 {currentTime.toLocaleTimeString('en-GB', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    timeZone: 'UTC'
+                  })} GMT
+                </div>
+              </div>
+              
+              {/* Language Toggle */}
               <button
-                onClick={loadDashboardData}
-                disabled={loading}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-kioo-primary hover:bg-kioo-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kioo-primary disabled:opacity-50"
+                onClick={toggleLanguage}
+                className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
               >
-                {loading ? t('refreshing', 'Refreshing...') : t('refresh', 'Refresh')}
+                {language === 'en' ? 'EN' : 'FR'} | {language === 'en' ? 'FR' : 'EN'}
+              </button>
+              
+              {/* Actions */}
+              <button
+                onClick={loadFarmerWeatherData}
+                disabled={loading}
+                className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-kioo-primary hover:bg-kioo-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-kioo-primary disabled:opacity-50"
+              >
+                {loading ? t('refreshing') : t('refresh')}
               </button>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                className="px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
               >
-                {t('logout', 'Logout')}
+                {t('logout')}
               </button>
             </div>
           </div>
+          
+          {lastUpdated && (
+            <p className="text-xs text-gray-500 mt-2">
+              {t('lastUpdated')}: {lastUpdated.toLocaleString(language === 'fr' ? 'fr-FR' : 'en-GB', { timeZone: 'UTC' })} GMT
+            </p>
+          )}
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {loading && (
-          <div className="text-center py-4">
+          <div className="text-center py-8">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-kioo-primary"></div>
-            <p className="mt-2 text-gray-600">{t('loading', 'Loading...')}</p>
+            <p className="mt-2 text-gray-600">{t('loading')}</p>
           </div>
         )}
 
         {error && (
-          <div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
             {error}
-            <button onClick={() => setError('')} className="float-right font-bold">×</button>
+            <button onClick={() => setError('')} className="float-right font-bold text-lg hover:text-red-900">×</button>
           </div>
         )}
 
-        {/* Dashboard Tiles */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-            {/* Visitors This Month */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                      <span className="text-white font-bold">👥</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">{t('visitorsThisMonth', 'Visitors This Month')}</dt>
-                      <dd className="text-lg font-medium text-gray-900">{stats.visitors_this_month.toLocaleString()}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
+        {/* Weather Cards */}
+        {farmerWeatherData.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {farmerWeatherData.map((location, index) => {
+              const messages = generateFarmerMessages(location);
+              const firstRain = location.hourly?.find(h => 
+                (h.rainProbPct || 0) >= 50 && (h.rainMmHr || 0) >= 0.2
+              );
+              
+              const getIntensityLabel = (rainMmHr) => {
+                if (!rainMmHr || rainMmHr < 0.2) return t('none');
+                if (rainMmHr < 2.5) return t('light');
+                if (rainMmHr <= 10) return t('moderate');
+                return t('heavy');
+              };
 
-            {/* Donations This Month */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                      <span className="text-white font-bold">💰</span>
-                    </div>
+              return (
+                <div key={index} className="bg-white rounded-lg shadow-sm p-6">
+                  {/* Location Header */}
+                  <div className="mb-4">
+                    <h3 className="text-lg font-bold text-gray-900">{location.location}</h3>
                   </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">{t('donationsThisMonth', 'Donations This Month')}</dt>
-                      <dd className="text-lg font-medium text-gray-900">${stats.donations_this_month.toLocaleString()}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* Income vs Expenses */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                      <span className="text-white font-bold">📊</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">{t('netIncome', 'Net Income')}</dt>
-                      <dd className={`text-lg font-medium ${
-                        (stats.income_this_month - stats.expenses_this_month) >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        ${(stats.income_this_month - stats.expenses_this_month).toLocaleString()}
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Open Reminders */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
-                      <span className="text-white font-bold">⏰</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">{t('openReminders', 'Open Reminders')}</dt>
-                      <dd className="text-lg font-medium text-gray-900">{stats.open_reminders}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Approved Stories */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-indigo-500 rounded-md flex items-center justify-center">
-                      <span className="text-white font-bold">📖</span>
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">{t('approvedStories', 'Approved Stories')}</dt>
-                      <dd className="text-lg font-medium text-gray-900">{stats.approved_stories}</dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Weather Section */}
-        {(Object.keys(weatherData).length > 0 || Object.keys(weatherForecast).length > 0) && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('weatherForecast', 'Weather Forecast')}</h2>
-            
-            {/* Current Weather */}
-            {Object.keys(weatherData).length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">{t('currentWeather', 'Current Weather')}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {Object.entries(weatherData).map(([city, data]) => (
-                    <div key={city} className="bg-white rounded-lg shadow p-4">
-                      <div className="text-sm font-medium text-gray-600 mb-1">{city}</div>
-                      <div className="text-2xl font-bold text-blue-600 mb-1">{data.temperature}°C</div>
-                      <div className="text-sm text-gray-700 mb-2">{data.condition}</div>
-                      <div className="text-xs text-gray-500">
-                        {t('updated', 'Updated')}: {data.updated}
+                  {/* Current Conditions */}
+                  <div className="mb-6">
+                    <h4 className="text-sm font-medium text-gray-700 mb-3">{t('now')}</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-600">{location.now?.tempC || 'N/A'}°C</div>
+                        <div className="text-xs text-gray-500">{t('temp')}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-gray-800">{location.now?.rainProbPct || 0}%</div>
+                        <div className="text-xs text-gray-500">{t('rainChance')}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm font-medium text-gray-700">
+                          {getIntensityLabel(location.now?.rainMmHr)}
+                        </div>
+                        <div className="text-xs text-gray-500">{t('rainIntensity')}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm text-gray-600">{location.now?.windKph || 0} km/h</div>
+                        <div className="text-xs text-gray-500">{t('wind')}</div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  </div>
 
-            {/* 2-Day Weather Forecast */}
-            {Object.keys(weatherForecast).length > 0 && (
-              <div>
-                <h3 className="text-lg font-medium text-gray-800 mb-4">{t('twoDayForecast', '2-Day Weather Predictions')}</h3>
-                <div className="space-y-4">
-                  {Object.entries(weatherForecast).map(([city, data]) => (
-                    <div key={city} className="bg-white rounded-lg shadow p-4">
-                      <div className="font-medium text-gray-900 mb-3">{city}</div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        {data.forecast && data.forecast.map((day, index) => (
-                          <div key={index} className="bg-gray-50 rounded p-3 text-center">
-                            <div className="text-sm font-medium text-gray-600 mb-1">{day.day_label}</div>
-                            <div className="text-xs text-gray-500 mb-2">{day.date}</div>
-                            <div className="flex justify-center items-center space-x-2 mb-1">
-                              <span className="text-lg font-bold text-red-500">{day.temp_max}°</span>
-                              <span className="text-sm text-gray-400">/</span>
-                              <span className="text-lg font-bold text-blue-500">{day.temp_min}°</span>
+                  {/* Rain Highlight */}
+                  <div className="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+                    <div className="text-sm font-medium text-blue-900">
+                      {firstRain ? (
+                        <>
+                          {t('likelyRain')} {new Date(firstRain.timeIsoUTC).toLocaleTimeString('en-GB', { 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            timeZone: 'UTC'
+                          })} GMT
+                        </>
+                      ) : (
+                        t('lowChanceNext24h')
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 3-Day Outlook */}
+                  <div className="mb-6">
+                    <h4 className="text-sm font-medium text-gray-700 mb-3">{t('threeDayOutlook')}</h4>
+                    <div className="space-y-2">
+                      {location.daily?.slice(0, 3).map((day, dayIndex) => {
+                        const date = new Date(day.dateIsoUTC);
+                        const dayName = date.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-GB', { 
+                          weekday: 'short',
+                          timeZone: 'UTC'
+                        });
+                        
+                        // Create sparkline data from hourly data for this day
+                        const dayHourly = location.hourly?.filter(h => {
+                          const hourDate = new Date(h.timeIsoUTC);
+                          return hourDate.toDateString() === date.toDateString();
+                        }) || [];
+                        const sparklineData = dayHourly.map(h => h.rainProbPct || 0);
+
+                        return (
+                          <div key={dayIndex} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-sm font-medium text-gray-900 w-8">{dayName}</span>
+                              <span className="text-sm text-gray-600">{t('maxChance')}: {day.rainProbMaxPct || 0}%</span>
+                              <span className="text-sm text-gray-600">{t('totalRain')}: {(day.rainSumMm || 0).toFixed(1)}mm</span>
                             </div>
-                            <div className="text-xs text-gray-700">{day.condition}</div>
+                            <Sparkline data={sparklineData} width={60} height={20} />
                           </div>
-                        ))}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-2">
-                        {t('updated', 'Updated')}: {data.updated}
-                      </div>
+                        );
+                      })}
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Farmer Messages */}
+                  <div className="space-y-3">
+                    {messages.map((message, msgIndex) => (
+                      <div 
+                        key={msgIndex} 
+                        className={`p-3 rounded-lg text-sm ${
+                          msgIndex === 0 
+                            ? 'bg-green-50 border border-green-200 text-green-800 font-medium' 
+                            : 'bg-yellow-50 border border-yellow-200 text-yellow-800'
+                        }`}
+                      >
+                        <span className="mr-2">{msgIndex === 0 ? '🌾' : '⚠️'}</span>
+                        {message}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })}
           </div>
         )}
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Income vs Expenses Bar Chart */}
-          {incomeExpenses && (
-            <BarChart data={incomeExpenses} width={400} height={250} />
-          )}
-
-          {/* Donations by Project Pie Chart */}
-          {donationsByProject.length > 0 && (
-            <PieChart data={donationsByProject} width={400} height={300} />
-          )}
-        </div>
+        {/* Legend */}
+        {farmerWeatherData.length > 0 && (
+          <div className="mt-8 bg-white rounded-lg shadow-sm p-4">
+            <div className="text-xs text-gray-500 space-y-1">
+              <div className="font-medium text-gray-700 mb-2">{t('rainIntensity')} (mm/h):</div>
+              <div className="flex flex-wrap gap-4">
+                <span>{t('light')}: &lt;2.5mm/h</span>
+                <span>{t('moderate')}: 2.5-10mm/h</span>
+                <span>{t('heavy')}: &gt;10mm/h</span>
+              </div>
+              <div className="mt-2 pt-2 border-t border-gray-200">
+                <p className="italic">
+                  {language === 'fr' 
+                    ? 'Prévisions basées sur les données météorologiques. Les conditions peuvent changer rapidement.'
+                    : 'Forecasts based on weather data. Conditions may change rapidly.'
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
