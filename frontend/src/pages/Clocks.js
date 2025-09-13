@@ -480,7 +480,7 @@ const Clocks = () => {
             {weeklySchedule.map((daySchedule, dayIndex) => (
               <div key={daySchedule.day} className="p-4">
                 <h3 className="font-bold text-center text-gray-900 mb-4 sticky top-0 bg-white py-2">
-                  {daySchedule.day}
+                  {daySchedule.displayDay}
                 </h3>
                 
                 <div className="space-y-1">
