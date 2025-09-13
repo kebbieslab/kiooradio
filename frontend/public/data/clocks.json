@@ -1,0 +1,64 @@
+{
+  "languages": [
+    {"code":"kissi","name":"Kissi","color":"#148026"},
+    {"code":"en","name":"English","color":"#1b5f9e"},
+    {"code":"fr","name":"French","color":"#c47a00"},
+    {"code":"ev","name":"Evangelistic (Fula/Mandingo/Gbandi)","color":"#7b3fb2"}
+  ],
+  "weeklyBlocks": [
+    {"day":"*","start":"06:00","end":"10:00","lang":"kissi","title":"Morning Devotion & Community"},
+    {"day":"*","start":"10:00","end":"12:00","lang":"en","title":"Magazine & News (EN)"},
+    {"day":"*","start":"12:00","end":"14:00","lang":"fr","title":"Magazine & News (FR)"},
+    {"day":"*","start":"14:00","end":"16:00","lang":"ev","title":"Evangelistic Programs"},
+    {"day":"*","start":"16:00","end":"18:00","lang":"en","title":"Drive Time (EN)"},
+    {"day":"*","start":"18:00","end":"22:00","lang":"kissi","title":"Evening Block (Kissi)"},
+    {"day":"*","start":"22:00","end":"00:00","lang":"ev","title":"Evening Outreach (EV)"},
+    {"day":"*","start":"00:00","end":"02:00","lang":"fr","title":"Overnight (FR)"},
+    {"day":"*","start":"02:00","end":"04:00","lang":"en","title":"Overnight (EN)"},
+    {"day":"*","start":"04:00","end":"06:00","lang":"kissi","title":"Pre-Dawn Worship (Kissi)"}
+  ],
+  "overrides": [],
+  "hourTemplates": {
+    "kissi":[
+      {"start":"00:00","end":"00:30","item":"Station ID + TOH headlines"},
+      {"start":"00:30","end":"08:00","item":"Devotional + worship set"},
+      {"start":"08:00","end":"12:00","item":"Community bulletin"},
+      {"start":"12:00","end":"24:00","item":"Teaching/interview"},
+      {"start":"24:00","end":"26:00","item":"Music bumper + ID"},
+      {"start":"26:00","end":"38:00","item":"Worship set"},
+      {"start":"38:00","end":"44:00","item":"Testimony/field update"},
+      {"start":"44:00","end":"50:00","item":"Recap + response info"},
+      {"start":"50:00","end":"60:00","item":"Music build to top"}
+    ],
+    "en":[
+      {"start":"00:00","end":"00:30","item":"Station ID + News headlines"},
+      {"start":"00:30","end":"10:00","item":"Morning magazine content"},
+      {"start":"10:00","end":"15:00","item":"Community announcements"},
+      {"start":"15:00","end":"30:00","item":"Interview/talk segment"},
+      {"start":"30:00","end":"35:00","item":"Music transition + ID"},
+      {"start":"35:00","end":"45:00","item":"Feature story/documentary"},
+      {"start":"45:00","end":"55:00","item":"Interactive talk/call-in"},
+      {"start":"55:00","end":"60:00","item":"Music + weather update"}
+    ],
+    "fr":[
+      {"start":"00:00","end":"00:30","item":"Identification + Actualités"},
+      {"start":"00:30","end":"10:00","item":"Magazine matinal français"},
+      {"start":"10:00","end":"15:00","item":"Annonces communautaires"},
+      {"start":"15:00","end":"30:00","item":"Interview/débat français"},
+      {"start":"30:00","end":"35:00","item":"Transition musicale + ID"},
+      {"start":"35:00","end":"45:00","item":"Reportage/documentaire"},
+      {"start":"45:00","end":"55:00","item":"Programme interactif"},
+      {"start":"55:00","end":"60:00","item":"Musique + météo"}
+    ],
+    "ev":[
+      {"start":"00:00","end":"00:30","item":"Station ID + Prayer time"},
+      {"start":"00:30","end":"10:00","item":"Evangelistic message"},
+      {"start":"10:00","end":"15:00","item":"Community prayer requests"},
+      {"start":"15:00","end":"30:00","item":"Teaching/testimony (Fula/Mandingo/Gbandi)"},
+      {"start":"30:00","end":"35:00","item":"Gospel music + ID"},
+      {"start":"35:00","end":"45:00","item":"Cross-border outreach"},
+      {"start":"45:00","end":"55:00","item":"Interactive prayer/response"},
+      {"start":"55:00","end":"60:00","item":"Closing prayer + music"}
+    ]
+  }
+}
