@@ -304,7 +304,7 @@ const Clocks = () => {
                   style={{ backgroundColor: lang.color }}
                 ></div>
                 <span className="text-xs">
-                  {lang.name}: {total?.percentage || 0}%
+                  {getLanguageTranslation(lang.code)}: {total?.percentage || 0}%
                   {Math.abs(total?.drift || 0) > 2 && (
                     <span className={`ml-1 ${total.drift > 0 ? 'text-orange-600' : 'text-blue-600'}`}>
                       ({total.drift > 0 ? '+' : ''}{total.drift}%)
