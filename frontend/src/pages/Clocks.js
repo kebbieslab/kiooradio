@@ -519,12 +519,12 @@ const Clocks = () => {
                     style={{ backgroundColor: lang.color }}
                   ></div>
                   <div className="font-medium text-gray-900">{lang.name}</div>
-                  <div className="text-2xl font-bold text-gray-800">{total?.hours || 0}h</div>
+                  <div className="text-2xl font-bold text-gray-800">{total?.hours || 0}{t('clocks.hoursAbbrev')}</div>
                   <div className="text-sm text-gray-600">
-                    {total?.percentage || 0}% of week
+                    {total?.percentage || 0}% {t('clocks.ofWeek')}
                   </div>
                   <div className="text-xs text-gray-500">
-                    Target: {total?.target || 0}%
+                    {t('clocks.target')}: {total?.target || 0}%
                   </div>
                   {isDrifting && (
                     <div className={`text-xs font-medium mt-1 ${
