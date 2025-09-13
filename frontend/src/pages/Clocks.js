@@ -605,29 +605,83 @@ const ClocksNew = () => {
                   <div className="flex items-center space-x-3">
                     <div 
                       className="w-6 h-6 rounded-full" 
-                      style={{ backgroundColor: selectedSegment.color }}
+                      style={{ backgroundColor: selectedSegment.langInfo?.color || selectedSegment.color }}
                     ></div>
-                    <h4 className="text-xl font-semibold text-gray-900">{selectedSegment.name}</h4>
+                    <h4 className="text-xl font-semibold text-gray-900">
+                      {selectedSegment.program || selectedSegment.name}
+                    </h4>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-50 rounded-lg p-4 text-center">
-                      <div className="text-2xl font-bold text-kioo-primary">{selectedSegment.percentage}%</div>
-                      <div className="text-sm text-gray-600">Weekly Share</div>
+                  {/* Time slot details */}
+                  {selectedSegment.startTime && (
+                    <div className="bg-kioo-primary/10 rounded-lg p-4">
+                      <h5 className="font-medium text-gray-900 mb-2">Time Slot</h5>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-kioo-primary">{selectedSegment.startTime}</div>
+                          <div className="text-sm text-gray-600">Start Time</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-lg font-bold text-kioo-primary">{selectedSegment.endTime}</div>
+                          <div className="text-sm text-gray-600">End Time</div>
+                        </div>
+                      </div>
+                      <div className="text-center mt-3">
+                        <div className="text-2xl font-bold text-gray-900">{selectedSegment.hours}h</div>
+                        <div className="text-sm text-gray-600">Duration</div>
+                      </div>
                     </div>
-                    <div className="bg-gray-50 rounded-lg p-4 text-center">
-                      <div className="text-2xl font-bold text-kioo-primary">{selectedSegment.hours}h</div>
-                      <div className="text-sm text-gray-600">Hours/Week</div>
+                  )}
+                  
+                  {/* Language summary for language segments */}
+                  {selectedSegment.percentage && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-gray-50 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-kioo-primary">{selectedSegment.percentage}%</div>
+                        <div className="text-sm text-gray-600">Weekly Share</div>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-4 text-center">
+                        <div className="text-2xl font-bold text-kioo-primary">{selectedSegment.hours}h</div>
+                        <div className="text-sm text-gray-600">Hours/Week</div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                   
                   <div className="bg-blue-50 rounded-lg p-4">
-                    <h5 className="font-medium text-gray-900 mb-2">Weekly Impact</h5>
+                    <h5 className="font-medium text-gray-900 mb-2">Program Details</h5>
                     <p className="text-sm text-gray-600">
-                      {selectedSegment.name} programming reaches our community for {selectedSegment.hours} hours 
-                      each week, representing {selectedSegment.percentage}% of our total broadcast time.
+                      {selectedSegment.program ? (
+                        <>
+                          <strong>{selectedSegment.program}</strong> airs daily from {selectedSegment.startTime} to {selectedSegment.endTime} 
+                          in {selectedSegment.langInfo?.name} language, providing {selectedSegment.hours} hours of daily programming.
+                        </>
+                      ) : (
+                        <>
+                          {selectedSegment.name} programming reaches our community for {selectedSegment.hours} hours 
+                          each week, representing {selectedSegment.percentage}% of our total broadcast time.
+                        </>
+                      )}
                     </p>
                   </div>
+
+                  {/* Show related time slots for language selections */}
+                  {selectedSegment.code && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h5 className="font-medium text-gray-900 mb-2">Daily Time Slots</h5>
+                      <div className="space-y-2">
+                        {dailySchedule
+                          .filter(slot => slot.lang === selectedSegment.code)
+                          .map((slot, index) => (
+                            <div key={index} className="flex justify-between items-center text-sm">
+                              <span className="font-medium">
+                                {String(slot.start).padStart(2, '0')}:00 - {String(slot.end).padStart(2, '0')}:00
+                              </span>
+                              <span className="text-gray-600">{slot.program}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
