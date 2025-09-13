@@ -617,15 +617,6 @@ Generated on: ${new Date().toLocaleString()}
         </div>
       )}
 
-      {/* Admin Access Button */}
-      <button
-        onClick={() => setShowAdminPanel(true)}
-        className="fixed top-4 left-4 bg-gray-800 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-900 z-40"
-        style={{ fontSize: '12px' }}
-      >
-        🔧 Admin
-      </button>
-
       {/* Header */}
       <section className={`bg-kioo-primary text-white py-16 ${isPreviewMode ? 'mt-12' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
