@@ -587,12 +587,12 @@ const Clocks = () => {
               <div className="flex-1 px-6 py-4 overflow-y-auto">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-gray-600">{t('clocks.detailTitle')}</label>
+                    <label className="text-sm font-medium text-gray-600">{t('clocksDetailTitle')}</label>
                     <p className="text-lg font-medium text-gray-900">{selectedBlock.title}</p>
                   </div>
                   
                   <div>
-                    <label className="text-sm font-medium text-gray-600">{t('clocks.language')}</label>
+                    <label className="text-sm font-medium text-gray-600">{t('clocksLanguage')}</label>
                     <div className="flex items-center mt-1">
                       <div 
                         className="w-4 h-4 rounded-full mr-2" 
@@ -603,12 +603,12 @@ const Clocks = () => {
                   </div>
                   
                   <div>
-                    <label className="text-sm font-medium text-gray-600">{t('clocks.day')}</label>
+                    <label className="text-sm font-medium text-gray-600">{t('clocksDay')}</label>
                     <p className="text-gray-900">{getDayTranslation(selectedBlock.actualDay)}</p>
                   </div>
                   
                   <div>
-                    <label className="text-sm font-medium text-gray-600">{t('clocks.time')}</label>
+                    <label className="text-sm font-medium text-gray-600">{t('clocksTime')}</label>
                     <p className="text-gray-900">{selectedBlock.start} - {selectedBlock.end} GMT</p>
                   </div>
                   
