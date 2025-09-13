@@ -74,10 +74,211 @@ const Dashboard = () => {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setCredentials({ username: '', password: '' });
-    setStats(null);
-    setDonationsByProject([]);
-    setIncomeExpenses(null);
+    setFarmerWeatherData([]);
     setLastUpdated(null);
+  };
+
+  const toggleLanguage = () => {
+    const newLang = language === 'en' ? 'fr' : 'en';
+    setLanguage(newLang);
+    localStorage.setItem('kioo_lang', newLang);
+  };
+
+  // Translation function
+  const t = (key, fallback = key) => {
+    const translations = {
+      en: {
+        dashboardTitle: 'Kioo Dashboard: GMT + Farmer Messages',
+        farmerFocused: 'Farmer-focused rain timing & intensity',
+        allTimesGMT: 'All times in GMT',
+        currentTime: 'Current Time',
+        dashboardAccess: 'Dashboard Access',
+        dashboardAccessDesc: 'Please enter your credentials to access the farmer weather dashboard',
+        username: 'Username',
+        password: 'Password',
+        accessDashboard: 'Access Dashboard',
+        refresh: 'Refresh',
+        logout: 'Logout',
+        loading: 'Loading...',
+        refreshing: 'Refreshing...',
+        lastUpdated: 'Last updated',
+        now: 'Now',
+        temp: 'Temp',
+        rainChance: 'Rain Chance',
+        wind: 'Wind',
+        humidity: 'Humidity',
+        threeDayOutlook: '3-Day Outlook',
+        rainIntensity: 'Rain Intensity',
+        light: 'Light',
+        moderate: 'Moderate',
+        heavy: 'Heavy',
+        none: 'None',
+        likelyRain: 'Likely rain ~',
+        lowChanceNext24h: 'Low chance of rain next 24h',
+        dryPatternExpected: 'Dry pattern expected',
+        maxChance: 'Max',
+        totalRain: 'Total',
+        mon: 'Mon',
+        tue: 'Tue',
+        wed: 'Wed',
+        thu: 'Thu',
+        fri: 'Fri',
+        sat: 'Sat',
+        sun: 'Sun'
+      },
+      fr: {
+        dashboardTitle: 'Tableau de bord Kioo : GMT + Messages aux agriculteurs',
+        farmerFocused: 'Informations pluie pour les agriculteurs : moment et intensité',
+        allTimesGMT: 'Toutes les heures en GMT',
+        currentTime: 'Heure actuelle',
+        dashboardAccess: 'Accès au tableau de bord',
+        dashboardAccessDesc: 'Veuillez saisir vos identifiants pour accéder au tableau de bord météo agricole',
+        username: 'Nom d\'utilisateur',
+        password: 'Mot de passe',
+        accessDashboard: 'Accéder au tableau de bord',
+        refresh: 'Actualiser',
+        logout: 'Déconnexion',
+        loading: 'Chargement...',
+        refreshing: 'Actualisation...',
+        lastUpdated: 'Dernière mise à jour',
+        now: 'Maintenant',
+        temp: 'Temp',
+        rainChance: 'Chance de pluie',
+        wind: 'Vent',
+        humidity: 'Humidité',
+        threeDayOutlook: 'Prévisions 3 jours',
+        rainIntensity: 'Intensité pluie',
+        light: 'Légère',
+        moderate: 'Modérée',
+        heavy: 'Forte',
+        none: 'Aucune',
+        likelyRain: 'Pluie probable ~',
+        lowChanceNext24h: 'Faible risque de pluie dans les 24h',
+        dryPatternExpected: 'Tendance sèche prévue',
+        maxChance: 'Max',
+        totalRain: 'Total',
+        mon: 'Lun',
+        tue: 'Mar',
+        wed: 'Mer',
+        thu: 'Jeu',
+        fri: 'Ven',
+        sat: 'Sam',
+        sun: 'Dim'
+      }
+    };
+
+    return translations[language]?.[key] || fallback;
+  };
+
+  // Farmer message generation
+  const generateFarmerMessages = (locationData) => {
+    const messages = [];
+    const { hourly = [], daily = [], now = {} } = locationData;
+    
+    // Check if any hourly has heavy rain (> 10mm/h)
+    const hasHeavyRain = hourly.some(h => (h.rainMmHr || 0) > 10);
+    
+    // Find first rain within 3 hours
+    const rainSoon = hourly.slice(0, 3).find(h => 
+      (h.rainProbPct || 0) >= 50 && (h.rainMmHr || 0) >= 0.2
+    );
+    
+    // Find first rain in next 24 hours
+    const firstRain24h = hourly.find(h => 
+      (h.rainProbPct || 0) >= 50 && (h.rainMmHr || 0) >= 0.2
+    );
+    
+    // Check tomorrow's rain probability
+    const tomorrowRain = daily.length > 1 ? daily[1] : null;
+    
+    // Check if 3-day totals are near zero
+    const threeDayTotal = daily.slice(0, 3).reduce((sum, day) => sum + (day.rainSumMm || 0), 0);
+    
+    const getIntensityLabel = (rainMmHr) => {
+      if (!rainMmHr || rainMmHr < 0.2) return language === 'fr' ? 'Aucune' : 'None';
+      if (rainMmHr < 2.5) return language === 'fr' ? 'Légère' : 'Light';
+      if (rainMmHr <= 10) return language === 'fr' ? 'Modérée' : 'Moderate';
+      return language === 'fr' ? 'Forte' : 'Heavy';
+    };
+    
+    const formatTime = (isoString) => {
+      const date = new Date(isoString);
+      return date.toLocaleTimeString('en-GB', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'UTC'
+      }) + ' GMT';
+    };
+
+    // Primary message logic (priority order)
+    if (hasHeavyRain) {
+      const todayTotal = daily[0]?.rainSumMm || 0;
+      messages.push(language === 'fr' 
+        ? `Cumul proche de ${todayTotal} mm aujourd'hui. Évitez les zones basses.`
+        : `Total rain near ${todayTotal} mm today. Avoid field work in low areas.`
+      );
+    } else if (rainSoon) {
+      const timeStr = formatTime(rainSoon.timeIsoUTC);
+      messages.push(language === 'fr'
+        ? `Pluie probable vers ${timeStr}. Protégez les outils et privilégiez les tâches à l'abri.`
+        : `Rain likely around ${timeStr}. Keep tools dry and plan indoor tasks.`
+      );
+    } else if (firstRain24h) {
+      const hour = new Date(firstRain24h.timeIsoUTC).getUTCHours();
+      const intensity = getIntensityLabel(firstRain24h.rainMmHr);
+      
+      if (hour >= 12 && hour < 18) {
+        messages.push(language === 'fr'
+          ? `${intensity} pluies attendues cet après-midi. Récoltez plus tôt si possible.`
+          : `Expect ${intensity.toLowerCase()} showers this afternoon. Harvest early if possible.`
+        );
+      } else if (hour >= 18) {
+        const timeStr = formatTime(firstRain24h.timeIsoUTC);
+        messages.push(language === 'fr'
+          ? `Pluie en soirée (~${timeStr}). Séchez les récoltes le matin.`
+          : `Rain starting in the evening (~${timeStr}). Dry crops in the morning hours.`
+        );
+      } else {
+        messages.push(language === 'fr'
+          ? `Faible risque de pluie aujourd'hui. Bonne fenêtre pour semis/récolte.`
+          : `Low chance of rain today. Good window for planting/harvest.`
+        );
+      }
+    } else if (tomorrowRain && (tomorrowRain.rainProbMaxPct || 0) >= 60) {
+      const intensity = getIntensityLabel(tomorrowRain.rainSumMm / 24); // Rough intensity estimate
+      messages.push(language === 'fr'
+        ? `${tomorrowRain.rainProbMaxPct}% de ${intensity.toLowerCase()} pluie demain. Sécurisez les récoltes en séchage.`
+        : `Tomorrow shows ${tomorrowRain.rainProbMaxPct}% chance of ${intensity.toLowerCase()} rain. Secure drying crops.`
+      );
+    } else if (threeDayTotal < 5) {
+      messages.push(language === 'fr'
+        ? `Tendance sèche prévue pour les 3 prochains jours.`
+        : `Dry pattern expected for the next 3 days.`
+      );
+    } else {
+      messages.push(language === 'fr'
+        ? `Faible risque de pluie aujourd'hui. Bonne fenêtre pour semis/récolte.`
+        : `Low chance of rain today. Good window for planting/harvest.`
+      );
+    }
+
+    // Secondary messages
+    if ((now.windKph || 0) >= 25) {
+      messages.push(language === 'fr'
+        ? `Vent proche de ${now.windKph} km/h. Fixez les bâches, évitez le brûlage.`
+        : `Wind near ${now.windKph} km/h. Tie down tarps and avoid burning.`
+      );
+    }
+
+    const todayTotal = daily[0]?.rainSumMm || 0;
+    if (todayTotal >= 20) {
+      messages.push(language === 'fr'
+        ? `Fort cumul journalier de ${todayTotal} mm. Évitez les zones basses.`
+        : `Heavy day total of ${todayTotal} mm. Avoid field work in low areas.`
+      );
+    }
+
+    return messages.slice(0, 3); // Maximum 3 messages
   };
 
   // Simple SVG Bar Chart Component
