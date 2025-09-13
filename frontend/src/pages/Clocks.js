@@ -452,7 +452,7 @@ const Clocks = () => {
             <div className="flex items-center space-x-4">
               <input
                 type="text"
-                placeholder={t('clocks.searchPrograms')}
+                placeholder={t('clocksSearchPrograms')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-kioo-primary focus:border-transparent"
@@ -464,7 +464,7 @@ const Clocks = () => {
                 }}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300 transition-colors"
               >
-                {t('clocks.clearFilters')}
+                {t('clocksClearFilters')}
               </button>
             </div>
           </div>
