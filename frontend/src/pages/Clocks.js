@@ -683,6 +683,7 @@ const Clocks = () => {
                     onClick={() => {
                       const url = `${window.location.href}?day=${selectedBlock.actualDay}&start=${selectedBlock.start}`;
                       navigator.clipboard.writeText(url);
+                      // eslint-disable-next-line no-undef
                       alert(t('clocksLinkCopied'));
                     }}
                   >
