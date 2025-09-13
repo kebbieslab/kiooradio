@@ -17,59 +17,28 @@ const Clocks = () => {
     { code: 'ev', name: 'Evangelistic Focus (Fula/Mandingo/Gbandi)', percentage: 16.7, color: '#7b3fb2', hours: 28 }
   ];
 
-  // Calculate weekly totals and target percentages
-  const calculateWeeklyTotals = useMemo(() => {
-    if (!programData) return {};
+  // Create donut chart segments
+  const createDonutSegments = () => {
+    const filteredData = languageData.filter(lang => visibleLanguages.includes(lang.code));
+    let cumulativePercentage = 0;
+    const radius = 80;
+    const strokeWidth = 40;
+    const circumference = 2 * Math.PI * radius;
 
-    const totals = {};
-    const totalWeekMinutes = 168 * 60; // 168 hours * 60 minutes
-    const targets = {
-      kissi: 41.7,
-      en: 25.0,
-      fr: 16.7,
-      ev: 16.7
-    };
-
-    programData.languages.forEach(lang => {
-      totals[lang.code] = {
-        minutes: 0,
-        hours: 0,
-        percentage: 0,
-        target: targets[lang.code] || 0,
-        drift: 0
+    return filteredData.map((lang, index) => {
+      const strokeDasharray = `${(lang.percentage / 100) * circumference} ${circumference}`;
+      const strokeDashoffset = -((cumulativePercentage / 100) * circumference);
+      
+      cumulativePercentage += lang.percentage;
+      
+      return {
+        ...lang,
+        strokeDasharray,
+        strokeDashoffset,
+        index
       };
     });
-
-    // Calculate for all 7 days
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    days.forEach(day => {
-      programData.weeklyBlocks.forEach(block => {
-        if (block.day === '*' || block.day === day) {
-          const startMinutes = parseTimeToMinutes(block.start);
-          const endMinutes = parseTimeToMinutes(block.end);
-          let duration = endMinutes - startMinutes;
-          
-          // Handle overnight programs (crossing midnight)
-          if (duration < 0) {
-            duration = (24 * 60) - startMinutes + endMinutes;
-          }
-          
-          if (totals[block.lang]) {
-            totals[block.lang].minutes += duration;
-          }
-        }
-      });
-    });
-
-    // Convert to hours and calculate percentages
-    Object.keys(totals).forEach(lang => {
-      totals[lang].hours = Math.round(totals[lang].minutes / 60 * 10) / 10;
-      totals[lang].percentage = Math.round((totals[lang].minutes / totalWeekMinutes) * 100 * 10) / 10;
-      totals[lang].drift = Math.round((totals[lang].percentage - totals[lang].target) * 10) / 10;
-    });
-
-    return totals;
-  }, [programData, parseTimeToMinutes]);
+  };
 
   // Get current live program
   const getCurrentLiveProgram = () => {
