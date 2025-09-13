@@ -536,7 +536,7 @@ export const labels = {
     "clocks.weeklySchedule": "Weekly Programming Schedule",
     "clocks.weeklyTotals": "Weekly Totals",
     "clocks.programDetails": "Program Details",
-    "clocks.title": "Title",
+    "clocks.detailTitle": "Title",
     "clocks.language": "Language",
     "clocks.day": "Day",
     "clocks.time": "Time",
