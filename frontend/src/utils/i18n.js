@@ -1101,7 +1101,7 @@ export const labels = {
     "clocks.weeklySchedule": "Grille de Programmation Hebdomadaire",
     "clocks.weeklyTotals": "Totaux Hebdomadaires",
     "clocks.programDetails": "Détails du Programme",
-    "clocks.title": "Titre",
+    "clocks.detailTitle": "Titre",
     "clocks.language": "Langue",
     "clocks.day": "Jour",
     "clocks.time": "Heure",
