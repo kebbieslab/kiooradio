@@ -1,17 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
 import SEOHead from '../components/SEOHead';
 
 const Clocks = () => {
   const { t } = useTranslation();
-  const [programData, setProgramData] = useState(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [selectedLanguage, setSelectedLanguage] = useState(null);
-  const [filterLanguages, setFilterLanguages] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showDetailsDrawer, setShowDetailsDrawer] = useState(false);
-  const [selectedBlock, setSelectedBlock] = useState(null);
-  const [weeklyTotals, setWeeklyTotals] = useState({});
+  const [viewMode, setViewMode] = useState('week'); // 'week' or 'day'
+  const [visibleLanguages, setVisibleLanguages] = useState(['kissi', 'en', 'fr', 'ev']);
+  const [selectedSegment, setSelectedSegment] = useState(null);
+  const [showPanel, setShowPanel] = useState(false);
 
   // Helper function to parse time string to minutes (defined early to avoid hoisting issues)
   const parseTimeToMinutes = (timeStr) => {
