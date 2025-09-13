@@ -284,8 +284,8 @@ const Clocks = () => {
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-sm font-medium text-gray-600">{t('clocks.totalHours')}</div>
-              <div className="text-lg font-bold">168{t('clocks.hoursAbbrev')}</div>
+              <div className="text-sm font-medium text-gray-600">{t('clocksTotalHours')}</div>
+              <div className="text-lg font-bold">168{t('clocksHoursAbbrev')}</div>
             </div>
           </div>
         </div>
