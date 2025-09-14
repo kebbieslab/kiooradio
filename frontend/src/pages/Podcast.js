@@ -286,13 +286,13 @@ const Podcast = () => {
                       </p>
                     </div>
 
-                    {/* Audio Player */}
+                    {/* Sample Audio Player */}
                     <div className="mb-4">
                       <audio 
                         controls 
-                        preload="metadata"
-                        className="w-full"
-                        style={{ height: '36px' }}
+                        preload="none"
+                        className="w-full h-8"
+                        style={{ height: '32px' }}
                       >
                         <source src={sample.audioUrl} type="audio/mpeg" />
                         Your browser does not support the audio element.
