@@ -405,7 +405,7 @@ const WeatherCard = ({ location, language }) => {
                   timeZone: 'UTC'
                 })}
               </div>
-              <div className="text-sm font-medium">{Math.round(hour.tempC)}°</div>
+              <div className="text-sm font-medium">{Math.round((hour.tempC * 9/5) + 32)}°F</div>
               <div className="text-xs text-kioo-primary">{hour.rainProbPct}%</div>
             </div>
           ))}
