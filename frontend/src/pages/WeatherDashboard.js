@@ -202,12 +202,47 @@ const WeatherDashboard = () => {
               </p>
             </div>
 
-            {/* Weather Cards Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {farmerWeatherData.map((location, index) => (
-                <WeatherCard key={index} location={location} language={language} />
-              ))}
+            {/* Tab Navigation */}
+            <div className="flex bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+              <button
+                onClick={() => setActiveTab('current')}
+                className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${
+                  activeTab === 'current'
+                    ? 'bg-kioo-primary text-white rounded-l-lg'
+                    : 'text-gray-600 hover:text-kioo-primary'
+                }`}
+              >
+                {language === 'fr' ? '🌡️ Météo Actuelle' : '🌡️ Current Weather'}
+              </button>
+              <button
+                onClick={() => setActiveTab('forecast')}
+                className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${
+                  activeTab === 'forecast'
+                    ? 'bg-kioo-primary text-white rounded-r-lg'
+                    : 'text-gray-600 hover:text-kioo-primary'
+                }`}
+              >
+                {language === 'fr' ? '📅 Prévisions' : '📅 Forecast'}
+              </button>
             </div>
+
+            {/* Current Weather Tab */}
+            {activeTab === 'current' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                {farmerWeatherData.map((location, index) => (
+                  <CompactWeatherCard key={index} location={location} language={language} />
+                ))}
+              </div>
+            )}
+
+            {/* Forecast Tab */}
+            {activeTab === 'forecast' && (
+              <div className="space-y-6">
+                {farmerWeatherData.map((location, index) => (
+                  <ForecastCard key={index} location={location} language={language} />
+                ))}
+              </div>
+            )}
 
             {/* Farming Tips */}
             <div className="mt-12 bg-kioo-light border border-kioo-primary/20 rounded-lg p-6">
