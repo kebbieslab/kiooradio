@@ -209,11 +209,11 @@ const WeatherDashboard = () => {
             </div>
 
             {/* Farming Tips */}
-            <div className="mt-12 bg-green-50 border border-green-200 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-green-900 mb-3">
+            <div className="mt-12 bg-kioo-light border border-kioo-primary/20 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-kioo-dark mb-3">
                 {language === 'fr' ? '🌾 Conseils Agricoles' : '🌾 Farming Tips'}
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-green-800">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-kioo-secondary">
                 <div>
                   <strong>{language === 'fr' ? 'Planification:' : 'Planning:'}</strong> 
                   {language === 'fr' 
