@@ -170,7 +170,7 @@ const WeatherDashboard = () => {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {loading && (
           <div className="flex justify-center items-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mr-4"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-kioo-primary mr-4"></div>
             <span className="text-lg text-gray-600">
               {language === 'fr' ? 'Chargement des données météo...' : 'Loading weather data...'}
             </span>
