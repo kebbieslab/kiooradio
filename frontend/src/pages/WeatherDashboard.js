@@ -385,6 +385,41 @@ const WeatherCard = ({ location, language }) => {
         </div>
       </div>
 
+      {/* 2-Day Forecast */}
+      <div className="border-t pt-4 mb-4">
+        <h4 className="font-medium text-gray-900 mb-3">
+          {language === 'fr' ? '📅 Prévisions 2 jours' : '📅 2-Day Forecast'}
+        </h4>
+        
+        <div className="space-y-3">
+          {location.daily?.slice(1, 3).map((day, index) => (
+            <div key={index} className={`flex items-center justify-between p-3 ${theme.headerBg} rounded-lg border ${theme.borderColor}`}>
+              <div className="flex items-center space-x-3">
+                <span className="font-medium text-gray-900">
+                  {index === 0 ? (language === 'fr' ? '🌅 Demain' : '🌅 Tomorrow') : (language === 'fr' ? '🌄 Après-demain' : '🌄 Day After')}
+                </span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="text-center">
+                  <div className="text-xs text-gray-600">{language === 'fr' ? 'Pluie' : 'Rain'}</div>
+                  <div className={`text-sm font-semibold ${theme.accentColor}`}>{day.rainProbMaxPct || 0}%</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-600">{language === 'fr' ? 'Total' : 'Total'}</div>
+                  <div className="text-sm font-semibold text-gray-700">{Math.round(day.rainSumMm || 0)}mm</div>
+                </div>
+                <div className="w-16 h-3 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full ${theme.progressColor} transition-all rounded-full`}
+                    style={{ width: `${Math.min((day.rainProbMaxPct || 0), 100)}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Hourly Preview */}
       <div className="border-t pt-4 mt-4">
         <h4 className="font-medium text-gray-900 mb-3">
