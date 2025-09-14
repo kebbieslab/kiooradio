@@ -383,7 +383,7 @@ const WeatherCard = ({ location, language }) => {
                 </span>
                 <div className="w-12 h-4 bg-gray-200 rounded overflow-hidden">
                   <div 
-                    className="h-full bg-blue-400 transition-all"
+                    className="h-full bg-kioo-primary transition-all"
                     style={{ width: `${Math.min((day.rainProbMaxPct || 0), 100)}%` }}
                   ></div>
                 </div>
