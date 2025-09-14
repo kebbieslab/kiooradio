@@ -314,7 +314,7 @@ const WeatherCard = ({ location, language }) => {
           </p>
         </div>
         <div className="text-right">
-          <div className="text-3xl font-bold text-blue-600">
+          <div className="text-3xl font-bold text-kioo-primary">
             {formatTemperature(location.now?.tempC)}
           </div>
           <div className="text-sm text-gray-600">
