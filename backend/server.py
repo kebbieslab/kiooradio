@@ -2674,7 +2674,7 @@ async def get_farmer_weather():
                         "longitude": location["lon"],
                         "current": "temperature_2m,relative_humidity_2m,precipitation,weather_code,cloud_cover,wind_speed_10m",
                         "hourly": "temperature_2m,precipitation_probability,precipitation,weather_code",
-                        "daily": "precipitation_probability_max,precipitation_sum,weather_code_max",
+                        "daily": "precipitation_probability_max,precipitation_sum",
                         "timezone": "UTC",
                         "forecast_days": 3,
                         "forecast_hours": 72
