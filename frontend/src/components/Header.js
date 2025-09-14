@@ -19,7 +19,8 @@ const Header = ({ setIsPlayerVisible }) => {
       icon: '📅',
       dropdown: [
         { name: t('navPrograms'), path: '/programs', icon: '📅' },
-        { name: 'Clocks', path: '/clocks', icon: '🕐' }
+        { name: 'Clocks', path: '/clocks', icon: '🕐' },
+        { name: 'Podcast', path: '/podcast', icon: '🎙️' }
       ]
     },
     { name: t('navChurches'), nameKey: 'navChurches', path: '/church-partners', icon: '⛪' },
