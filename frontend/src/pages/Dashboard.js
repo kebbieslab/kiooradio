@@ -416,4 +416,156 @@ const Dashboard = () => {
   );
 };
 
+// WeatherCard Component
+const WeatherCard = ({ location, language }) => {
+  if (!location) return null;
+
+  const formatTime = (timestamp) => {
+    if (!timestamp) return '';
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString('en-GB', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      timeZone: 'UTC'
+    });
+  };
+
+  const formatTemperature = (temp) => {
+    return temp !== null && temp !== undefined ? `${Math.round(temp)}°C` : 'N/A';
+  };
+
+  const formatRainIntensity = (intensity) => {
+    if (!intensity || intensity === 'none') return language === 'fr' ? 'Aucune' : 'None';
+    const intensityMap = {
+      'light': language === 'fr' ? 'Légère' : 'Light',
+      'moderate': language === 'fr' ? 'Modérée' : 'Moderate', 
+      'heavy': language === 'fr' ? 'Forte' : 'Heavy'
+    };
+    return intensityMap[intensity] || intensity;
+  };
+
+  const renderSparkline = (data) => {
+    if (!data || data.length === 0) return null;
+    
+    const max = Math.max(...data, 1);
+    const points = data.map((value, index) => {
+      const x = (index / (data.length - 1)) * 60;
+      const y = 20 - (value / max) * 20;
+      return `${x},${y}`;
+    }).join(' ');
+
+    return (
+      <svg width="60" height="20" className="inline-block">
+        <polyline
+          points={points}
+          fill="none"
+          stroke="#3B82F6"
+          strokeWidth="1"
+        />
+      </svg>
+    );
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      {/* Location Header */}
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900">{location.name}</h3>
+          <p className="text-sm text-gray-600">{location.country}</p>
+        </div>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-gray-900">
+            {formatTemperature(location.current?.tempC)}
+          </div>
+          <div className="text-sm text-gray-600">
+            {language === 'fr' ? 'Maintenant' : 'Now'}
+          </div>
+        </div>
+      </div>
+
+      {/* Current Conditions */}
+      <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+        <div>
+          <span className="text-gray-600">{language === 'fr' ? 'Humidité:' : 'Humidity:'}</span>
+          <span className="font-medium ml-1">{location.current?.humidityPct || 0}%</span>
+        </div>
+        <div>
+          <span className="text-gray-600">{language === 'fr' ? 'Vent:' : 'Wind:'}</span>
+          <span className="font-medium ml-1">{location.current?.windKph || 0} km/h</span>
+        </div>
+        <div>
+          <span className="text-gray-600">{language === 'fr' ? 'Pluie:' : 'Rain:'}</span>
+          <span className="font-medium ml-1">{location.current?.rainProbPct || 0}%</span>
+        </div>
+        <div>
+          <span className="text-gray-600">{language === 'fr' ? 'Intensité:' : 'Intensity:'}</span>
+          <span className="font-medium ml-1">{formatRainIntensity(location.current?.rainIntensity)}</span>
+        </div>
+      </div>
+
+      {/* Rain Status */}
+      <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+        <div className="text-sm font-medium text-blue-900">
+          {location.rainStatus || (language === 'fr' ? 'Faible chance de pluie dans les 24h' : 'Low chance of rain next 24h')}
+        </div>
+        {location.nextRainTime && (
+          <div className="text-xs text-blue-700 mt-1">
+            {language === 'fr' ? 'Prochaine pluie probable vers' : 'Next rain likely around'} {formatTime(location.nextRainTime)}
+          </div>
+        )}
+      </div>
+
+      {/* 3-Day Outlook */}
+      <div className="border-t pt-4">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">
+          {language === 'fr' ? 'Prévisions 3 jours' : '3-Day Outlook'}
+        </h4>
+        
+        <div className="space-y-2 text-xs">
+          {location.forecast?.daily?.slice(0, 3).map((day, index) => (
+            <div key={index} className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="w-8 text-gray-600">
+                  {['Today', 'Tomorrow', 'Day 3'][index]}
+                </span>
+                <span className="text-gray-900 font-medium">
+                  {language === 'fr' ? 'Max' : 'Max'} {day.maxRainChance || 0}%
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-600">
+                  {day.totalRain || 0}mm
+                </span>
+                {renderSparkline(day.hourlyRainChances?.slice(0, 8) || [])}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Farmer Messages */}
+      {location.farmerMessages && (
+        <div className="border-t pt-4 mt-4">
+          <h4 className="text-sm font-medium text-gray-900 mb-2">
+            {language === 'fr' ? 'Messages Agriculteurs' : 'Farmer Messages'}
+          </h4>
+          <div className="space-y-2">
+            {location.farmerMessages.primary && (
+              <div className="text-sm text-green-800 bg-green-50 rounded p-2">
+                🌾 {location.farmerMessages.primary}
+              </div>
+            )}
+            {location.farmerMessages.secondary && (
+              <div className="text-xs text-blue-700 bg-blue-50 rounded p-2">
+                💧 {location.farmerMessages.secondary}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default Dashboard;
