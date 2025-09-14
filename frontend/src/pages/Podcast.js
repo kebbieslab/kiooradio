@@ -5,67 +5,139 @@ const Podcast = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  // Sample program data - you can later move this to a JSON file or API
+  // Real program samples based on kiooradio.org/programs
   const programSamples = [
     {
       id: 1,
-      title: "Morning Devotion",
+      title: "Guidelines",
       language: "en",
-      description: "Start your day with inspiring devotional content and prayers",
-      thumbnail: "/assets/images/morning-devotion.jpg",
-      audioUrl: "/assets/audio/morning-devotion-sample.mp3",
-      duration: "5:30",
-      category: "Devotional"
+      description: "Morning Bible teaching program providing spiritual guidance and scriptural insights",
+      thumbnail: "https://images.unsplash.com/photo-1576506542790-51244b486a6b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzd8MHwxfHNlYXJjaHwxfHxiaWJsZSUyMHN0dWR5fGVufDB8fHx8MTc1NzgyNTQ1N3ww&ixlib=rb-4.1.0&q=85",
+      audioUrl: "/assets/audio/guidelines-sample.mp3",
+      duration: "5:10",
+      category: "Bible Teaching",
+      timeSlot: "05:00-05:10"
     },
     {
       id: 2,
-      title: "Kissi Gospel Hour",
-      language: "kissi",
-      description: "Traditional gospel music and teachings in Kissi language",
-      thumbnail: "/assets/images/kissi-gospel.jpg",
-      audioUrl: "/assets/audio/kissi-gospel-sample.mp3",
-      duration: "8:15",
-      category: "Gospel"
+      title: "Love & Faith",
+      language: "en", 
+      description: "Special program featuring Christian teachings on love, faith, and spiritual growth",
+      thumbnail: "https://images.pexels.com/photos/3118214/pexels-photo-3118214.jpeg",
+      audioUrl: "/assets/audio/love-faith-sample.mp3",
+      duration: "7:30",
+      category: "Bible Teaching",
+      timeSlot: "07:00-07:30"
     },
     {
       id: 3,
-      title: "French Bible Study",
-      language: "fr",
-      description: "Interactive Bible study sessions conducted in French",
-      thumbnail: "/assets/images/french-bible.jpg",
-      audioUrl: "/assets/audio/french-bible-sample.mp3",
-      duration: "12:45",
-      category: "Bible Study"
+      title: "Thru the Bible (TTB) - Kissi",
+      language: "kissi",
+      description: "Bible teaching program conducted in Kissi language for local community",
+      thumbnail: "https://images.unsplash.com/photo-1485579149621-3123dd979885?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwxfHxtaWNyb3Bob25lfGVufDB8fHx8MTc1NzgyNTQ1MHww&ixlib=rb-4.1.0&q=85",
+      audioUrl: "/assets/audio/ttb-kissi-sample.mp3",
+      duration: "8:30",
+      category: "Bible Teaching",
+      timeSlot: "08:00-08:30"
     },
     {
       id: 4,
-      title: "Youth Connection",
-      language: "en",
-      description: "Engaging content designed specifically for young listeners",
-      thumbnail: "/assets/images/youth-program.jpg",
-      audioUrl: "/assets/audio/youth-sample.mp3",
-      duration: "6:20",
-      category: "Youth"
+      title: "La Vie Chez Nous",
+      language: "fr",
+      description: "Community program in French featuring local stories and cultural content",
+      thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwyfHxtaWNyb3Bob25lfGVufDB8fHx8MTc1NzgyNTQ1MHww&ixlib=rb-4.1.0&q=85",
+      audioUrl: "https://customer-assets.emergentagent.com/job_radio-weather-hub/artifacts/hmq9da5g_Spot%20Kioo%20Radio%2BLa%20Vie%20chez%20Nous_mixage%20final.mp3",
+      duration: "2:45",
+      category: "Community",
+      timeSlot: "Various"
     },
     {
       id: 5,
-      title: "Evening Reflection",
-      language: "kissi",
-      description: "Peaceful evening reflections and community stories",
-      thumbnail: "/assets/images/evening-reflection.jpg",
-      audioUrl: "/assets/audio/evening-sample.mp3",
-      duration: "7:30",
-      category: "Reflection"
+      title: "Renaissance",
+      language: "fr",
+      description: "Interactive French program promoting cultural renaissance and community engagement",
+      thumbnail: "https://images.unsplash.com/photo-1531651008558-ed1740375b39?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwzfHxtaWNyb3Bob25lfGVufDB8fHx8MTc1NzgyNTQ1MHww&ixlib=rb-4.1.0&q=85",
+      audioUrl: "/assets/audio/renaissance-sample.mp3",
+      duration: "16:30",
+      category: "Interactive",
+      timeSlot: "16:30-17:30"
     },
     {
       id: 6,
-      title: "Prières du Soir",
+      title: "Pastor's Corner - Multi-Country",
+      language: "mixed",
+      description: "Special sermon program featuring pastors from Liberia, Sierra Leone, and Guinea",
+      thumbnail: "https://images.unsplash.com/photo-1713281318607-c0fbfc96d58c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwxfHxyYWRpbyUyMGJyb2FkY2FzdGluZ3xlbnwwfHx8fDE3NTc4MjU0NDR8MA&ixlib=rb-4.1.0&q=85",
+      audioUrl: "/assets/audio/pastors-corner-sample.mp3",
+      duration: "21:30",
+      category: "Sermon",
+      timeSlot: "21:30-22:00"
+    },
+    {
+      id: 7,
+      title: "Youth Connect",
+      language: "kissi",
+      description: "Engaging program designed for young listeners with music, discussions, and inspiration",
+      thumbnail: "https://images.unsplash.com/photo-1562072299-8ecc43a8c709?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHw0fHxyYWRpbyUyMGJyb2FkY2FzdGluZ3xlbnwwfHx8fDE3NTc4MjU0NDR8MA&ixlib=rb-4.1.0&q=85",  
+      audioUrl: "/assets/audio/youth-connect-sample.mp3",
+      duration: "12:30",
+      category: "Youth/Community",
+      timeSlot: "12:30-13:00"
+    },
+    {
+      id: 8,
+      title: "Makona Talk Show",
+      language: "mixed",
+      description: "Weekly interactive show featuring discussions on issues across Liberia, Sierra Leone, and Guinea",
+      thumbnail: "https://images.unsplash.com/photo-1713281318667-920b4708e77e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDF8MHwxfHNlYXJjaHwzfHxyYWRpbyUyMGJyb2FkY2FzdGluZ3xlbnwwfHx8fDE3NTc4MjU0NDR8MA&ixlib=rb-4.1.0&q=85",
+      audioUrl: "/assets/audio/makona-talk-sample.mp3",
+      duration: "18:00",
+      category: "Interactive",
+      timeSlot: "Saturday 06:00-09:00"
+    },
+    {
+      id: 9,
+      title: "Hope & Care Outreach",
+      language: "mixed",
+      description: "Community outreach program focusing on hope, care, and social support across the region",
+      thumbnail: "https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/jimaulr5_wide-view-of-Foya.jpg",
+      audioUrl: "/assets/audio/hope-care-sample.mp3",
+      duration: "15:00",
+      category: "Outreach",
+      timeSlot: "15:00-15:30"
+    },
+    {
+      id: 10,
+      title: "Christian Teaching - Mandingo",
+      language: "mandingo",
+      description: "Christian teachings and biblical principles presented in Mandingo language",
+      thumbnail: "https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/bh1ilom6_Telling-the-vision-of-Kioo.jpg",
+      audioUrl: "/assets/audio/christian-mandingo-sample.mp3",
+      duration: "16:00",
+      category: "Bible Teaching",
+      timeSlot: "16:00-16:30"
+    },
+    {
+      id: 11,
+      title: "Christian Teaching - Fula",
+      language: "fula",
+      description: "Bible-based teachings and spiritual guidance presented in Fula language",
+      thumbnail: "https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/6f4q1xma_Praying-over-Gue%CC%81cke%CC%81dou.JPG",
+      audioUrl: "/assets/audio/christian-fula-sample.mp3",
+      duration: "17:00",
+      category: "Bible Teaching",
+      timeSlot: "17:00-17:30"
+    },
+    {
+      id: 12,
+      title: "VNA French Satellite Feed",
       language: "fr",
-      description: "Evening prayers and spiritual guidance in French",
-      thumbnail: "/assets/images/french-prayers.jpg",
-      audioUrl: "/assets/audio/french-prayers-sample.mp3",
-      duration: "4:45",
-      category: "Prayer"
+      description: "International French programming via satellite providing diverse content from Voice of America",
+      thumbnail: "https://customer-assets.emergentagent.com/job_kioo-broadcast-mgmt/artifacts/dd62t4s1_view-of-Gue%CC%81cke%CC%81dou.jpg",
+      audioUrl: "/assets/audio/vna-french-sample.mp3",
+      duration: "10:00",
+      category: "Satellite",
+      timeSlot: "09:00-10:00"
     }
   ];
 
