@@ -351,15 +351,21 @@ const WeatherCard = ({ location, language }) => {
       {/* Current Conditions */}
       <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
         <div className="bg-gray-50 p-3 rounded">
-          <div className="text-gray-600">{language === 'fr' ? 'Humidité' : 'Humidity'}</div>
+          <div className="text-gray-600 flex items-center gap-1">
+            💧 {language === 'fr' ? 'Humidité' : 'Humidity'}
+          </div>
           <div className="font-semibold text-lg">{location.now?.humidityPct || 0}%</div>
         </div>
         <div className="bg-gray-50 p-3 rounded">
-          <div className="text-gray-600">{language === 'fr' ? 'Pluie' : 'Rain'}</div>
+          <div className="text-gray-600 flex items-center gap-1">
+            🌧️ {language === 'fr' ? 'Pluie' : 'Rain'}
+          </div>
           <div className="font-semibold text-lg">{location.now?.rainProbPct || 0}%</div>
         </div>
         <div className="bg-gray-50 p-3 rounded col-span-2 text-center">
-          <div className="text-gray-600">{language === 'fr' ? 'Pluie/Heure' : 'Rain/Hour'}</div>
+          <div className="text-gray-600 flex items-center justify-center gap-1">
+            ☔ {language === 'fr' ? 'Pluie/Heure' : 'Rain/Hour'}
+          </div>
           <div className="font-semibold text-lg">{location.now?.rainMmHr || 0} mm</div>
         </div>
       </div>
