@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import SEOHead from '../components/SEOHead';
 
 const Dashboard = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [farmerWeatherData, setFarmerWeatherData] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [language, setLanguage] = useState('en');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
 
@@ -25,6 +24,11 @@ const Dashboard = () => {
       setLanguage('en');
       localStorage.setItem('kioo_lang', 'en');
     }
+  }, []);
+
+  // Load farmer weather data on component mount
+  useEffect(() => {
+    loadFarmerWeatherData();
   }, []);
 
   // Update current time every minute
