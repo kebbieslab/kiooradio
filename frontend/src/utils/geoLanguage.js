@@ -82,7 +82,8 @@ export class GeoIPAdapter {
   static async getCountryFromPublicAPI() {
     try {
       // Using ipapi.co (free tier: 1000 requests/day)
-      const response = await fetch('https://ipapi.co/country/', {
+      const geoApiUrl = process.env.REACT_APP_GEO_API_URL || 'https://ipapi.co/country/';
+      const response = await fetch(geoApiUrl, {
         headers: { 'Accept': 'text/plain' }
       });
       if (response.ok) {
