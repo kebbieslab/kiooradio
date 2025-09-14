@@ -329,50 +329,50 @@ const WeatherCard = ({ location, language }) => {
   const theme = getCountryTheme(location.location);
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border-2 ${theme.borderColor} p-6 hover:shadow-md transition-shadow`}>
+    <div className={`bg-white rounded-lg shadow-sm border-2 ${theme.borderColor} p-4 hover:shadow-md transition-shadow`}>
       {/* Location Header */}
-      <div className={`flex justify-between items-start mb-4 p-3 ${theme.headerBg} rounded-lg`}>
+      <div className={`flex justify-between items-start mb-3 p-2 ${theme.headerBg} rounded-lg`}>
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">{location.location}</h3>
-          <p className={`text-sm font-medium ${theme.accentColor} flex items-center gap-1`}>
+          <h3 className="text-lg font-semibold text-gray-900">{location.location}</h3>
+          <p className={`text-xs font-medium ${theme.accentColor} flex items-center gap-1`}>
             {theme.flag} {theme.name}
           </p>
         </div>
         <div className="text-right">
-          <div className={`text-3xl font-bold ${theme.tempColor}`}>
+          <div className={`text-2xl font-bold ${theme.tempColor}`}>
             {formatTemperature(location.now?.tempC)}
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-xs text-gray-600">
             {language === 'fr' ? 'Maintenant' : 'Now'}
           </div>
         </div>
       </div>
 
       {/* Current Conditions */}
-      <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-        <div className="bg-gray-50 p-3 rounded">
+      <div className="grid grid-cols-2 gap-2 mb-3 text-xs">
+        <div className="bg-gray-50 p-2 rounded">
           <div className="text-gray-600 flex items-center gap-1">
             💧 {language === 'fr' ? 'Humidité' : 'Humidity'}
           </div>
-          <div className="font-semibold text-lg">{location.now?.humidityPct || 0}%</div>
+          <div className="font-semibold text-sm">{location.now?.humidityPct || 0}%</div>
         </div>
-        <div className="bg-gray-50 p-3 rounded">
+        <div className="bg-gray-50 p-2 rounded">
           <div className="text-gray-600 flex items-center gap-1">
             🌧️ {language === 'fr' ? 'Pluie' : 'Rain'}
           </div>
-          <div className="font-semibold text-lg">{location.now?.rainProbPct || 0}%</div>
+          <div className="font-semibold text-sm">{location.now?.rainProbPct || 0}%</div>
         </div>
-        <div className="bg-gray-50 p-3 rounded col-span-2 text-center">
+        <div className="bg-gray-50 p-2 rounded col-span-2 text-center">
           <div className="text-gray-600 flex items-center justify-center gap-1">
             ☔ {language === 'fr' ? 'Pluie/Heure' : 'Rain/Hour'}
           </div>
-          <div className="font-semibold text-lg">{location.now?.rainMmHr || 0} mm</div>
+          <div className="font-semibold text-sm">{location.now?.rainMmHr || 0} mm</div>
         </div>
       </div>
 
       {/* Rain Status */}
-      <div className={`mb-4 p-4 ${theme.headerBg} rounded-lg border-l-4 ${theme.borderColor}`}>
-        <div className="font-medium text-gray-900">
+      <div className={`mb-3 p-2 ${theme.headerBg} rounded-lg border-l-4 ${theme.borderColor}`}>
+        <div className="font-medium text-sm text-gray-900">
           {location.now?.rainProbPct > 70 
             ? (language === 'fr' ? '🌧️ Forte chance de pluie' : '🌧️ High chance of rain')
             : location.now?.rainProbPct > 40
@@ -380,35 +380,33 @@ const WeatherCard = ({ location, language }) => {
             : (language === 'fr' ? '☁️ Faible chance de pluie' : '☁️ Low chance of rain')
           }
         </div>
-        <div className={`text-sm ${theme.accentColor} mt-1`}>
-          {language === 'fr' ? 'Probabilité actuelle:' : 'Current probability:'} {location.now?.rainProbPct || 0}%
+        <div className={`text-xs ${theme.accentColor} mt-1`}>
+          {language === 'fr' ? 'Probabilité:' : 'Probability:'} {location.now?.rainProbPct || 0}%
         </div>
       </div>
 
       {/* 2-Day Forecast */}
-      <div className="border-t pt-4 mb-4">
-        <h4 className="font-medium text-gray-900 mb-3">
-          {language === 'fr' ? '📅 Prévisions 2 jours' : '📅 2-Day Forecast'}
+      <div className="border-t pt-2 mb-2">
+        <h4 className="font-medium text-sm text-gray-900 mb-2">
+          {language === 'fr' ? '📅 2 jours' : '📅 2-Day'}
         </h4>
         
-        <div className="space-y-3">
+        <div className="space-y-2">
           {location.daily?.slice(1, 3).map((day, index) => (
-            <div key={index} className={`flex items-center justify-between p-3 ${theme.headerBg} rounded-lg border ${theme.borderColor}`}>
-              <div className="flex items-center space-x-3">
-                <span className="font-medium text-gray-900">
-                  {index === 0 ? (language === 'fr' ? '🌅 Demain' : '🌅 Tomorrow') : (language === 'fr' ? '🌄 Après-demain' : '🌄 Day After')}
+            <div key={index} className={`flex items-center justify-between p-2 ${theme.headerBg} rounded border ${theme.borderColor}`}>
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-xs text-gray-900">
+                  {index === 0 ? (language === 'fr' ? '🌅 Demain' : '🌅 Tomorrow') : (language === 'fr' ? '🌄 Après' : '🌄 Day+2')}
                 </span>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
                 <div className="text-center">
-                  <div className="text-xs text-gray-600">{language === 'fr' ? 'Pluie' : 'Rain'}</div>
-                  <div className={`text-sm font-semibold ${theme.accentColor}`}>{day.rainProbMaxPct || 0}%</div>
+                  <div className={`text-xs font-semibold ${theme.accentColor}`}>{day.rainProbMaxPct || 0}%</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xs text-gray-600">{language === 'fr' ? 'Total' : 'Total'}</div>
-                  <div className="text-sm font-semibold text-gray-700">{Math.round(day.rainSumMm || 0)}mm</div>
+                  <div className="text-xs font-semibold text-gray-700">{Math.round(day.rainSumMm || 0)}mm</div>
                 </div>
-                <div className="w-16 h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div className="w-8 h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div 
                     className={`h-full ${theme.progressColor} transition-all rounded-full`}
                     style={{ width: `${Math.min((day.rainProbMaxPct || 0), 100)}%` }}
@@ -421,20 +419,20 @@ const WeatherCard = ({ location, language }) => {
       </div>
 
       {/* Hourly Preview */}
-      <div className="border-t pt-4 mt-4">
-        <h4 className="font-medium text-gray-900 mb-3">
+      <div className="border-t pt-2">
+        <h4 className="font-medium text-sm text-gray-900 mb-2">
           {language === 'fr' ? 'Prochaines heures' : 'Next Hours'}
         </h4>
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {location.hourly?.slice(0, 6).map((hour, index) => (
-            <div key={index} className={`flex-shrink-0 ${theme.headerBg} rounded p-2 text-center min-w-16 border ${theme.borderColor}`}>
+        <div className="flex gap-1 overflow-x-auto pb-1">
+          {location.hourly?.slice(0, 4).map((hour, index) => (
+            <div key={index} className={`flex-shrink-0 ${theme.headerBg} rounded p-1 text-center min-w-12 border ${theme.borderColor}`}>
               <div className="text-xs text-gray-600">
                 {new Date(hour.timeIsoUTC).toLocaleTimeString('en-GB', { 
                   hour: '2-digit',
                   timeZone: 'UTC'
                 })}
               </div>
-              <div className={`text-sm font-medium ${theme.tempColor}`}>{Math.round((hour.tempC * 9/5) + 32)}°F</div>
+              <div className={`text-xs font-medium ${theme.tempColor}`}>{Math.round((hour.tempC * 9/5) + 32)}°F</div>
               <div className={`text-xs ${theme.accentColor}`}>{hour.rainProbPct}%</div>
             </div>
           ))}
