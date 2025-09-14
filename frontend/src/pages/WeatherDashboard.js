@@ -189,11 +189,11 @@ const WeatherDashboard = () => {
         {!loading && !error && (
           <>
             {/* Coverage Area Info */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-              <h2 className="text-lg font-semibold text-blue-900 mb-2">
+            <div className="bg-kioo-light border border-kioo-primary/20 rounded-lg p-6 mb-8">
+              <h2 className="text-lg font-semibold text-kioo-dark mb-2">
                 {language === 'fr' ? 'Zone de Couverture' : 'Coverage Area'}
               </h2>
-              <p className="text-blue-800">
+              <p className="text-kioo-secondary">
                 {language === 'fr' 
                   ? 'Données météo pour les régions agricoles clés de la zone de diffusion de Kioo Radio 98.1 FM.'
                   : 'Weather data for key agricultural regions within Kioo Radio 98.1 FM broadcast coverage.'
