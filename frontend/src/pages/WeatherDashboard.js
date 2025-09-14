@@ -99,7 +99,7 @@ const WeatherDashboard = () => {
                 <span className="text-sm text-gray-600">
                   {language === 'fr' ? 'Toutes les heures en GMT' : 'All times in GMT'}
                 </span>
-                <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                <div className="bg-kioo-primary text-white px-3 py-1 rounded-full text-sm font-medium">
                   🕐 {currentTime.toLocaleTimeString('en-GB', { 
                     hour: '2-digit', 
                     minute: '2-digit',
