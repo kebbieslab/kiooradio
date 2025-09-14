@@ -302,16 +302,20 @@ const WeatherCard = ({ location, language }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
       {/* Location Header */}
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-semibold text-gray-900">{location.name}</h3>
-          <p className="text-sm text-gray-600">{location.country}</p>
+          <h3 className="text-xl font-semibold text-gray-900">{location.location}</h3>
+          <p className="text-sm text-gray-600">
+            {location.location?.includes('Liberia') ? '🇱🇷 Liberia' :
+             location.location?.includes('Sierra Leone') ? '🇸🇱 Sierra Leone' :
+             location.location?.includes('Guinea') ? '🇬🇳 Guinea' : 'Unknown'}
+          </p>
         </div>
         <div className="text-right">
           <div className="text-3xl font-bold text-blue-600">
-            {formatTemperature(location.current?.tempC)}
+            {formatTemperature(location.now?.tempC)}
           </div>
           <div className="text-sm text-gray-600">
             {language === 'fr' ? 'Maintenant' : 'Now'}
@@ -323,32 +327,35 @@ const WeatherCard = ({ location, language }) => {
       <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
         <div className="bg-gray-50 p-3 rounded">
           <div className="text-gray-600">{language === 'fr' ? 'Humidité' : 'Humidity'}</div>
-          <div className="font-semibold text-lg">{location.current?.humidityPct || 0}%</div>
+          <div className="font-semibold text-lg">{location.now?.humidityPct || 0}%</div>
         </div>
         <div className="bg-gray-50 p-3 rounded">
           <div className="text-gray-600">{language === 'fr' ? 'Vent' : 'Wind'}</div>
-          <div className="font-semibold text-lg">{location.current?.windKph || 0} km/h</div>
+          <div className="font-semibold text-lg">{location.now?.windKph || 0} km/h</div>
         </div>
         <div className="bg-gray-50 p-3 rounded">
           <div className="text-gray-600">{language === 'fr' ? 'Pluie' : 'Rain'}</div>
-          <div className="font-semibold text-lg">{location.current?.rainProbPct || 0}%</div>
+          <div className="font-semibold text-lg">{location.now?.rainProbPct || 0}%</div>
         </div>
         <div className="bg-gray-50 p-3 rounded">
-          <div className="text-gray-600">{language === 'fr' ? 'Intensité' : 'Intensity'}</div>
-          <div className="font-semibold text-lg">{formatRainIntensity(location.current?.rainIntensity)}</div>
+          <div className="text-gray-600">{language === 'fr' ? 'Pluie/Heure' : 'Rain/Hour'}</div>
+          <div className="font-semibold text-lg">{location.now?.rainMmHr || 0} mm</div>
         </div>
       </div>
 
       {/* Rain Status */}
       <div className="mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400">
         <div className="font-medium text-blue-900">
-          {location.rainStatus || (language === 'fr' ? 'Faible chance de pluie dans les 24h' : 'Low chance of rain next 24h')}
+          {location.now?.rainProbPct > 70 
+            ? (language === 'fr' ? '🌧️ Forte chance de pluie' : '🌧️ High chance of rain')
+            : location.now?.rainProbPct > 40
+            ? (language === 'fr' ? '🌦️ Chance modérée de pluie' : '🌦️ Moderate chance of rain') 
+            : (language === 'fr' ? '☁️ Faible chance de pluie' : '☁️ Low chance of rain')
+          }
         </div>
-        {location.nextRainTime && (
-          <div className="text-sm text-blue-700 mt-1">
-            {language === 'fr' ? 'Prochaine pluie probable vers' : 'Next rain likely around'} {formatTime(location.nextRainTime)}
-          </div>
-        )}
+        <div className="text-sm text-blue-700 mt-1">
+          {language === 'fr' ? 'Probabilité actuelle:' : 'Current probability:'} {location.now?.rainProbPct || 0}%
+        </div>
       </div>
 
       {/* 3-Day Outlook */}
@@ -358,7 +365,7 @@ const WeatherCard = ({ location, language }) => {
         </h4>
         
         <div className="space-y-3">
-          {location.forecast?.daily?.slice(0, 3).map((day, index) => (
+          {location.daily?.slice(0, 3).map((day, index) => (
             <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
               <div className="flex items-center space-x-3">
                 <span className="w-16 text-sm text-gray-600">
@@ -367,40 +374,45 @@ const WeatherCard = ({ location, language }) => {
                    (language === 'fr' ? 'Jour 3' : 'Day 3')}
                 </span>
                 <span className="text-sm font-medium">
-                  {language === 'fr' ? 'Max' : 'Max'} {day.maxRainChance || 0}%
+                  {language === 'fr' ? 'Max' : 'Max'} {day.rainProbMaxPct || 0}%
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <span className="text-sm text-gray-600">
-                  {day.totalRain || 0}mm
+                  {Math.round(day.rainSumMm || 0)}mm
                 </span>
-                {renderSparkline(day.hourlyRainChances?.slice(0, 8) || [])}
+                <div className="w-12 h-4 bg-gray-200 rounded overflow-hidden">
+                  <div 
+                    className="h-full bg-blue-400 transition-all"
+                    style={{ width: `${Math.min((day.rainProbMaxPct || 0), 100)}%` }}
+                  ></div>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Farmer Messages */}
-      {location.farmerMessages && (
-        <div className="border-t pt-4 mt-4">
-          <h4 className="font-medium text-gray-900 mb-3">
-            {language === 'fr' ? 'Messages Agriculteurs' : 'Farmer Messages'}
-          </h4>
-          <div className="space-y-2">
-            {location.farmerMessages.primary && (
-              <div className="text-sm text-green-800 bg-green-100 rounded-lg p-3 border-l-4 border-green-400">
-                🌾 {location.farmerMessages.primary}
+      {/* Hourly Preview */}
+      <div className="border-t pt-4 mt-4">
+        <h4 className="font-medium text-gray-900 mb-3">
+          {language === 'fr' ? 'Prochaines heures' : 'Next Hours'}
+        </h4>
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {location.hourly?.slice(0, 6).map((hour, index) => (
+            <div key={index} className="flex-shrink-0 bg-gray-50 rounded p-2 text-center min-w-16">
+              <div className="text-xs text-gray-600">
+                {new Date(hour.timeIsoUTC).toLocaleTimeString('en-GB', { 
+                  hour: '2-digit',
+                  timeZone: 'UTC'
+                })}
               </div>
-            )}
-            {location.farmerMessages.secondary && (
-              <div className="text-sm text-blue-700 bg-blue-100 rounded-lg p-3 border-l-4 border-blue-400">
-                💧 {location.farmerMessages.secondary}
-              </div>
-            )}
-          </div>
+              <div className="text-sm font-medium">{Math.round(hour.tempC)}°</div>
+              <div className="text-xs text-blue-600">{hour.rainProbPct}%</div>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
