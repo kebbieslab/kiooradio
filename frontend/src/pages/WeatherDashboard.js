@@ -379,41 +379,6 @@ const WeatherCard = ({ location, language }) => {
         </div>
       </div>
 
-      {/* 3-Day Outlook */}
-      <div className="border-t pt-4">
-        <h4 className="font-medium text-gray-900 mb-3">
-          {language === 'fr' ? 'Prévisions 3 jours' : '3-Day Outlook'}
-        </h4>
-        
-        <div className="space-y-3">
-          {location.daily?.slice(0, 3).map((day, index) => (
-            <div key={index} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-              <div className="flex items-center space-x-3">
-                <span className="w-16 text-sm text-gray-600">
-                  {index === 0 ? (language === 'fr' ? 'Aujourd\'hui' : 'Today') : 
-                   index === 1 ? (language === 'fr' ? 'Demain' : 'Tomorrow') : 
-                   (language === 'fr' ? 'Jour 3' : 'Day 3')}
-                </span>
-                <span className="text-sm font-medium">
-                  {language === 'fr' ? 'Max' : 'Max'} {day.rainProbMaxPct || 0}%
-                </span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-gray-600">
-                  {Math.round(day.rainSumMm || 0)}mm
-                </span>
-                <div className="w-12 h-4 bg-gray-200 rounded overflow-hidden">
-                  <div 
-                    className={`h-full ${theme.progressColor} transition-all`}
-                    style={{ width: `${Math.min((day.rainProbMaxPct || 0), 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Hourly Preview */}
       <div className="border-t pt-4 mt-4">
         <h4 className="font-medium text-gray-900 mb-3">
