@@ -1107,7 +1107,7 @@ class EmailNotificationService:
                         </ul>
                         
                         <p style="margin-top: 20px;">
-                            <a href="http://localhost:3000/crm" class="button">Access CRM System</a>
+                            <a href="{os.environ.get('FRONTEND_URL', 'http://localhost:3000')}/crm" class="button">Access CRM System</a>
                         </p>
                         
                         <p><strong>Important:</strong> Please keep your login credentials secure and do not share them with others.</p>
