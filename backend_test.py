@@ -386,6 +386,367 @@ class KiooRadioAPITester:
         
         return server_time_issues == 0
 
+    def test_farmer_weather_dashboard_endpoint(self):
+        """COMPREHENSIVE TEST: Farmer Weather Dashboard Backend Endpoint"""
+        print("\n=== COMPREHENSIVE FARMER WEATHER DASHBOARD TESTING ===")
+        print("Testing: GET /api/dashboard/farmer-weather endpoint")
+        print("Locations: Foya Liberia, Koindu Sierra Leone, Guéckédou Guinea, Kissidougou Guinea")
+        print("Authentication: Public endpoint (no auth required)")
+        print("Issue: Frontend showing fallback data (N/A temperatures, 0% rain chance)")
+        
+        # VERIFICATION 1: Test endpoint accessibility
+        print(f"\n🔍 VERIFICATION 1: Farmer Weather Endpoint Access")
+        
+        success, weather_response = self.run_test("Farmer Weather Dashboard", "GET", "dashboard/farmer-weather", 200)
+        
+        if success:
+            print(f"✅ Farmer weather endpoint accessible")
+            
+            # Verify response structure
+            if isinstance(weather_response, dict):
+                required_top_level_fields = ['locations', 'updated', 'cache_duration_minutes', 'timezone']
+                missing_fields = [field for field in required_top_level_fields if field not in weather_response]
+                
+                if missing_fields:
+                    print(f"❌ Missing top-level fields: {missing_fields}")
+                    self.failed_tests.append(f"Farmer Weather - Missing top-level fields: {missing_fields}")
+                else:
+                    print(f"✅ All required top-level fields present")
+                    print(f"   Updated: {weather_response.get('updated')}")
+                    print(f"   Cache Duration: {weather_response.get('cache_duration_minutes')} minutes")
+                    print(f"   Timezone: {weather_response.get('timezone')}")
+                    
+                    # Check for error field (indicates fallback mode)
+                    if 'error' in weather_response:
+                        print(f"⚠️  FALLBACK MODE DETECTED: {weather_response.get('error')}")
+                        print(f"   This explains why frontend shows fallback data")
+                    else:
+                        print(f"✅ No error field - API should be working normally")
+            else:
+                print(f"❌ Response should be a dictionary, got {type(weather_response)}")
+                self.failed_tests.append("Farmer Weather - Invalid response structure")
+                return False
+        else:
+            print(f"❌ Farmer weather endpoint failed")
+            self.failed_tests.append("Farmer Weather - Endpoint failed")
+            return False
+        
+        # VERIFICATION 2: Test location data structure and content
+        print(f"\n🔍 VERIFICATION 2: Location Data Structure and Content")
+        
+        locations_data = weather_response.get('locations', [])
+        expected_locations = ["Foya, Liberia", "Koindu, Sierra Leone", "Guéckédou, Guinea", "Kissidougou, Guinea"]
+        
+        if isinstance(locations_data, list):
+            print(f"   Found {len(locations_data)} locations")
+            
+            if len(locations_data) == 4:
+                print(f"✅ Correct number of locations (4)")
+            else:
+                print(f"❌ Expected 4 locations, got {len(locations_data)}")
+                self.failed_tests.append(f"Farmer Weather - Wrong number of locations: {len(locations_data)}")
+            
+            # Check each location
+            found_locations = []
+            fallback_detected = False
+            live_data_detected = False
+            
+            for i, location_data in enumerate(locations_data):
+                if isinstance(location_data, dict):
+                    location_name = location_data.get('location', f'Location {i+1}')
+                    found_locations.append(location_name)
+                    
+                    print(f"\n   📍 {location_name}:")
+                    
+                    # Check required fields for each location
+                    required_location_fields = ['location', 'now', 'hourly', 'daily']
+                    missing_location_fields = [field for field in required_location_fields if field not in location_data]
+                    
+                    if missing_location_fields:
+                        print(f"      ❌ Missing fields: {missing_location_fields}")
+                        self.failed_tests.append(f"Farmer Weather - {location_name} missing fields: {missing_location_fields}")
+                    else:
+                        print(f"      ✅ All required fields present")
+                        
+                        # Check 'now' data structure
+                        now_data = location_data.get('now', {})
+                        if isinstance(now_data, dict):
+                            required_now_fields = ['tempC', 'humidityPct', 'windKph', 'cloudPct', 'rainProbPct', 'rainMmHr']
+                            missing_now_fields = [field for field in required_now_fields if field not in now_data]
+                            
+                            if missing_now_fields:
+                                print(f"      ❌ 'now' missing fields: {missing_now_fields}")
+                                self.failed_tests.append(f"Farmer Weather - {location_name} 'now' missing fields: {missing_now_fields}")
+                            else:
+                                print(f"      ✅ 'now' data complete")
+                                
+                                # Extract current weather values
+                                temp = now_data.get('tempC', 0)
+                                humidity = now_data.get('humidityPct', 0)
+                                wind = now_data.get('windKph', 0)
+                                cloud = now_data.get('cloudPct', 0)
+                                rain_prob = now_data.get('rainProbPct', 0)
+                                rain_mm = now_data.get('rainMmHr', 0)
+                                
+                                print(f"         Temperature: {temp}°C")
+                                print(f"         Humidity: {humidity}%")
+                                print(f"         Wind: {wind} km/h")
+                                print(f"         Cloud Cover: {cloud}%")
+                                print(f"         Rain Probability: {rain_prob}%")
+                                print(f"         Rain Rate: {rain_mm} mm/hr")
+                                
+                                # Detect if this is fallback data
+                                if (temp == 25 and humidity == 75 and wind == 10 and 
+                                    cloud == 50 and rain_prob == 30 and rain_mm == 0):
+                                    print(f"      ⚠️  FALLBACK DATA DETECTED (static values)")
+                                    fallback_detected = True
+                                elif temp == 0 and humidity == 0 and wind == 0 and rain_prob == 0:
+                                    print(f"      ⚠️  ZERO VALUES DETECTED (API error fallback)")
+                                    fallback_detected = True
+                                else:
+                                    print(f"      ✅ LIVE DATA DETECTED (realistic values)")
+                                    live_data_detected = True
+                                
+                                # Validate data types and ranges
+                                if isinstance(temp, (int, float)) and -50 <= temp <= 60:
+                                    print(f"         ✅ Temperature format and range valid")
+                                else:
+                                    print(f"         ❌ Temperature invalid: {temp}")
+                                    self.failed_tests.append(f"Farmer Weather - {location_name} invalid temperature")
+                                
+                                if isinstance(rain_prob, (int, float)) and 0 <= rain_prob <= 100:
+                                    print(f"         ✅ Rain probability format and range valid")
+                                else:
+                                    print(f"         ❌ Rain probability invalid: {rain_prob}")
+                                    self.failed_tests.append(f"Farmer Weather - {location_name} invalid rain probability")
+                        else:
+                            print(f"      ❌ 'now' should be a dictionary, got {type(now_data)}")
+                            self.failed_tests.append(f"Farmer Weather - {location_name} 'now' invalid structure")
+                        
+                        # Check hourly data structure
+                        hourly_data = location_data.get('hourly', [])
+                        if isinstance(hourly_data, list):
+                            print(f"      ✅ Hourly data: {len(hourly_data)} hours")
+                            
+                            if len(hourly_data) > 0:
+                                # Check first hourly entry structure
+                                first_hour = hourly_data[0]
+                                if isinstance(first_hour, dict):
+                                    required_hourly_fields = ['timeIsoUTC', 'tempC', 'rainProbPct', 'rainMmHr']
+                                    missing_hourly_fields = [field for field in required_hourly_fields if field not in first_hour]
+                                    
+                                    if missing_hourly_fields:
+                                        print(f"         ❌ Hourly missing fields: {missing_hourly_fields}")
+                                        self.failed_tests.append(f"Farmer Weather - {location_name} hourly missing fields")
+                                    else:
+                                        print(f"         ✅ Hourly data structure valid")
+                                        print(f"         First hour: {first_hour.get('timeIsoUTC')} - {first_hour.get('tempC')}°C, {first_hour.get('rainProbPct')}% rain")
+                            else:
+                                print(f"      ⚠️  No hourly data (may indicate fallback mode)")
+                        else:
+                            print(f"      ❌ 'hourly' should be a list, got {type(hourly_data)}")
+                            self.failed_tests.append(f"Farmer Weather - {location_name} 'hourly' invalid structure")
+                        
+                        # Check daily data structure
+                        daily_data = location_data.get('daily', [])
+                        if isinstance(daily_data, list):
+                            print(f"      ✅ Daily data: {len(daily_data)} days")
+                            
+                            if len(daily_data) > 0:
+                                # Check first daily entry structure
+                                first_day = daily_data[0]
+                                if isinstance(first_day, dict):
+                                    required_daily_fields = ['dateIsoUTC', 'rainProbMaxPct', 'rainSumMm']
+                                    missing_daily_fields = [field for field in required_daily_fields if field not in first_day]
+                                    
+                                    if missing_daily_fields:
+                                        print(f"         ❌ Daily missing fields: {missing_daily_fields}")
+                                        self.failed_tests.append(f"Farmer Weather - {location_name} daily missing fields")
+                                    else:
+                                        print(f"         ✅ Daily data structure valid")
+                                        print(f"         First day: {first_day.get('dateIsoUTC')} - {first_day.get('rainProbMaxPct')}% max rain, {first_day.get('rainSumMm')}mm total")
+                            else:
+                                print(f"      ⚠️  No daily data (may indicate fallback mode)")
+                        else:
+                            print(f"      ❌ 'daily' should be a list, got {type(daily_data)}")
+                            self.failed_tests.append(f"Farmer Weather - {location_name} 'daily' invalid structure")
+                else:
+                    print(f"   ❌ Location {i+1}: Invalid structure (not dict)")
+                    self.failed_tests.append(f"Farmer Weather - Location {i+1} invalid structure")
+            
+            # Check if all expected locations are present
+            missing_locations = [loc for loc in expected_locations if loc not in found_locations]
+            if missing_locations:
+                print(f"\n❌ Missing expected locations: {missing_locations}")
+                self.failed_tests.append(f"Farmer Weather - Missing locations: {missing_locations}")
+            else:
+                print(f"\n✅ All expected locations present: {found_locations}")
+        else:
+            print(f"❌ 'locations' should be a list, got {type(locations_data)}")
+            self.failed_tests.append("Farmer Weather - 'locations' invalid structure")
+        
+        # VERIFICATION 3: Test Open-Meteo API Integration Status
+        print(f"\n🔍 VERIFICATION 3: Open-Meteo API Integration Analysis")
+        
+        if fallback_detected and not live_data_detected:
+            print(f"❌ ALL LOCATIONS USING FALLBACK DATA")
+            print(f"   Root Cause: Open-Meteo API calls are failing or returning errors")
+            print(f"   This explains why frontend shows 'N/A temperatures, 0% rain chance'")
+            print(f"   Possible issues:")
+            print(f"   - Network connectivity problems")
+            print(f"   - Open-Meteo API rate limiting")
+            print(f"   - API endpoint changes")
+            print(f"   - Timeout issues (10 second timeout configured)")
+            self.failed_tests.append("Farmer Weather - Open-Meteo API integration failing")
+        elif live_data_detected and not fallback_detected:
+            print(f"✅ ALL LOCATIONS USING LIVE DATA")
+            print(f"   Open-Meteo API integration working correctly")
+            print(f"   Frontend should show real weather data")
+        elif live_data_detected and fallback_detected:
+            print(f"⚠️  MIXED DATA SOURCES")
+            print(f"   Some locations have live data, others use fallback")
+            print(f"   Indicates partial API connectivity issues")
+            self.failed_tests.append("Farmer Weather - Partial API failures detected")
+        else:
+            print(f"⚠️  UNABLE TO DETERMINE DATA SOURCE")
+            print(f"   Could not classify data as live or fallback")
+        
+        # VERIFICATION 4: Test Public Access (No Authentication Required)
+        print(f"\n🔍 VERIFICATION 4: Public Access Verification")
+        
+        # Test that farmer weather endpoint is publicly accessible (no auth required)
+        print(f"   Testing farmer weather endpoint without authentication...")
+        
+        success, _ = self.run_test("Farmer Weather - No Auth", "GET", "dashboard/farmer-weather", 200)
+        if success:
+            print(f"✅ Farmer weather is publicly accessible")
+        else:
+            print(f"❌ Farmer weather should be publicly accessible")
+            self.failed_tests.append("Farmer Weather Access - Should be public")
+        
+        # Verify it works with optional authentication too
+        admin_auth = ('admin', 'kioo2025!')
+        success, auth_response = self.run_test("Farmer Weather - With Auth", "GET", "dashboard/farmer-weather", 200, auth=admin_auth)
+        if success:
+            print(f"✅ Farmer weather works with authentication (optional)")
+            
+            # Response should be identical whether authenticated or not
+            if auth_response == weather_response:
+                print(f"✅ Response identical with/without auth")
+            else:
+                print(f"⚠️  Response differs with authentication (may be expected)")
+        else:
+            print(f"❌ Farmer weather should work with authentication")
+            self.failed_tests.append("Farmer Weather Access - Should work with auth")
+        
+        # VERIFICATION 5: Test Response Time and Performance
+        print(f"\n🔍 VERIFICATION 5: Performance and Rate Limiting Analysis")
+        
+        import time
+        
+        # Test response time (should be reasonable for dashboard loading)
+        response_times = []
+        
+        for i in range(3):
+            start_time = time.time()
+            success, _ = self.run_test(f"Farmer Weather - Performance Test {i+1}", "GET", "dashboard/farmer-weather", 200)
+            response_time = time.time() - start_time
+            response_times.append(response_time)
+            
+            if success:
+                print(f"   Test {i+1}: {response_time:.2f}s")
+            else:
+                print(f"   Test {i+1}: Failed")
+                self.failed_tests.append(f"Farmer Weather Performance - Test {i+1} failed")
+            
+            # Small delay between requests to avoid rate limiting
+            time.sleep(1)
+        
+        if response_times:
+            avg_response_time = sum(response_times) / len(response_times)
+            max_response_time = max(response_times)
+            
+            print(f"✅ Average response time: {avg_response_time:.2f}s")
+            print(f"✅ Maximum response time: {max_response_time:.2f}s")
+            
+            # Should respond within reasonable time for dashboard (15 seconds)
+            if max_response_time < 15.0:
+                print(f"✅ Response times acceptable for dashboard loading")
+            else:
+                print(f"⚠️  Response times may be slow for dashboard (max: {max_response_time:.2f}s)")
+                print(f"   This could indicate Open-Meteo API timeout issues")
+        
+        # VERIFICATION 6: Test Cache Duration and Data Freshness
+        print(f"\n🔍 VERIFICATION 6: Cache Duration and Data Freshness")
+        
+        cache_duration = weather_response.get('cache_duration_minutes', 0)
+        updated_time = weather_response.get('updated', '')
+        
+        print(f"   Cache Duration: {cache_duration} minutes")
+        print(f"   Last Updated: {updated_time}")
+        
+        if cache_duration == 15:
+            print(f"✅ Correct cache duration (15 minutes)")
+        else:
+            print(f"⚠️  Unexpected cache duration: {cache_duration} minutes")
+        
+        # Check if updated time is recent
+        try:
+            from datetime import datetime, timezone
+            if updated_time:
+                updated_dt = datetime.fromisoformat(updated_time.replace('Z', '+00:00'))
+                now_dt = datetime.now(timezone.utc)
+                age_minutes = (now_dt - updated_dt).total_seconds() / 60
+                
+                print(f"   Data Age: {age_minutes:.1f} minutes")
+                
+                if age_minutes < 30:  # Data should be relatively fresh
+                    print(f"✅ Data is fresh (< 30 minutes old)")
+                else:
+                    print(f"⚠️  Data may be stale (> 30 minutes old)")
+                    print(f"   This could indicate caching issues or API problems")
+        except Exception as e:
+            print(f"   ⚠️  Could not parse updated time: {e}")
+        
+        # Final summary for Farmer Weather Dashboard System
+        print(f"\n📊 FARMER WEATHER DASHBOARD VERIFICATION SUMMARY:")
+        print(f"   Endpoint Access: {'✅ WORKING' if len([t for t in self.failed_tests if 'endpoint failed' in t.lower()]) == 0 else '❌ ISSUES'}")
+        print(f"   Response Structure: {'✅ COMPLETE' if len([t for t in self.failed_tests if 'missing fields' in t.lower() or 'invalid structure' in t.lower()]) == 0 else '❌ INCOMPLETE'}")
+        print(f"   Location Coverage: {'✅ COMPLETE' if len([t for t in self.failed_tests if 'missing locations' in t.lower()]) == 0 else '❌ INCOMPLETE'}")
+        print(f"   Open-Meteo API: {'✅ WORKING' if len([t for t in self.failed_tests if 'api integration failing' in t.lower()]) == 0 else '❌ FAILING'}")
+        print(f"   Public Access: {'✅ WORKING' if len([t for t in self.failed_tests if 'should be public' in t.lower()]) == 0 else '❌ RESTRICTED'}")
+        print(f"   Performance: {'✅ ACCEPTABLE' if len([t for t in self.failed_tests if 'performance' in t.lower()]) == 0 else '❌ SLOW'}")
+        print(f"   Expected Locations: {expected_locations}")
+        print(f"   Average Response Time: {sum(response_times)/len(response_times):.2f}s" if response_times else "N/A")
+        print(f"   Cache Duration: {cache_duration} minutes")
+        
+        # Specific diagnosis for frontend issue
+        if fallback_detected and not live_data_detected:
+            print(f"\n🔍 FRONTEND ISSUE DIAGNOSIS:")
+            print(f"   ❌ CONFIRMED: Backend is returning fallback data")
+            print(f"   ❌ This explains why frontend shows 'N/A temperatures, 0% rain chance'")
+            print(f"   🔧 SOLUTION NEEDED: Fix Open-Meteo API integration in backend")
+            print(f"   📋 RECOMMENDED ACTIONS:")
+            print(f"      1. Check backend logs for Open-Meteo API errors")
+            print(f"      2. Verify network connectivity to api.open-meteo.com")
+            print(f"      3. Test Open-Meteo API directly with curl")
+            print(f"      4. Check for rate limiting (429 errors)")
+            print(f"      5. Verify API parameters and coordinates")
+        elif live_data_detected:
+            print(f"\n🔍 FRONTEND ISSUE DIAGNOSIS:")
+            print(f"   ✅ Backend is returning live weather data")
+            print(f"   ❓ Frontend issue may be elsewhere:")
+            print(f"      - Check frontend API URL configuration")
+            print(f"      - Verify frontend data parsing logic")
+            print(f"      - Check browser network requests")
+            print(f"      - Verify frontend error handling")
+        
+        print(f"\n✅ Farmer Weather Dashboard testing completed!")
+        farmer_weather_issues = len([t for t in self.failed_tests if any(x in t.lower() for x in ['farmer weather', 'open-meteo'])])
+        print(f"   Total Farmer Weather Issues: {farmer_weather_issues}")
+        
+        return farmer_weather_issues == 0
+
     def test_weather_forecast_endpoints(self):
         """COMPREHENSIVE TEST: Weather Forecast Backend Endpoints"""
         print("\n=== COMPREHENSIVE WEATHER FORECAST TESTING ===")
