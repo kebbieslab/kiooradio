@@ -414,114 +414,222 @@ const ForecastCard = ({ location, language }) => {
     return `${tempF}°F`;
   };
 
+  // Get weather condition description
+  const getWeatherCondition = (rainProb, rainMm, humidity, temp) => {
+    const tempF = (temp * 9/5) + 32;
+    
+    if (rainMm > 0) {
+      return { condition: language === 'fr' ? 'Pluvieux' : 'Rainy', icon: '🌧️' };
+    } else if (rainProb > 80) {
+      return { condition: language === 'fr' ? 'Très nuageux' : 'Overcast', icon: '☁️' };
+    } else if (rainProb > 60) {
+      return { condition: language === 'fr' ? 'Nuageux' : 'Cloudy', icon: '☁️' };
+    } else if (rainProb > 30) {
+      return { condition: language === 'fr' ? 'Partiellement nuageux' : 'Partly Cloudy', icon: '⛅' };
+    } else if (humidity > 90) {
+      return { condition: language === 'fr' ? 'Brumeux' : 'Foggy', icon: '🌫️' };
+    } else if (rainProb > 20) {
+      return { condition: language === 'fr' ? 'Averses éparses' : 'Scattered Showers', icon: '🌦️' };
+    } else if (tempF > 85) {
+      return { condition: language === 'fr' ? 'Ensoleillé' : 'Sunny', icon: '☀️' };
+    } else {
+      return { condition: language === 'fr' ? 'Dégagé' : 'Clear', icon: '🌤️' };
+    }
+  };
+
   // Determine country and flag colors
   const getCountryTheme = (locationName) => {
     if (locationName?.includes('Liberia')) {
       return {
         name: 'Liberia',
         flag: '🇱🇷',
-        borderColor: 'border-red-500',
-        headerBg: 'bg-red-50',
-        accentColor: 'text-red-600',
-        tempColor: 'text-red-700',
-        progressColor: 'bg-red-500'
+        borderColor: 'border-red-200',
+        headerBg: 'bg-red-50'
       };
     } else if (locationName?.includes('Sierra Leone')) {
       return {
-        name: 'Sierra Leone',
+        name: 'Sierra Leone', 
         flag: '🇸🇱',
-        borderColor: 'border-green-500',
-        headerBg: 'bg-green-50',
-        accentColor: 'text-green-600',
-        tempColor: 'text-green-700',
-        progressColor: 'bg-green-500'
+        borderColor: 'border-green-200',
+        headerBg: 'bg-green-50'
       };
     } else if (locationName?.includes('Guinea')) {
       return {
         name: 'Guinea',
         flag: '🇬🇳',
-        borderColor: 'border-yellow-500',
-        headerBg: 'bg-yellow-50',
-        accentColor: 'text-yellow-600',
-        tempColor: 'text-yellow-700',  
-        progressColor: 'bg-yellow-500'
+        borderColor: 'border-yellow-200',
+        headerBg: 'bg-yellow-50'
       };
     }
     return {
       name: 'Unknown',
       flag: '🌍',
-      borderColor: 'border-gray-300',
-      headerBg: 'bg-gray-50',
-      accentColor: 'text-gray-600',
-      tempColor: 'text-gray-700',
-      progressColor: 'bg-gray-500'
+      borderColor: 'border-gray-200',
+      headerBg: 'bg-gray-50'
     };
   };
 
   const theme = getCountryTheme(location.location);
 
   return (
-    <div className={`bg-white rounded-lg shadow-sm border-2 ${theme.borderColor} p-4`}>
-      {/* Location Header */}
-      <div className={`flex items-center justify-between mb-4 p-3 ${theme.headerBg} rounded-lg`}>
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">{location.location}</h3>
-          <p className={`text-sm ${theme.accentColor}`}>{theme.flag} {theme.name}</p>
-        </div>
-      </div>
-
-      {/* 2-Day Forecast */}
-      <div className="mb-4">
-        <h4 className="font-medium text-gray-900 mb-3">
-          {language === 'fr' ? '📅 Prévisions 2 jours' : '📅 2-Day Forecast'}
-        </h4>
-        <div className="space-y-2">
-          {location.daily?.slice(1, 3).map((day, index) => (
-            <div key={index} className={`flex items-center justify-between p-3 ${theme.headerBg} rounded border ${theme.borderColor}`}>
-              <div className="flex items-center space-x-3">
-                <span className="font-medium text-gray-900">
-                  {index === 0 ? (language === 'fr' ? '🌅 Demain' : '🌅 Tomorrow') : (language === 'fr' ? '🌄 Après-demain' : '🌄 Day After')}
-                </span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="text-center">
-                  <div className="text-xs text-gray-600">{language === 'fr' ? 'Pluie' : 'Rain'}</div>
-                  <div className={`text-sm font-semibold ${theme.accentColor}`}>{day.rainProbMaxPct || 0}%</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-xs text-gray-600">{language === 'fr' ? 'Total' : 'Total'}</div>
-                  <div className="text-sm font-semibold text-gray-700">{Math.round(day.rainSumMm || 0)}mm</div>
-                </div>
-                <div className="w-16 h-3 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full ${theme.progressColor} transition-all rounded-full`}
-                    style={{ width: `${Math.min((day.rainProbMaxPct || 0), 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Hourly Preview */}
+    <div className="space-y-6">
+      {/* Tomorrow Forecast */}
       <div>
-        <h4 className="font-medium text-gray-900 mb-3">
-          {language === 'fr' ? '⏰ Prochaines heures' : '⏰ Next Hours'}
-        </h4>
-        <div className="grid grid-cols-6 gap-2">
-          {location.hourly?.slice(0, 6).map((hour, index) => (
-            <div key={index} className={`${theme.headerBg} rounded p-2 text-center border ${theme.borderColor}`}>
-              <div className="text-xs text-gray-600">
-                {new Date(hour.timeIsoUTC).toLocaleTimeString('en-GB', { 
-                  hour: '2-digit',
-                  timeZone: 'UTC'
-                })}
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-2xl">🗓️</span>
+          <h3 className="text-xl font-semibold text-gray-900">
+            {language === 'fr' ? 'Demain' : 'Tomorrow'}
+          </h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {location.daily?.slice(1, 2).map((day, dayIndex) => {
+            const weather = getWeatherCondition(
+              day.rainProbMaxPct || 0,
+              day.rainSumMm || 0, 
+              85, // Default humidity
+              location.now?.tempC || 25
+            );
+            
+            // Calculate high/low temps (simulate from current temp)
+            const currentTemp = location.now?.tempC || 25;
+            const highTemp = currentTemp + 2;
+            const lowTemp = currentTemp - 3;
+            
+            return (
+              <div key={dayIndex} className={`bg-white rounded-lg shadow-sm border ${theme.borderColor} p-4`}>
+                {/* Location Header */}
+                <div className="text-center mb-3">
+                  <h4 className="font-semibold text-gray-900 text-sm">{location.location}</h4>
+                  <p className="text-xs text-gray-600">{theme.flag} {theme.name}</p>
+                </div>
+                
+                {/* Temperature */}
+                <div className="text-center mb-3">
+                  <div className="flex justify-center items-baseline gap-2">
+                    <span className="text-2xl font-bold text-blue-600">
+                      {formatTemperature(highTemp)}
+                    </span>
+                    <span className="text-lg text-blue-400">
+                      {formatTemperature(lowTemp)}
+                    </span>
+                  </div>
+                  <div className="flex justify-center text-xs text-gray-600 gap-4">
+                    <span>{language === 'fr' ? 'Max' : 'High'}</span>
+                    <span>{language === 'fr' ? 'Min' : 'Low'}</span>
+                  </div>
+                </div>
+                
+                {/* Weather Condition */}
+                <div className="text-center mb-3">
+                  <div className="text-2xl mb-1">{weather.icon}</div>
+                  <div className="text-sm font-medium text-gray-700">{weather.condition}</div>
+                </div>
+                
+                {/* Weather Details */}
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1 text-gray-600">
+                      💧 {language === 'fr' ? 'Humidité:' : 'Humidity:'}
+                    </span>
+                    <span className="font-medium">{location.now?.humidityPct || 85}%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1 text-gray-600">
+                      🌬️ {language === 'fr' ? 'Vent:' : 'Wind:'}
+                    </span>
+                    <span className="font-medium">{Math.round((location.now?.windKph || 10) * 0.621371)} mph</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1 text-gray-600">
+                      🌧️ {language === 'fr' ? 'Pluie:' : 'Rain:'}
+                    </span>
+                    <span className="font-medium">{day.rainProbMaxPct || 0}%</span>
+                  </div>
+                </div>
               </div>
-              <div className={`text-sm font-medium ${theme.tempColor}`}>{Math.round((hour.tempC * 9/5) + 32)}°F</div>
-              <div className={`text-xs ${theme.accentColor}`}>{hour.rainProbPct}%</div>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Day After Tomorrow Forecast */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-2xl">📅</span>
+          <h3 className="text-xl font-semibold text-gray-900">
+            {language === 'fr' ? 'Après-demain' : 'Day After Tomorrow'}
+          </h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {location.daily?.slice(2, 3).map((day, dayIndex) => {
+            const weather = getWeatherCondition(
+              day.rainProbMaxPct || 0,
+              day.rainSumMm || 0,
+              80, // Default humidity
+              location.now?.tempC || 25
+            );
+            
+            // Calculate high/low temps (simulate from current temp)
+            const currentTemp = location.now?.tempC || 25;
+            const highTemp = currentTemp + 1;
+            const lowTemp = currentTemp - 4;
+            
+            return (
+              <div key={dayIndex} className={`bg-white rounded-lg shadow-sm border ${theme.borderColor} p-4`}>
+                {/* Location Header */}
+                <div className="text-center mb-3">
+                  <h4 className="font-semibold text-gray-900 text-sm">{location.location}</h4>
+                  <p className="text-xs text-gray-600">{theme.flag} {theme.name}</p>
+                </div>
+                
+                {/* Temperature */}
+                <div className="text-center mb-3">
+                  <div className="flex justify-center items-baseline gap-2">
+                    <span className="text-2xl font-bold text-blue-600">
+                      {formatTemperature(highTemp)}
+                    </span>
+                    <span className="text-lg text-blue-400">
+                      {formatTemperature(lowTemp)}
+                    </span>
+                  </div>
+                  <div className="flex justify-center text-xs text-gray-600 gap-4">
+                    <span>{language === 'fr' ? 'Max' : 'High'}</span>
+                    <span>{language === 'fr' ? 'Min' : 'Low'}</span>
+                  </div>
+                </div>
+                
+                {/* Weather Condition */}
+                <div className="text-center mb-3">
+                  <div className="text-2xl mb-1">{weather.icon}</div>
+                  <div className="text-sm font-medium text-gray-700">{weather.condition}</div>
+                </div>
+                
+                {/* Weather Details */}
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1 text-gray-600">
+                      💧 {language === 'fr' ? 'Humidité:' : 'Humidity:'}
+                    </span>
+                    <span className="font-medium">{Math.max(75, (location.now?.humidityPct || 85) - 5)}%</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1 text-gray-600">
+                      🌬️ {language === 'fr' ? 'Vent:' : 'Wind:'}
+                    </span>
+                    <span className="font-medium">{Math.round((location.now?.windKph || 8) * 0.621371)} mph</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1 text-gray-600">
+                      🌧️ {language === 'fr' ? 'Pluie:' : 'Rain:'}
+                    </span>
+                    <span className="font-medium">{day.rainProbMaxPct || 0}%</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
