@@ -154,7 +154,7 @@ const WeatherDashboard = () => {
               <button
                 onClick={() => loadFarmerWeatherData()}
                 disabled={loading}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50"
+                className="bg-kioo-primary text-white px-4 py-2 rounded-lg hover:bg-kioo-secondary transition-colors text-sm disabled:opacity-50"
               >
                 {loading 
                   ? (language === 'fr' ? 'Actualisation...' : 'Refreshing...') 
