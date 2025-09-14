@@ -151,7 +151,10 @@ const Podcast = () => {
       'kissi': 'Kissi',
       'en': 'English',
       'fr': 'French',
-      'ev': 'Evangelistic'
+      'mixed': 'Mixed',
+      'mandingo': 'Mandingo',
+      'fula': 'Fula',
+      'gbandi': 'Gbandi'
     };
     return labels[lang] || lang;
   };
@@ -161,7 +164,10 @@ const Podcast = () => {
       'kissi': 'bg-blue-100 text-blue-800',
       'en': 'bg-green-100 text-green-800',
       'fr': 'bg-purple-100 text-purple-800',
-      'ev': 'bg-orange-100 text-orange-800'
+      'mixed': 'bg-orange-100 text-orange-800',
+      'mandingo': 'bg-red-100 text-red-800',
+      'fula': 'bg-yellow-100 text-yellow-800',
+      'gbandi': 'bg-pink-100 text-pink-800'
     };
     return colors[lang] || 'bg-gray-100 text-gray-800';
   };
