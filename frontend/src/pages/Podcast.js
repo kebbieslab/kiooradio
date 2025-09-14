@@ -279,6 +279,13 @@ const Podcast = () => {
                       {sample.description}
                     </p>
 
+                    {/* Time Slot Info */}
+                    <div className="mb-3">
+                      <p className="text-xs text-gray-500">
+                        📅 Air Time: {sample.timeSlot}
+                      </p>
+                    </div>
+
                     {/* Audio Player */}
                     <div className="mb-4">
                       <audio 
