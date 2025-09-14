@@ -401,18 +401,13 @@ const WeatherCard = ({ location, language }) => {
         </div>
       </div>
 
-      {/* Rain Status */}
+      {/* Weather Condition Status */}
       <div className={`mb-3 p-2 ${theme.headerBg} rounded-lg border-l-4 ${theme.borderColor}`}>
         <div className="font-medium text-sm text-gray-900">
-          {location.now?.rainProbPct > 70 
-            ? (language === 'fr' ? '🌧️ Forte chance de pluie' : '🌧️ High chance of rain')
-            : location.now?.rainProbPct > 40
-            ? (language === 'fr' ? '🌦️ Chance modérée de pluie' : '🌦️ Moderate chance of rain') 
-            : (language === 'fr' ? '☁️ Faible chance de pluie' : '☁️ Low chance of rain')
-          }
+          {getWeatherCondition(location, language)}
         </div>
         <div className={`text-xs ${theme.accentColor} mt-1`}>
-          {language === 'fr' ? 'Probabilité:' : 'Probability:'} {location.now?.rainProbPct || 0}%
+          {language === 'fr' ? 'Probabilité pluie:' : 'Rain probability:'} {location.now?.rainProbPct || 0}%
         </div>
       </div>
 
