@@ -330,14 +330,10 @@ const WeatherCard = ({ location, language }) => {
           <div className="font-semibold text-lg">{location.now?.humidityPct || 0}%</div>
         </div>
         <div className="bg-gray-50 p-3 rounded">
-          <div className="text-gray-600">{language === 'fr' ? 'Vent' : 'Wind'}</div>
-          <div className="font-semibold text-lg">{location.now?.windKph || 0} km/h</div>
-        </div>
-        <div className="bg-gray-50 p-3 rounded">
           <div className="text-gray-600">{language === 'fr' ? 'Pluie' : 'Rain'}</div>
           <div className="font-semibold text-lg">{location.now?.rainProbPct || 0}%</div>
         </div>
-        <div className="bg-gray-50 p-3 rounded">
+        <div className="bg-gray-50 p-3 rounded col-span-2">
           <div className="text-gray-600">{language === 'fr' ? 'Pluie/Heure' : 'Rain/Hour'}</div>
           <div className="font-semibold text-lg">{location.now?.rainMmHr || 0} mm</div>
         </div>
