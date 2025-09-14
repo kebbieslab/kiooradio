@@ -281,42 +281,65 @@ const WeatherCard = ({ location, language }) => {
     return intensityMap[intensity] || intensity;
   };
 
-  const renderSparkline = (data) => {
-    if (!data || data.length === 0) return null;
-    
-    const max = Math.max(...data, 1);
-    const points = data.map((value, index) => {
-      const x = (index / (data.length - 1)) * 60;
-      const y = 20 - (value / max) * 20;
-      return `${x},${y}`;
-    }).join(' ');
-
-    return (
-      <svg width="60" height="20" className="inline-block">
-        <polyline
-          points={points}
-          fill="none"
-          stroke="#3B82F6"
-          strokeWidth="1"
-        />
-      </svg>
-    );
+  // Determine country and flag colors
+  const getCountryTheme = (locationName) => {
+    if (locationName?.includes('Liberia')) {
+      return {
+        name: 'Liberia',
+        flag: '🇱🇷',
+        borderColor: 'border-red-500',
+        headerBg: 'bg-red-50',
+        accentColor: 'text-red-600',
+        tempColor: 'text-red-700',
+        progressColor: 'bg-red-500'
+      };
+    } else if (locationName?.includes('Sierra Leone')) {
+      return {
+        name: 'Sierra Leone',
+        flag: '🇸🇱',
+        borderColor: 'border-green-500',
+        headerBg: 'bg-green-50',
+        accentColor: 'text-green-600',
+        tempColor: 'text-green-700',
+        progressColor: 'bg-green-500'
+      };
+    } else if (locationName?.includes('Guinea')) {
+      return {
+        name: 'Guinea',
+        flag: '🇬🇳',
+        borderColor: 'border-yellow-500',
+        headerBg: 'bg-yellow-50',
+        accentColor: 'text-yellow-600',
+        tempColor: 'text-yellow-700',
+        progressColor: 'bg-yellow-500'
+      };
+    }
+    // Default theme
+    return {
+      name: 'Unknown',
+      flag: '🌍',
+      borderColor: 'border-gray-300',
+      headerBg: 'bg-gray-50',
+      accentColor: 'text-gray-600',
+      tempColor: 'text-gray-700',
+      progressColor: 'bg-gray-500'
+    };
   };
 
+  const theme = getCountryTheme(location.location);
+
   return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+    <div className={`bg-white rounded-lg shadow-sm border-2 ${theme.borderColor} p-6 hover:shadow-md transition-shadow`}>
       {/* Location Header */}
-      <div className="flex justify-between items-start mb-4">
+      <div className={`flex justify-between items-start mb-4 p-3 ${theme.headerBg} rounded-lg`}>
         <div>
           <h3 className="text-xl font-semibold text-gray-900">{location.location}</h3>
-          <p className="text-sm text-gray-600">
-            {location.location?.includes('Liberia') ? '🇱🇷 Liberia' :
-             location.location?.includes('Sierra Leone') ? '🇸🇱 Sierra Leone' :
-             location.location?.includes('Guinea') ? '🇬🇳 Guinea' : 'Unknown'}
+          <p className={`text-sm font-medium ${theme.accentColor} flex items-center gap-1`}>
+            {theme.flag} {theme.name}
           </p>
         </div>
         <div className="text-right">
-          <div className="text-3xl font-bold text-kioo-primary">
+          <div className={`text-3xl font-bold ${theme.tempColor}`}>
             {formatTemperature(location.now?.tempC)}
           </div>
           <div className="text-sm text-gray-600">
@@ -342,8 +365,8 @@ const WeatherCard = ({ location, language }) => {
       </div>
 
       {/* Rain Status */}
-      <div className="mb-4 p-4 bg-kioo-light rounded-lg border-l-4 border-kioo-primary">
-        <div className="font-medium text-kioo-dark">
+      <div className={`mb-4 p-4 ${theme.headerBg} rounded-lg border-l-4 ${theme.borderColor}`}>
+        <div className="font-medium text-gray-900">
           {location.now?.rainProbPct > 70 
             ? (language === 'fr' ? '🌧️ Forte chance de pluie' : '🌧️ High chance of rain')
             : location.now?.rainProbPct > 40
@@ -351,7 +374,7 @@ const WeatherCard = ({ location, language }) => {
             : (language === 'fr' ? '☁️ Faible chance de pluie' : '☁️ Low chance of rain')
           }
         </div>
-        <div className="text-sm text-kioo-secondary mt-1">
+        <div className={`text-sm ${theme.accentColor} mt-1`}>
           {language === 'fr' ? 'Probabilité actuelle:' : 'Current probability:'} {location.now?.rainProbPct || 0}%
         </div>
       </div>
@@ -381,7 +404,7 @@ const WeatherCard = ({ location, language }) => {
                 </span>
                 <div className="w-12 h-4 bg-gray-200 rounded overflow-hidden">
                   <div 
-                    className="h-full bg-kioo-primary transition-all"
+                    className={`h-full ${theme.progressColor} transition-all`}
                     style={{ width: `${Math.min((day.rainProbMaxPct || 0), 100)}%` }}
                   ></div>
                 </div>
@@ -398,15 +421,15 @@ const WeatherCard = ({ location, language }) => {
         </h4>
         <div className="flex gap-2 overflow-x-auto pb-2">
           {location.hourly?.slice(0, 6).map((hour, index) => (
-            <div key={index} className="flex-shrink-0 bg-gray-50 rounded p-2 text-center min-w-16">
+            <div key={index} className={`flex-shrink-0 ${theme.headerBg} rounded p-2 text-center min-w-16 border ${theme.borderColor}`}>
               <div className="text-xs text-gray-600">
                 {new Date(hour.timeIsoUTC).toLocaleTimeString('en-GB', { 
                   hour: '2-digit',
                   timeZone: 'UTC'
                 })}
               </div>
-              <div className="text-sm font-medium">{Math.round((hour.tempC * 9/5) + 32)}°F</div>
-              <div className="text-xs text-kioo-primary">{hour.rainProbPct}%</div>
+              <div className={`text-sm font-medium ${theme.tempColor}`}>{Math.round((hour.tempC * 9/5) + 32)}°F</div>
+              <div className={`text-xs ${theme.accentColor}`}>{hour.rainProbPct}%</div>
             </div>
           ))}
         </div>
