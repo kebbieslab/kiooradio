@@ -117,6 +117,7 @@ function App() {
             <Route path="/launch" element={<Launch />} />
             <Route path="/clocks" element={<Clocks />} />
             <Route path="/podcast" element={<Podcast />} />
+            <Route path="/weather-dashboard" element={<WeatherDashboard />} />
           </Routes>
         </main>
 
