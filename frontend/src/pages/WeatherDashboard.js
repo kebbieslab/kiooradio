@@ -265,8 +265,10 @@ const WeatherCard = ({ location, language }) => {
     });
   };
 
-  const formatTemperature = (temp) => {
-    return temp !== null && temp !== undefined ? `${Math.round(temp)}°C` : 'N/A';
+  const formatTemperature = (tempC) => {
+    if (tempC === null || tempC === undefined) return 'N/A';
+    const tempF = Math.round((tempC * 9/5) + 32);
+    return `${tempF}°F`;
   };
 
   const formatRainIntensity = (intensity) => {
