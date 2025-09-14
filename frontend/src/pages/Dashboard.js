@@ -41,35 +41,23 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-    
-    if (credentials.username === 'admin' && credentials.password === 'kioo2025!') {
-      setIsAuthenticated(true);
-      loadFarmerWeatherData();
-    } else {
-      setError(language === 'fr' ? 'Nom d\'utilisateur ou mot de passe incorrect' : 'Invalid username or password');
-    }
-  };
-
   const loadFarmerWeatherData = async () => {
-    setLoading(true);
     try {
-      // Load farmer-focused weather data for 4 locations
+      setLoading(true);
+      setError('');
+      
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/dashboard/farmer-weather`);
       
       if (response.ok) {
-        const weatherData = await response.json();
-        setFarmerWeatherData(weatherData.locations || []);
-        setLastUpdated(new Date(weatherData.updated));
+        const data = await response.json();
+        setFarmerWeatherData(data.locations || []);
+        setLastUpdated(new Date());
       } else {
         throw new Error('Failed to load weather data');
       }
-
     } catch (error) {
-      console.error('Failed to load farmer weather data:', error);
-      setError(language === 'fr' ? 'Échec du chargement des données météo' : 'Failed to load weather data');
+      console.error('Error loading farmer weather data:', error);
+      setError(language === 'fr' ? 'Erreur de chargement des données météo' : 'Failed to load weather data');
     } finally {
       setLoading(false);
     }
