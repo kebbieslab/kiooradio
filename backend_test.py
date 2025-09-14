@@ -6649,18 +6649,19 @@ Anonymous,Lola,Guinea,French Gospel,French,Cette station radio m'a aidé à gran
 def main():
     tester = KiooRadioAPITester()
     
-    # Run the specific test requested: Interactive Programming Clocks Server Time Endpoint
-    print("🎵 KIOO RADIO API - INTERACTIVE PROGRAMMING CLOCKS TESTING")
+    # Run the specific test requested: Farmer Weather Dashboard Backend Endpoint
+    print("🎵 KIOO RADIO API - FARMER WEATHER DASHBOARD TESTING")
     print("=" * 70)
-    print("Focus: /api/server-time endpoint for Interactive Programming Clocks")
+    print("Focus: /api/dashboard/farmer-weather endpoint")
+    print("Issue: Frontend showing fallback data (N/A temperatures, 0% rain chance)")
     print("=" * 70)
     
-    # Run the server time endpoint test
-    server_time_success = tester.test_server_time_endpoint()
+    # Run the farmer weather dashboard test
+    farmer_weather_success = tester.test_farmer_weather_dashboard_endpoint()
     
     # Print final summary
     print(f"\n" + "=" * 70)
-    print(f"📊 INTERACTIVE PROGRAMMING CLOCKS SERVER TIME TEST SUMMARY")
+    print(f"📊 FARMER WEATHER DASHBOARD TEST SUMMARY")
     print(f"=" * 70)
     print(f"Total tests run: {tester.tests_run}")
     print(f"Tests passed: {tester.tests_passed}")
@@ -6674,9 +6675,9 @@ def main():
     else:
         print(f"\n✅ ALL TESTS PASSED!")
     
-    print(f"\n🎵 Interactive Programming Clocks Server Time testing completed!")
+    print(f"\n🎵 Farmer Weather Dashboard testing completed!")
     
-    return 0 if server_time_success else 1
+    return 0 if farmer_weather_success else 1
 
 if __name__ == "__main__":
     sys.exit(main())
