@@ -408,7 +408,7 @@ const WeatherCard = ({ location, language }) => {
                 })}
               </div>
               <div className="text-sm font-medium">{Math.round(hour.tempC)}°</div>
-              <div className="text-xs text-blue-600">{hour.rainProbPct}%</div>
+              <div className="text-xs text-kioo-primary">{hour.rainProbPct}%</div>
             </div>
           ))}
         </div>
