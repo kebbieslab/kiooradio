@@ -326,6 +326,37 @@ const WeatherCard = ({ location, language }) => {
     };
   };
 
+  // Get weather condition description like VOX Radio
+  const getWeatherCondition = (location, language) => {
+    const temp = location.now?.tempC || 0;
+    const humidity = location.now?.humidityPct || 0;
+    const rainProb = location.now?.rainProbPct || 0;
+    const rainMm = location.now?.rainMmHr || 0;
+
+    // Convert temperature to Fahrenheit for comparison
+    const tempF = (temp * 9/5) + 32;
+
+    if (rainMm > 0) {
+      return language === 'fr' ? 'Pluvieux' : 'Rainy';
+    } else if (rainProb > 80) {
+      return language === 'fr' ? 'Très nuageux' : 'Overcast';
+    } else if (rainProb > 60) {
+      return language === 'fr' ? 'Nuageux' : 'Cloudy';
+    } else if (rainProb > 30) {
+      return language === 'fr' ? 'Partiellement nuageux' : 'Partly Cloudy';
+    } else if (humidity > 90) {
+      return language === 'fr' ? 'Brumeux' : 'Foggy';
+    } else if (tempF < 75) {
+      return language === 'fr' ? 'Frais' : 'Cool';
+    } else if (tempF > 85) {
+      return language === 'fr' ? 'Chaud' : 'Hot';
+    } else if (rainProb < 20 && humidity < 60) {
+      return language === 'fr' ? 'Ensoleillé' : 'Sunny';
+    } else {
+      return language === 'fr' ? 'Dégagé' : 'Clear';
+    }
+  };
+
   const theme = getCountryTheme(location.location);
 
   return (
