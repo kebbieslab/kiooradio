@@ -303,18 +303,6 @@ const Podcast = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => {
-                          const audio = document.createElement('audio');
-                          audio.src = sample.audioUrl;
-                          audio.play().catch(() => {
-                            alert('Unable to play audio. Please check your browser settings.');
-                          });
-                        }}
-                        className="flex-1 bg-kioo-primary text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-kioo-primary-dark transition-colors"
-                      >
-                        🎵 Play Sample
-                      </button>
-                      <button
-                        onClick={() => {
                           // Share functionality
                           if (navigator.share) {
                             navigator.share({
@@ -329,7 +317,7 @@ const Podcast = () => {
                         }}
                         className="px-3 py-2 border border-gray-300 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-50 transition-colors"
                       >
-                        📤
+                        📤 Share
                       </button>
                     </div>
                   </div>
