@@ -8,6 +8,7 @@ const WeatherDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [activeTab, setActiveTab] = useState('current'); // New state for tabs
 
   // Language detection and setup
   useEffect(() => {
