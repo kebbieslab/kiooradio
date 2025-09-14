@@ -7227,6 +7227,377 @@ async def startup_db_client():
 
 # Shutdown event
 @app.on_event("shutdown")
+# ====================================
+# PODCAST API ENDPOINTS
+# ====================================
+
+# Podcast Data Models
+class PodcastSeries(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    slug: str
+    language: str  # kissi | en | fr | ev
+    imageUrl: Optional[str] = ""
+    description: Optional[str] = ""
+    created_at: Optional[str] = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class PodcastEpisode(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    seriesId: str
+    title: str
+    slug: str
+    date_gmt_iso: str  # e.g., "2025-09-13T09:00:00Z"
+    duration_sec: int
+    language: str  # kissi | en | fr | ev
+    audio_url: str  # mp3/m4a; supports range requests
+    audio_bytes: Optional[int] = 0  # optional for showing file size
+    description: Optional[str] = ""
+    imageUrl: Optional[str] = ""
+    transcript_url: Optional[str] = ""
+    created_at: Optional[str] = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class BulkImportRequest(BaseModel):
+    csv_data: str
+
+# Series endpoints
+@api_router.get("/podcast/series")
+async def get_podcast_series():
+    """Get all podcast series"""
+    try:
+        series_list = await db.podcast_series.find().to_list(length=None)
+        return {"series": series_list, "total": len(series_list)}
+    except Exception as e:
+        logger.error(f"Error fetching podcast series: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch series")
+
+@api_router.post("/podcast/series")
+async def create_podcast_series(series: PodcastSeries, credentials: HTTPBasicCredentials = Depends(security)):
+    """Create a new podcast series"""
+    authenticate_admin(credentials)
+    
+    # Check if slug already exists
+    existing = await db.podcast_series.find_one({"slug": series.slug})
+    if existing:
+        raise HTTPException(status_code=400, detail="Series with this slug already exists")
+    
+    try:
+        series_dict = series.dict()
+        await db.podcast_series.insert_one(series_dict)
+        return {"message": "Series created successfully", "series": series_dict}
+    except Exception as e:
+        logger.error(f"Error creating podcast series: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create series")
+
+@api_router.put("/podcast/series/{series_id}")
+async def update_podcast_series(series_id: str, series: PodcastSeries, credentials: HTTPBasicCredentials = Depends(security)):
+    """Update a podcast series"""
+    authenticate_admin(credentials)
+    
+    try:
+        series_dict = series.dict()
+        series_dict["id"] = series_id  # Ensure ID matches
+        
+        result = await db.podcast_series.update_one(
+            {"id": series_id},
+            {"$set": series_dict}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Series not found")
+        
+        return {"message": "Series updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating podcast series: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update series")
+
+@api_router.delete("/podcast/series/{series_id}")
+async def delete_podcast_series(series_id: str, credentials: HTTPBasicCredentials = Depends(security)):
+    """Delete a podcast series"""
+    authenticate_admin(credentials)
+    
+    try:
+        # Check if there are episodes in this series
+        episode_count = await db.podcast_episodes.count_documents({"seriesId": series_id})
+        if episode_count > 0:
+            raise HTTPException(status_code=400, detail=f"Cannot delete series with {episode_count} episodes")
+        
+        result = await db.podcast_series.delete_one({"id": series_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Series not found")
+        
+        return {"message": "Series deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting podcast series: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete series")
+
+# Episodes endpoints
+@api_router.get("/podcast/episodes")
+async def get_podcast_episodes(
+    language: Optional[str] = None,
+    series_id: Optional[str] = None,
+    limit: Optional[int] = 50,
+    skip: Optional[int] = 0
+):
+    """Get podcast episodes with optional filters"""
+    try:
+        query = {}
+        if language and language != 'all':
+            query["language"] = language
+        if series_id and series_id != 'all':
+            query["seriesId"] = series_id
+        
+        episodes_list = await db.podcast_episodes.find(query).sort("date_gmt_iso", -1).skip(skip).limit(limit).to_list(length=None)
+        total_count = await db.podcast_episodes.count_documents(query)
+        
+        return {
+            "episodes": episodes_list,
+            "total": total_count,
+            "limit": limit,
+            "skip": skip
+        }
+    except Exception as e:
+        logger.error(f"Error fetching podcast episodes: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch episodes")
+
+@api_router.get("/podcast/episodes/{episode_slug}")
+async def get_podcast_episode(episode_slug: str):
+    """Get a single podcast episode by slug"""
+    try:
+        episode = await db.podcast_episodes.find_one({"slug": episode_slug})
+        if not episode:
+            raise HTTPException(status_code=404, detail="Episode not found")
+        
+        return {"episode": episode}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching podcast episode: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch episode")
+
+@api_router.post("/podcast/episodes")
+async def create_podcast_episode(episode: PodcastEpisode, credentials: HTTPBasicCredentials = Depends(security)):
+    """Create a new podcast episode"""
+    authenticate_admin(credentials)
+    
+    # Validate series exists
+    series = await db.podcast_series.find_one({"id": episode.seriesId})
+    if not series:
+        raise HTTPException(status_code=400, detail="Series not found")
+    
+    # Check if slug already exists
+    existing = await db.podcast_episodes.find_one({"slug": episode.slug})
+    if existing:
+        raise HTTPException(status_code=400, detail="Episode with this slug already exists")
+    
+    try:
+        episode_dict = episode.dict()
+        await db.podcast_episodes.insert_one(episode_dict)
+        return {"message": "Episode created successfully", "episode": episode_dict}
+    except Exception as e:
+        logger.error(f"Error creating podcast episode: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create episode")
+
+@api_router.put("/podcast/episodes/{episode_id}")
+async def update_podcast_episode(episode_id: str, episode: PodcastEpisode, credentials: HTTPBasicCredentials = Depends(security)):
+    """Update a podcast episode"""
+    authenticate_admin(credentials)
+    
+    try:
+        episode_dict = episode.dict()
+        episode_dict["id"] = episode_id  # Ensure ID matches
+        
+        result = await db.podcast_episodes.update_one(
+            {"id": episode_id},
+            {"$set": episode_dict}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Episode not found")
+        
+        return {"message": "Episode updated successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating podcast episode: {e}")
+        raise HTTPException(status_code=500, detail="Failed to update episode")
+
+@api_router.delete("/podcast/episodes/{episode_id}")
+async def delete_podcast_episode(episode_id: str, credentials: HTTPBasicCredentials = Depends(security)):
+    """Delete a podcast episode"""
+    authenticate_admin(credentials)
+    
+    try:
+        result = await db.podcast_episodes.delete_one({"id": episode_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Episode not found")
+        
+        return {"message": "Episode deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting podcast episode: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete episode")
+
+@api_router.post("/podcast/episodes/bulk-import")
+async def bulk_import_episodes(request: BulkImportRequest, credentials: HTTPBasicCredentials = Depends(security)):
+    """Bulk import episodes from CSV data"""
+    authenticate_admin(credentials)
+    
+    try:
+        import csv
+        from io import StringIO
+        
+        csv_reader = csv.DictReader(StringIO(request.csv_data))
+        imported_count = 0
+        errors = []
+        
+        for row_num, row in enumerate(csv_reader, start=2):
+            try:
+                # Validate required fields
+                required_fields = ['title', 'seriesId', 'date_gmt_iso', 'duration_sec', 'language', 'audio_url']
+                for field in required_fields:
+                    if not row.get(field):
+                        raise ValueError(f"Missing required field: {field}")
+                
+                # Generate slug if not provided
+                if not row.get('slug'):
+                    row['slug'] = row['title'].lower().replace(' ', '-').replace(',', '').replace('.', '')
+                
+                # Generate ID if not provided
+                if not row.get('id'):
+                    row['id'] = str(uuid.uuid4())
+                
+                # Convert numeric fields
+                row['duration_sec'] = int(row['duration_sec'])
+                row['audio_bytes'] = int(row.get('audio_bytes', 0))
+                
+                # Validate series exists
+                series = await db.podcast_series.find_one({"id": row['seriesId']})
+                if not series:
+                    raise ValueError(f"Series not found: {row['seriesId']}")
+                
+                # Check for duplicate slug
+                existing = await db.podcast_episodes.find_one({"slug": row['slug']})
+                if existing:
+                    raise ValueError(f"Episode with slug already exists: {row['slug']}")
+                
+                # Add timestamp
+                row['created_at'] = datetime.now(timezone.utc).isoformat()
+                
+                # Insert episode
+                await db.podcast_episodes.insert_one(row)
+                imported_count += 1
+                
+            except Exception as e:
+                errors.append(f"Row {row_num}: {str(e)}")
+        
+        if errors:
+            return {
+                "imported_count": imported_count,
+                "errors": errors,
+                "message": f"Imported {imported_count} episodes with {len(errors)} errors"
+            }
+        else:
+            return {
+                "imported_count": imported_count,
+                "message": f"Successfully imported {imported_count} episodes"
+            }
+    except Exception as e:
+        logger.error(f"Error in bulk import: {e}")
+        raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
+
+# RSS Feed endpoint
+@api_router.get("/podcast/feed.xml")
+async def get_podcast_rss_feed():
+    """Generate iTunes/Apple Podcasts compatible RSS feed"""
+    try:
+        # Get all episodes with series info
+        episodes_list = await db.podcast_episodes.find().sort("date_gmt_iso", -1).to_list(length=None)
+        
+        # Build RSS XML
+        rss_items = []
+        for episode in episodes_list[:50]:  # Limit to latest 50 episodes
+            # Get series info
+            series = await db.podcast_series.find_one({"id": episode.get("seriesId")})
+            series_title = series.get("title", "Unknown Series") if series else "Unknown Series"
+            
+            # Format date for RSS (RFC 2822 format)
+            try:
+                episode_date = datetime.fromisoformat(episode["date_gmt_iso"].replace('Z', '+00:00'))
+                rss_date = episode_date.strftime("%a, %d %b %Y %H:%M:%S +0000")
+            except:
+                rss_date = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+            
+            # Format duration for RSS (HH:MM:SS)
+            duration_sec = episode.get("duration_sec", 0)
+            hours = duration_sec // 3600
+            minutes = (duration_sec % 3600) // 60
+            seconds = duration_sec % 60
+            duration_formatted = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+            
+            # Escape XML content
+            def escape_xml(text):
+                return (str(text or "")
+                    .replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
+                    .replace('"', "&quot;")
+                    .replace("'", "&#x27;"))
+            
+            rss_items.append(f"""
+        <item>
+            <title>{escape_xml(episode.get('title', 'Untitled'))}</title>
+            <description>{escape_xml(episode.get('description', ''))}</description>
+            <pubDate>{rss_date}</pubDate>
+            <enclosure url="{escape_xml(episode.get('audio_url', ''))}" 
+                      length="{episode.get('audio_bytes', 0)}" 
+                      type="audio/mpeg" />
+            <guid>{escape_xml(episode.get('id', ''))}</guid>
+            <itunes:author>Kioo Radio</itunes:author>
+            <itunes:duration>{duration_formatted}</itunes:duration>
+            <itunes:explicit>no</itunes:explicit>
+            <itunes:category text="{escape_xml(series_title)}" />
+        </item>""")
+        
+        # Build complete RSS
+        current_date = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
+        
+        rss_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+    <channel>
+        <title>Kioo Radio Podcast</title>
+        <link>https://kiooradio.com/podcast</link>
+        <description>Inspiring content from Kioo Radio bringing hope, faith, and community across the Makona River Region in multiple languages.</description>
+        <language>en-us</language>
+        <copyright>© 2024 Kioo Radio</copyright>
+        <lastBuildDate>{current_date}</lastBuildDate>
+        <pubDate>{current_date}</pubDate>
+        <ttl>60</ttl>
+        <itunes:author>Kioo Radio</itunes:author>
+        <itunes:summary>Inspiring content from Kioo Radio bringing hope, faith, and community across the Makona River Region in multiple languages.</itunes:summary>
+        <itunes:owner>
+            <itunes:name>Kioo Radio</itunes:name>
+            <itunes:email>info@kiooradio.com</itunes:email>
+        </itunes:owner>
+        <itunes:image href="https://kiooradio.com/assets/images/kioo-logo.png" />
+        <itunes:category text="Religion &amp; Spirituality" />
+        <itunes:explicit>no</itunes:explicit>
+        {''.join(rss_items)}
+    </channel>
+</rss>"""
+        
+        return Response(content=rss_xml, media_type="application/rss+xml")
+        
+    except Exception as e:
+        logger.error(f"Error generating RSS feed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate RSS feed")
+
 async def shutdown_db_client():
     """Close database connection on shutdown"""
     try:
