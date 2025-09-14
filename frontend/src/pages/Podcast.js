@@ -206,7 +206,7 @@ const Podcast = () => {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex flex-wrap items-center justify-center gap-3">
             <span className="text-sm font-medium text-gray-700">Filter by Language:</span>
-            {['all', 'kissi', 'en', 'fr'].map(lang => (
+            {['all', 'kissi', 'en', 'fr', 'mixed', 'mandingo', 'fula'].map(lang => (
               <button
                 key={lang}
                 onClick={() => setSelectedLanguage(lang)}
