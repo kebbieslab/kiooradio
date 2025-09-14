@@ -8,6 +8,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
 
   // Language detection and setup
   useEffect(() => {
