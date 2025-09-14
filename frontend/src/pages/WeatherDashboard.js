@@ -71,7 +71,7 @@ const WeatherDashboard = () => {
       />
       
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
+      <div className="bg-gradient-to-r from-kioo-primary to-kioo-accent text-white">
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
