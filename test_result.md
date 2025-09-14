@@ -56,9 +56,35 @@
 ##   test_all: false
 ##   test_priority: "high_first"  # or "sequential" or "stuck_first"
 ##
+## backend:
+  - task: "Kioo Dashboard: GMT + Farmer Messages Backend API"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Backend farmer weather endpoint fixed and fully operational. Root cause was invalid 'weather_code_max' parameter in Open-Meteo API request causing HTTP 400 errors. Fixed by removing invalid parameter. All 4 locations (Foya, Koindu, Guéckédou, Kissidougou) now return realistic live weather data with proper temperature, humidity, rain probability, and forecast data. Backend logs confirm successful API integration."
+
+## frontend:
+  - task: "Kioo Dashboard: GMT + Farmer Messages Frontend Interface"
+    implemented: true
+    working: false
+    file: "/app/frontend/src/pages/Dashboard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: false
+          agent: "main"
+          comment: "Frontend dashboard implemented with authentication (admin/kioo2025!), bilingual support (EN/FR), GMT timezone display, 4 weather location cards, farmer message generation, and 3-day outlook. Backend API integration fixed, but frontend needs testing to verify live weather data is now displaying correctly instead of fallback N/A values."
+
 ## agent_communication:
-##     -agent: "main"  # or "testing" or "user"
-##     -message: "Communication message between agents"
+    - agent: "main"
+      message: "Backend farmer weather API endpoint was fixed - removed invalid 'weather_code_max' parameter causing Open-Meteo API rejections. Need comprehensive end-to-end testing to verify frontend now displays live weather data instead of fallback values. Testing priority: backend confirmation first, then frontend verification."
 
 # Protocol Guidelines for Main agent
 #
