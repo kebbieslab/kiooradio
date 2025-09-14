@@ -237,10 +237,38 @@ const WeatherDashboard = () => {
 
             {/* Forecast Tab */}
             {activeTab === 'forecast' && (
-              <div className="space-y-6">
-                {farmerWeatherData.map((location, index) => (
-                  <ForecastCard key={index} location={location} language={language} />
-                ))}
+              <div className="space-y-8">
+                {/* Tomorrow Forecast */}
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <span className="text-2xl">🗓️</span>
+                    <h3 className="text-2xl font-semibold text-gray-900">
+                      {language === 'fr' ? 'Demain' : 'Tomorrow'}
+                    </h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                    {farmerWeatherData.map((location, index) => (
+                      <ForecastLocationCard key={`tomorrow-${index}`} location={location} language={language} dayOffset={1} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Day After Tomorrow Forecast */}
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <span className="text-2xl">📅</span>
+                    <h3 className="text-2xl font-semibold text-gray-900">
+                      {language === 'fr' ? 'Après-demain' : 'Day After Tomorrow'}
+                    </h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                    {farmerWeatherData.map((location, index) => (
+                      <ForecastLocationCard key={`day-after-${index}`} location={location} language={language} dayOffset={2} />
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
