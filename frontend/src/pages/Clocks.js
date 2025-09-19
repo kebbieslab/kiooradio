@@ -68,7 +68,7 @@ const ClocksNew = () => {
     { startTime: "18:00", endTime: "19:00", lang: 'mixed', program: 'Evening News & Roundup', type: 'Community' },
     { startTime: "19:00", endTime: "19:30", lang: 'fr', program: 'Pastor\'s Corner - Guinea', type: 'Sermon', special: true },
     { startTime: "19:30", endTime: "20:00", lang: 'en', program: 'Community Announcements', type: 'Community' },
-    { startTime: "20:00", endTime: "20:30", lang: 'kissi', program: 'Community Programming', type: 'Community' },
+    { startTime: "20:00", endTime: "20:30", lang: 'kissi', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
     { startTime: "20:30", endTime: "21:00", lang: 'kissi', program: 'Phone-in Program', type: 'Interactive' },
     { startTime: "21:00", endTime: "21:30", lang: 'en', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
     { startTime: "21:30", endTime: "22:00", lang: 'mixed', program: 'Pastor\'s Corner - Multi-Country', type: 'Sermon', special: true },
