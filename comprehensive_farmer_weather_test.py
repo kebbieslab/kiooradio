@@ -13,7 +13,7 @@ import sys
 class ComprehensiveFarmerWeatherTester:
     def __init__(self):
         # Use the production URL from frontend/.env
-        self.base_url = "https://radio-weather-hub.preview.emergentagent.com/api"
+        self.base_url = "https://farmer-weather.preview.emergentagent.com/api"
         self.tests_run = 0
         self.tests_passed = 0
         self.failed_tests = []

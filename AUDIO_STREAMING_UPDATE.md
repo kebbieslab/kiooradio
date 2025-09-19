@@ -85,7 +85,7 @@
 
 ## 🌐 **LIVE WEBSITE RESULTS**
 
-**URL:** https://radio-weather-hub.preview.emergentagent.com
+**URL:** https://farmer-weather.preview.emergentagent.com
 
 ### **Homepage Changes:**
 - ✅ Clean hero section without "Currently Playing" banner

@@ -488,7 +488,7 @@ Enhance CRM Projects section with receipt management, multimedia uploads, AI-pow
           comment: "Partner Churches page showing 'Coming Soon' placeholder data instead of real church partner data from database. API has 79 partners but frontend shows placeholders."
         - working: true
           agent: "main"
-          comment: "✅ FIXED: Root cause was REACT_APP_BACKEND_URL pointing to production URL (https://radio-weather-hub.preview.emergentagent.com) instead of local development URL. Updated to http://localhost:8001 and restarted frontend. Page now shows 79 real partner churches instead of placeholders."
+          comment: "✅ FIXED: Root cause was REACT_APP_BACKEND_URL pointing to production URL (https://farmer-weather.preview.emergentagent.com) instead of local development URL. Updated to http://localhost:8001 and restarted frontend. Page now shows 79 real partner churches instead of placeholders."
 
   - task: "Verify Presenters Dashboard Functionality"
     implemented: true

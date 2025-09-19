@@ -131,7 +131,7 @@ Your comprehensive partners logo strip has been successfully added to the Kioo R
 
 ## 🚀 **LIVE WEBSITE**
 
-**URL:** https://radio-weather-hub.preview.emergentagent.com  
+**URL:** https://farmer-weather.preview.emergentagent.com  
 **Status:** ✅ **FULLY OPERATIONAL** with scrolling partners strip
 
 **Features Working:**
