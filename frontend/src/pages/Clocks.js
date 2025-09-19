@@ -51,7 +51,7 @@ const ClocksNew = () => {
     { startTime: "11:30", endTime: "12:00", lang: 'en', program: 'Music & Reflection', type: 'Music' },
     
     // 12 PM to 6 PM  
-    { startTime: "12:00", endTime: "12:30", lang: 'kissi', program: 'Thru the Bible (TTB)', type: 'Bible Teaching' },
+    { startTime: "12:00", endTime: "12:30", lang: 'kissi', program: 'Community Programming', type: 'Community' },
     { startTime: "12:30", endTime: "13:00", lang: 'kissi', program: 'Youth Connect', type: 'Youth/Community' },
     { startTime: "13:00", endTime: "13:30", lang: 'kissi', program: 'Community Announcements', type: 'Community' },
     { startTime: "13:30", endTime: "14:00", lang: 'kissi', program: 'Phone-in Program', type: 'Interactive' },
